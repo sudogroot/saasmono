@@ -8,6 +8,9 @@
     "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:generate": "drizzle-kit generate",
@@ -44,9 +47,11 @@
     "@types/express": "^5.0.1",
     "@types/node": "^22.13.11",
     "@types/pg": "^8.11.11",
+    "@vitest/coverage-v8": "^2.1.8",
     "drizzle-kit": "^0.31.2",
     "tsdown": "^0.14.1",
     "tsx": "^4.20.5",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "vitest": "^2.1.8"
   }
 }
