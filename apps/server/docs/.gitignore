@@ -1,0 +1,5 @@
+# Generated OpenAPI files
+openapi.json
+
+# Keep README.md
+!README.md

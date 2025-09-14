@@ -3,6 +3,7 @@ import type { Context } from "./context";
 
 export const o = os.$context<Context>();
 
+// Configure with detailed input structure to handle path parameters properly
 export const publicProcedure = o;
 
 const requireAuth = o.middleware(async ({ context, next }) => {
