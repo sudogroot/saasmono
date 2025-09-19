@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
@@ -9,18 +9,12 @@ export default defineConfig({
     exclude: ['node_modules', 'dist'],
     coverage: {
       reporter: ['text', 'json', 'html'],
-      exclude: [
-        'node_modules/',
-        'dist/',
-        'src/**/*.d.ts',
-        'src/**/*.config.{js,ts}',
-        'src/**/index.ts'
-      ]
-    }
+      exclude: ['node_modules/', 'dist/', 'src/**/*.d.ts', 'src/**/*.config.{js,ts}', 'src/**/index.ts'],
+    },
   },
   resolve: {
     alias: {
-      '@': new URL('./src', import.meta.url).pathname
-    }
-  }
-});
+      '@': new URL('./src', import.meta.url).pathname,
+    },
+  },
+})

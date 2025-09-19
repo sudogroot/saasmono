@@ -1,18 +1,17 @@
 {
-	"compilerOptions": {
-		"target": "ESNext",
-		"module": "ESNext",
-		"moduleResolution": "bundler",
-		"verbatimModuleSyntax": true,
-		"strict": true,
-		"skipLibCheck": true,
-		"baseUrl": "./",
-		"paths": {
-			"@/*": ["./src/*"]
-		},
-		"outDir": "./dist",
-		"types": ["node"],
-		"composite": true,
-		"jsx": "react-jsx"
-	}
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "outDir": "./dist",
+    "types": ["node"],
+    "composite": true,
+    "jsx": "react-jsx"
+  }
 }

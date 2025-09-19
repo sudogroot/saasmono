@@ -28,17 +28,20 @@ This will start a local server at `http://localhost:8080` displaying the interac
 ## API Features
 
 ### Authentication
+
 - JWT Bearer token authentication
 - Session-based authentication via cookies
 - Organization-scoped access control
 
 ### User Management Endpoints
+
 - User CRUD operations
 - Parent-student relationship management
 - Teacher assignment management
 - Type-based user filtering
 
 ### OpenAPI Features
+
 - Complete request/response schemas
 - Interactive API explorer
 - Authentication requirements
@@ -54,6 +57,7 @@ The API documentation is automatically generated from the ORPC router definition
 3. Regenerate the specification with `pnpm docs:generate`
 
 Example:
+
 ```typescript
 .meta({
   openapi: {

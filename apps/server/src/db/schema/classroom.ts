@@ -1,157 +1,157 @@
-import { pgTable, text, timestamp, uuid, integer, boolean } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
-import { user, organization } from "./auth";
-import { educationLevel, educationSubject } from "./education";
+import { relations } from 'drizzle-orm'
+import { boolean, integer, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { organization, user } from './auth'
+import { educationLevel, educationSubject } from './education'
 
 // Main class/grade entity
-export const classroom = pgTable("classroom", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name").notNull(), // e.g., "Class 3A", "Grade 10 Science"
-  code: text("code").notNull(), // e.g., "3A", "10SCI"
-  academicYear: text("academic_year").notNull(), // e.g., "2024-2025"
-  capacity: integer("capacity"), // Maximum number of students
+export const classroom = pgTable('classroom', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: text('name').notNull(), // e.g., "Class 3A", "Grade 10 Science"
+  code: text('code').notNull(), // e.g., "3A", "10SCI"
+  academicYear: text('academic_year').notNull(), // e.g., "2024-2025"
+  capacity: integer('capacity'), // Maximum number of students
 
   // References
-  educationLevelId: uuid("education_level_id")
+  educationLevelId: uuid('education_level_id')
     .notNull()
-    .references(() => educationLevel.id, { onDelete: "cascade" }),
-  orgId: text("org_id")
+    .references(() => educationLevel.id, { onDelete: 'cascade' }),
+  orgId: text('org_id')
     .notNull()
-    .references(() => organization.id, { onDelete: "cascade" }),
+    .references(() => organization.id, { onDelete: 'cascade' }),
 
   // Audit fields
-  createdByUserId: text("created_by_user_id").references(() => user.id),
-  updatedByUserId: text("updated_by_user_id").references(() => user.id),
-  deletedByUserId: text("deleted_by_user_id").references(() => user.id),
+  createdByUserId: text('created_by_user_id').references(() => user.id),
+  updatedByUserId: text('updated_by_user_id').references(() => user.id),
+  deletedByUserId: text('deleted_by_user_id').references(() => user.id),
 
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
-  deletedAt: timestamp("deleted_at"),
-});
+  deletedAt: timestamp('deleted_at'),
+})
 
 // Students assigned to classes
-export const classroomStudentEnrollment = pgTable("classroom_student_enrollment", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  classroomId: uuid("classroom_id")
+export const classroomStudentEnrollment = pgTable('classroom_student_enrollment', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  classroomId: uuid('classroom_id')
     .notNull()
-    .references(() => classroom.id, { onDelete: "cascade" }),
-  studentId: text("student_id")
+    .references(() => classroom.id, { onDelete: 'cascade' }),
+  studentId: text('student_id')
     .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  enrollmentDate: timestamp("enrollment_date").defaultNow().notNull(),
-  status: text("status").default("active").notNull(), // active, inactive, transferred
+    .references(() => user.id, { onDelete: 'cascade' }),
+  enrollmentDate: timestamp('enrollment_date').defaultNow().notNull(),
+  status: text('status').default('active').notNull(), // active, inactive, transferred
 
-  orgId: text("org_id")
+  orgId: text('org_id')
     .notNull()
-    .references(() => organization.id, { onDelete: "cascade" }),
+    .references(() => organization.id, { onDelete: 'cascade' }),
 
   // Audit fields
-  createdByUserId: text("created_by_user_id").references(() => user.id),
-  updatedByUserId: text("updated_by_user_id").references(() => user.id),
-  deletedByUserId: text("deleted_by_user_id").references(() => user.id),
+  createdByUserId: text('created_by_user_id').references(() => user.id),
+  updatedByUserId: text('updated_by_user_id').references(() => user.id),
+  deletedByUserId: text('deleted_by_user_id').references(() => user.id),
 
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
-  deletedAt: timestamp("deleted_at"),
-});
+  deletedAt: timestamp('deleted_at'),
+})
 
 // Teachers assigned to teach specific subjects in specific classes
-export const classroomTeacherAssignment = pgTable("classroom_teacher_assignment", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  classroomId: uuid("classroom_id")
+export const classroomTeacherAssignment = pgTable('classroom_teacher_assignment', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  classroomId: uuid('classroom_id')
     .notNull()
-    .references(() => classroom.id, { onDelete: "cascade" }),
-  teacherId: text("teacher_id")
+    .references(() => classroom.id, { onDelete: 'cascade' }),
+  teacherId: text('teacher_id')
     .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  educationSubjectId: uuid("education_subject_id")
+    .references(() => user.id, { onDelete: 'cascade' }),
+  educationSubjectId: uuid('education_subject_id')
     .notNull()
-    .references(() => educationSubject.id, { onDelete: "cascade" }),
+    .references(() => educationSubject.id, { onDelete: 'cascade' }),
 
   // Role in this specific class-subject assignment
-  role: text("role").default("teacher").notNull(), // teacher, assistant, substitute
-  isMainTeacher: text("is_main_teacher").default("false").notNull(), // Main teacher for this subject in this class
+  role: text('role').default('teacher').notNull(), // teacher, assistant, substitute
+  isMainTeacher: text('is_main_teacher').default('false').notNull(), // Main teacher for this subject in this class
 
-  orgId: text("org_id")
+  orgId: text('org_id')
     .notNull()
-    .references(() => organization.id, { onDelete: "cascade" }),
+    .references(() => organization.id, { onDelete: 'cascade' }),
 
   // Audit fields
-  createdByUserId: text("created_by_user_id").references(() => user.id),
-  updatedByUserId: text("updated_by_user_id").references(() => user.id),
-  deletedByUserId: text("deleted_by_user_id").references(() => user.id),
+  createdByUserId: text('created_by_user_id').references(() => user.id),
+  updatedByUserId: text('updated_by_user_id').references(() => user.id),
+  deletedByUserId: text('deleted_by_user_id').references(() => user.id),
 
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
-  deletedAt: timestamp("deleted_at"),
-});
+  deletedAt: timestamp('deleted_at'),
+})
 
 // Flexible grouping system for dividing classes
-export const classroomGroup = pgTable("classroom_group", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name").notNull(), // "Group A", "Group B", "All Students", "Advanced", "Beginner"
-  code: text("code").notNull(), // "GRP_A", "GRP_B", "ALL", "ADV", "BEG"
-  description: text("description"),
-  maxCapacity: integer("max_capacity"), // Maximum students in this group
-  isDefault: boolean("is_default").default(false).notNull(), // Is this the default "all students" group
+export const classroomGroup = pgTable('classroom_group', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: text('name').notNull(), // "Group A", "Group B", "All Students", "Advanced", "Beginner"
+  code: text('code').notNull(), // "GRP_A", "GRP_B", "ALL", "ADV", "BEG"
+  description: text('description'),
+  maxCapacity: integer('max_capacity'), // Maximum students in this group
+  isDefault: boolean('is_default').default(false).notNull(), // Is this the default "all students" group
 
-  classroomId: uuid("classroom_id")
+  classroomId: uuid('classroom_id')
     .notNull()
-    .references(() => classroom.id, { onDelete: "cascade" }),
-  orgId: text("org_id")
+    .references(() => classroom.id, { onDelete: 'cascade' }),
+  orgId: text('org_id')
     .notNull()
-    .references(() => organization.id, { onDelete: "cascade" }),
+    .references(() => organization.id, { onDelete: 'cascade' }),
 
   // Audit fields
-  createdByUserId: text("created_by_user_id").references(() => user.id),
-  updatedByUserId: text("updated_by_user_id").references(() => user.id),
-  deletedByUserId: text("deleted_by_user_id").references(() => user.id),
+  createdByUserId: text('created_by_user_id').references(() => user.id),
+  updatedByUserId: text('updated_by_user_id').references(() => user.id),
+  deletedByUserId: text('deleted_by_user_id').references(() => user.id),
 
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
-  deletedAt: timestamp("deleted_at"),
-});
+  deletedAt: timestamp('deleted_at'),
+})
 
 // Students assigned to specific groups within a classroom
-export const classroomGroupMembership = pgTable("classroom_group_membership", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  classroomGroupId: uuid("classroom_group_id")
+export const classroomGroupMembership = pgTable('classroom_group_membership', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  classroomGroupId: uuid('classroom_group_id')
     .notNull()
-    .references(() => classroomGroup.id, { onDelete: "cascade" }),
-  studentId: text("student_id")
+    .references(() => classroomGroup.id, { onDelete: 'cascade' }),
+  studentId: text('student_id')
     .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
+    .references(() => user.id, { onDelete: 'cascade' }),
 
   // Flexible assignment - can be subject-specific or general
-  educationSubjectId: uuid("education_subject_id"), // Optional: group for specific subject only
-  isActive: boolean("is_active").default(true).notNull(),
+  educationSubjectId: uuid('education_subject_id'), // Optional: group for specific subject only
+  isActive: boolean('is_active').default(true).notNull(),
 
-  orgId: text("org_id")
+  orgId: text('org_id')
     .notNull()
-    .references(() => organization.id, { onDelete: "cascade" }),
+    .references(() => organization.id, { onDelete: 'cascade' }),
 
   // Audit fields
-  createdByUserId: text("created_by_user_id").references(() => user.id),
-  updatedByUserId: text("updated_by_user_id").references(() => user.id),
+  createdByUserId: text('created_by_user_id').references(() => user.id),
+  updatedByUserId: text('updated_by_user_id').references(() => user.id),
 
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
-});
+})
 
 // Relations
 export const classroomRelations = relations(classroom, ({ many, one }) => ({
@@ -180,19 +180,19 @@ export const classroomRelations = relations(classroom, ({ many, one }) => ({
   createdBy: one(user, {
     fields: [classroom.createdByUserId],
     references: [user.id],
-    relationName: "classroomCreatedBy"
+    relationName: 'classroomCreatedBy',
   }),
   updatedBy: one(user, {
     fields: [classroom.updatedByUserId],
     references: [user.id],
-    relationName: "classroomUpdatedBy"
+    relationName: 'classroomUpdatedBy',
   }),
   deletedBy: one(user, {
     fields: [classroom.deletedByUserId],
     references: [user.id],
-    relationName: "classroomDeletedBy"
+    relationName: 'classroomDeletedBy',
   }),
-}));
+}))
 
 export const classroomStudentEnrollmentRelations = relations(classroomStudentEnrollment, ({ one }) => ({
   classroom: one(classroom, {
@@ -202,7 +202,7 @@ export const classroomStudentEnrollmentRelations = relations(classroomStudentEnr
   student: one(user, {
     fields: [classroomStudentEnrollment.studentId],
     references: [user.id],
-    relationName: "studentEnrollment"
+    relationName: 'studentEnrollment',
   }),
   organization: one(organization, {
     fields: [classroomStudentEnrollment.orgId],
@@ -211,9 +211,9 @@ export const classroomStudentEnrollmentRelations = relations(classroomStudentEnr
   createdBy: one(user, {
     fields: [classroomStudentEnrollment.createdByUserId],
     references: [user.id],
-    relationName: "enrollmentCreatedBy"
+    relationName: 'enrollmentCreatedBy',
   }),
-}));
+}))
 
 export const classroomTeacherAssignmentRelations = relations(classroomTeacherAssignment, ({ one }) => ({
   classroom: one(classroom, {
@@ -223,7 +223,7 @@ export const classroomTeacherAssignmentRelations = relations(classroomTeacherAss
   teacher: one(user, {
     fields: [classroomTeacherAssignment.teacherId],
     references: [user.id],
-    relationName: "teacherAssignment"
+    relationName: 'teacherAssignment',
   }),
   educationSubject: one(educationSubject, {
     fields: [classroomTeacherAssignment.educationSubjectId],
@@ -236,9 +236,9 @@ export const classroomTeacherAssignmentRelations = relations(classroomTeacherAss
   createdBy: one(user, {
     fields: [classroomTeacherAssignment.createdByUserId],
     references: [user.id],
-    relationName: "teacherAssignmentCreatedBy"
+    relationName: 'teacherAssignmentCreatedBy',
   }),
-}));
+}))
 
 export const classroomGroupRelations = relations(classroomGroup, ({ many, one }) => ({
   memberships: many(classroomGroupMembership),
@@ -253,9 +253,9 @@ export const classroomGroupRelations = relations(classroomGroup, ({ many, one })
   createdBy: one(user, {
     fields: [classroomGroup.createdByUserId],
     references: [user.id],
-    relationName: "classroomGroupCreatedBy"
+    relationName: 'classroomGroupCreatedBy',
   }),
-}));
+}))
 
 export const classroomGroupMembershipRelations = relations(classroomGroupMembership, ({ one }) => ({
   classroomGroup: one(classroomGroup, {
@@ -265,7 +265,7 @@ export const classroomGroupMembershipRelations = relations(classroomGroupMembers
   student: one(user, {
     fields: [classroomGroupMembership.studentId],
     references: [user.id],
-    relationName: "groupMembershipStudent"
+    relationName: 'groupMembershipStudent',
   }),
   organization: one(organization, {
     fields: [classroomGroupMembership.orgId],
@@ -274,6 +274,6 @@ export const classroomGroupMembershipRelations = relations(classroomGroupMembers
   createdBy: one(user, {
     fields: [classroomGroupMembership.createdByUserId],
     references: [user.id],
-    relationName: "groupMembershipCreatedBy"
+    relationName: 'groupMembershipCreatedBy',
   }),
-}));
+}))

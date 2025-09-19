@@ -1,6 +1,6 @@
 // all routes exported here
-import { userManagementRouter } from "./user";
+import { userManagementRouter } from './user'
 
 export const managementRouter = {
   users: userManagementRouter,
-};
+}

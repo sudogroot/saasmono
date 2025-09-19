@@ -1,4 +1,4 @@
-import type { LevelType, SectionType, LevelCodeNameType, SectionCodeNameType, InstitutionLevelType, SubjectType } from './dataTypes'
+import type { LevelType, SubjectType } from './dataTypes'
 export const PRIMAIRE_LEVELS: LevelType[] = [
   {
     institutionLevel: 'PRIMAIRE',
@@ -11,7 +11,7 @@ export const PRIMAIRE_LEVELS: LevelType[] = [
     },
     displayDescription: {
       en: 'First year of PRIMAIRE education',
-      fr: 'Première année de l\'enseignement primaire',
+      fr: "Première année de l'enseignement primaire",
       ar: 'السنة الأولى من التعليم الابتدائي',
     },
   },
@@ -26,7 +26,7 @@ export const PRIMAIRE_LEVELS: LevelType[] = [
     },
     displayDescription: {
       en: 'Second year of PRIMAIRE education',
-      fr: 'Deuxième année de l\'enseignement primaire',
+      fr: "Deuxième année de l'enseignement primaire",
       ar: 'السنة الثانية من التعليم الابتدائي',
     },
   },
@@ -41,7 +41,7 @@ export const PRIMAIRE_LEVELS: LevelType[] = [
     },
     displayDescription: {
       en: 'Third year of PRIMAIRE education',
-      fr: 'Troisième année de l\'enseignement primaire',
+      fr: "Troisième année de l'enseignement primaire",
       ar: 'السنة الثالثة من التعليم الابتدائي',
     },
   },
@@ -56,7 +56,7 @@ export const PRIMAIRE_LEVELS: LevelType[] = [
     },
     displayDescription: {
       en: 'Fourth year of PRIMAIRE education',
-      fr: 'Quatrième année de l\'enseignement primaire',
+      fr: "Quatrième année de l'enseignement primaire",
       ar: 'السنة الرابعة من التعليم الابتدائي',
     },
   },
@@ -71,7 +71,7 @@ export const PRIMAIRE_LEVELS: LevelType[] = [
     },
     displayDescription: {
       en: 'Fifth year of PRIMAIRE education',
-      fr: 'Cinquième année de l\'enseignement primaire',
+      fr: "Cinquième année de l'enseignement primaire",
       ar: 'السنة الخامسة من التعليم الابتدائي',
     },
   },
@@ -86,7 +86,7 @@ export const PRIMAIRE_LEVELS: LevelType[] = [
     },
     displayDescription: {
       en: 'Sixth year of PRIMAIRE education',
-      fr: 'Sixième année de l\'enseignement primaire',
+      fr: "Sixième année de l'enseignement primaire",
       ar: 'السنة السادسة من التعليم الابتدائي',
     },
   },
@@ -104,7 +104,7 @@ export const COLLEGE_LEVELS: LevelType[] = [
     },
     displayDescription: {
       en: 'Seventh year of COLLEGE school education',
-      fr: 'Septième année de l\'enseignement secondaire',
+      fr: "Septième année de l'enseignement secondaire",
       ar: 'السنة السابعة من التعليم المتوسط',
     },
   },
@@ -119,7 +119,7 @@ export const COLLEGE_LEVELS: LevelType[] = [
     },
     displayDescription: {
       en: 'Eighth year of COLLEGE school education',
-      fr: 'Huitième année de l\'enseignement secondaire',
+      fr: "Huitième année de l'enseignement secondaire",
       ar: 'السنة الثامنة من التعليم المتوسط',
     },
   },
@@ -134,10 +134,10 @@ export const COLLEGE_LEVELS: LevelType[] = [
     },
     displayDescription: {
       en: 'Ninth year of COLLEGE school education',
-      fr: 'Neuvième année de l\'enseignement secondaire',
+      fr: "Neuvième année de l'enseignement secondaire",
       ar: 'السنة التاسعة من التعليم المتوسط',
     },
-  }
+  },
 ]
 
 export const SECONDAIRE_SCHOOL_LEVELS: LevelType[] = [
@@ -153,7 +153,7 @@ export const SECONDAIRE_SCHOOL_LEVELS: LevelType[] = [
     },
     displayDescription: {
       en: 'First year of SECONDAIRE school education',
-      fr: 'Première année de l\'enseignement secondaire',
+      fr: "Première année de l'enseignement secondaire",
       ar: 'السنة الأولى من التعليم الثانوي',
     },
   },
@@ -447,9 +447,8 @@ export const SECONDAIRE_SCHOOL_LEVELS: LevelType[] = [
       fr: 'Quatrième année du lycée avec spécialisation en mathématiques',
       ar: 'السنة الرابعة من الثانوي بتخصص رياضيات',
     },
-  }
+  },
 ]
-
 
 export const PRIMAIRE_SUBJECTS: SubjectType[] = [
   {
@@ -526,7 +525,7 @@ export const PRIMAIRE_SUBJECTS: SubjectType[] = [
     },
     displayDescription: {
       en: 'Introduction to music appreciation and basic musical concepts',
-      fr: 'Introduction à l\'appréciation musicale et concepts musicaux de base',
+      fr: "Introduction à l'appréciation musicale et concepts musicaux de base",
       ar: 'مقدمة في الاستماع الموسيقي والمفاهيم الموسيقية الأساسية',
     },
   },
@@ -604,7 +603,7 @@ export const PRIMAIRE_SUBJECTS: SubjectType[] = [
     },
     displayDescription: {
       en: 'Introduction to local history and basic geographical concepts',
-      fr: 'Introduction à l\'histoire locale et concepts géographiques de base',
+      fr: "Introduction à l'histoire locale et concepts géographiques de base",
       ar: 'مقدمة في التاريخ المحلي والمفاهيم الجغرافية الأساسية',
     },
   },
@@ -634,8 +633,7 @@ export const PRIMAIRE_SUBJECTS: SubjectType[] = [
       ar: 'مقدمة في اللغة الإنجليزية والتواصل الأساسي',
     },
   },
-];
-
+]
 
 export const COLLEGE_SUBJECTS: SubjectType[] = [
   {
@@ -724,7 +722,7 @@ export const COLLEGE_SUBJECTS: SubjectType[] = [
       ar: 'الجغرافیا',
     },
     displayDescription: {
-      en: 'Study of the Earth\'s physical features and human geography',
+      en: "Study of the Earth's physical features and human geography",
       fr: 'Étude des caractéristiques physiques de la Terre et géographie humaine',
       ar: 'دراسة المعالم الجغرافية للأرض والجغرافيا البشرية',
     },
@@ -790,7 +788,7 @@ export const COLLEGE_SUBJECTS: SubjectType[] = [
     },
     displayDescription: {
       en: 'Study of computer science and information technology',
-      fr: 'Étude de l\'informatique et technologies de l\'information',
+      fr: "Étude de l'informatique et technologies de l'information",
       ar: 'دراسة علوم الحاسوب وتكنولوجيا المعلومات',
     },
   },
@@ -846,11 +844,9 @@ export const COLLEGE_SUBJECTS: SubjectType[] = [
       ar: 'دراسة الأنشطة البدنية والرياضة',
     },
   },
-];
-
+]
 
 export const SECONDAIRE_SCHOOL_SUBJECTS: SubjectType[] = [
-
   {
     institutionLevel: 'SECONDAIRE',
     levelCodeName: ['SECONDAIRE-3-INFORMATIQUE', 'SECONDAIRE-3-INFORMATIQUE'],
@@ -870,12 +866,12 @@ export const SECONDAIRE_SCHOOL_SUBJECTS: SubjectType[] = [
     levelCodeName: ['SECONDAIRE-3-INFORMATIQUE', 'SECONDAIRE-3-INFORMATIQUE'],
     displayName: {
       en: 'Information and Communication Technology',
-      fr: 'Technologies de l\'information et de la communication',
+      fr: "Technologies de l'information et de la communication",
       ar: 'تكنولوجیا المعلومات والاتّصال',
     },
     displayDescription: {
       en: 'Study of information systems, communication technologies, and digital tools',
-      fr: 'Étude des systèmes d\'information, technologies de communication et outils numériques',
+      fr: "Étude des systèmes d'information, technologies de communication et outils numériques",
       ar: 'دراسة أنظمة المعلومات وتقنيات الاتصال والأدوات الرقمية',
     },
   },
@@ -931,12 +927,10 @@ export const SECONDAIRE_SCHOOL_SUBJECTS: SubjectType[] = [
     },
     displayDescription: {
       en: 'Study of business management, organizational behavior, and leadership',
-      fr: 'Étude de la gestion d\'entreprise, comportement organisationnel et leadership',
+      fr: "Étude de la gestion d'entreprise, comportement organisationnel et leadership",
       ar: 'دراسة إدارة الأعمال وسلوك المنظمات والقيادة',
     },
   },
-
-
 
   /// Most common subjects
   {
@@ -979,12 +973,16 @@ export const SECONDAIRE_SCHOOL_SUBJECTS: SubjectType[] = [
     },
   },
 
-
-
   // non common subjects
   {
     institutionLevel: 'SECONDAIRE',
-    levelCodeName: ['SECONDAIRE-1-*', 'SECONDAIRE-2-*', 'SECONDAIRE-3-*', 'SECONDAIRE-4-LITERATURE', 'SECONDAIRE-4-ECONOMY'],
+    levelCodeName: [
+      'SECONDAIRE-1-*',
+      'SECONDAIRE-2-*',
+      'SECONDAIRE-3-*',
+      'SECONDAIRE-4-LITERATURE',
+      'SECONDAIRE-4-ECONOMY',
+    ],
     displayName: {
       en: 'History',
       fr: 'Histoire',
@@ -998,7 +996,13 @@ export const SECONDAIRE_SCHOOL_SUBJECTS: SubjectType[] = [
   },
   {
     institutionLevel: 'SECONDAIRE',
-    levelCodeName: ['SECONDAIRE-1-*', 'SECONDAIRE-2-*', 'SECONDAIRE-3-*', 'SECONDAIRE-4-LITERATURE', 'SECONDAIRE-4-ECONOMY'],
+    levelCodeName: [
+      'SECONDAIRE-1-*',
+      'SECONDAIRE-2-*',
+      'SECONDAIRE-3-*',
+      'SECONDAIRE-4-LITERATURE',
+      'SECONDAIRE-4-ECONOMY',
+    ],
     displayName: {
       en: 'Geography',
       fr: 'Géographie',
@@ -1013,7 +1017,14 @@ export const SECONDAIRE_SCHOOL_SUBJECTS: SubjectType[] = [
 
   {
     institutionLevel: 'SECONDAIRE',
-    levelCodeName: ['SECONDAIRE-1-*', 'SECONDAIRE-2-*', 'SECONDAIRE-3-LITERATURE', 'SECONDAIRE-4-LITERATURE', 'SECONDAIRE-3-MATH', 'SECONDAIRE-3-SCIENCE'],
+    levelCodeName: [
+      'SECONDAIRE-1-*',
+      'SECONDAIRE-2-*',
+      'SECONDAIRE-3-LITERATURE',
+      'SECONDAIRE-4-LITERATURE',
+      'SECONDAIRE-3-MATH',
+      'SECONDAIRE-3-SCIENCE',
+    ],
     displayName: {
       en: 'Islamic Thinking',
       fr: 'Pensée islamique',
@@ -1055,12 +1066,23 @@ export const SECONDAIRE_SCHOOL_SUBJECTS: SubjectType[] = [
     },
   },
 
-
-
   {
     institutionLevel: 'SECONDAIRE',
-    levelCodeName: ['SECONDAIRE-1-*', 'SECONDAIRE-2-*', 'SECONDAIRE-3-MATH', 'SECONDAIRE-4-MATH', 'SECONDAIRE-3-SCIENCE', 'SECONDAIRE-4-SCIENCE', 'SECONDAIRE-3-TECHNIQUE', 'SECONDAIRE-4-TECHNIQUE', 'SECONDAIRE-3-INFORMATIQUE', 'SECONDAIRE-4-INFORMATIQUE', 'SECONDAIRE-3-ECONOMY', 'SECONDAIRE-4-ECONOMY'],
-    levelCodeNameOptional:['SECONDAIRE-3-LITERATURE', 'SECONDAIRE-4-LITERATURE'],
+    levelCodeName: [
+      'SECONDAIRE-1-*',
+      'SECONDAIRE-2-*',
+      'SECONDAIRE-3-MATH',
+      'SECONDAIRE-4-MATH',
+      'SECONDAIRE-3-SCIENCE',
+      'SECONDAIRE-4-SCIENCE',
+      'SECONDAIRE-3-TECHNIQUE',
+      'SECONDAIRE-4-TECHNIQUE',
+      'SECONDAIRE-3-INFORMATIQUE',
+      'SECONDAIRE-4-INFORMATIQUE',
+      'SECONDAIRE-3-ECONOMY',
+      'SECONDAIRE-4-ECONOMY',
+    ],
+    levelCodeNameOptional: ['SECONDAIRE-3-LITERATURE', 'SECONDAIRE-4-LITERATURE'],
     displayName: {
       en: 'Mathematics',
       fr: 'Mathématiques',
@@ -1074,7 +1096,21 @@ export const SECONDAIRE_SCHOOL_SUBJECTS: SubjectType[] = [
   },
   {
     institutionLevel: 'SECONDAIRE',
-    levelCodeName: ['SECONDAIRE-1-*', 'SECONDAIRE-2-MATH', 'SECONDAIRE-3-MATH', 'SECONDAIRE-4-MATH', 'SECONDAIRE-2-SCIENCE', 'SECONDAIRE-3-SCIENCE', 'SECONDAIRE-4-SCIENCE', 'SECONDAIRE-2-TECHNIQUE', 'SECONDAIRE-3-TECHNIQUE', 'SECONDAIRE-4-TECHNIQUE', 'SECONDAIRE-2-INFORMATIQUE', 'SECONDAIRE-3-INFORMATIQUE', 'SECONDAIRE-4-INFORMATIQUE'],
+    levelCodeName: [
+      'SECONDAIRE-1-*',
+      'SECONDAIRE-2-MATH',
+      'SECONDAIRE-3-MATH',
+      'SECONDAIRE-4-MATH',
+      'SECONDAIRE-2-SCIENCE',
+      'SECONDAIRE-3-SCIENCE',
+      'SECONDAIRE-4-SCIENCE',
+      'SECONDAIRE-2-TECHNIQUE',
+      'SECONDAIRE-3-TECHNIQUE',
+      'SECONDAIRE-4-TECHNIQUE',
+      'SECONDAIRE-2-INFORMATIQUE',
+      'SECONDAIRE-3-INFORMATIQUE',
+      'SECONDAIRE-4-INFORMATIQUE',
+    ],
     displayName: {
       en: 'Physics',
       fr: 'Physique',
@@ -1088,8 +1124,18 @@ export const SECONDAIRE_SCHOOL_SUBJECTS: SubjectType[] = [
   },
   {
     institutionLevel: 'SECONDAIRE',
-    levelCodeName: ['SECONDAIRE-1-*','SECONDAIRE-2-LITERATURE','SECONDAIRE-2-MATH', 'SECONDAIRE-3-MATH', 'SECONDAIRE-4-MATH', 'SECONDAIRE-2-SCIENCE', 'SECONDAIRE-3-SCIENCE', 'SECONDAIRE-4-SCIENCE', 'SECONDAIRE-2-TECHNIQUE'],
-    levelCodeNameOptional:['SECONDAIRE-3-LITERATURE', 'SECONDAIRE-4-LITERATURE'],
+    levelCodeName: [
+      'SECONDAIRE-1-*',
+      'SECONDAIRE-2-LITERATURE',
+      'SECONDAIRE-2-MATH',
+      'SECONDAIRE-3-MATH',
+      'SECONDAIRE-4-MATH',
+      'SECONDAIRE-2-SCIENCE',
+      'SECONDAIRE-3-SCIENCE',
+      'SECONDAIRE-4-SCIENCE',
+      'SECONDAIRE-2-TECHNIQUE',
+    ],
+    levelCodeNameOptional: ['SECONDAIRE-3-LITERATURE', 'SECONDAIRE-4-LITERATURE'],
 
     displayName: {
       en: 'Life and Earth Sciences',
@@ -1105,7 +1151,15 @@ export const SECONDAIRE_SCHOOL_SUBJECTS: SubjectType[] = [
 
   {
     institutionLevel: 'SECONDAIRE',
-    levelCodeName: ['SECONDAIRE-1-*', 'SECONDAIRE-2-MATH', 'SECONDAIRE-2-SCIENCE', 'SECONDAIRE-2-TECHNIQUE', 'SECONDAIRE-3-TECHNIQUE', 'SECONDAIRE-4-TECHNIQUE', 'SECONDAIRE-2-INFORMATIQUE'],
+    levelCodeName: [
+      'SECONDAIRE-1-*',
+      'SECONDAIRE-2-MATH',
+      'SECONDAIRE-2-SCIENCE',
+      'SECONDAIRE-2-TECHNIQUE',
+      'SECONDAIRE-3-TECHNIQUE',
+      'SECONDAIRE-4-TECHNIQUE',
+      'SECONDAIRE-2-INFORMATIQUE',
+    ],
     displayName: {
       en: 'Technology',
       fr: 'Technologie',
@@ -1113,13 +1167,26 @@ export const SECONDAIRE_SCHOOL_SUBJECTS: SubjectType[] = [
     },
     displayDescription: {
       en: 'Study of technological systems, engineering principles, and innovation',
-      fr: 'Étude des systèmes technologiques, principes d\'ingénierie et innovation',
+      fr: "Étude des systèmes technologiques, principes d'ingénierie et innovation",
       ar: 'دراسة الأنظمة التكنولوجية ومبادئ الهندسة والابتكار',
     },
   },
   {
     institutionLevel: 'SECONDAIRE',
-    levelCodeName: ['SECONDAIRE-3-LITERATURE', 'SECONDAIRE-4-LITERATURE', 'SECONDAIRE-2-ECONOMY', 'SECONDAIRE-3-ECONOMY', 'SECONDAIRE-4-ECONOMY', 'SECONDAIRE-3-MATH', 'SECONDAIRE-4-MATH',  'SECONDAIRE-3-SCIENCE', 'SECONDAIRE-4-SCIENCE', 'SECONDAIRE-3-TECHNIQUE', 'SECONDAIRE-4-TECHNIQUE', 'SECONDAIRE-2-INFORMATIQUE'],
+    levelCodeName: [
+      'SECONDAIRE-3-LITERATURE',
+      'SECONDAIRE-4-LITERATURE',
+      'SECONDAIRE-2-ECONOMY',
+      'SECONDAIRE-3-ECONOMY',
+      'SECONDAIRE-4-ECONOMY',
+      'SECONDAIRE-3-MATH',
+      'SECONDAIRE-4-MATH',
+      'SECONDAIRE-3-SCIENCE',
+      'SECONDAIRE-4-SCIENCE',
+      'SECONDAIRE-3-TECHNIQUE',
+      'SECONDAIRE-4-TECHNIQUE',
+      'SECONDAIRE-2-INFORMATIQUE',
+    ],
     displayName: {
       en: 'Informatics',
       fr: 'Informatique',
@@ -1127,7 +1194,7 @@ export const SECONDAIRE_SCHOOL_SUBJECTS: SubjectType[] = [
     },
     displayDescription: {
       en: 'Study of computer science, software development, and information systems',
-      fr: 'Étude de l\'informatique, développement logiciel et systèmes d\'information',
+      fr: "Étude de l'informatique, développement logiciel et systèmes d'information",
       ar: 'دراسة علوم الحاسوب وتطوير البرمجيات وأنظمة المعلومات',
     },
   },
@@ -1144,7 +1211,6 @@ export const SECONDAIRE_SCHOOL_SUBJECTS: SubjectType[] = [
       ar: 'دراسة الأنشطة البدنية والرياضة والتربية الصحية',
     },
   },
-
 
   // optional subjects for all SECONDAIRE level
 
@@ -1259,5 +1325,5 @@ export const SECONDAIRE_SCHOOL_SUBJECTS: SubjectType[] = [
       fr: 'Travail pratique de projet, recherche et mise en œuvre de projets étudiants',
       ar: 'العمل العملي على المشاريع والبحث وتنفيذ مشاريع الطلاب',
     },
-  }
-];
+  },
+]

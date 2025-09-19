@@ -1,34 +1,44 @@
 export interface LevelType {
   // id: number;
-  institutionLevel: InstitutionLevelType;
-  codeName: `${InstitutionLevelType}-${string}-${SectionType}` | `${InstitutionLevelType}-${string}-`;
-  section?: SectionType;
-  level: number;
-  displayName?: { // this is for translation
-    en: string;
-    fr: string;
-    ar: string;
-  };
-  displayDescription?: { // this is for translation
-    en: string;
-    fr: string;
-    ar: string;
-  };
-};
+  institutionLevel: InstitutionLevelType
+  codeName: `${InstitutionLevelType}-${string}-${SectionType}` | `${InstitutionLevelType}-${string}-`
+  section?: SectionType
+  level: number
+  displayName?: {
+    // this is for translation
+    en: string
+    fr: string
+    ar: string
+  }
+  displayDescription?: {
+    // this is for translation
+    en: string
+    fr: string
+    ar: string
+  }
+}
 
 // ELEMENTARY = mardasah
 // MIDDLE = college
 // HIGH = lycee
 // UNIVERSITY = universite
 
-export type InstitutionLevelType = 'JARDIN' | 'PRIMAIRE' | 'COLLEGE' | 'SECONDAIRE' | 'SUPERIEUR';
+export type InstitutionLevelType = 'JARDIN' | 'PRIMAIRE' | 'COLLEGE' | 'SECONDAIRE' | 'SUPERIEUR'
 // export type CodeNameSuffixType = 'ELE' | 'MID' | 'HIG' | 'UNI';
-export type SectionType = 'COMMUN' | 'SCIENCE' | 'MATH' | 'LITERATURE' | 'TECHNIQUE' | 'SPORT' | 'ECONOMY' | 'INFORMATIQUE';
+export type SectionType =
+  | 'COMMUN'
+  | 'SCIENCE'
+  | 'MATH'
+  | 'LITERATURE'
+  | 'TECHNIQUE'
+  | 'SPORT'
+  | 'ECONOMY'
+  | 'INFORMATIQUE'
 // export type SectionSuffixType = 'COM' | 'SCI' | 'MAT' | 'LIT' | 'TEC' | 'SPO' | 'ECO' | 'INF';
 
-export type LevelCodeNameType = LevelType['codeName'];
+export type LevelCodeNameType = LevelType['codeName']
 
-export type SectionCodeNameType = `${LevelType['level']}-${SectionType}`;
+export type SectionCodeNameType = `${LevelType['level']}-${SectionType}`
 
 // Mappers
 // export const sectionToSuffix: Record<SectionType, SectionSuffixType> = {
@@ -70,33 +80,35 @@ export type SectionCodeNameType = `${LevelType['level']}-${SectionType}`;
 // subjects types
 
 export interface SubjectType {
-  institutionLevel: InstitutionLevelType;
-  levelCodeName?: Array<`${InstitutionLevelType}-${string}-${SectionType}` | `${InstitutionLevelType}-${string}-*`>;
-  levelCodeNameOptional?: Array<`${InstitutionLevelType}-${string}-${SectionType}` | `${InstitutionLevelType}-${string}-*`>;
+  institutionLevel: InstitutionLevelType
+  levelCodeName?: Array<`${InstitutionLevelType}-${string}-${SectionType}` | `${InstitutionLevelType}-${string}-*`>
+  levelCodeNameOptional?: Array<
+    `${InstitutionLevelType}-${string}-${SectionType}` | `${InstitutionLevelType}-${string}-*`
+  >
   // codeName: SubjectCodeNameType;
-  isOptional?: boolean;
+  isOptional?: boolean
   displayName: {
-    en: string;
-    fr: string;
-    ar: string;
-  };
+    en: string
+    fr: string
+    ar: string
+  }
   displayDescription?: {
-    en: string;
-    fr: string;
-    ar: string;
-  };
-};
+    en: string
+    fr: string
+    ar: string
+  }
+}
 
-export type SubjectCodeNameType = `${InstitutionLevelType}-${string}`;
+export type SubjectCodeNameType = `${InstitutionLevelType}-${string}`
 
 // TODO need to move this to a config file and create tables for it
-export type AccountType = 'STUDENT' | 'TEACHER' | 'PARENT' | 'ADMIN';
-export type PaymentTemplate = 'HOURLY' | 'MONTHLY' | 'YEARLY' | 'SEMESTERLY' | 'TERMLY' | 'ONCE' | 'ATTENDANCE'; // we only support by attendance for now; we need to support monthly and yearly, semesterly
+export type AccountType = 'STUDENT' | 'TEACHER' | 'PARENT' | 'ADMIN'
+export type PaymentTemplate = 'HOURLY' | 'MONTHLY' | 'YEARLY' | 'SEMESTERLY' | 'TERMLY' | 'ONCE' | 'ATTENDANCE' // we only support by attendance for now; we need to support monthly and yearly, semesterly
 
 export interface OrganizationConfigType {
-  institution: InstitutionLevelType[];
-  studentPaymentTemplates: Array<PaymentTemplate> | 'ALL'; // is it student or parent
-  teacherPaymentTemplates: Array<PaymentTemplate> | 'ALL';
+  institution: InstitutionLevelType[]
+  studentPaymentTemplates: Array<PaymentTemplate> | 'ALL' // is it student or parent
+  teacherPaymentTemplates: Array<PaymentTemplate> | 'ALL'
   // resourcesPaymentTemplate: Array<PaymentTemplate> | 'ALL'; // not sure about this, adding it here to keep it in mind (resources like books, paper, transportation/services, and other resources)
-  accounts: Array<AccountType> | 'ALL';
+  accounts: Array<AccountType> | 'ALL'
 }

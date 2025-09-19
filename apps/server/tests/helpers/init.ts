@@ -1,72 +1,72 @@
-import { testDb } from "../setup";
-import * as authSchema from "../../src/db/schema/auth";
-import * as usersSchema from "../../src/db/schema/users";
-import { eq } from "drizzle-orm";
-import { faker } from "@faker-js/faker";
-import {auth} from '../../src/lib/auth';
-import { seedInstitutionLevels, seedSecondaireEducation } from "../../src/db/seeds/utils/seedEducation";
+import { faker } from '@faker-js/faker'
+import { eq } from 'drizzle-orm'
+import * as authSchema from '../../src/db/schema/auth'
+import * as usersSchema from '../../src/db/schema/users'
+import { seedInstitutionLevels, seedSecondaireEducation } from '../../src/db/seeds/utils/seedEducation'
+import { auth } from '../../src/lib/auth'
+import { testDb } from '../setup'
 
 export interface TestUser {
-  id: string;
-  name: string;
-  lastName: string;
-  email: string;
-  emailVerified: boolean;
-  userType: 'admin' | 'staff' | 'student' | 'parent' | 'teacher';
+  id: string
+  name: string
+  lastName: string
+  email: string
+  emailVerified: boolean
+  userType: 'admin' | 'staff' | 'student' | 'parent' | 'teacher'
 }
 
 export interface TestAccount {
-  id: string;
-  accountId: string;
-  providerId: string;
-  userId: string;
-  password: string;
+  id: string
+  accountId: string
+  providerId: string
+  userId: string
+  password: string
 }
 
 export interface TestOrganization {
-  id: string;
-  name: string;
-  slug: string;
-  createdAt: Date;
+  id: string
+  name: string
+  slug: string
+  createdAt: Date
 }
 
 export interface TestMember {
-  id: string;
-  organizationId: string;
-  userId: string;
-  role: string;
-  createdAt: Date;
+  id: string
+  organizationId: string
+  userId: string
+  role: string
+  createdAt: Date
 }
 
 export interface TestEducationLevel {
-  id: string;
-  institutionLevelId: string;
-  level: number;
-  displayNameEn?: string;
-  displayNameFr?: string;
-  displayNameAr?: string;
-  orgId: string;
+  id: string
+  institutionLevelId: string
+  level: number
+  displayNameEn?: string
+  displayNameFr?: string
+  displayNameAr?: string
+  orgId: string
 }
 
 export interface TestEducationSubject {
-  id: string;
-  institutionLevelId: string;
-  name: string;
-  displayNameEn: string;
-  displayNameFr: string;
-  displayNameAr: string;
-  orgId: string;
+  id: string
+  institutionLevelId: string
+  name: string
+  displayNameEn: string
+  displayNameFr: string
+  displayNameAr: string
+  orgId: string
 }
 
 export interface SeedData {
-  organization: TestOrganization;
-  users: TestUser[];
-  admin: TestUser;
-  adminCookie: string;
-  accounts: TestAccount[];
-  members: TestMember[];
-  educationLevels: TestEducationLevel[];
-  educationSubjects: TestEducationSubject[];
+  organization: TestOrganization
+  users: TestUser[]
+  admin: TestUser
+  adminCookie: string
+  accounts: TestAccount[]
+  members: TestMember[]
+  educationLevels: TestEducationLevel[]
+  educationSubjects: TestEducationSubject[]
 }
 
 export const createTestUser = (overrides: Partial<TestUser> = {}): TestUser => ({
@@ -75,9 +75,9 @@ export const createTestUser = (overrides: Partial<TestUser> = {}): TestUser => (
   lastName: faker.person.lastName(),
   email: faker.internet.email(),
   emailVerified: true,
-  userType: "student",
+  userType: 'student',
   ...overrides,
-});
+})
 
 export const createTestOrganization = (overrides: Partial<TestOrganization> = {}): TestOrganization => ({
   id: `org_test_${faker.string.nanoid(8)}`,
@@ -85,31 +85,30 @@ export const createTestOrganization = (overrides: Partial<TestOrganization> = {}
   slug: `test-${faker.string.alphanumeric(8).toLowerCase()}`,
   createdAt: new Date(),
   ...overrides,
-});
-
+})
 
 export const seedDatabase = async (customData?: Partial<SeedData>): Promise<SeedData> => {
-  const testOrg = createTestOrganization(customData?.organization);
+  const testOrg = createTestOrganization(customData?.organization)
 
   const defaultUsers: TestUser[] = [
-    createTestUser({ userType: "staff", email: "test-staff@example.com" }),
-    createTestUser({ userType: "parent", email: "test-parent@example.com" }),
-    createTestUser({ userType: "teacher", email: "test-teacher@example.com" }),
-    createTestUser({ userType: "student", email: "test-student@example.com" }),
-  ];
+    createTestUser({ userType: 'staff', email: 'test-staff@example.com' }),
+    createTestUser({ userType: 'parent', email: 'test-parent@example.com' }),
+    createTestUser({ userType: 'teacher', email: 'test-teacher@example.com' }),
+    createTestUser({ userType: 'student', email: 'test-student@example.com' }),
+  ]
 
-  const testUsers = customData?.users || defaultUsers;
+  const testUsers = customData?.users || defaultUsers
 
   // Create accounts with default password (matching seed file pattern)
 
-  const hashedPassword = await (await auth.$context).password.hash('password1234');
+  const hashedPassword = await (await auth.$context).password.hash('password1234')
   const testAccounts: TestAccount[] = testUsers.map((user) => ({
     id: `account_${user.id}`,
     accountId: user.id,
-    providerId: "credential",
+    providerId: 'credential',
     userId: user.id,
     password: hashedPassword, // In real tests, this should be properly hashed
-  }));
+  }))
 
   // set active organization
   // await auth.api.set
@@ -118,119 +117,116 @@ export const seedDatabase = async (customData?: Partial<SeedData>): Promise<Seed
     id: `member_${user.id}`,
     organizationId: testOrg.id,
     userId: user.id,
-    role: user.userType === "staff" ? "admin" : user.userType,
+    role: user.userType === 'staff' ? 'admin' : user.userType,
     createdAt: new Date(),
-  }));
+  }))
 
   // Seed institution levels first
-  await seedInstitutionLevels(testDb);
+  await seedInstitutionLevels(testDb)
 
   // Run all operations in a transaction (following seed file pattern)
   await testDb.transaction(async (tx) => {
     // Insert organization
-    await tx.insert(authSchema.organization).values(testOrg);
+    await tx.insert(authSchema.organization).values(testOrg)
 
     // Insert users
-    await tx.insert(authSchema.user).values(testUsers);
+    await tx.insert(authSchema.user).values(testUsers)
 
     // Insert accounts
-    await tx.insert(authSchema.account).values(testAccounts);
+    await tx.insert(authSchema.account).values(testAccounts)
 
     // Insert organization memberships
-    await tx.insert(authSchema.member).values(testMembers);
-  });
+    await tx.insert(authSchema.member).values(testMembers)
+  })
 
   // Seed education data after organization is created
-  const educationData = await seedSecondaireEducation(testDb, testOrg.id);
+  const educationData = await seedSecondaireEducation(testDb, testOrg.id)
 
-   let cookies  : string | null = ''
-    try{
-      const loginAdmin = await auth.api.signInEmail({
-         body: {
-           email: 'test-staff@example.com',
-           password: 'password1234',
-         },
-         asResponse: true
-         });
-
-    cookies = loginAdmin.headers.get("set-cookie");
-     await auth.api.setActiveOrganization({
-     body:{
-       organizationId: testOrg.id
-     },
-     headers: {
-         'Content-Type': 'application/json',
-         Cookie: cookies!,   // <-- pass cookie here
-         }
+  let cookies: string | null = ''
+  try {
+    const loginAdmin = await auth.api.signInEmail({
+      body: {
+        email: 'test-staff@example.com',
+        password: 'password1234',
+      },
+      asResponse: true,
     })
 
-    }catch(e){
-      console.log('Could not login')
-      console.log(e)
-      throw new Error('Could not login')
-    }
+    cookies = loginAdmin.headers.get('set-cookie')
+    await auth.api.setActiveOrganization({
+      body: {
+        organizationId: testOrg.id,
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        Cookie: cookies!, // <-- pass cookie here
+      },
+    })
+  } catch (e) {
+    console.log('Could not login')
+    console.log(e)
+    throw new Error('Could not login')
+  }
   return {
     organization: testOrg,
     users: testUsers,
-    admin: testUsers.find((user) => user.userType === "admin") as TestUser,
+    admin: testUsers.find((user) => user.userType === 'admin') as TestUser,
     adminCookie: cookies!,
     accounts: testAccounts,
     members: testMembers,
     educationLevels: educationData.educationLevels,
     educationSubjects: educationData.educationSubjects,
-  };
-};
+  }
+}
 
 export const cleanupDatabase = async (): Promise<void> => {
   // Clean up test data in proper order (respecting foreign key constraints)
   // Following the same pattern as the reset.ts file
   await testDb.transaction(async (tx) => {
     // Delete in order that respects foreign key constraints
-    await tx.delete(usersSchema.parentStudentRelation);
-    await tx.delete(usersSchema.organizationConfig);
-    await tx.delete(authSchema.invitation);
-    await tx.delete(authSchema.member);
-    await tx.delete(authSchema.session);
-    await tx.delete(authSchema.account);
-    await tx.delete(authSchema.verification);
-    await tx.delete(authSchema.user);
-    await tx.delete(authSchema.organization);
-  });
-};
+    await tx.delete(usersSchema.parentStudentRelation)
+    await tx.delete(usersSchema.organizationConfig)
+    await tx.delete(authSchema.invitation)
+    await tx.delete(authSchema.member)
+    await tx.delete(authSchema.session)
+    await tx.delete(authSchema.account)
+    await tx.delete(authSchema.verification)
+    await tx.delete(authSchema.user)
+    await tx.delete(authSchema.organization)
+  })
+}
 
 export const findUserByEmail = async (email: string): Promise<TestUser | null> => {
-  const result = await testDb
-    .select()
-    .from(authSchema.user)
-    .where(eq(authSchema.user.email, email))
-    .limit(1);
+  const result = await testDb.select().from(authSchema.user).where(eq(authSchema.user.email, email)).limit(1)
 
-  return result[0] as TestUser || null;
-};
+  return (result[0] as TestUser) || null
+}
 
 export const findOrganizationBySlug = async (slug: string): Promise<TestOrganization | null> => {
   const result = await testDb
     .select()
     .from(authSchema.organization)
     .where(eq(authSchema.organization.slug, slug))
-    .limit(1);
+    .limit(1)
 
-  return result[0] as TestOrganization || null;
-};
+  return (result[0] as TestOrganization) || null
+}
 
 // Helper to create authenticated test user with proper password hashing
-export const createAuthenticatedTestUser = async (overrides: Partial<TestUser> = {}): Promise<{ user: TestUser; account: TestAccount }> => {
-  const user = createTestUser(overrides);
+export const createAuthenticatedTestUser = async (
+  overrides: Partial<TestUser> = {}
+): Promise<{ user: TestUser; account: TestAccount }> => {
+  const user = createTestUser(overrides)
 
   // For tests, we use a simple password hash placeholder
   // In production tests, you would use the actual auth system to hash passwords
   const account: TestAccount = {
     id: `account_${user.id}`,
     accountId: user.id,
-    providerId: "credential",
+    providerId: 'credential',
     userId: user.id,
-    password: "test_hashed_password", // Replace with actual hashing in production
-  };
+    password: 'test_hashed_password', // Replace with actual hashing in production
+  }
 
-  return { user, account };
-};
+  return { user, account }
+}
