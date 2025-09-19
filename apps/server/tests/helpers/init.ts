@@ -4,6 +4,7 @@ import * as usersSchema from "../../src/db/schema/users";
 import { eq } from "drizzle-orm";
 import { faker } from "@faker-js/faker";
 import {auth} from '../../src/lib/auth';
+import { seedInstitutionLevels, seedSecondaireEducation } from "../../src/db/seeds/utils/seedEducation";
 
 export interface TestUser {
   id: string;
@@ -37,6 +38,26 @@ export interface TestMember {
   createdAt: Date;
 }
 
+export interface TestEducationLevel {
+  id: string;
+  institutionLevelId: string;
+  level: number;
+  displayNameEn?: string;
+  displayNameFr?: string;
+  displayNameAr?: string;
+  orgId: string;
+}
+
+export interface TestEducationSubject {
+  id: string;
+  institutionLevelId: string;
+  name: string;
+  displayNameEn: string;
+  displayNameFr: string;
+  displayNameAr: string;
+  orgId: string;
+}
+
 export interface SeedData {
   organization: TestOrganization;
   users: TestUser[];
@@ -44,6 +65,8 @@ export interface SeedData {
   adminCookie: string;
   accounts: TestAccount[];
   members: TestMember[];
+  educationLevels: TestEducationLevel[];
+  educationSubjects: TestEducationSubject[];
 }
 
 export const createTestUser = (overrides: Partial<TestUser> = {}): TestUser => ({
@@ -63,6 +86,7 @@ export const createTestOrganization = (overrides: Partial<TestOrganization> = {}
   createdAt: new Date(),
   ...overrides,
 });
+
 
 export const seedDatabase = async (customData?: Partial<SeedData>): Promise<SeedData> => {
   const testOrg = createTestOrganization(customData?.organization);
@@ -98,6 +122,9 @@ export const seedDatabase = async (customData?: Partial<SeedData>): Promise<Seed
     createdAt: new Date(),
   }));
 
+  // Seed institution levels first
+  await seedInstitutionLevels(testDb);
+
   // Run all operations in a transaction (following seed file pattern)
   await testDb.transaction(async (tx) => {
     // Insert organization
@@ -112,6 +139,9 @@ export const seedDatabase = async (customData?: Partial<SeedData>): Promise<Seed
     // Insert organization memberships
     await tx.insert(authSchema.member).values(testMembers);
   });
+
+  // Seed education data after organization is created
+  const educationData = await seedSecondaireEducation(testDb, testOrg.id);
 
    let cookies  : string | null = ''
     try{
@@ -146,6 +176,8 @@ export const seedDatabase = async (customData?: Partial<SeedData>): Promise<Seed
     adminCookie: cookies!,
     accounts: testAccounts,
     members: testMembers,
+    educationLevels: educationData.educationLevels,
+    educationSubjects: educationData.educationSubjects,
   };
 };
 

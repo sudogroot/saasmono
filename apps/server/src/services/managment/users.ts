@@ -135,34 +135,47 @@ export class UserManagementService {
 
   // 3. Parent-Student Relation CRUD
   async createParentStudentRelation(orgId: string, data: CreateParentStudentRelationData) {
-    // Verify both parent and student belong to organization
-    const [parentMember, studentMember] = await Promise.all([
+    // Verify both parent and student belong to organization and get their details
+    const [parentResult, studentResult] = await Promise.all([
       this.db
-        .select()
-        .from(member)
+        .select({
+          id: user.id,
+          name: user.name,
+          lastName: user.lastName
+        })
+        .from(user)
+        .innerJoin(member, eq(user.id, member.userId))
         .where(
           and(
-            eq(member.userId, data.parentId),
+            eq(user.id, data.parentId),
             eq(member.organizationId, orgId)
           )
         ),
       this.db
-        .select()
-        .from(member)
+        .select({
+          id: user.id,
+          name: user.name,
+          lastName: user.lastName
+        })
+        .from(user)
+        .innerJoin(member, eq(user.id, member.userId))
         .where(
           and(
-            eq(member.userId, data.studentId),
+            eq(user.id, data.studentId),
             eq(member.organizationId, orgId)
           )
         )
     ]);
 
-    if (parentMember.length === 0) {
+    if (parentResult.length === 0) {
       throw new Error('Parent not found in organization');
     }
-    if (studentMember.length === 0) {
+    if (studentResult.length === 0) {
       throw new Error('Student not found in organization');
     }
+
+    const parent = parentResult[0];
+    const student = studentResult[0];
 
     const [relation] = await this.db
       .insert(parentStudentRelation)
@@ -173,7 +186,18 @@ export class UserManagementService {
       })
       .returning();
 
-    return relation as unknown as ParentStudentRelation;
+    // Return relation with names included
+    return {
+      id: relation.id,
+      parentId: relation.parentId,
+      studentId: relation.studentId,
+      relationshipType: relation.relationshipType,
+      parentName: parent.name,
+      parentLastName: parent.lastName,
+      studentName: student.name,
+      studentLastName: student.lastName,
+      createdAt: relation.createdAt
+    } as unknown as ParentStudentRelation;
   }
 
 

@@ -30,7 +30,7 @@ export const UpdateTeacherAssignmentSchema = z.object({
   educationLevelId: z.string().uuid().optional(),
 });
 
-// Output Schemas
+// Output Schemas - Using coerce for date strings from API
 export const ParentStudentRelationSchema = z.object({
   id: z.string(),
   parentId: z.string(),
@@ -40,7 +40,7 @@ export const ParentStudentRelationSchema = z.object({
   parentLastName: z.string(),
   studentName: z.string(),
   studentLastName: z.string(),
-  createdAt: z.date(),
+  createdAt: z.coerce.date(),
 });
 
 export const TeacherAssignmentSchema = z.object({
@@ -49,9 +49,9 @@ export const TeacherAssignmentSchema = z.object({
   educationSubjectId: z.string(),
   educationLevelId: z.string(),
   orgId: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date().optional(),
-  deletedAt: z.date().optional().nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().optional(),
+  deletedAt: z.coerce.date().optional().nullable(),
 });
 
 export const UserResponseSchema = z.object({
@@ -60,8 +60,8 @@ export const UserResponseSchema = z.object({
   lastName: z.string(),
   email: z.string().email(),
   userType: UserTypeSchema,
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
   parentChildrenRelations: z.array(ParentStudentRelationSchema),
   teacherAssignments: z.array(TeacherAssignmentSchema),
 });
@@ -72,8 +72,8 @@ export const UserListItemSchema = z.object({
   lastName: z.string(),
   email: z.string().email(),
   userType: UserTypeSchema,
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 });
 
 export const SuccessResponseSchema = z.object({

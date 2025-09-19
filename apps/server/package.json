@@ -23,8 +23,11 @@
     "db:down": "docker compose down",
     "seed:users": "tsx src/db/seeds/dev/users.ts",
     "seed:reset": "tsx src/db/seeds/dev/reset.ts",
+    "seed:reset:testdb": "tsx src/db/seeds/reset/testdb.ts",
+    "seed:reset:testdb-full": "tsx src/db/seeds/reset/testdb-full.ts",
     "seed:level:secondaire": "tsx src/db/seeds/prod/highSchoolEducation.ts",
-    "seed:institutionLevel": "tsx src/db/seeds/prod/institutionLevel.ts"
+    "seed:institutionLevel": "tsx src/db/seeds/prod/institutionLevel.ts",
+    "db:show-tables": "tsx src/db/seeds/utils/showTables.ts"
   },
   "dependencies": {
     "@better-auth/expo": "^1.3.9",
