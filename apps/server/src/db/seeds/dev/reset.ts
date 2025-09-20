@@ -91,6 +91,24 @@ async function resetDatabase() {
       await client.query('BEGIN')
 
       // Delete data in order (respecting foreign key constraints)
+
+      // Delete classroom-related tables first (they depend on classrooms, education, and users)
+      console.log('🗑️  Deleting classroom group memberships...')
+      await client.query('DELETE FROM "classroom_group_membership"')
+
+      console.log('🗑️  Deleting classroom groups...')
+      await client.query('DELETE FROM "classroom_group"')
+
+      console.log('🗑️  Deleting classroom teacher assignments...')
+      await client.query('DELETE FROM "classroom_teacher_assignment"')
+
+      console.log('🗑️  Deleting classroom student enrollments...')
+      await client.query('DELETE FROM "classroom_student_enrollment"')
+
+      console.log('🗑️  Deleting classrooms...')
+      await client.query('DELETE FROM "classroom"')
+
+      // Delete education-related tables
       console.log('🗑️  Deleting education level-subject relationships...')
       await client.query('DELETE FROM "education_level_subject"')
 

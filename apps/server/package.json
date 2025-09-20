@@ -32,6 +32,12 @@
     "seed:reset:testdb-full": "tsx src/db/seeds/reset/testdb-full.ts",
     "seed:level:secondaire": "tsx src/db/seeds/prod/highSchoolEducation.ts",
     "seed:institutionLevel": "tsx src/db/seeds/prod/institutionLevel.ts",
+    "seed:classrooms": "tsx src/db/seeds/dev/classrooms.ts",
+    "seed:classroom-groups": "tsx src/db/seeds/dev/classroomGroups.ts",
+    "seed:teacher-assignments": "tsx src/db/seeds/dev/teacherAssignments.ts",
+    "seed:student-enrollments": "tsx src/db/seeds/dev/studentEnrollments.ts",
+    "seed:group-memberships": "tsx src/db/seeds/dev/groupMemberships.ts",
+    "seed:classroom-complete": "tsx src/db/seeds/dev/seedClassroomComplete.ts",
     "db:show-tables": "tsx src/db/seeds/utils/showTables.ts"
   },
   "dependencies": {

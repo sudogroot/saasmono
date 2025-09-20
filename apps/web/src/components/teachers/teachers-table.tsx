@@ -11,7 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { BookOpen, Building2, Eye, GraduationCap, Mail, Plus, User } from 'lucide-react'
+import { BookOpen, Building2, Eye, Mail, Plus, User } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 interface TeacherSubjectAssignment {
@@ -135,10 +135,6 @@ export function TeachersTable({ onEdit, onDelete, onView, onCreateNew }: Teacher
         cell: ({ row }) => {
           const totalClassrooms = row.original.classrooms.length
           const totalSubjects = row.original.classrooms.reduce((sum, classroom) => sum + classroom.subjects.length, 0)
-          const mainSubjects = row.original.classrooms.reduce(
-            (sum, classroom) => sum + classroom.subjects.filter((s) => s.isMainTeacher).length,
-            0
-          )
 
           return (
             <div className="space-y-1 text-sm">
@@ -150,12 +146,6 @@ export function TeachersTable({ onEdit, onDelete, onView, onCreateNew }: Teacher
                 <BookOpen className="text-muted-foreground h-3 w-3" />
                 <span>{totalSubjects} مادة</span>
               </div>
-              {mainSubjects > 0 && (
-                <div className="flex items-center gap-2">
-                  <GraduationCap className="text-muted-foreground h-3 w-3" />
-                  <span>{mainSubjects} رئيسي</span>
-                </div>
-              )}
             </div>
           )
         },
