@@ -2,20 +2,7 @@
 
 import { authClient } from '@/lib/auth-client'
 import { orpc } from '@/utils/orpc'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Separator,
-} from '@repo/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui'
 import { useQuery } from '@tanstack/react-query'
 import { AlertCircle, BookOpen, Calendar, CheckCircle, Clock, GraduationCap, TrendingUp, Users } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -145,20 +132,6 @@ export default function Dashboard() {
 
   return (
     <>
-      <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-        <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="#">لوحة التحكم</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator className="hidden md:block" />
-            <BreadcrumbItem>
-              <BreadcrumbPage>الرئيسية</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </header>
       <div className="flex flex-1 flex-col gap-4 space-y-6 p-4" dir="rtl">
         {/* Welcome Section */}
         <div className="mb-8">
