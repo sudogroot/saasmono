@@ -99,7 +99,10 @@ export function SiteHeader({
             <SidebarTrigger className="h-9 w-9 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" />
           )}
           {showSidebarTrigger && (
-            <Separator orientation="vertical" className="h-5 bg-gray-300 dark:bg-gray-700" />
+            <Separator
+              orientation="vertical"
+              className="h-5 bg-gray-300 dark:bg-gray-700"
+            />
           )}
 
           {(title || subtitle) && (
@@ -180,7 +183,10 @@ export function SiteHeader({
                   <span className="sr-only">الإشعارات</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80 shadow-lg border-gray-200 dark:border-gray-700">
+              <DropdownMenuContent
+                align="end"
+                className="w-80 shadow-lg border-gray-200 dark:border-gray-700"
+              >
                 <DropdownMenuLabel className="text-right py-3 px-4 bg-gray-50 dark:bg-gray-800/50 font-semibold">
                   الإشعارات ({unreadCount} غير مقروءة)
                 </DropdownMenuLabel>
@@ -191,7 +197,8 @@ export function SiteHeader({
                       key={index}
                       className={cn(
                         "cursor-pointer p-4 text-right hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors",
-                        !notification.isRead && "bg-blue-50/50 dark:bg-blue-950/30 border-r-2 border-blue-500",
+                        !notification.isRead &&
+                          "bg-blue-50/50 dark:bg-blue-950/30 border-r-2 border-blue-500",
                       )}
                       onClick={() => onNotificationClick?.(notification)}
                     >
@@ -247,31 +254,26 @@ export function SiteHeader({
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 shadow-lg border-gray-200 dark:border-gray-700">
+              <DropdownMenuContent
+                align="end"
+                className="w-56 shadow-lg border-gray-200 dark:border-gray-700"
+              >
                 <DropdownMenuLabel className="text-right py-3 px-4 bg-gray-50 dark:bg-gray-800/50">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white">{user.name}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                      {user.name}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {user.email}
+                    </p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="my-0" />
                 <DropdownMenuItem
                   className="cursor-pointer text-right py-2.5 px-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
-                  onClick={() => onUserMenuClick?.("profile")}
-                >
-                  <span className="font-medium">الملف الشخصي</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="cursor-pointer text-right py-2.5 px-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                   onClick={() => onUserMenuClick?.("settings")}
                 >
                   <span className="font-medium">الإعدادات</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="cursor-pointer text-right py-2.5 px-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
-                  onClick={() => onUserMenuClick?.("billing")}
-                >
-                  <span className="font-medium">الفواتير</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-0" />
                 <DropdownMenuItem

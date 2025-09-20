@@ -1,14 +1,17 @@
 'use client'
 
-import { Header, GenericSidebar, DashboardLayout } from '@repo/ui'
-import {
-  dashboardSidebarSections,
-  dashboardNotifications,
-  dashboardUser,
-  dashboardQuickActions
-} from '@/config/dashboard'
+import { dashboardNotifications, dashboardQuickActions, dashboardSidebarSections } from '@/config/dashboard'
+
+import { useSessionStorage } from '@/hooks/use-session-storage'
+import { authClient } from '@/lib/auth-client'
+import { DashboardLayout, GenericSidebar, Header } from '@repo/ui'
+import { useRouter } from 'next/navigation'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const router = useRouter()
+
+  const { data, isPending, clearStoredData } = useSessionStorage()
+  console.log(data)
   return (
     <DashboardLayout
       sidebar={{
@@ -39,7 +42,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           title: 'لوحة التحكم',
           subtitle: 'إدارة شؤون المدرسة',
           notifications: dashboardNotifications,
-          user: dashboardUser,
+          user: !isPending
+            ? {
+                name: data?.user?.name,
+                email: data?.user?.email,
+                avatar: data?.user?.image,
+                initials: data?.user?.name
+                  ?.split(' ')
+                  .map((word) => word[0])
+                  .join(''),
+              }
+            : undefined,
           quickActions: dashboardQuickActions,
           showSearch: true,
           searchPlaceholder: 'البحث...',
@@ -49,8 +62,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           onMarkAllAsRead: () => {
             console.log('Mark all as read')
           },
-          onUserMenuClick: (action: string) => {
-            console.log('User menu action:', action)
+          onUserMenuClick: async (action: string) => {
+            if (action === 'logout') {
+              clearStoredData()
+              await authClient.signOut()
+            } else if (action === 'settings') {
+              router.push('/dashboard/user/settings')
+            }
           },
         },
       }}

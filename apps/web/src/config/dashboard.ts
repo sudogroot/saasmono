@@ -1,14 +1,4 @@
-import {
-  LayoutDashboard,
-  Users,
-  BookOpen,
-  Calendar,
-  Settings,
-  BarChart3,
-  FileText,
-  GraduationCap,
-  School
-} from 'lucide-react'
+import { BookOpen, FileText, LayoutDashboard, Users } from 'lucide-react'
 
 export const dashboardSidebarSections = [
   {
@@ -19,64 +9,69 @@ export const dashboardSidebarSections = [
         icon: LayoutDashboard,
         url: '/dashboard',
       },
-      {
-        title: 'إدارة الطلاب',
-        icon: Users,
-        url: '/dashboard/students',
-        items: [
-          { title: 'قائمة الطلاب', url: '/dashboard/students' },
-          { title: 'إضافة طالب', url: '/dashboard/students/new' },
-        ]
-      },
-      {
-        title: 'إدارة المعلمين',
-        icon: GraduationCap,
-        url: '/dashboard/teachers',
-        items: [
-          { title: 'قائمة المعلمين', url: '/dashboard/teachers' },
-          { title: 'إضافة معلم', url: '/dashboard/teachers/new' },
-        ]
-      },
-      {
-        title: 'المناهج الدراسية',
-        icon: BookOpen,
-        url: '/dashboard/curriculum',
-        items: [
-          { title: 'المواد الدراسية', url: '/dashboard/curriculum/subjects' },
-          { title: 'الصفوف الدراسية', url: '/dashboard/curriculum/grades' },
-        ]
-      },
-      {
-        title: 'الجدول الدراسي',
-        icon: Calendar,
-        url: '/dashboard/schedule',
-      },
-      {
-        title: 'التقارير',
-        icon: BarChart3,
-        url: '/dashboard/reports',
-        items: [
-          { title: 'تقارير الحضور', url: '/dashboard/reports/attendance' },
-          { title: 'تقارير الدرجات', url: '/dashboard/reports/grades' },
-        ]
-      },
-    ]
+      // {
+      //   title: 'إدارة الطلاب',
+      //   icon: Users,
+      //   url: '/dashboard/students',
+      //   items: [
+      //     { title: 'قائمة الطلاب', url: '/dashboard/students' },
+      //     { title: 'إضافة طالب', url: '/dashboard/students/new' },
+      //   ]
+      // },
+      // {
+      //   title: 'إدارة المعلمين',
+      //   icon: GraduationCap,
+      //   url: '/dashboard/teachers',
+      //   items: [
+      //     { title: 'قائمة المعلمين', url: '/dashboard/teachers' },
+      //     { title: 'إضافة معلم', url: '/dashboard/teachers/new' },
+      //   ]
+      // },
+      // {
+      //   title: 'المناهج الدراسية',
+      //   icon: BookOpen,
+      //   url: '/dashboard/curriculum',
+      //   items: [
+      //     { title: 'المواد الدراسية', url: '/dashboard/curriculum/subjects' },
+      //     { title: 'الصفوف الدراسية', url: '/dashboard/curriculum/grades' },
+      //   ]
+      // },
+      // {
+      //   title: 'الجدول الدراسي',
+      //   icon: Calendar,
+      //   url: '/dashboard/schedule',
+      // },
+      // {
+      //   title: 'التقارير',
+      //   icon: BarChart3,
+      //   url: '/dashboard/reports',
+      //   items: [
+      //     { title: 'تقارير الحضور', url: '/dashboard/reports/attendance' },
+      //     { title: 'تقارير الدرجات', url: '/dashboard/reports/grades' },
+      //   ]
+      // },
+    ],
   },
   {
-    title: 'الإدارة',
+    title: 'إعدادات المدرسة',
     items: [
       {
-        title: 'إعدادات المدرسة',
-        icon: School,
-        url: '/dashboard/school-settings',
+        title: 'المستويات والمواد',
+        url: '/dashboard/curriculum',
+        icon: BookOpen,
       },
-      {
-        title: 'الإعدادات العامة',
-        icon: Settings,
-        url: '/dashboard/settings',
-      },
-    ]
-  }
+      // {
+      //   title: 'إعدادات المدرسة',
+      //   icon: School,
+      //   url: '/dashboard/school-settings',
+      // },
+      // {
+      //   title: 'الإعدادات العامة',
+      //   icon: Settings,
+      //   url: '/dashboard/settings',
+      // },
+    ],
+  },
 ]
 
 export const dashboardNotifications = [
@@ -118,12 +113,12 @@ export const dashboardQuickActions = [
     id: 'add-student',
     label: 'إضافة طالب',
     icon: Users,
-    onClick: () => window.location.href = '/dashboard/students/new',
+    onClick: () => (window.location.href = '/dashboard/students/new'),
   },
   {
     id: 'new-report',
     label: 'تقرير جديد',
     icon: FileText,
-    onClick: () => window.location.href = '/dashboard/reports/new',
+    onClick: () => (window.location.href = '/dashboard/reports/new'),
   },
 ]
