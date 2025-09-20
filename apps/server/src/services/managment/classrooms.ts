@@ -16,6 +16,7 @@ export class ClassroomManagementService {
       .select({
         classroomId: classroom.id,
         classroomName: classroom.name,
+        classroomAcademicYear: classroom.academicYear,
         classroomEducationLevelId: classroom.educationLevelId,
         levelId: educationLevel.id,
         levelLevel: educationLevel.level,
@@ -60,6 +61,7 @@ export class ClassroomManagementService {
     return results.map((row) => ({
       id: row.classroomId,
       name: row.classroomName,
+      academicYear: row.classroomAcademicYear,
       educationLevelId: row.classroomEducationLevelId,
       educationLevel: {
         id: row.levelId,

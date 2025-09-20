@@ -13,6 +13,7 @@ import {
 } from '@tanstack/react-table'
 import { BookOpen, Building2, Eye, Mail, Plus, User } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { TeacherViewSheet } from './teacher-view-sheet'
 
 interface TeacherSubjectAssignment {
   id: string
@@ -50,13 +51,12 @@ interface TeacherWithAssignments {
 interface TeachersTableProps {
   onEdit?: (teacherId: string) => void
   onDelete?: (teacherId: string) => void
-  onView?: (teacherId: string) => void
   onCreateNew?: () => void
 }
 
 const columnHelper = createColumnHelper<TeacherWithAssignments>()
 
-export function TeachersTable({ onEdit, onDelete, onView, onCreateNew }: TeachersTableProps) {
+export function TeachersTable({ onEdit, onDelete, onCreateNew }: TeachersTableProps) {
   const { data: teachers = [], isLoading, error } = useQuery(orpc.management.users.getTeachersList.queryOptions())
 
   const [searchValue, setSearchValue] = useState('')
@@ -65,6 +65,15 @@ export function TeachersTable({ onEdit, onDelete, onView, onCreateNew }: Teacher
     pageIndex: 0,
     pageSize: 20,
   })
+
+  // Sheet state
+  const [selectedTeacher, setSelectedTeacher] = useState<TeacherWithAssignments | null>(null)
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+
+  const handleViewTeacher = (teacher: TeacherWithAssignments) => {
+    setSelectedTeacher(teacher)
+    setIsSheetOpen(true)
+  }
 
   const columns = useMemo(
     () => [
@@ -155,14 +164,14 @@ export function TeachersTable({ onEdit, onDelete, onView, onCreateNew }: Teacher
         header: 'الإجراءات',
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" onClick={() => onView?.(row.original.id)} title="عرض">
+            <Button variant="ghost" size="sm" onClick={() => handleViewTeacher(row.original)} title="عرض">
               <Eye className="h-4 w-4" />
             </Button>
           </div>
         ),
       }),
     ],
-    [onEdit, onView]
+    [onEdit]
   )
 
   const quickFilters = useMemo(
@@ -302,7 +311,7 @@ export function TeachersTable({ onEdit, onDelete, onView, onCreateNew }: Teacher
             variant="outline"
             size="sm"
             className="h-8 w-8 p-0"
-            onClick={() => onView?.(row.original.id)}
+            onClick={() => handleViewTeacher(row.original)}
             title="عرض"
           >
             <Eye className="h-4 w-4" />
@@ -345,24 +354,32 @@ export function TeachersTable({ onEdit, onDelete, onView, onCreateNew }: Teacher
   }
 
   return (
-    <GenericTable
-      table={table}
-      isLoading={isLoading}
-      error={error}
-      searchValue={searchValue}
-      onSearchChange={setSearchValue}
-      searchPlaceholder="البحث عن معلم (الاسم، البريد، الفصول، المواد...)"
-      noDataMessage="لا يوجد معلمون مطابقون للبحث"
-      mobileCardRenderer={mobileCardRenderer}
-      showQuickFilters={true}
-      quickFilters={quickFilters}
-      activeFilters={activeFilters}
-      onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
-      headerActions={headerActions}
-      emptyStateAction={emptyStateAction}
-      enableVirtualScroll={true}
-      virtualItemHeight={60}
-      className="w-full"
-    />
+    <>
+      <GenericTable
+        table={table}
+        isLoading={isLoading}
+        error={error}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        searchPlaceholder="البحث عن معلم (الاسم، البريد، الفصول، المواد...)"
+        noDataMessage="لا يوجد معلمون مطابقون للبحث"
+        mobileCardRenderer={mobileCardRenderer}
+        showQuickFilters={true}
+        quickFilters={quickFilters}
+        activeFilters={activeFilters}
+        onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
+        headerActions={headerActions}
+        emptyStateAction={emptyStateAction}
+        enableVirtualScroll={true}
+        virtualItemHeight={60}
+        className="w-full"
+      />
+
+      <TeacherViewSheet
+        teacher={selectedTeacher}
+        open={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+      />
+    </>
   )
 }
