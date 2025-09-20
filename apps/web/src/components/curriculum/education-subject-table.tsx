@@ -13,6 +13,7 @@ import {
 } from '@tanstack/react-table'
 import { BookOpen, Edit, Eye, GraduationCap, Plus } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { EducationSubjectViewSheet } from './education-subject-view-sheet'
 
 interface EducationLevel {
   id: string
@@ -34,13 +35,12 @@ interface EducationSubject {
 interface EducationSubjectTableProps {
   onEdit?: (subjectId: string) => void
   onDelete?: (subjectId: string) => void
-  onView?: (subjectId: string) => void
   onCreateNew?: () => void
 }
 
 const columnHelper = createColumnHelper<EducationSubject>()
 
-export function EducationSubjectTable({ onEdit, onDelete, onView, onCreateNew }: EducationSubjectTableProps) {
+export function EducationSubjectTable({ onEdit, onDelete, onCreateNew }: EducationSubjectTableProps) {
   const {
     data: subjects = [],
     isLoading,
@@ -53,6 +53,15 @@ export function EducationSubjectTable({ onEdit, onDelete, onView, onCreateNew }:
     pageIndex: 0,
     pageSize: 20,
   })
+
+  // Sheet state
+  const [selectedSubject, setSelectedSubject] = useState<EducationSubject | null>(null)
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+
+  const handleViewSubject = (subject: EducationSubject) => {
+    setSelectedSubject(subject)
+    setIsSheetOpen(true)
+  }
 
   const columns = useMemo(
     () => [
@@ -126,7 +135,7 @@ export function EducationSubjectTable({ onEdit, onDelete, onView, onCreateNew }:
         header: 'الإجراءات',
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" onClick={() => onView?.(row.original.id)} title="عرض">
+            <Button variant="ghost" size="sm" onClick={() => handleViewSubject(row.original)} title="عرض">
               <Eye className="h-4 w-4" />
             </Button>
             <Button variant="ghost" size="sm" onClick={() => onEdit?.(row.original.id)} title="تعديل">
@@ -136,7 +145,7 @@ export function EducationSubjectTable({ onEdit, onDelete, onView, onCreateNew }:
         ),
       }),
     ],
-    [onEdit, onView]
+    [onEdit]
   )
 
   const quickFilters = useMemo(
@@ -218,41 +227,30 @@ export function EducationSubjectTable({ onEdit, onDelete, onView, onCreateNew }:
   })
 
   const mobileCardRenderer = (row: any) => (
-    <div className="w-full">
-      <div className="flex items-center justify-between px-4 py-3">
-        <div className="flex min-w-0 flex-1 items-center gap-3">
-          <div className="bg-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
-            <BookOpen className="text-primary h-5 w-5" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-foreground truncate font-medium">{row.original.displayNameAr}</div>
-            <div className="text-muted-foreground truncate text-sm">{row.original.name}</div>
-            <div className="mt-1 flex items-center gap-2">
-              <Badge variant="outline" className="text-xs">
-                {row.original.educationLevels.length} مستوى
-              </Badge>
-              {row.original.educationLevels.some((l: EducationLevel) => l.isOptional) && (
-                <Badge variant="outline" className="text-xs text-orange-600">
-                  اختياري
-                </Badge>
-              )}
-            </div>
-          </div>
-        </div>
+    <div
+      className="flex items-center px-4 py-3 active:bg-muted/50 transition-colors"
+      onClick={() => handleViewSubject(row.original)}
+    >
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 mr-3">
+        <BookOpen className="h-5 w-5 text-primary" />
+      </div>
 
-        <div className="mx-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 w-8 p-0"
-            onClick={() => onView?.(row.original.id)}
-            title="عرض"
-          >
-            <Eye className="h-4 w-4" />
-          </Button>
+      <div className="min-w-0 flex-1">
+        <div className="font-medium text-foreground text-base leading-tight">
+          {row.original.displayNameAr}
+        </div>
+        <div className="text-sm text-muted-foreground leading-tight mt-0.5">
+          {row.original.name}
+        </div>
+        <div className="text-xs text-muted-foreground mt-1">
+          {row.original.educationLevels.length} مستوى تعليمي
+          {row.original.educationLevels.some((l: EducationLevel) => l.isOptional) && ' • اختياري'}
         </div>
       </div>
-      <div className="bg-border/30 h-px w-full" />
+
+      <div className="ml-2 text-muted-foreground">
+        <Eye className="h-4 w-4" />
+      </div>
     </div>
   )
 
@@ -288,24 +286,32 @@ export function EducationSubjectTable({ onEdit, onDelete, onView, onCreateNew }:
   }
 
   return (
-    <GenericTable
-      table={table}
-      isLoading={isLoading}
-      error={error}
-      searchValue={searchValue}
-      onSearchChange={setSearchValue}
-      searchPlaceholder="البحث عن مادة دراسية (الاسم، الوصف، المستويات...)"
-      noDataMessage="لا توجد مواد دراسية مطابقة للبحث"
-      mobileCardRenderer={mobileCardRenderer}
-      showQuickFilters={true}
-      quickFilters={quickFilters}
-      activeFilters={activeFilters}
-      onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
-      headerActions={headerActions}
-      emptyStateAction={emptyStateAction}
-      enableVirtualScroll={true}
-      virtualItemHeight={60}
-      className="w-full"
-    />
+    <>
+      <GenericTable
+        table={table}
+        isLoading={isLoading}
+        error={error}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        searchPlaceholder="البحث عن مادة دراسية (الاسم، الوصف، المستويات...)"
+        noDataMessage="لا توجد مواد دراسية مطابقة للبحث"
+        mobileCardRenderer={mobileCardRenderer}
+        showQuickFilters={true}
+        quickFilters={quickFilters}
+        activeFilters={activeFilters}
+        onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
+        headerActions={headerActions}
+        emptyStateAction={emptyStateAction}
+        enableVirtualScroll={true}
+        virtualItemHeight={72}
+        className="w-full"
+      />
+
+      <EducationSubjectViewSheet
+        subject={selectedSubject}
+        open={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+      />
+    </>
   )
 }

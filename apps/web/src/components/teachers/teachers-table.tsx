@@ -284,41 +284,30 @@ export function TeachersTable({ onEdit, onDelete, onCreateNew }: TeachersTablePr
   })
 
   const mobileCardRenderer = (row: any) => (
-    <div className="w-full">
-      <div className="flex items-center justify-between px-4 py-3">
-        <div className="flex min-w-0 flex-1 items-center gap-3">
-          <div className="bg-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
-            <User className="text-primary h-5 w-5" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-foreground truncate font-medium">
-              {row.original.name} {row.original.lastName}
-            </div>
-            <div className="text-muted-foreground truncate text-sm">{row.original.email}</div>
-            <div className="mt-1 flex items-center gap-2">
-              <Badge variant="outline" className="text-xs">
-                {row.original.classrooms.length} فصل
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                {row.original.classrooms.reduce((sum: number, c: any) => sum + c.subjects.length, 0)} مادة
-              </Badge>
-            </div>
-          </div>
-        </div>
-
-        <div className="mx-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 w-8 p-0"
-            onClick={() => handleViewTeacher(row.original)}
-            title="عرض"
-          >
-            <Eye className="h-4 w-4" />
-          </Button>
-        </div>
+    <div
+      className="flex items-center bg-white px-4 py-3 transition-colors"
+      onClick={() => handleViewTeacher(row.original)}
+    >
+      <div className="bg-primary/10 mx-2 flex h-10 w-10 items-center justify-center rounded-lg">
+        <User className="text-primary h-5 w-5" />
       </div>
-      <div className="bg-border/30 h-px w-full" />
+
+      <div className="min-w-0 flex-1">
+        <div className="text-foreground text-base leading-tight font-medium">
+          {row.original.name} {row.original.lastName}
+        </div>
+        <div className="text-muted-foreground mt-0.5 text-sm leading-tight">{row.original.email}</div>
+        {row.original.classrooms.length > 0 && (
+          <div className="text-muted-foreground mt-1 text-xs">
+            {row.original.classrooms.length} فصل •{' '}
+            {row.original.classrooms.reduce((sum: number, c: any) => sum + c.subjects.length, 0)} مادة
+          </div>
+        )}
+      </div>
+
+      <div className="text-muted-foreground ml-2">
+        <Eye className="h-4 w-4" />
+      </div>
     </div>
   )
 
@@ -371,15 +360,11 @@ export function TeachersTable({ onEdit, onDelete, onCreateNew }: TeachersTablePr
         headerActions={headerActions}
         emptyStateAction={emptyStateAction}
         enableVirtualScroll={true}
-        virtualItemHeight={60}
+        virtualItemHeight={72}
         className="w-full"
       />
 
-      <TeacherViewSheet
-        teacher={selectedTeacher}
-        open={isSheetOpen}
-        onOpenChange={setIsSheetOpen}
-      />
+      <TeacherViewSheet teacher={selectedTeacher} open={isSheetOpen} onOpenChange={setIsSheetOpen} />
     </>
   )
 }

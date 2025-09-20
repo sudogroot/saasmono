@@ -33,6 +33,10 @@ export interface GenericTableProps<TData> {
   tableTitle?: string;
   headerActions?: React.ReactNode;
   emptyStateAction?: React.ReactNode;
+  // Infinite scroll props
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
+  fetchNextPage?: () => void;
 }
 
 export interface TablePaginationProps<TData> {

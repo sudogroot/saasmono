@@ -13,6 +13,7 @@ import {
 } from '@tanstack/react-table'
 import { Building2, Edit, Eye, GraduationCap, Plus, Users } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { ClassroomViewSheet } from './classroom-view-sheet'
 
 interface EducationLevel {
   id: string
@@ -34,13 +35,12 @@ interface ClassroomListItem {
 interface ClassroomsTableProps {
   onEdit?: (classroomId: string) => void
   onDelete?: (classroomId: string) => void
-  onView?: (classroomId: string) => void
   onCreateNew?: () => void
 }
 
 const columnHelper = createColumnHelper<ClassroomListItem>()
 
-export function ClassroomsTable({ onEdit, onDelete, onView, onCreateNew }: ClassroomsTableProps) {
+export function ClassroomsTable({ onEdit, onDelete, onCreateNew }: ClassroomsTableProps) {
   const {
     data: classrooms = [],
     isLoading,
@@ -53,6 +53,15 @@ export function ClassroomsTable({ onEdit, onDelete, onView, onCreateNew }: Class
     pageIndex: 0,
     pageSize: 20,
   })
+
+  // Sheet state
+  const [selectedClassroom, setSelectedClassroom] = useState<ClassroomListItem | null>(null)
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+
+  const handleViewClassroom = (classroom: ClassroomListItem) => {
+    setSelectedClassroom(classroom)
+    setIsSheetOpen(true)
+  }
 
   const columns = useMemo(
     () => [
@@ -116,7 +125,7 @@ export function ClassroomsTable({ onEdit, onDelete, onView, onCreateNew }: Class
         header: 'الإجراءات',
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" onClick={() => onView?.(row.original.id)} title="عرض">
+            <Button variant="ghost" size="sm" onClick={() => handleViewClassroom(row.original)} title="عرض">
               <Eye className="h-4 w-4" />
             </Button>
             <Button variant="ghost" size="sm" onClick={() => onEdit?.(row.original.id)} title="تعديل">
@@ -126,7 +135,7 @@ export function ClassroomsTable({ onEdit, onDelete, onView, onCreateNew }: Class
         ),
       }),
     ],
-    [onEdit, onView]
+    [onEdit]
   )
 
   const quickFilters = useMemo(
@@ -218,42 +227,29 @@ export function ClassroomsTable({ onEdit, onDelete, onView, onCreateNew }: Class
   })
 
   const mobileCardRenderer = (row: any) => (
-    <div className="w-full">
-      <div className="flex items-center justify-between px-4 py-3">
-        <div className="flex min-w-0 flex-1 items-center gap-3">
-          <div className="bg-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
-            <Building2 className="text-primary h-5 w-5" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-foreground truncate font-medium">{row.original.name}</div>
-            <div className="text-muted-foreground truncate text-sm">{row.original.academicYear}</div>
-            <div className="mt-1 flex items-center gap-2">
-              <Badge variant="outline" className="text-xs">
-                المستوى {row.original.educationLevel.level}
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                {row.original.studentCount} طالب
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                {row.original.teacherCount} معلم
-              </Badge>
-            </div>
-          </div>
-        </div>
+    <div
+      className="flex items-center px-4 py-3 active:bg-muted/50 transition-colors"
+      onClick={() => handleViewClassroom(row.original)}
+    >
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 mr-3">
+        <Building2 className="h-5 w-5 text-primary" />
+      </div>
 
-        <div className="mx-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 w-8 p-0"
-            onClick={() => onView?.(row.original.id)}
-            title="عرض"
-          >
-            <Eye className="h-4 w-4" />
-          </Button>
+      <div className="min-w-0 flex-1">
+        <div className="font-medium text-foreground text-base leading-tight">
+          {row.original.name}
+        </div>
+        <div className="text-sm text-muted-foreground leading-tight mt-0.5">
+          {row.original.academicYear} • المستوى {row.original.educationLevel.level}
+        </div>
+        <div className="text-xs text-muted-foreground mt-1">
+          {row.original.studentCount} طالب • {row.original.teacherCount} معلم
         </div>
       </div>
-      <div className="bg-border/30 h-px w-full" />
+
+      <div className="ml-2 text-muted-foreground">
+        <Eye className="h-4 w-4" />
+      </div>
     </div>
   )
 
@@ -289,24 +285,32 @@ export function ClassroomsTable({ onEdit, onDelete, onView, onCreateNew }: Class
   }
 
   return (
-    <GenericTable
-      table={table}
-      isLoading={isLoading}
-      error={error}
-      searchValue={searchValue}
-      onSearchChange={setSearchValue}
-      searchPlaceholder="البحث عن فصل دراسي (الاسم، العام الدراسي، المستوى...)"
-      noDataMessage="لا توجد فصول دراسية مطابقة للبحث"
-      mobileCardRenderer={mobileCardRenderer}
-      showQuickFilters={true}
-      quickFilters={quickFilters}
-      activeFilters={activeFilters}
-      onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
-      headerActions={headerActions}
-      emptyStateAction={emptyStateAction}
-      enableVirtualScroll={true}
-      virtualItemHeight={60}
-      className="w-full"
-    />
+    <>
+      <GenericTable
+        table={table}
+        isLoading={isLoading}
+        error={error}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        searchPlaceholder="البحث عن فصل دراسي (الاسم، العام الدراسي، المستوى...)"
+        noDataMessage="لا توجد فصول دراسية مطابقة للبحث"
+        mobileCardRenderer={mobileCardRenderer}
+        showQuickFilters={true}
+        quickFilters={quickFilters}
+        activeFilters={activeFilters}
+        onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
+        headerActions={headerActions}
+        emptyStateAction={emptyStateAction}
+        enableVirtualScroll={true}
+        virtualItemHeight={72}
+        className="w-full"
+      />
+
+      <ClassroomViewSheet
+        classroom={selectedClassroom}
+        open={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+      />
+    </>
   )
 }

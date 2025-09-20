@@ -1,14 +1,11 @@
 "use client";
 
-import React, { useRef, useCallback, useState, useEffect } from "react";
+import React, { useRef, useCallback } from "react";
 import { Input } from "../../ui/input";
-import { Button } from "../../ui/button";
-import { Checkbox } from "../../ui/checkbox";
-import { Search, Loader2, Filter } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import { cn } from "../../../lib/utils";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import type { MobileTableProps } from "./types";
-import { FilterDrawer } from "./filter-drawer";
-import { FilterChips } from "./filter-chips";
 
 export function MobileTable<TData>({
   table,
@@ -19,140 +16,70 @@ export function MobileTable<TData>({
   noDataMessage = "لا توجد بيانات",
   showSearch = true,
   searchPlaceholder = "البحث...",
-  isSelectable = false,
   className = "",
   searchValue = "",
   onSearchChange,
   mobileCardRenderer,
   enableVirtualScroll = true,
-  virtualItemHeight = 50,
-  containerHeight = 600,
-  showQuickFilters = false,
-  quickFilters = [],
-  activeFilters = {},
-  onFilterChange,
-  enablePullToRefresh = false,
-  onRefresh,
+  virtualItemHeight = 72,
   tableTitle,
   headerActions,
   emptyStateAction,
+  // Infinite scroll props
+  hasNextPage = false,
+  isFetchingNextPage = false,
+  fetchNextPage,
 }: MobileTableProps<TData>) {
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [pullDistance, setPullDistance] = useState(0);
-  const [showFilters, setShowFilters] = useState(false);
-  const [scrollTop, setScrollTop] = useState(0);
-  const [containerSize, setContainerSize] = useState({ width: 0, height: containerHeight });
-  const [dynamicHeight, setDynamicHeight] = useState(containerHeight);
-  
-  const pullStartY = useRef(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const virtualScrollRef = useRef<HTMLDivElement>(null);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
 
-  // For mobile, use all filtered rows (no pagination)
   const rows = table.getFilteredRowModel().rows;
 
-  const visibleStartIndex = Math.floor(scrollTop / virtualItemHeight);
-  const visibleEndIndex = Math.min(
-    visibleStartIndex + Math.ceil(containerSize.height / virtualItemHeight) + 1,
-    rows.length
+  // Fetch more data when scrolling near bottom
+  const fetchMoreOnBottomReached = useCallback(
+    (containerRefElement?: HTMLDivElement | null) => {
+      if (containerRefElement && hasNextPage && !isFetchingNextPage && fetchNextPage) {
+        const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
+        // Fetch more when within 300px of bottom
+        if (scrollHeight - scrollTop - clientHeight < 300) {
+          fetchNextPage();
+        }
+      }
+    },
+    [fetchNextPage, isFetchingNextPage, hasNextPage]
   );
-  const visibleRows = enableVirtualScroll
-    ? rows.slice(visibleStartIndex, visibleEndIndex)
-    : rows;
 
-  const totalHeight = rows.length * virtualItemHeight;
-  const offsetY = visibleStartIndex * virtualItemHeight;
+  // Set up virtual scrolling
+  const rowVirtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => tableContainerRef.current,
+    estimateSize: () => virtualItemHeight,
+    // Enable dynamic height measurement for better UX
+    measureElement:
+      typeof window !== 'undefined' && navigator.userAgent.indexOf('Firefox') === -1
+        ? element => element?.getBoundingClientRect().height
+        : undefined,
+    overscan: 5,
+  });
 
-  const handleTouchStart = useCallback((e: TouchEvent) => {
-    if (enablePullToRefresh && containerRef.current?.scrollTop === 0 && e.touches[0]) {
-      pullStartY.current = e.touches[0].clientY;
-    }
-  }, [enablePullToRefresh]);
+  // Handle scroll for infinite loading
+  const handleScroll = useCallback(
+    (e: React.UIEvent<HTMLDivElement>) => {
+      fetchMoreOnBottomReached(e.currentTarget);
+    },
+    [fetchMoreOnBottomReached]
+  );
 
-  const handleTouchMove = useCallback((e: TouchEvent) => {
-    if (enablePullToRefresh && pullStartY.current > 0 && e.touches[0]) {
-      const currentY = e.touches[0].clientY;
-      const distance = Math.max(0, (currentY - pullStartY.current) * 0.5);
-      setPullDistance(Math.min(distance, 80));
-
-      if (distance > 10) {
-        e.preventDefault();
-      }
-    }
-  }, [enablePullToRefresh]);
-
-  const handleTouchEnd = useCallback(async () => {
-    if (enablePullToRefresh && pullDistance > 60 && onRefresh) {
-      setIsRefreshing(true);
-      try {
-        await onRefresh();
-      } finally {
-        setIsRefreshing(false);
-      }
-    }
-    setPullDistance(0);
-    pullStartY.current = 0;
-  }, [enablePullToRefresh, pullDistance, onRefresh]);
-
-  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    setScrollTop(e.currentTarget.scrollTop);
-  }, []);
-
-  const handleClearAllFilters = () => {
-    quickFilters.forEach(filter => onFilterChange?.(filter.key, ""));
-  };
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    container.addEventListener('touchstart', handleTouchStart, { passive: false });
-    container.addEventListener('touchmove', handleTouchMove, { passive: false });
-    container.addEventListener('touchend', handleTouchEnd);
-
-    return () => {
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('touchmove', handleTouchMove);
-      container.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [handleTouchStart, handleTouchMove, handleTouchEnd]);
-
-  // Set dynamic height based on viewport
-  useEffect(() => {
-    const setHeight = () => {
-      const viewportHeight = window.innerHeight;
-      const headerHeight = 200; // Approximate header + search height
-      const bottomNavHeight = 80; // Mobile bottom nav height
-      const calculatedHeight = viewportHeight - headerHeight - bottomNavHeight;
-      setDynamicHeight(Math.max(calculatedHeight, 400)); // Minimum height of 400px
-    };
-
-    setHeight();
-    window.addEventListener('resize', setHeight);
-    return () => window.removeEventListener('resize', setHeight);
-  }, []);
-
-  useEffect(() => {
-    if (!enableVirtualScroll || !virtualScrollRef.current) return;
-
-    const resizeObserver = new ResizeObserver((entries) => {
-      const entry = entries[0];
-      if (entry) {
-        const { width, height } = entry.contentRect;
-        setContainerSize({ width, height });
-      }
-    });
-
-    resizeObserver.observe(virtualScrollRef.current);
-    return () => resizeObserver.disconnect();
-  }, [enableVirtualScroll]);
+  // Check if we need to fetch more on mount/data change
+  React.useEffect(() => {
+    fetchMoreOnBottomReached(tableContainerRef.current);
+  }, [fetchMoreOnBottomReached]);
 
   if (isLoading && rows.length === 0) {
     return (
       <div className={cn("flex items-center justify-center py-12", className)}>
-        <div className="flex items-center space-x-2">
-          <Loader2 className="h-6 w-6 animate-spin" />
-          <span className="text-lg">{loadingMessage}</span>
+        <div className="flex items-center gap-3">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span className="text-sm text-muted-foreground">{loadingMessage}</span>
         </div>
       </div>
     );
@@ -162,140 +89,124 @@ export function MobileTable<TData>({
     return (
       <div className={cn("flex items-center justify-center py-12 text-destructive", className)}>
         <div className="text-center">
-          <div className="text-lg font-semibold mb-2">حدث خطأ</div>
-          <div className="text-sm">{errorMessage || error.message}</div>
+          <div className="text-sm font-medium mb-1">حدث خطأ</div>
+          <div className="text-xs text-muted-foreground">{errorMessage || error.message}</div>
         </div>
       </div>
     );
   }
 
   return (
-    <>
-      <div ref={containerRef} className={cn("w-full", className)}>
-        {enablePullToRefresh && pullDistance > 0 && (
-          <div
-            className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur border-b"
-            style={{ transform: `translateY(${Math.min(pullDistance - 60, 20)}px)` }}
-          >
-            <div className="flex items-center justify-center py-4">
-              <Loader2 className={cn("h-5 w-5", isRefreshing ? "animate-spin" : "")} />
-              <span className="mr-2 text-sm">
-                {isRefreshing ? "جاري التحديث..." : pullDistance > 60 ? "اتركه للتحديث" : "اسحب للتحديث"}
-              </span>
+    <div className={cn("flex flex-col h-full bg-background", className)}>
+      {/* Header */}
+      <div className="sticky top-0 z-10 bg-background border-b border-border/50">
+        {tableTitle && (
+          <div className="flex items-center justify-between px-4 py-3">
+            <h1 className="text-lg font-semibold text-foreground">{tableTitle}</h1>
+            {headerActions}
+          </div>
+        )}
+
+        {showSearch && (
+          <div className="px-4 pb-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={searchPlaceholder}
+                value={searchValue}
+                onChange={(e) => onSearchChange?.(e.target.value)}
+                className="pl-9 h-10 bg-muted/50 border-0 rounded-lg text-sm placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:bg-background"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Virtualized List */}
+      <div
+        ref={tableContainerRef}
+        className="flex-1 overflow-auto -webkit-overflow-scrolling-touch"
+        onScroll={enableVirtualScroll ? handleScroll : undefined}
+        style={{
+          height: "100%",
+        }}
+      >
+        {rows.length > 0 ? (
+          enableVirtualScroll ? (
+            // Virtualized rendering
+            <div
+              style={{
+                height: `${rowVirtualizer.getTotalSize()}px`,
+                position: "relative",
+              }}
+            >
+              {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                const row = rows[virtualRow.index];
+                if (!row) return null;
+
+                return (
+                  <div
+                    key={row.id}
+                    data-index={virtualRow.index}
+                    ref={(node) => rowVirtualizer.measureElement(node)}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      transform: `translateY(${virtualRow.start}px)`,
+                    }}
+                  >
+                    <div className="border-b border-border/20">
+                      {mobileCardRenderer ? (
+                        mobileCardRenderer(row)
+                      ) : (
+                        <div className="px-4 py-3">
+                          <div className="text-sm text-foreground">
+                            Item {virtualRow.index + 1}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            // Non-virtualized rendering
+            <div>
+              {rows.map((row) => (
+                <div key={row.id} className="border-b border-border/20 last:border-b-0">
+                  {mobileCardRenderer ? (
+                    mobileCardRenderer(row)
+                  ) : (
+                    <div className="px-4 py-3">
+                      <div className="text-sm text-foreground">Item {row.index + 1}</div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )
+        ) : (
+          <div className="flex flex-col items-center justify-center py-16 px-4">
+            <div className="text-center space-y-3">
+              <div className="text-sm text-muted-foreground">{noDataMessage}</div>
+              {emptyStateAction}
             </div>
           </div>
         )}
 
-        <div className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
-          <div className="p-4 space-y-4">
-            {tableTitle && (
-              <div className="flex items-center justify-between">
-                <h1 className="text-xl font-semibold">{tableTitle}</h1>
-                {headerActions}
-              </div>
-            )}
-
-            {showSearch && (
-              <div className="space-y-3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                  <Input
-                    placeholder={searchPlaceholder}
-                    value={searchValue}
-                    onChange={(e) => onSearchChange?.(e.target.value)}
-                    className="pl-10 h-12 text-base rounded-xl border-2 focus:ring-2 focus:ring-offset-1"
-                  />
-                  {showQuickFilters && quickFilters.length > 0 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowFilters(true)}
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0"
-                    >
-                      <Filter className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-
-                {showQuickFilters && (
-                  <FilterChips
-                    quickFilters={quickFilters}
-                    activeFilters={activeFilters}
-                    onFilterChange={onFilterChange || (() => {})}
-                    onClearAll={handleClearAllFilters}
-                  />
-                )}
-              </div>
-            )}
-
-            {isSelectable && table.getFilteredSelectedRowModel().rows.length > 0 && (
-              <div className="p-3 bg-muted/50 rounded-lg">
-                <div className="text-sm font-medium">
-                  تم تحديد {table.getFilteredSelectedRowModel().rows.length} عنصر
-                </div>
-              </div>
-            )}
+        {/* Loading indicator for infinite scroll */}
+        {isFetchingNextPage && (
+          <div className="flex items-center justify-center py-4">
+            <div className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span className="text-xs text-muted-foreground">جاري تحميل المزيد...</span>
+            </div>
           </div>
-        </div>
-
-        <div
-          ref={virtualScrollRef}
-          className="pb-4"
-          style={{ height: enableVirtualScroll ? dynamicHeight : 'auto' }}
-          onScroll={enableVirtualScroll ? handleScroll : undefined}
-        >
-          {visibleRows.length > 0 ? (
-            <div style={{ height: enableVirtualScroll ? totalHeight : 'auto', position: 'relative' }}>
-              <div style={{ transform: `translateY(${offsetY}px)` }}>
-                {visibleRows.map((row) => (
-                  <div
-                    key={row.id}
-                    style={{ height: enableVirtualScroll ? virtualItemHeight : 'auto' }}
-                  >
-                    {mobileCardRenderer ? (
-                      <div className="relative">
-                        {isSelectable && (
-                          <div className="absolute top-4 right-4 z-10">
-                            <Checkbox
-                              checked={row.getIsSelected()}
-                              onCheckedChange={(value) => row.toggleSelected(!!value)}
-                              aria-label="تحديد الصف"
-                              className="h-5 w-5"
-                            />
-                          </div>
-                        )}
-                        {mobileCardRenderer(row)}
-                      </div>
-                    ) : (
-                      <div className="px-4 py-2 border-b border-border/30">
-                        <div className="text-sm">Row {row.index + 1}</div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center py-20">
-              <div className="text-center">
-                <div className="text-lg text-muted-foreground mb-4">{noDataMessage}</div>
-                {emptyStateAction}
-              </div>
-            </div>
-          )}
-        </div>
+        )}
       </div>
-
-      {showQuickFilters && (
-        <FilterDrawer
-          isOpen={showFilters}
-          onClose={() => setShowFilters(false)}
-          quickFilters={quickFilters}
-          activeFilters={activeFilters}
-          onFilterChange={onFilterChange || (() => {})}
-          onClearAll={handleClearAllFilters}
-        />
-      )}
-    </>
+    </div>
   );
 }
