@@ -214,6 +214,7 @@ export {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  SheetBody,
 } from "./sheet";
 export {
   Sidebar,
