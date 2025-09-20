@@ -1,4 +1,4 @@
-import { BookOpen, BookUser, FileText, LayoutDashboard, Users } from 'lucide-react'
+import { BookOpen, BookUser, FileText, GraduationCap, LayoutDashboard, Users } from 'lucide-react'
 
 export const dashboardSidebarSections = [
   {
@@ -8,6 +8,11 @@ export const dashboardSidebarSections = [
         title: 'لوحة التحكم',
         icon: LayoutDashboard,
         url: '/dashboard',
+      },
+      {
+        title: 'الأقسام',
+        icon: GraduationCap,
+        url: '/dashboard/classrooms',
       },
       // {
       //   title: 'إدارة الطلاب',
