@@ -59,7 +59,7 @@ export function DashboardLayout({
 
   // Default props for SiteHeader
   const defaultHeaderProps = {
-    title: "Dashboard",
+    // title: "Dashboard",
     ...header?.props,
   };
 

@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { authClient } from '@/lib/auth-client'
+import { useEffect, useState } from 'react'
 
 interface User {
   id: string
@@ -89,22 +89,28 @@ export function useSessionStorage() {
   useEffect(() => {
     if (!isPending && authData) {
       const sessionData: SessionData = {
-        user: authData.user ? {
-          id: authData.user.id,
-          name: authData.user.name || '',
-          email: authData.user.email || '',
-          image: authData.user.image,
-        } : null,
-        session: authData.session ? {
-          user: authData.user ? {
-            id: authData.user.id,
-            name: authData.user.name || '',
-            email: authData.user.email || '',
-            image: authData.user.image,
-          } : null as any,
-          token: authData.session.token,
-          expiresAt: authData.session.expiresAt,
-        } : null,
+        user: authData.user
+          ? {
+              id: authData.user.id,
+              name: authData.user.name || '',
+              email: authData.user.email || '',
+              image: authData.user.image,
+            }
+          : null,
+        session: authData.session
+          ? {
+              user: authData.user
+                ? {
+                    id: authData.user.id,
+                    name: authData.user.name || '',
+                    email: authData.user.email || '',
+                    image: authData.user.image,
+                  }
+                : (null as any),
+              token: authData.session.token,
+              expiresAt: authData.session.expiresAt,
+            }
+          : null,
       }
 
       setLocalData(sessionData)
@@ -121,22 +127,28 @@ export function useSessionStorage() {
     refreshFromAuth: () => {
       if (authData) {
         const sessionData: SessionData = {
-          user: authData.user ? {
-            id: authData.user.id,
-            name: authData.user.name || '',
-            email: authData.user.email || '',
-            image: authData.user.image,
-          } : null,
-          session: authData.session ? {
-            user: authData.user ? {
-              id: authData.user.id,
-              name: authData.user.name || '',
-              email: authData.user.email || '',
-              image: authData.user.image,
-            } : null as any,
-            token: authData.session.token,
-            expiresAt: authData.session.expiresAt,
-          } : null,
+          user: authData.user
+            ? {
+                id: authData.user.id,
+                name: authData.user.name || '',
+                email: authData.user.email || '',
+                image: authData.user.image,
+              }
+            : null,
+          session: authData.session
+            ? {
+                user: authData.user
+                  ? {
+                      id: authData.user.id,
+                      name: authData.user.name || '',
+                      email: authData.user.email || '',
+                      image: authData.user.image,
+                    }
+                  : (null as any),
+                token: authData.session.token,
+                expiresAt: authData.session.expiresAt,
+              }
+            : null,
         }
         setLocalData(sessionData)
         setStoredData(sessionData)

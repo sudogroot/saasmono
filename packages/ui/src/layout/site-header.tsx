@@ -139,7 +139,7 @@ export function SiteHeader({
         {/* Left side - Actions and user menu */}
         <div className="flex items-center gap-2">
           {/* Quick Actions */}
-          {quickActions.map((action, index) => (
+          {/*{quickActions.map((action, index) => (
             <Button
               key={index}
               variant={action.variant || "ghost"}
@@ -150,20 +150,20 @@ export function SiteHeader({
               <action.icon className="h-4 w-4" />
               <span className="text-sm font-medium">{action.label}</span>
             </Button>
-          ))}
+          ))}*/}
 
           {/* Add Button */}
-          <Button
+          {/*<Button
             variant="ghost"
             size="sm"
             className="hidden sm:flex h-9 px-3 gap-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           >
             <Plus className="h-4 w-4" />
             <span className="text-sm font-medium hidden lg:inline">إضافة</span>
-          </Button>
+          </Button>*/}
 
           {/* Notifications */}
-          {notifications.length > 0 && (
+          {/*{notifications.length > 0 && (
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -237,7 +237,7 @@ export function SiteHeader({
               </DropdownMenuContent>
             </DropdownMenu>
           )}
-
+*/}
           {/* User Menu */}
           {user && (
             <DropdownMenu modal={false}>

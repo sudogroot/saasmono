@@ -1,4 +1,4 @@
-import { BookOpen, FileText, LayoutDashboard, Users } from 'lucide-react'
+import { BookOpen, BookUser, FileText, LayoutDashboard, Users } from 'lucide-react'
 
 export const dashboardSidebarSections = [
   {
@@ -53,12 +53,17 @@ export const dashboardSidebarSections = [
     ],
   },
   {
-    title: 'إعدادات المدرسة',
+    title: 'إعدادات المؤسسة ',
     items: [
       {
         title: 'المستويات والمواد',
-        url: '/dashboard/curriculum',
+        url: '/dashboard/institution-settings/curriculum',
         icon: BookOpen,
+      },
+      {
+        title: 'قائمة الأساتذة',
+        icon: BookUser,
+        url: '/dashboard/institution-settings/teachers',
       },
       // {
       //   title: 'إعدادات المدرسة',

@@ -19,7 +19,7 @@ export const user = pgTable('user', {
   isAnonymous: boolean('is_anonymous'),
   username: text('username').unique(),
   displayUsername: text('display_username'),
-  userType: text('user_type').notNull(),
+  userType: text('user_type').notNull(), // student, teacher , staff, parent
 })
 
 export const session = pgTable('session', {
@@ -88,7 +88,7 @@ export const member = pgTable('member', {
   userId: text('user_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  role: text('role').default('member').notNull(),
+  role: text('role').default('member').notNull(), // student, teacher , staff, parent
   createdAt: timestamp('created_at').notNull(),
 })
 

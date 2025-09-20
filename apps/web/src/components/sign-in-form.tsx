@@ -25,7 +25,13 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
           password: value.password,
         },
         {
-          onSuccess: () => {
+          onSuccess: async () => {
+            const organizations = await authClient.organization.list()
+            // every user should have only one organization  that is why we are hard coding 0 index there
+            // TODO : may be we should throw if login sucess and have no organization that should not happe
+            await authClient.organization.setActive({
+              organizationId: organizations?.data?.[0]?.id,
+            })
             router.push('/dashboard')
             toast.success('تم تسجيل الدخول بنجاح')
           },

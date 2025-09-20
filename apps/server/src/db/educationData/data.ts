@@ -849,7 +849,7 @@ export const COLLEGE_SUBJECTS: SubjectType[] = [
 export const SECONDAIRE_SCHOOL_SUBJECTS: SubjectType[] = [
   {
     institutionLevel: 'SECONDAIRE',
-    levelCodeName: ['SECONDAIRE-3-INFORMATIQUE', 'SECONDAIRE-3-INFORMATIQUE'],
+    levelCodeName: ['SECONDAIRE-3-INFORMATIQUE', 'SECONDAIRE-4-INFORMATIQUE'],
     displayName: {
       en: 'Algorithms and Programming',
       fr: 'Algorithmes et Programmation',

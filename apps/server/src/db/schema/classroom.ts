@@ -277,3 +277,9 @@ export const classroomGroupMembershipRelations = relations(classroomGroupMembers
     relationName: 'groupMembershipCreatedBy',
   }),
 }))
+
+// techaer class assingment classroom id should be Optional
+// teacher should ahve link to  classroom
+// classroom group should have classroom id optional
+// classroomgroup should have a link to educationLevel optional !!!!...
+// classroomgroup should have  level subject as optional

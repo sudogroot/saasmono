@@ -39,8 +39,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       header={{
         component: Header,
         props: {
-          title: 'لوحة التحكم',
-          subtitle: 'إدارة شؤون المدرسة',
           notifications: dashboardNotifications,
           user: !isPending
             ? {
