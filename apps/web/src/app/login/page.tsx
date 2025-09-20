@@ -1,7 +1,6 @@
 'use client'
 
 import SignInForm from '@/components/sign-in-form'
-import SignUpForm from '@/components/sign-up-form'
 import { Card, CardContent } from '@repo/ui'
 import { ArrowRight, BookOpen, Calendar, GraduationCap, Users } from 'lucide-react'
 import Image from 'next/image'
@@ -122,11 +121,12 @@ export default function LoginPage() {
                   </p>
                 </div>
 
-                {showSignIn ? (
+                <SignInForm onSwitchToSignUp={() => setShowSignIn(false)} />
+                {/*{showSignIn ? (
                   <SignInForm onSwitchToSignUp={() => setShowSignIn(false)} />
                 ) : (
                   <SignUpForm onSwitchToSignIn={() => setShowSignIn(true)} />
-                )}
+                )}*/}
               </CardContent>
             </Card>
 

@@ -65,7 +65,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           onUserMenuClick: async (action: string) => {
             if (action === 'logout') {
               clearStoredData()
-              await authClient.signOut()
+              await authClient.signOut({
+                fetchOptions: {
+                  onSuccess: () => {
+                    router.push('/') // redirect to login page
+                  },
+                },
+              })
             } else if (action === 'settings') {
               router.push('/dashboard/user/settings')
             }

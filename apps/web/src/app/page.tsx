@@ -15,8 +15,11 @@ import {
   Users,
 } from 'lucide-react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 export default function Home() {
+  const router = useRouter()
+
   return (
     <div
       className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-blue-950"
@@ -44,8 +47,14 @@ export default function Home() {
               </a>
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="ghost">تسجيل الدخول</Button>
-              <Button>ابدأ مجاناً</Button>
+              <Button
+                onClick={() => {
+                  router.push('/login')
+                }}
+              >
+                تسجيل الدخول
+              </Button>
+              {/*<Button>ابدأ مجاناً</Button>*/}
             </div>
           </div>
         </div>
