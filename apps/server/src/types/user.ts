@@ -80,6 +80,40 @@ export const SuccessResponseSchema = z.object({
   success: z.boolean(),
 })
 
+// Enhanced Teacher schemas with nested classroom and subject data
+export const TeacherSubjectAssignmentSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  displayNameAr: z.string(),
+  role: z.string(),
+  isMainTeacher: z.boolean(),
+  assignmentId: z.string(),
+})
+
+export const TeacherClassroomSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  code: z.string(),
+  academicYear: z.string(),
+  educationLevel: z.object({
+    id: z.string(),
+    level: z.number(),
+    displayNameAr: z.string().nullable(),
+  }),
+  subjects: z.array(TeacherSubjectAssignmentSchema),
+})
+
+export const TeacherWithAssignmentsSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  lastName: z.string(),
+  email: z.string().email(),
+  userType: z.literal('teacher'),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  classrooms: z.array(TeacherClassroomSchema),
+})
+
 // Type exports
 export type UserUpdateInput = z.infer<typeof UserUpdateSchema>
 export type CreateParentStudentRelationInput = z.infer<typeof CreateParentStudentRelationSchema>
@@ -89,3 +123,6 @@ export type UserResponse = z.infer<typeof UserResponseSchema>
 export type UserListItem = z.infer<typeof UserListItemSchema>
 export type ParentStudentRelation = z.infer<typeof ParentStudentRelationSchema>
 export type TeacherAssignment = z.infer<typeof TeacherAssignmentSchema>
+export type TeacherWithAssignments = z.infer<typeof TeacherWithAssignmentsSchema>
+export type TeacherClassroom = z.infer<typeof TeacherClassroomSchema>
+export type TeacherSubjectAssignment = z.infer<typeof TeacherSubjectAssignmentSchema>

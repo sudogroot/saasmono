@@ -9,6 +9,7 @@ import {
   ParentStudentRelationSchema,
   SuccessResponseSchema,
   TeacherAssignmentSchema,
+  TeacherWithAssignmentsSchema,
   UserListItemSchema,
   UserResponseSchema,
   UserTypeSchema,
@@ -89,6 +90,24 @@ export const userManagementRouter = {
         return await userService.listUsersByType(orgId, input.userType)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch users')
+      }
+    }),
+
+  getTeachersList: protectedProcedure
+    .output(z.array(TeacherWithAssignmentsSchema))
+    .route({
+      method: 'GET',
+      path: '/management/users/teachers/list',
+      tags: ['User Management'],
+      summary: 'List teachers with assignments',
+      description: 'Retrieves teachers with their classroom and subject assignments',
+    })
+    .handler(async ({ context }) => {
+      const orgId = getOrgId(context)
+      try {
+        return await userService.getTeachersList(orgId)
+      } catch (error) {
+        throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch teachers')
       }
     }),
 

@@ -3,6 +3,7 @@ import React from "react";
 
 export interface GenericTableProps<TData> {
   table: ReactTable<TData>;
+  dir?: "rtl" | "ltr";
   isLoading?: boolean;
   error?: Error | null;
   loadingMessage?: string;

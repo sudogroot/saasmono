@@ -11,17 +11,40 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Edit, Eye, GraduationCap, Mail, Plus, User } from 'lucide-react'
+import { BookOpen, Building2, Eye, GraduationCap, Mail, Plus, User } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
-interface UserListItem {
+interface TeacherSubjectAssignment {
+  id: string
+  name: string
+  displayNameAr: string
+  role: string
+  isMainTeacher: boolean
+  assignmentId: string
+}
+
+interface TeacherClassroom {
+  id: string
+  name: string
+  code: string
+  academicYear: string
+  educationLevel: {
+    id: string
+    level: number
+    displayNameAr: string | null
+  }
+  subjects: TeacherSubjectAssignment[]
+}
+
+interface TeacherWithAssignments {
   id: string
   name: string
   lastName: string
   email: string
-  userType: 'teacher' | 'student' | 'parent' | 'staff'
+  userType: 'teacher'
   createdAt: Date
   updatedAt: Date
+  classrooms: TeacherClassroom[]
 }
 
 interface TeachersTableProps {
@@ -31,20 +54,10 @@ interface TeachersTableProps {
   onCreateNew?: () => void
 }
 
-const columnHelper = createColumnHelper<UserListItem>()
+const columnHelper = createColumnHelper<TeacherWithAssignments>()
 
 export function TeachersTable({ onEdit, onDelete, onView, onCreateNew }: TeachersTableProps) {
-  const {
-    data: teachers = [],
-    isLoading,
-    error,
-  } = useQuery(
-    orpc.management.users.listUsers.queryOptions({
-      input: {
-        userType: 'teacher',
-      },
-    })
-  )
+  const { data: teachers = [], isLoading, error } = useQuery(orpc.management.users.getTeachersList.queryOptions())
 
   const [searchValue, setSearchValue] = useState('')
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
@@ -75,64 +88,77 @@ export function TeachersTable({ onEdit, onDelete, onView, onCreateNew }: Teacher
           </div>
         ),
       }),
-      columnHelper.accessor('userType', {
-        id: 'type',
-        header: 'النوع',
+      columnHelper.display({
+        id: 'assignments',
+        header: 'التكليفات',
         cell: ({ row }) => (
-          <Badge variant="outline" className="border-green-200 bg-green-50 text-xs font-medium text-green-700">
-            <GraduationCap className="ml-1 h-3 w-3" />
-            معلم
-          </Badge>
-        ),
-      }),
-      columnHelper.accessor('createdAt', {
-        id: 'joinDate',
-        header: 'تاريخ الانضمام',
-        cell: ({ row }) => (
-          <div className="text-sm">
-            <div className="text-foreground">
-              {new Date(row.original.createdAt).toLocaleDateString('ar-SA', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </div>
-            <div className="text-muted-foreground text-xs">
-              {new Date(row.original.createdAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              })}
-            </div>
-          </div>
-        ),
-      }),
-      columnHelper.accessor('updatedAt', {
-        id: 'lastUpdate',
-        header: 'آخر تحديث',
-        cell: ({ row }) => (
-          <div className="text-sm">
-            <div className="text-foreground">
-              {new Date(row.original.updatedAt).toLocaleDateString('ar-SA', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </div>
-            <div className="text-muted-foreground text-xs">
-              منذ {Math.floor((Date.now() - new Date(row.original.updatedAt).getTime()) / (1000 * 60 * 60 * 24))} يوم
-            </div>
+          <div className="space-y-2">
+            {row.original.classrooms.length > 0 ? (
+              <div className="space-y-1">
+                {row.original.classrooms.slice(0, 2).map((classroom) => (
+                  <div key={classroom.id} className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Building2 className="text-muted-foreground h-3 w-3" />
+                      <span className="text-sm font-medium">{classroom.name}</span>
+                      <Badge variant="outline" className="text-xs">
+                        المستوى {classroom.educationLevel.level}
+                      </Badge>
+                    </div>
+                    <div className="flex flex-wrap gap-1 pl-5">
+                      {classroom.subjects.slice(0, 3).map((subject) => (
+                        <Badge key={subject.id} variant="secondary" className="text-xs">
+                          {subject.displayNameAr}
+                          {subject.isMainTeacher && ' (رئيسي)'}
+                        </Badge>
+                      ))}
+                      {classroom.subjects.length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{classroom.subjects.length - 3} أخرى
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                {row.original.classrooms.length > 2 && (
+                  <div className="text-muted-foreground text-xs">+{row.original.classrooms.length - 2} فصول أخرى</div>
+                )}
+              </div>
+            ) : (
+              <div className="text-muted-foreground text-sm">لا توجد تكليفات</div>
+            )}
           </div>
         ),
       }),
       columnHelper.display({
-        id: 'status',
-        header: 'الحالة',
-        cell: ({ row }) => (
-          <Badge variant="secondary" className="border-blue-200 bg-blue-50 text-xs font-medium text-blue-700">
-            نشط
-          </Badge>
-        ),
+        id: 'stats',
+        header: 'الإحصائيات',
+        cell: ({ row }) => {
+          const totalClassrooms = row.original.classrooms.length
+          const totalSubjects = row.original.classrooms.reduce((sum, classroom) => sum + classroom.subjects.length, 0)
+          const mainSubjects = row.original.classrooms.reduce(
+            (sum, classroom) => sum + classroom.subjects.filter((s) => s.isMainTeacher).length,
+            0
+          )
+
+          return (
+            <div className="space-y-1 text-sm">
+              <div className="flex items-center gap-2">
+                <Building2 className="text-muted-foreground h-3 w-3" />
+                <span>{totalClassrooms} فصل</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <BookOpen className="text-muted-foreground h-3 w-3" />
+                <span>{totalSubjects} مادة</span>
+              </div>
+              {mainSubjects > 0 && (
+                <div className="flex items-center gap-2">
+                  <GraduationCap className="text-muted-foreground h-3 w-3" />
+                  <span>{mainSubjects} رئيسي</span>
+                </div>
+              )}
+            </div>
+          )
+        },
       }),
       columnHelper.display({
         id: 'actions',
@@ -141,9 +167,6 @@ export function TeachersTable({ onEdit, onDelete, onView, onCreateNew }: Teacher
           <div className="flex items-center gap-1">
             <Button variant="ghost" size="sm" onClick={() => onView?.(row.original.id)} title="عرض">
               <Eye className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => onEdit?.(row.original.id)} title="تعديل">
-              <Edit className="h-4 w-4" />
             </Button>
           </div>
         ),
@@ -155,20 +178,28 @@ export function TeachersTable({ onEdit, onDelete, onView, onCreateNew }: Teacher
   const quickFilters = useMemo(
     () => [
       {
+        key: 'hasAssignments',
+        label: 'حالة التكليفات',
+        values: [
+          { label: 'لديه تكليفات', value: 'true' },
+          { label: 'بدون تكليفات', value: 'false' },
+        ],
+      },
+      {
+        key: 'isMainTeacher',
+        label: 'المعلم الرئيسي',
+        values: [
+          { label: 'معلم رئيسي لمادة', value: 'true' },
+          { label: 'معلم مساعد فقط', value: 'false' },
+        ],
+      },
+      {
         key: 'joinedRecently',
         label: 'تاريخ الانضمام',
         values: [
           { label: 'انضم خلال الشهر الماضي', value: 'month' },
           { label: 'انضم خلال الـ 3 أشهر الماضية', value: 'quarter' },
           { label: 'انضم خلال السنة الماضية', value: 'year' },
-        ],
-      },
-      {
-        key: 'nameSort',
-        label: 'ترتيب الأسماء',
-        values: [
-          { label: 'ترتيب أبجدي (أ-ي)', value: 'asc' },
-          { label: 'ترتيب أبجدي عكسي (ي-أ)', value: 'desc' },
         ],
       },
     ],
@@ -183,6 +214,21 @@ export function TeachersTable({ onEdit, onDelete, onView, onCreateNew }: Teacher
       if (!value) return
 
       switch (key) {
+        case 'hasAssignments':
+          const hasAssignments = value === 'true'
+          filtered = filtered.filter((teacher) =>
+            hasAssignments ? teacher.classrooms.length > 0 : teacher.classrooms.length === 0
+          )
+          break
+        case 'isMainTeacher':
+          const isMainTeacher = value === 'true'
+          filtered = filtered.filter((teacher) => {
+            const hasMainSubjects = teacher.classrooms.some((classroom) =>
+              classroom.subjects.some((subject) => subject.isMainTeacher)
+            )
+            return isMainTeacher ? hasMainSubjects : !hasMainSubjects
+          })
+          break
         case 'joinedRecently':
           const now = new Date()
           let cutoffDate = new Date()
@@ -200,13 +246,6 @@ export function TeachersTable({ onEdit, onDelete, onView, onCreateNew }: Teacher
           }
 
           filtered = filtered.filter((teacher) => new Date(teacher.createdAt) >= cutoffDate)
-          break
-        case 'nameSort':
-          filtered = [...filtered].sort((a, b) => {
-            const nameA = `${a.name} ${a.lastName}`.toLowerCase()
-            const nameB = `${b.name} ${b.lastName}`.toLowerCase()
-            return value === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
-          })
           break
       }
     })
@@ -228,6 +267,9 @@ export function TeachersTable({ onEdit, onDelete, onView, onCreateNew }: Teacher
         teacher.lastName,
         teacher.email,
         `${teacher.name} ${teacher.lastName}`,
+        ...teacher.classrooms.map((c) => c.name),
+        ...teacher.classrooms.flatMap((c) => c.subjects.map((s) => s.displayNameAr)),
+        ...teacher.classrooms.map((c) => `المستوى ${c.educationLevel.level}`),
       ]
         .filter(Boolean)
         .join(' ')
@@ -255,11 +297,11 @@ export function TeachersTable({ onEdit, onDelete, onView, onCreateNew }: Teacher
             </div>
             <div className="text-muted-foreground truncate text-sm">{row.original.email}</div>
             <div className="mt-1 flex items-center gap-2">
-              <Badge variant="outline" className="text-xs text-green-600">
-                معلم
+              <Badge variant="outline" className="text-xs">
+                {row.original.classrooms.length} فصل
               </Badge>
-              <Badge variant="outline" className="text-xs text-blue-600">
-                نشط
+              <Badge variant="outline" className="text-xs">
+                {row.original.classrooms.reduce((sum: number, c: any) => sum + c.subjects.length, 0)} مادة
               </Badge>
             </div>
           </div>
@@ -319,7 +361,7 @@ export function TeachersTable({ onEdit, onDelete, onView, onCreateNew }: Teacher
       error={error}
       searchValue={searchValue}
       onSearchChange={setSearchValue}
-      searchPlaceholder="البحث عن معلم (الاسم، الكنية، البريد الإلكتروني...)"
+      searchPlaceholder="البحث عن معلم (الاسم، البريد، الفصول، المواد...)"
       noDataMessage="لا يوجد معلمون مطابقون للبحث"
       mobileCardRenderer={mobileCardRenderer}
       showQuickFilters={true}
