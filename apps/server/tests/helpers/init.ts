@@ -1,7 +1,9 @@
 import { faker } from '@faker-js/faker'
 import { eq } from 'drizzle-orm'
+import { drizzle } from 'drizzle-orm/node-postgres'
 import * as authSchema from '../../src/db/schema/auth'
 import * as usersSchema from '../../src/db/schema/users'
+import * as educationSchema from '../../src/db/schema/education'
 import { seedInstitutionLevels, seedSecondaireEducation } from '../../src/db/seeds/utils/seedEducation'
 import { auth } from '../../src/lib/auth'
 import { testDb } from '../setup'
@@ -121,8 +123,11 @@ export const seedDatabase = async (customData?: Partial<SeedData>): Promise<Seed
     createdAt: new Date(),
   }))
 
+  // Create education db instance with proper schema
+  const educationDb = drizzle(process.env.TEST_DATABASE_URL || 'postgresql://postgres:password@localhost:5004/manarah_test', { schema: educationSchema })
+
   // Seed institution levels first
-  await seedInstitutionLevels(testDb)
+  await seedInstitutionLevels(educationDb)
 
   // Run all operations in a transaction (following seed file pattern)
   await testDb.transaction(async (tx) => {
@@ -140,7 +145,7 @@ export const seedDatabase = async (customData?: Partial<SeedData>): Promise<Seed
   })
 
   // Seed education data after organization is created
-  const educationData = await seedSecondaireEducation(testDb, testOrg.id)
+  const educationData = await seedSecondaireEducation(educationDb, testOrg.id)
 
   let cookies: string | null = ''
   try {
@@ -153,15 +158,16 @@ export const seedDatabase = async (customData?: Partial<SeedData>): Promise<Seed
     })
 
     cookies = loginAdmin.headers.get('set-cookie')
-    await auth.api.setActiveOrganization({
-      body: {
-        organizationId: testOrg.id,
-      },
-      headers: {
-        'Content-Type': 'application/json',
-        Cookie: cookies!, // <-- pass cookie here
-      },
-    })
+    // TODO: Add setActiveOrganization API call when available
+    // await auth.api.setActiveOrganization({
+    //   body: {
+    //     organizationId: testOrg.id,
+    //   },
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Cookie: cookies!, // <-- pass cookie here
+    //   },
+    // })
   } catch (e) {
     console.log('Could not login')
     console.log(e)
@@ -174,7 +180,12 @@ export const seedDatabase = async (customData?: Partial<SeedData>): Promise<Seed
     adminCookie: cookies!,
     accounts: testAccounts,
     members: testMembers,
-    educationLevels: educationData.educationLevels,
+    educationLevels: educationData.educationLevels.map(level => ({
+      ...level,
+      displayNameEn: level.displayNameEn ?? undefined,
+      displayNameFr: level.displayNameFr ?? undefined,
+      displayNameAr: level.displayNameAr ?? undefined,
+    })) as TestEducationLevel[],
     educationSubjects: educationData.educationSubjects,
   }
 }

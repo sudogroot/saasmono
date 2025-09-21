@@ -47,7 +47,7 @@ export function matchesLevelPattern(levelCodeName: string, pattern: string): boo
 }
 
 // Shared function to seed institution levels
-export async function seedInstitutionLevels(db: NodePgDatabase) {
+export async function seedInstitutionLevels(db: NodePgDatabase<typeof educationSchema>) {
   const existingLevels = await db.select().from(educationSchema.institutionLevel)
 
   const existingNames = new Set(existingLevels.map((level) => level.name))
@@ -63,7 +63,7 @@ export async function seedInstitutionLevels(db: NodePgDatabase) {
 }
 
 // Shared function to seed SECONDAIRE education
-export async function seedSecondaireEducation(db: NodePgDatabase, orgId: string) {
+export async function seedSecondaireEducation(db: NodePgDatabase<typeof educationSchema>, orgId: string) {
   // Get SECONDAIRE institution level ID
   const institutionLevelResult = await db
     .select()
@@ -74,7 +74,12 @@ export async function seedSecondaireEducation(db: NodePgDatabase, orgId: string)
     throw new Error('SECONDAIRE institution level not found. Please run the institutionLevel seed first.')
   }
 
-  const institutionLevelId = institutionLevelResult[0].id
+  const institutionLevel = institutionLevelResult[0]
+  if (!institutionLevel) {
+    throw new Error('SECONDAIRE institution level not found in result.')
+  }
+
+  const institutionLevelId = institutionLevel.id
 
   // Check if SECONDAIRE education data already exists for this organization
   const existingLevels = await db

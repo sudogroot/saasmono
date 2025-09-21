@@ -129,9 +129,10 @@ async function seedGroupMemberships(orgId: string) {
               })
               .returning()
 
+            if (!membership) throw new Error(`Failed to create default group membership for student ${enrollment.studentId}`)
             createdMemberships.push(membership)
           } catch (error) {
-            if (error.message?.includes('duplicate') || error.message?.includes('unique')) {
+            if ((error as Error).message?.includes('duplicate') || (error as Error).message?.includes('unique')) {
               console.log(`    ⚠️  Skipping duplicate membership for student in default group`)
               continue
             }
@@ -177,7 +178,7 @@ async function seedGroupMemberships(orgId: string) {
       for (const group of specializedGroups) {
         // Determine group type from code
         const groupType = group.code.split('_').slice(-1)[0] // Get last part of code
-        const participationRate = groupDistribution[groupType] || 0.3 // Default 30%
+        const participationRate = (groupType ? groupDistribution[groupType as keyof typeof groupDistribution] : null) || 0.3 // Default 30%
 
         // Calculate how many students for this group
         const maxStudents = group.maxCapacity || Math.ceil(classroomEnrollments.length * participationRate)
@@ -205,9 +206,10 @@ async function seedGroupMemberships(orgId: string) {
                 })
                 .returning()
 
+              if (!membership) throw new Error(`Failed to create group membership for student ${enrollment.studentId}`)
               createdMemberships.push(membership)
             } catch (error) {
-              if (error.message?.includes('duplicate') || error.message?.includes('unique')) {
+              if ((error as Error).message?.includes('duplicate') || (error as Error).message?.includes('unique')) {
                 continue
               }
               throw error
@@ -228,7 +230,7 @@ async function seedGroupMemberships(orgId: string) {
     // Show membership distribution by classroom
     const membershipsByClassroom = new Map()
     for (const membership of createdMemberships) {
-      const group = classroomGroups.find(g => g.id === membership.classroomGroupId)
+      const group = classroomGroups.find(g => g.id === membership?.classroomGroupId)
       const classroomName = group?.classroomName || 'Unknown'
 
       if (!membershipsByClassroom.has(classroomName)) {

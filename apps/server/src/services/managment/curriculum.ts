@@ -52,10 +52,10 @@ export class CurriculumManagementService {
       if (row.levelId) {
         subjectsMap.get(subjectId).educationLevels.push({
           id: row.levelId,
-          level: row.levelLevel,
+          level: row.levelLevel!,
           section: row.levelSection,
           displayNameAr: row.levelDisplayNameAr,
-          isOptional: row.isOptional,
+          isOptional: row.isOptional ?? false,
         })
       }
     })
@@ -100,13 +100,13 @@ export class CurriculumManagementService {
       displayDescriptionAr: result[0].subjectDisplayDescriptionAr,
       institutionLevelId: result[0].subjectInstitutionLevelId,
       educationLevels: result
-        .filter((row) => row.levelId)
+        .filter((row) => row.levelId !== null)
         .map((row) => ({
-          id: row.levelId,
-          level: row.levelLevel,
+          id: row.levelId!,
+          level: row.levelLevel!,
           section: row.levelSection,
           displayNameAr: row.levelDisplayNameAr,
-          isOptional: row.isOptional,
+          isOptional: row.isOptional ?? false,
         })),
     }
 
@@ -166,10 +166,10 @@ export class CurriculumManagementService {
       if (row.subjectId) {
         levelsMap.get(levelId).educationSubjects.push({
           id: row.subjectId,
-          name: row.subjectName,
-          displayNameAr: row.subjectDisplayNameAr,
+          name: row.subjectName!,
+          displayNameAr: row.subjectDisplayNameAr!,
           displayDescriptionAr: row.subjectDisplayDescriptionAr,
-          isOptional: row.isOptional,
+          isOptional: row.isOptional ?? false,
         })
       }
     })
@@ -224,11 +224,11 @@ export class CurriculumManagementService {
       educationSubjects: result
         .filter((row) => row.subjectId)
         .map((row) => ({
-          id: row.subjectId,
-          name: row.subjectName,
-          displayNameAr: row.subjectDisplayNameAr,
+          id: row.subjectId!,
+          name: row.subjectName!,
+          displayNameAr: row.subjectDisplayNameAr!,
           displayDescriptionAr: row.subjectDisplayDescriptionAr,
-          isOptional: row.isOptional,
+          isOptional: row.isOptional ?? false,
         })),
     }
 
@@ -267,7 +267,12 @@ export class CurriculumManagementService {
       throw new Error('Institution level not found')
     }
 
-    return result[0]
+    const institutionLevelRecord = result[0]
+    if (!institutionLevelRecord) {
+      throw new Error('Institution level not found in result')
+    }
+
+    return institutionLevelRecord
   }
 
   // Get education level-subject associations
@@ -318,7 +323,12 @@ export class CurriculumManagementService {
       throw new Error('Education level-subject association not found')
     }
 
-    return result[0]
+    const association = result[0]
+    if (!association) {
+      throw new Error('Education level-subject association not found in result')
+    }
+
+    return association
   }
 }
 

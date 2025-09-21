@@ -249,6 +249,11 @@ async function seedTeacherAssignments(orgId: string) {
 
         for (let i = 0; i < selectedTeachers.length; i++) {
           const teacher = selectedTeachers[i]
+          if (!teacher) {
+            console.log(`    ⚠️  No teacher found at index ${i}`)
+            continue
+          }
+
           const roleInfo = getRandomRole()
 
           // Ensure at least one main teacher per subject
@@ -270,6 +275,7 @@ async function seedTeacherAssignments(orgId: string) {
               })
               .returning()
 
+            if (!assignment) throw new Error(`Failed to create teacher assignment for ${teacher.name}`)
             createdAssignments.push(assignment)
             assignmentCount++
 
@@ -278,7 +284,7 @@ async function seedTeacherAssignments(orgId: string) {
 
           } catch (error) {
             // Skip if duplicate assignment (teacher already assigned to this subject in this classroom)
-            if (error.message?.includes('duplicate') || error.message?.includes('unique')) {
+            if ((error as Error).message?.includes('duplicate') || (error as Error).message?.includes('unique')) {
               console.log(`    ⚠️  Skipping duplicate assignment: ${teacher.name} → ${subjectName}`)
               continue
             }
@@ -294,7 +300,7 @@ async function seedTeacherAssignments(orgId: string) {
     console.log(`  - ${classrooms.length} classrooms processed`)
     console.log(`  - ${teachers.length} teachers available`)
 
-    const mainTeachers = createdAssignments.filter(a => a.isMainTeacher === 'true')
+    const mainTeachers = createdAssignments.filter(a => a && a.isMainTeacher === 'true')
     console.log(`  - ${mainTeachers.length} main teacher assignments`)
     console.log(`  - ${createdAssignments.length - mainTeachers.length} assistant/support assignments`)
 

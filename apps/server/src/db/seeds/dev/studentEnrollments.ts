@@ -116,6 +116,11 @@ async function seedStudentEnrollments(orgId: string) {
 
       for (let i = 0; i < actualStudentsForClass && studentIndex < students.length; i++) {
         const student = students[studentIndex]
+        if (!student) {
+          console.log(`    ⚠️  No student found at index ${studentIndex}`)
+          studentIndex++
+          continue
+        }
 
         try {
           const [enrollment] = await db
@@ -129,13 +134,14 @@ async function seedStudentEnrollments(orgId: string) {
             })
             .returning()
 
+          if (!enrollment) throw new Error(`Failed to create enrollment for student ${student.email}`)
           createdEnrollments.push(enrollment)
           console.log(`    ✅ ${student.name} ${student.lastName} (${student.email})`)
           studentIndex++
 
         } catch (error) {
           // Skip if duplicate enrollment
-          if (error.message?.includes('duplicate') || error.message?.includes('unique')) {
+          if ((error as Error).message?.includes('duplicate') || (error as Error).message?.includes('unique')) {
             console.log(`    ⚠️  Skipping duplicate enrollment: ${student.name}`)
             studentIndex++
             continue
@@ -148,10 +154,18 @@ async function seedStudentEnrollments(orgId: string) {
     // Enroll any remaining students in the last classroom
     if (studentIndex < students.length) {
       const lastClassroom = classrooms[classrooms.length - 1]
+      if (!lastClassroom) {
+        throw new Error('No classroom available for remaining students')
+      }
       console.log(`\n📍 Enrolling remaining students in: ${lastClassroom.name}`)
 
       while (studentIndex < students.length) {
         const student = students[studentIndex]
+        if (!student) {
+          console.log(`    ⚠️  No student found at index ${studentIndex}`)
+          studentIndex++
+          continue
+        }
 
         try {
           const [enrollment] = await db
@@ -165,12 +179,13 @@ async function seedStudentEnrollments(orgId: string) {
             })
             .returning()
 
+          if (!enrollment) throw new Error(`Failed to create enrollment for student ${student.email}`)
           createdEnrollments.push(enrollment)
           console.log(`    ✅ ${student.name} ${student.lastName} (${student.email})`)
           studentIndex++
 
         } catch (error) {
-          if (error.message?.includes('duplicate') || error.message?.includes('unique')) {
+          if ((error as Error).message?.includes('duplicate') || (error as Error).message?.includes('unique')) {
             console.log(`    ⚠️  Skipping duplicate enrollment: ${student.name}`)
             studentIndex++
             continue
@@ -188,7 +203,7 @@ async function seedStudentEnrollments(orgId: string) {
     // Show enrollment distribution
     const enrollmentsByClassroom = new Map()
     for (const enrollment of createdEnrollments) {
-      const classroom = classrooms.find(c => c.id === enrollment.classroomId)
+      const classroom = classrooms.find(c => c.id === enrollment?.classroomId)
       const count = enrollmentsByClassroom.get(classroom?.name || 'Unknown') || 0
       enrollmentsByClassroom.set(classroom?.name || 'Unknown', count + 1)
     }

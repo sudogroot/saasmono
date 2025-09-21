@@ -130,13 +130,14 @@ async function resetTestDatabase() {
     console.log(`  - Records after: ${totalRecordsAfter}`)
     console.log(`  - Records cleared: ${recordsCleared}`)
 
-    if (totalRecordsAfter === afterCounts['institution_level'] || totalRecordsAfter === 0) {
+    const institutionLevelCount = afterCounts['institution_level'] ?? 0
+    if (totalRecordsAfter === institutionLevelCount || totalRecordsAfter === 0) {
       console.log('\n🎉 Test database reset completed successfully!')
       console.log('✅ All test data has been cleared.')
 
-      if (afterCounts['institution_level'] > 0) {
+      if (institutionLevelCount > 0) {
         console.log(
-          `ℹ️  Institution levels preserved: ${afterCounts['institution_level']} records (global reference data)`
+          `ℹ️  Institution levels preserved: ${institutionLevelCount} records (global reference data)`
         )
       }
     } else {
@@ -149,7 +150,7 @@ async function resetTestDatabase() {
     }
 
     // Show preserved institution levels if any
-    if (afterCounts['institution_level'] > 0) {
+    if (institutionLevelCount > 0) {
       console.log('\n📚 Preserved Institution Levels:')
       const levelsResult = await db.execute(sql`
         SELECT name, "displayNameEn"

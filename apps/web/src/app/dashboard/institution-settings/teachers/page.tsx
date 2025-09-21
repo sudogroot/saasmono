@@ -21,7 +21,7 @@ export default function Teachers() {
     // TODO: Implement create functionality
   }
   if (isMobile) {
-    return <TeachersTable onEdit={handleEditTeacher} onView={handleViewTeacher} onCreateNew={handleCreateNewTeacher} />
+    return <TeachersTable onEdit={handleEditTeacher} onCreateNew={handleCreateNewTeacher} />
   }
 
   return (
@@ -38,7 +38,7 @@ export default function Teachers() {
           <CardDescription>إدارة قائمة المعلمين ومعلوماتهم الشخصية والمهنية</CardDescription>
         </CardHeader>
         <CardContent>
-          <TeachersTable onEdit={handleEditTeacher} onView={handleViewTeacher} onCreateNew={handleCreateNewTeacher} />
+          <TeachersTable onEdit={handleEditTeacher} onCreateNew={handleCreateNewTeacher} />
         </CardContent>
       </Card>
     </div>

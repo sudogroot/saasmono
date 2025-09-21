@@ -94,7 +94,7 @@ export function useSessionStorage() {
               id: authData.user.id,
               name: authData.user.name || '',
               email: authData.user.email || '',
-              image: authData.user.image,
+              image: authData.user.image || undefined,
             }
           : null,
         session: authData.session
@@ -104,11 +104,11 @@ export function useSessionStorage() {
                     id: authData.user.id,
                     name: authData.user.name || '',
                     email: authData.user.email || '',
-                    image: authData.user.image,
+                    image: authData.user.image || undefined,
                   }
                 : (null as any),
               token: authData.session.token,
-              expiresAt: authData.session.expiresAt,
+              expiresAt: authData.session.expiresAt.toISOString(),
             }
           : null,
       }
@@ -132,7 +132,7 @@ export function useSessionStorage() {
                 id: authData.user.id,
                 name: authData.user.name || '',
                 email: authData.user.email || '',
-                image: authData.user.image,
+                image: authData.user.image || undefined,
               }
             : null,
           session: authData.session
@@ -146,7 +146,7 @@ export function useSessionStorage() {
                     }
                   : (null as any),
                 token: authData.session.token,
-                expiresAt: authData.session.expiresAt,
+                expiresAt: authData.session.expiresAt.toISOString(),
               }
             : null,
         }

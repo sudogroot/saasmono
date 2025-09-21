@@ -131,6 +131,7 @@ async function seedClassroomGroups(orgId: string) {
           })
           .returning()
 
+        if (!group) throw new Error('Failed to create classroom group')
         createdGroups.push(group)
         console.log(`  ✅ ${group.name} (${group.code})`)
       }
@@ -154,6 +155,7 @@ async function seedClassroomGroups(orgId: string) {
             })
             .returning()
 
+          if (!group) throw new Error(`Failed to create science group: ${template.name}`)
           createdGroups.push(group)
           console.log(`  ✅ ${group.name} (${group.code})`)
         }
@@ -175,6 +177,7 @@ async function seedClassroomGroups(orgId: string) {
             })
             .returning()
 
+          if (!group) throw new Error(`Failed to create math group: ${template.name}`)
           createdGroups.push(group)
           console.log(`  ✅ ${group.name} (${group.code})`)
         }
@@ -196,6 +199,7 @@ async function seedClassroomGroups(orgId: string) {
             })
             .returning()
 
+          if (!group) throw new Error(`Failed to create literature group: ${template.name}`)
           createdGroups.push(group)
           console.log(`  ✅ ${group.name} (${group.code})`)
         }
@@ -207,7 +211,7 @@ async function seedClassroomGroups(orgId: string) {
     console.log(`  - ${createdGroups.length} classroom groups created`)
     console.log(`  - ${classrooms.length} classrooms processed`)
 
-    const defaultGroups = createdGroups.filter(g => g.isDefault)
+    const defaultGroups = createdGroups.filter(g => g && g.isDefault)
     console.log(`  - ${defaultGroups.length} default groups`)
     console.log(`  - ${createdGroups.length - defaultGroups.length} specialized groups`)
 

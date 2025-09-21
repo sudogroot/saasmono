@@ -22,6 +22,9 @@ describe('UserManagementService', () => {
     it('should update user when user belongs to organization', async () => {
       // Get user from initialized data
       const testUser = testData.users[0] // Get first user
+      if (!testUser) {
+        throw new Error('No test user found')
+      }
       const userId = testUser.id
       const orgId = testData.organization.id
 
@@ -39,8 +42,10 @@ describe('UserManagementService', () => {
 
       // Assert the changes are reflected in the db
       expect(userInDb).toHaveLength(1)
-      expect(userInDb[0].name).toBe('Updated Name')
-      expect(userInDb[0].lastName).toBe('Updated LastName')
+      const updatedUserInDb = userInDb[0]
+      expect(updatedUserInDb).toBeDefined()
+      expect(updatedUserInDb!.name).toBe('Updated Name')
+      expect(updatedUserInDb!.lastName).toBe('Updated LastName')
       expect(updatedUser.name).toBe('Updated Name')
       expect(updatedUser.lastName).toBe('Updated LastName')
     })

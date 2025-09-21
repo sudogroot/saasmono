@@ -12,6 +12,7 @@
     "outDir": "./dist",
     "types": ["node"],
     "composite": true,
+    "incremental": true,
     "jsx": "react-jsx"
   }
 }

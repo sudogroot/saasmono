@@ -71,7 +71,7 @@ export class ClassroomManagementService {
       },
       studentCount: studentCountMap.get(row.classroomId) || 0,
       teacherCount: teacherCountMap.get(row.classroomId) || 0,
-    })) as unknown as ClassroomListItem
+    })) as ClassroomListItem[]
   }
 
   async getClassroomById(classroomId: string, orgId: string) {
@@ -127,6 +127,12 @@ export class ClassroomManagementService {
       )
 
     const row = result[0]
+
+    // Ensure education level exists (should not be null due to foreign key constraint)
+    if (!row.levelId) {
+      throw new Error('Education level not found for classroom')
+    }
+
     return {
       id: row.classroomId,
       name: row.classroomName,
@@ -140,7 +146,7 @@ export class ClassroomManagementService {
       deletedAt: row.classroomDeletedAt,
       educationLevel: {
         id: row.levelId,
-        level: row.levelLevel,
+        level: row.levelLevel!,
         section: row.levelSection,
         displayNameAr: row.levelDisplayNameAr,
         displayNameEn: row.levelDisplayNameEn,

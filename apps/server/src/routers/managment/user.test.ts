@@ -24,7 +24,7 @@ describe('/management/user/ API Tests', () => {
     it('should return user by id with all required fields', async () => {
       const { adminCookie } = testData
       const user = testData.users[0]
-      const res = await request(app).get(`/api/management/users/${user.id}`).set('Cookie', adminCookie)
+      const res = await request(app).get(`/api/management/users/${user?.id}`).set('Cookie', adminCookie)
 
       expect(res.status).toBe(200)
 
@@ -36,11 +36,11 @@ describe('/management/user/ API Tests', () => {
       expect(validationResult.success).toBe(true)
 
       // Validate specific fields
-      expect(res.body.id).toBe(user.id)
-      expect(res.body.name).toBe(user.name)
-      expect(res.body.lastName).toBe(user.lastName)
-      expect(res.body.email).toBe(user.email)
-      expect(res.body.userType).toBe(user.userType)
+      expect(res.body.id).toBe(user?.id)
+      expect(res.body.name).toBe(user?.name)
+      expect(res.body.lastName).toBe(user?.lastName)
+      expect(res.body.email).toBe(user?.email)
+      expect(res.body.userType).toBe(user?.userType)
       expect(res.body.createdAt).toBeDefined()
       expect(res.body.updatedAt).toBeDefined()
       expect(Array.isArray(res.body.parentChildrenRelations)).toBe(true)
@@ -56,7 +56,7 @@ describe('/management/user/ API Tests', () => {
 
     it('should return 401 without authentication', async () => {
       const user = testData.users[0]
-      const res = await request(app).get(`/api/management/users/${user.id}`)
+      const res = await request(app).get(`/api/management/users/${user?.id}`)
 
       expect(res.status).toBe(401)
     })
@@ -80,13 +80,13 @@ describe('/management/user/ API Tests', () => {
         expect(validationResult.success).toBe(true)
 
         // Ensure all required fields are present
-        expect(user.id).toBeDefined()
-        expect(user.name).toBeDefined()
-        expect(user.lastName).toBeDefined()
-        expect(user.email).toBeDefined()
-        expect(user.userType).toBeDefined()
-        expect(user.createdAt).toBeDefined()
-        expect(user.updatedAt).toBeDefined()
+        expect(user?.id).toBeDefined()
+        expect(user?.name).toBeDefined()
+        expect(user?.lastName).toBeDefined()
+        expect(user?.email).toBeDefined()
+        expect(user?.userType).toBeDefined()
+        expect(user?.createdAt).toBeDefined()
+        expect(user?.updatedAt).toBeDefined()
       })
     })
 
@@ -102,7 +102,7 @@ describe('/management/user/ API Tests', () => {
 
         // All returned users should have the specified type
         res.body.forEach((user: any) => {
-          expect(user.userType).toBe(userType)
+          expect(user?.userType).toBe(userType)
         })
       }
     })
@@ -125,12 +125,15 @@ describe('/management/user/ API Tests', () => {
         userType: 'teacher' as UserType,
       }
 
-      const res = await request(app).put(`/api/management/users/${user.id}`).send(updateData).set('Cookie', adminCookie)
+      const res = await request(app)
+        .put(`/api/management/users/${user?.id}`)
+        .send(updateData)
+        .set('Cookie', adminCookie)
 
       expect(res.status).toBe(200)
 
       // Verify the update was applied
-      const getRes = await request(app).get(`/api/management/users/${user.id}`).set('Cookie', adminCookie)
+      const getRes = await request(app).get(`/api/management/users/${user?.id}`).set('Cookie', adminCookie)
 
       expect(getRes.status).toBe(200)
       expect(getRes.body.name).toBe(updateData.name)
@@ -144,7 +147,7 @@ describe('/management/user/ API Tests', () => {
       const user = testData.users[0]
 
       const res = await request(app)
-        .put(`/api/management/users/${user.id}`)
+        .put(`/api/management/users/${user?.id}`)
         .send({ email: 'invalid-email' })
         .set('Cookie', adminCookie)
 
@@ -156,7 +159,7 @@ describe('/management/user/ API Tests', () => {
       const user = testData.users[0]
 
       const res = await request(app)
-        .put(`/api/management/users/${user.id}`)
+        .put(`/api/management/users/${user?.id}`)
         .send({ userType: 'invalid-type' })
         .set('Cookie', adminCookie)
 
@@ -302,8 +305,8 @@ describe('/management/user/ API Tests', () => {
 
       const assignmentData = {
         teacherId: teacherUser.id,
-        educationSubjectId: testData.educationSubjects[0].id,
-        educationLevelId: testData.educationLevels[0].id,
+        educationSubjectId: testData?.educationSubjects?.[0]?.id,
+        educationLevelId: testData?.educationLevels?.[0]?.id,
       }
 
       const res = await request(app)
@@ -350,8 +353,8 @@ describe('/management/user/ API Tests', () => {
 
       const assignmentData = {
         teacherId: 'non-existent-teacher-id',
-        educationSubjectId: testData.educationSubjects[0].id,
-        educationLevelId: testData.educationLevels[0].id,
+        educationSubjectId: testData?.educationSubjects?.[0]?.id,
+        educationLevelId: testData?.educationLevels?.[0]?.id,
       }
 
       const res = await request(app)
@@ -373,8 +376,8 @@ describe('/management/user/ API Tests', () => {
         .post('/api/management/teacher-assignments')
         .send({
           teacherId: teacherUser!.id,
-          educationSubjectId: testData.educationSubjects[0].id,
-          educationLevelId: testData.educationLevels[0].id,
+          educationSubjectId: testData?.educationSubjects?.[0]?.id,
+          educationLevelId: testData?.educationLevels?.[0]?.id,
         })
         .set('Cookie', adminCookie)
 
@@ -383,8 +386,8 @@ describe('/management/user/ API Tests', () => {
 
       // Then update it
       const updateData = {
-        educationSubjectId: testData.educationSubjects[1]?.id || testData.educationSubjects[0].id,
-        educationLevelId: testData.educationLevels[1]?.id || testData.educationLevels[0].id,
+        educationSubjectId: testData?.educationSubjects?.[1]?.id || testData?.educationSubjects?.[0]?.id,
+        educationLevelId: testData?.educationLevels?.[1]?.id || testData?.educationLevels?.[0]?.id,
       }
 
       const updateRes = await request(app)
@@ -409,7 +412,7 @@ describe('/management/user/ API Tests', () => {
       const res = await request(app)
         .put('/api/management/teacher-assignments/550e8400-e29b-41d4-a716-446655440000')
         .send({
-          educationSubjectId: testData.educationSubjects[0].id,
+          educationSubjectId: testData?.educationSubjects?.[0]?.id,
         })
         .set('Cookie', adminCookie)
 
@@ -427,8 +430,8 @@ describe('/management/user/ API Tests', () => {
         .post('/api/management/teacher-assignments')
         .send({
           teacherId: teacherUser!.id,
-          educationSubjectId: testData.educationSubjects[0].id,
-          educationLevelId: testData.educationLevels[0].id,
+          educationSubjectId: testData?.educationSubjects?.[0]?.id,
+          educationLevelId: testData?.educationLevels?.[0]?.id,
         })
         .set('Cookie', adminCookie)
 
@@ -465,28 +468,28 @@ describe('/management/user/ API Tests', () => {
 
       // Test all endpoints without authentication
       const endpoints = [
-        { method: 'get', path: `/api/management/users/${user.id}` },
+        { method: 'get', path: `/api/management/users/${user?.id}` },
         { method: 'get', path: '/api/management/users' },
-        { method: 'put', path: `/api/management/users/${user.id}`, body: { name: 'Test' } },
+        { method: 'put', path: `/api/management/users/${user?.id}`, body: { name: 'Test' } },
         {
           method: 'post',
           path: '/api/management/parent-student-relations',
-          body: { parentId: user.id, studentId: user.id },
+          body: { parentId: user?.id, studentId: user?.id },
         },
         { method: 'delete', path: '/api/management/parent-student-relations/550e8400-e29b-41d4-a716-446655440000' },
         {
           method: 'post',
           path: '/api/management/teacher-assignments',
           body: {
-            teacherId: user.id,
-            educationSubjectId: testData.educationSubjects[0].id,
-            educationLevelId: testData.educationLevels[0].id,
+            teacherId: user?.id,
+            educationSubjectId: testData?.educationSubjects?.[0]?.id,
+            educationLevelId: testData?.educationLevels?.[0]?.id,
           },
         },
         {
           method: 'put',
           path: '/api/management/teacher-assignments/550e8400-e29b-41d4-a716-446655440000',
-          body: { educationSubjectId: testData.educationSubjects[0].id },
+          body: { educationSubjectId: testData?.educationSubjects?.[0]?.id },
         },
         { method: 'delete', path: '/api/management/teacher-assignments/550e8400-e29b-41d4-a716-446655440000' },
       ]

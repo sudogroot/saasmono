@@ -64,7 +64,6 @@ export default function Curriculum() {
             <CardContent>
               <EducationSubjectTable
                 onEdit={handleEditSubject}
-                onView={handleViewSubject}
                 onCreateNew={handleCreateNewSubject}
               />
             </CardContent>

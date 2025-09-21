@@ -76,6 +76,9 @@ export class UserManagementService {
     }
 
     const userData = result[0]
+    if (!userData) {
+      throw new Error('User data not found')
+    }
 
     // Get parent-children relationships (where user is parent OR child)
     const parentChildrenRelations = await this.db
@@ -258,6 +261,9 @@ export class UserManagementService {
 
     const parent = parentResult[0]
     const student = studentResult[0]
+    if (!parent || !student) {
+      throw new Error('Parent or student data not found')
+    }
 
     const [relation] = await this.db
       .insert(parentStudentRelation)
@@ -267,6 +273,10 @@ export class UserManagementService {
         relationshipType: data.relationshipType || 'parent',
       })
       .returning()
+
+    if (!relation) {
+      throw new Error('Failed to create parent-student relation')
+    }
 
     // Return relation with names included
     return {
@@ -297,15 +307,20 @@ export class UserManagementService {
       throw new Error('Parent-student relation not found')
     }
 
+    const relationData = relation[0]
+    if (!relationData) {
+      throw new Error('Relation data not found')
+    }
+
     const [parentMember, studentMember] = await Promise.all([
       this.db
         .select()
         .from(member)
-        .where(and(eq(member.userId, relation[0].parentId), eq(member.organizationId, orgId))),
+        .where(and(eq(member.userId, relationData.parentId), eq(member.organizationId, orgId))),
       this.db
         .select()
         .from(member)
-        .where(and(eq(member.userId, relation[0].studentId), eq(member.organizationId, orgId))),
+        .where(and(eq(member.userId, relationData.studentId), eq(member.organizationId, orgId))),
     ])
 
     if (parentMember.length === 0 || studentMember.length === 0) {
@@ -329,7 +344,7 @@ export class UserManagementService {
       throw new Error('Teacher not found in organization')
     }
 
-    const [assignment] = await this.db
+    const result = await this.db
       .insert(teacherEducationSubjectLevelAssignment)
       .values({
         teacherId: data.teacherId,
@@ -339,6 +354,15 @@ export class UserManagementService {
         createdByUserId: data.createdByUserId,
       })
       .returning()
+
+    if (result.length === 0) {
+      throw new Error('Failed to create teacher assignment')
+    }
+
+    const assignment = result[0]
+    if (!assignment) {
+      throw new Error('Failed to create teacher assignment - no result returned')
+    }
 
     return assignment
   }
@@ -359,7 +383,7 @@ export class UserManagementService {
       throw new Error('Assignment not found in organization')
     }
 
-    const [updatedAssignment] = await this.db
+    const result = await this.db
       .update(teacherEducationSubjectLevelAssignment)
       .set({
         ...data,
@@ -368,6 +392,15 @@ export class UserManagementService {
       })
       .where(eq(teacherEducationSubjectLevelAssignment.id, assignmentId))
       .returning()
+
+    if (result.length === 0) {
+      throw new Error('Failed to update teacher assignment')
+    }
+
+    const updatedAssignment = result[0]
+    if (!updatedAssignment) {
+      throw new Error('Failed to update teacher assignment - no result returned')
+    }
 
     return updatedAssignment
   }

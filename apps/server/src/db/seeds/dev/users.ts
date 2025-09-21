@@ -149,19 +149,25 @@ async function main() {
     const student2Index = parentIndex * 2 + 1
 
     if (student1Index < studentUsers.length) {
-      parentStudentRelations.push({
-        parentId: parent.id,
-        studentId: studentUsers[student1Index].id,
-        relationshipType: 'parent',
-      })
+      const student1 = studentUsers[student1Index]
+      if (student1) {
+        parentStudentRelations.push({
+          parentId: parent.id,
+          studentId: student1.id,
+          relationshipType: 'parent',
+        })
+      }
     }
 
     if (student2Index < studentUsers.length) {
-      parentStudentRelations.push({
-        parentId: parent.id,
-        studentId: studentUsers[student2Index].id,
-        relationshipType: 'parent',
-      })
+      const student2 = studentUsers[student2Index]
+      if (student2) {
+        parentStudentRelations.push({
+          parentId: parent.id,
+          studentId: student2.id,
+          relationshipType: 'parent',
+        })
+      }
     }
   })
 

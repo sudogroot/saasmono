@@ -107,7 +107,18 @@ async function showDatabaseTables() {
       allTables.map(async (tableName) => {
         try {
           const countResult = await db.execute(sql.raw(`SELECT COUNT(*) as count FROM "${tableName}"`))
-          return parseInt(countResult[0].count as string)
+
+          // Handle different result formats for count
+          let count: number = 0
+          if (Array.isArray(countResult) && countResult.length > 0) {
+            count = parseInt((countResult[0] as any).count as string)
+          } else if (countResult && typeof countResult === 'object' && 'rows' in countResult) {
+            const rows = (countResult as any).rows
+            if (rows && rows.length > 0) {
+              count = parseInt(rows[0].count as string)
+            }
+          }
+          return count
         } catch {
           return 0
         }
@@ -142,8 +153,16 @@ async function showDatabaseTables() {
       ORDER BY tc.table_name, kcu.column_name;
     `)
 
-    if (fkResult.length > 0) {
-      fkResult.forEach((fk: any) => {
+    // Handle different result formats for foreign keys
+    let foreignKeys: any[] = []
+    if (Array.isArray(fkResult)) {
+      foreignKeys = fkResult
+    } else if (fkResult && typeof fkResult === 'object' && 'rows' in fkResult) {
+      foreignKeys = (fkResult as any).rows
+    }
+
+    if (foreignKeys.length > 0) {
+      foreignKeys.forEach((fk: any) => {
         console.log(`   ${fk.table_name}.${fk.column_name} → ${fk.foreign_table_name}.${fk.foreign_column_name}`)
       })
     } else {

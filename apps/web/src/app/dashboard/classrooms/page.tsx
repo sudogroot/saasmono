@@ -64,7 +64,6 @@ export default function Classrooms() {
             <CardContent>
               <ClassroomsTable
                 onEdit={handleEditClassroom}
-                onView={handleViewClassroom}
                 onCreateNew={handleCreateNewClassroom}
               />
             </CardContent>

@@ -137,6 +137,7 @@ async function seedClassrooms(orgId: string) {
         })
         .returning()
 
+      if (!classroom) throw new Error(`Failed to create classroom: ${classroomData.name}`)
       createdClassrooms.push(classroom)
       console.log(`  ✅ Created: ${classroom.name} (${classroom.code})`)
     }
