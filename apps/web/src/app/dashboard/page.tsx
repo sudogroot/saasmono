@@ -139,7 +139,9 @@ export default function Dashboard() {
             مرحباً بك، {session?.user.name || 'المستخدم'} 👋
           </h1>
           <p className="text-gray-600 dark:text-gray-400">إليك نظرة سريعة على نشاط مدرستك اليوم</p>
-          {privateData.data && <p className="mt-2 text-sm text-green-600">✅ {privateData.data.message}</p>}
+          {privateData.data && typeof privateData.data === 'object' && privateData.data !== null && 'message' in privateData.data ? (
+            <p className="mt-2 text-sm text-green-600">✅ {(privateData.data as { message: string }).message}</p>
+          ) : null}
         </div>
 
         {/* Stats Cards */}

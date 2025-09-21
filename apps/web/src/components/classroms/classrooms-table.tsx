@@ -47,6 +47,9 @@ export function ClassroomsTable({ onEdit, onDelete, onCreateNew }: ClassroomsTab
     error,
   } = useQuery(orpc.management.classroom.getClassroomsList.queryOptions())
 
+  // Type assertion for classrooms data
+  const typedClassrooms = (classrooms as ClassroomListItem[]) || []
+
   const [searchValue, setSearchValue] = useState('')
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
   const [pagination, setPagination] = useState({
@@ -143,7 +146,7 @@ export function ClassroomsTable({ onEdit, onDelete, onCreateNew }: ClassroomsTab
       {
         key: 'academicYear',
         label: 'العام الدراسي',
-        values: Array.from(new Set(classrooms.map((c) => c.academicYear))).map((year) => ({
+        values: Array.from(new Set(typedClassrooms.map((c) => c.academicYear))).map((year) => ({
           label: year,
           value: year,
         })),
@@ -169,7 +172,7 @@ export function ClassroomsTable({ onEdit, onDelete, onCreateNew }: ClassroomsTab
   )
 
   const filteredData = useMemo(() => {
-    let filtered = classrooms
+    let filtered = typedClassrooms
 
     // Apply active filters
     Object.entries(activeFilters).forEach(([key, value]) => {
@@ -195,7 +198,7 @@ export function ClassroomsTable({ onEdit, onDelete, onCreateNew }: ClassroomsTab
     })
 
     return filtered
-  }, [classrooms, activeFilters])
+  }, [typedClassrooms, activeFilters])
 
   const table = useReactTable({
     data: filteredData,
@@ -267,7 +270,7 @@ export function ClassroomsTable({ onEdit, onDelete, onCreateNew }: ClassroomsTab
     </Button>
   ) : null
 
-  if (classrooms.length === 0 && !isLoading) {
+  if (typedClassrooms.length === 0 && !isLoading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="space-y-4 text-center">

@@ -47,6 +47,9 @@ export function EducationSubjectTable({ onEdit, onDelete, onCreateNew }: Educati
     error,
   } = useQuery(orpc.management.curriculum.getEducationSubjectsList.queryOptions())
 
+  // Type assertion for subjects data
+  const typedSubjects = (subjects as EducationSubject[]) || []
+
   const [searchValue, setSearchValue] = useState('')
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
   const [pagination, setPagination] = useState({
@@ -171,7 +174,7 @@ export function EducationSubjectTable({ onEdit, onDelete, onCreateNew }: Educati
   )
 
   const filteredData = useMemo(() => {
-    let filtered = subjects
+    let filtered = typedSubjects
 
     // Apply active filters
     Object.entries(activeFilters).forEach(([key, value]) => {
@@ -196,7 +199,7 @@ export function EducationSubjectTable({ onEdit, onDelete, onCreateNew }: Educati
     })
 
     return filtered
-  }, [subjects, activeFilters])
+  }, [typedSubjects, activeFilters])
 
   const table = useReactTable({
     data: filteredData,
@@ -268,7 +271,7 @@ export function EducationSubjectTable({ onEdit, onDelete, onCreateNew }: Educati
     </Button>
   ) : null
 
-  if (subjects.length === 0 && !isLoading) {
+  if (typedSubjects.length === 0 && !isLoading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="space-y-4 text-center">

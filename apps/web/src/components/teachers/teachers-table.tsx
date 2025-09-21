@@ -59,6 +59,9 @@ const columnHelper = createColumnHelper<TeacherWithAssignments>()
 export function TeachersTable({ onEdit, onDelete, onCreateNew }: TeachersTableProps) {
   const { data: teachers = [], isLoading, error } = useQuery(orpc.management.users.getTeachersList.queryOptions())
 
+  // Type assertion for teachers data
+  const typedTeachers = (teachers as TeacherWithAssignments[]) || []
+
   const [searchValue, setSearchValue] = useState('')
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
   const [pagination, setPagination] = useState({
@@ -206,7 +209,7 @@ export function TeachersTable({ onEdit, onDelete, onCreateNew }: TeachersTablePr
   )
 
   const filteredData = useMemo(() => {
-    let filtered = teachers
+    let filtered = typedTeachers
 
     // Apply active filters
     Object.entries(activeFilters).forEach(([key, value]) => {
@@ -250,7 +253,7 @@ export function TeachersTable({ onEdit, onDelete, onCreateNew }: TeachersTablePr
     })
 
     return filtered
-  }, [teachers, activeFilters])
+  }, [typedTeachers, activeFilters])
 
   const table = useReactTable({
     data: filteredData,
@@ -325,7 +328,7 @@ export function TeachersTable({ onEdit, onDelete, onCreateNew }: TeachersTablePr
     </Button>
   ) : null
 
-  if (teachers.length === 0 && !isLoading) {
+  if (typedTeachers.length === 0 && !isLoading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="space-y-4 text-center">
