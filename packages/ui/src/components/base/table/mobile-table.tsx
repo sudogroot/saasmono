@@ -159,23 +159,18 @@ export function MobileTable<TData>({
                   placeholder={searchPlaceholder}
                   value={searchValue}
                   onChange={(e) => onSearchChange?.(e.target.value)}
-                  className="pl-9 h-10 bg-muted/50 border-0 rounded-lg text-sm placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:bg-background"
+                  className="pl-9  text-sm placeholder:text-muted-foreground "
                 />
               </div>
               {showQuickFilters && quickFilters.length > 0 && (
                 <Button
                   variant="outline"
-                  size="sm"
                   onClick={() => setIsFilterDrawerOpen(true)}
-                  className={cn(
-                    "h-10 px-3 shrink-0 rounded-lg border-0 bg-muted/50 hover:bg-muted",
-                    hasActiveFilters &&
-                      "bg-primary/10 text-primary hover:bg-primary/20",
-                  )}
+                  className={cn("shadow-sm relative")}
                 >
                   <Filter className="h-4 w-4" />
                   {hasActiveFilters && (
-                    <span className="ml-1 text-xs bg-primary text-primary-foreground rounded-full px-1.5 py-0.5 min-w-5 h-5 flex items-center justify-center">
+                    <span className="absolute pr-0.2 text-xs bg-primary text-primary-foreground rounded-full min-w-4 h-4 flex items-center justify-center top-[-5] left-[-5]">
                       {
                         Object.values(activeFilters).filter((v) => v !== "")
                           .length
