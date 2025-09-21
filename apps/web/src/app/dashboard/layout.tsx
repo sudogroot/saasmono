@@ -52,14 +52,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               }
             : undefined,
           quickActions: dashboardQuickActions,
-          showSearch: true,
-          searchPlaceholder: 'البحث...',
-          onNotificationClick: (notification: any) => {
-            console.log('Notification clicked:', notification)
-          },
-          onMarkAllAsRead: () => {
-            console.log('Mark all as read')
-          },
+          showSearch: false,
+          // searchPlaceholder: 'البحث...',
+          // onNotificationClick: (notification: any) => {
+          //   console.log('Notification clicked:', notification)
+          // },
+          // onMarkAllAsRead: () => {
+          //   console.log('Mark all as read')
+          // },
           onUserMenuClick: async (action: string) => {
             if (action === 'logout') {
               clearStoredData()

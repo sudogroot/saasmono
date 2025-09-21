@@ -1,6 +1,7 @@
 import { SidebarInset, SidebarProvider } from "../components/ui/sidebar";
 import { AppSidebar } from "./app-sidebar";
 import { SiteHeader } from "./site-header";
+import { usePathname } from "next/navigation";
 
 // Export the new generic components
 export { SiteHeader as Header } from "./site-header";
@@ -37,12 +38,35 @@ export interface DashboardLayoutProps {
   style?: React.CSSProperties;
 }
 
+function getActiveSidebarItemTitle(
+  pathname: string,
+  sections: any[],
+): string | undefined {
+  for (const section of sections) {
+    for (const item of section.items || []) {
+      if (item.url === pathname) {
+        return item.title;
+      }
+      // Check sub-items if they exist
+      if (item.items) {
+        for (const subItem of item.items) {
+          if (subItem.url === pathname) {
+            return subItem.title;
+          }
+        }
+      }
+    }
+  }
+  return undefined;
+}
+
 export function DashboardLayout({
   children,
   sidebar,
   header,
   style,
 }: DashboardLayoutProps) {
+  const pathname = usePathname();
   const SidebarComponent = sidebar?.component || AppSidebar;
   const HeaderComponent = header?.component || SiteHeader;
 
@@ -57,9 +81,15 @@ export function DashboardLayout({
     ...sidebar?.props,
   };
 
+  // Get active sidebar item title
+  const activeSidebarTitle = getActiveSidebarItemTitle(
+    pathname,
+    sidebar?.props?.sections || [],
+  );
+
   // Default props for SiteHeader
   const defaultHeaderProps = {
-    // title: "Dashboard",
+    title: activeSidebarTitle,
     ...header?.props,
   };
 
@@ -72,7 +102,7 @@ export function DashboardLayout({
         <HeaderComponent {...defaultHeaderProps} />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+            <div className="flex flex-col sm:gap-4 gap-0 sm:py-4 py-0 md:gap-6 md:py-6">
               {children}
             </div>
           </div>

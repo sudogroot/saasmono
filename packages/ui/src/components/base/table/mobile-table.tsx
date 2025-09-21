@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useState } from "react";
 import { Input } from "../../ui/input";
-import { Search, Loader2 } from "lucide-react";
+import { Button } from "../../ui/button";
+import { Search, Loader2, Filter } from "lucide-react";
 import { cn } from "../../../lib/utils";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { FilterDrawer } from "./filter-drawer";
 import type { MobileTableProps } from "./types";
 
 export function MobileTable<TData>({
@@ -25,19 +27,48 @@ export function MobileTable<TData>({
   tableTitle,
   headerActions,
   emptyStateAction,
+  // Filter props
+  showQuickFilters = false,
+  quickFilters = [],
+  activeFilters = {},
+  onFilterChange,
   // Infinite scroll props
   hasNextPage = false,
   isFetchingNextPage = false,
   fetchNextPage,
 }: MobileTableProps<TData>) {
   const tableContainerRef = useRef<HTMLDivElement>(null);
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
 
   const rows = table.getFilteredRowModel().rows;
+
+  // Filter management functions
+  const handleFilterChange = useCallback(
+    (key: string, value: string) => {
+      onFilterChange?.(key, value);
+    },
+    [onFilterChange],
+  );
+
+  const handleClearAllFilters = useCallback(() => {
+    quickFilters.forEach((filter) => {
+      onFilterChange?.(filter.key, "");
+    });
+  }, [quickFilters, onFilterChange]);
+
+  const hasActiveFilters = Object.values(activeFilters).some(
+    (value) => value !== "",
+  );
 
   // Fetch more data when scrolling near bottom
   const fetchMoreOnBottomReached = useCallback(
     (containerRefElement?: HTMLDivElement | null) => {
-      if (containerRefElement && hasNextPage && !isFetchingNextPage && fetchNextPage) {
+      if (
+        containerRefElement &&
+        hasNextPage &&
+        !isFetchingNextPage &&
+        fetchNextPage
+      ) {
         const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
         // Fetch more when within 300px of bottom
         if (scrollHeight - scrollTop - clientHeight < 300) {
@@ -45,7 +76,7 @@ export function MobileTable<TData>({
         }
       }
     },
-    [fetchNextPage, isFetchingNextPage, hasNextPage]
+    [fetchNextPage, isFetchingNextPage, hasNextPage],
   );
 
   // Set up virtual scrolling
@@ -55,8 +86,9 @@ export function MobileTable<TData>({
     estimateSize: () => virtualItemHeight,
     // Enable dynamic height measurement for better UX
     measureElement:
-      typeof window !== 'undefined' && navigator.userAgent.indexOf('Firefox') === -1
-        ? element => element?.getBoundingClientRect().height
+      typeof window !== "undefined" &&
+      navigator.userAgent.indexOf("Firefox") === -1
+        ? (element) => element?.getBoundingClientRect().height
         : undefined,
     overscan: 5,
   });
@@ -66,7 +98,7 @@ export function MobileTable<TData>({
     (e: React.UIEvent<HTMLDivElement>) => {
       fetchMoreOnBottomReached(e.currentTarget);
     },
-    [fetchMoreOnBottomReached]
+    [fetchMoreOnBottomReached],
   );
 
   // Check if we need to fetch more on mount/data change
@@ -79,7 +111,9 @@ export function MobileTable<TData>({
       <div className={cn("flex items-center justify-center py-12", className)}>
         <div className="flex items-center gap-3">
           <Loader2 className="h-5 w-5 animate-spin" />
-          <span className="text-sm text-muted-foreground">{loadingMessage}</span>
+          <span className="text-sm text-muted-foreground">
+            {loadingMessage}
+          </span>
         </div>
       </div>
     );
@@ -87,10 +121,17 @@ export function MobileTable<TData>({
 
   if (error) {
     return (
-      <div className={cn("flex items-center justify-center py-12 text-destructive", className)}>
+      <div
+        className={cn(
+          "flex items-center justify-center py-12 text-destructive",
+          className,
+        )}
+      >
         <div className="text-center">
           <div className="text-sm font-medium mb-1">حدث خطأ</div>
-          <div className="text-xs text-muted-foreground">{errorMessage || error.message}</div>
+          <div className="text-xs text-muted-foreground">
+            {errorMessage || error.message}
+          </div>
         </div>
       </div>
     );
@@ -102,21 +143,47 @@ export function MobileTable<TData>({
       <div className="sticky top-0 z-10 bg-background border-b border-border/50">
         {tableTitle && (
           <div className="flex items-center justify-between px-4 py-3">
-            <h1 className="text-lg font-semibold text-foreground">{tableTitle}</h1>
+            <h1 className="text-lg font-semibold text-foreground">
+              {tableTitle}
+            </h1>
             {headerActions}
           </div>
         )}
 
         {showSearch && (
-          <div className="px-4 pb-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder={searchPlaceholder}
-                value={searchValue}
-                onChange={(e) => onSearchChange?.(e.target.value)}
-                className="pl-9 h-10 bg-muted/50 border-0 rounded-lg text-sm placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:bg-background"
-              />
+          <div className="px-4 sm:pb-3 py-3 bg-white backdrop-blur-sm">
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder={searchPlaceholder}
+                  value={searchValue}
+                  onChange={(e) => onSearchChange?.(e.target.value)}
+                  className="pl-9 h-10 bg-muted/50 border-0 rounded-lg text-sm placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:bg-background"
+                />
+              </div>
+              {showQuickFilters && quickFilters.length > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsFilterDrawerOpen(true)}
+                  className={cn(
+                    "h-10 px-3 shrink-0 rounded-lg border-0 bg-muted/50 hover:bg-muted",
+                    hasActiveFilters &&
+                      "bg-primary/10 text-primary hover:bg-primary/20",
+                  )}
+                >
+                  <Filter className="h-4 w-4" />
+                  {hasActiveFilters && (
+                    <span className="ml-1 text-xs bg-primary text-primary-foreground rounded-full px-1.5 py-0.5 min-w-5 h-5 flex items-center justify-center">
+                      {
+                        Object.values(activeFilters).filter((v) => v !== "")
+                          .length
+                      }
+                    </span>
+                  )}
+                </Button>
+              )}
             </div>
           </div>
         )}
@@ -176,12 +243,17 @@ export function MobileTable<TData>({
             // Non-virtualized rendering
             <div>
               {rows.map((row) => (
-                <div key={row.id} className="border-b border-border/20 last:border-b-0">
+                <div
+                  key={row.id}
+                  className="border-b border-border/20 last:border-b-0"
+                >
                   {mobileCardRenderer ? (
                     mobileCardRenderer(row)
                   ) : (
                     <div className="px-4 py-3">
-                      <div className="text-sm text-foreground">Item {row.index + 1}</div>
+                      <div className="text-sm text-foreground">
+                        Item {row.index + 1}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -191,7 +263,9 @@ export function MobileTable<TData>({
         ) : (
           <div className="flex flex-col items-center justify-center py-16 px-4">
             <div className="text-center space-y-3">
-              <div className="text-sm text-muted-foreground">{noDataMessage}</div>
+              <div className="text-sm text-muted-foreground">
+                {noDataMessage}
+              </div>
               {emptyStateAction}
             </div>
           </div>
@@ -202,11 +276,25 @@ export function MobileTable<TData>({
           <div className="flex items-center justify-center py-4">
             <div className="flex items-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin" />
-              <span className="text-xs text-muted-foreground">جاري تحميل المزيد...</span>
+              <span className="text-xs text-muted-foreground">
+                جاري تحميل المزيد...
+              </span>
             </div>
           </div>
         )}
       </div>
+
+      {/* Filter Drawer */}
+      {showQuickFilters && quickFilters.length > 0 && (
+        <FilterDrawer
+          isOpen={isFilterDrawerOpen}
+          onClose={() => setIsFilterDrawerOpen(false)}
+          quickFilters={quickFilters}
+          activeFilters={activeFilters}
+          onFilterChange={handleFilterChange}
+          onClearAll={handleClearAllFilters}
+        />
+      )}
     </div>
   );
 }

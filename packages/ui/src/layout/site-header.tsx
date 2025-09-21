@@ -17,6 +17,7 @@ import { SidebarTrigger } from "../components/ui/sidebar";
 import { Separator } from "../components/ui/separator";
 import { Bell, Plus, Search } from "lucide-react";
 import { cn } from "../lib/utils";
+import { useIsMobile } from "../hooks/use-mobile";
 
 export interface Notification {
   id: string;
@@ -82,6 +83,7 @@ export function SiteHeader({
   children,
 }: HeaderProps) {
   const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const isMobile = useIsMobile();
 
   return (
     <header
@@ -89,6 +91,7 @@ export function SiteHeader({
         "sticky top-0 z-50 flex h-16 shrink-0 items-center border-b bg-white/80 backdrop-blur-md px-4 shadow-sm transition-all duration-200 ease-in-out",
         "group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12",
         "dark:bg-gray-950/80 dark:border-gray-800",
+        isMobile ? "shadow-none static" : "",
         className,
       )}
     >
@@ -105,7 +108,7 @@ export function SiteHeader({
             />
           )}
 
-          {(title || subtitle) && (
+          {(title || subtitle) && isMobile && (
             <div className="flex flex-col min-w-0">
               {title && (
                 <h1 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
