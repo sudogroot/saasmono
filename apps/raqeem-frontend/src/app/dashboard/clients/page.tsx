@@ -67,8 +67,9 @@ export default function ClientsPage() {
 
   const confirmDelete = () => {
     if (deletingClientId) {
+      console.log('Deleting client with ID:', deletingClientId)
       deleteMutation.mutate({
-        id: deletingClientId,
+        clientId: deletingClientId,
       })
     }
   }

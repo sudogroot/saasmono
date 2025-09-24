@@ -1,6 +1,17 @@
 import { type Table as ReactTable, type Row } from "@tanstack/react-table";
 import React from "react";
 
+export interface FilterOption {
+  label: string | React.ReactNode;
+  value: string;
+}
+
+export interface QuickFilter {
+  key: string;
+  label: string;
+  values: FilterOption[];
+}
+
 export interface GenericTableProps<TData> {
   table: ReactTable<TData>;
   dir?: "rtl" | "ltr";
@@ -16,16 +27,13 @@ export interface GenericTableProps<TData> {
   className?: string;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
+  onRowClick?: (row: Row<TData>) => void;
   mobileCardRenderer?: (row: Row<TData>) => React.ReactNode;
   enableVirtualScroll?: boolean;
   virtualItemHeight?: number;
   containerHeight?: number;
   showQuickFilters?: boolean;
-  quickFilters?: Array<{
-    key: string;
-    label: string;
-    values: Array<{ label: string; value: string }>;
-  }>;
+  quickFilters?: QuickFilter[];
   activeFilters?: Record<string, string>;
   onFilterChange?: (key: string, value: string) => void;
   enablePullToRefresh?: boolean;
@@ -55,22 +63,14 @@ export interface DesktopTableProps<TData> extends GenericTableProps<TData> {
 export interface FilterDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  quickFilters: Array<{
-    key: string;
-    label: string;
-    values: Array<{ label: string; value: string }>;
-  }>;
+  quickFilters: QuickFilter[];
   activeFilters: Record<string, string>;
   onFilterChange: (key: string, value: string) => void;
   onClearAll: () => void;
 }
 
 export interface FilterChipsProps {
-  quickFilters: Array<{
-    key: string;
-    label: string;
-    values: Array<{ label: string; value: string }>;
-  }>;
+  quickFilters: QuickFilter[];
   activeFilters: Record<string, string>;
   onFilterChange: (key: string, value: string) => void;
   onClearAll: () => void;

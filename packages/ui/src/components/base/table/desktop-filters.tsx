@@ -1,9 +1,10 @@
 "use client";
 
 import { Input } from "../../ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
 import { Search } from "lucide-react";
 import { FilterChips } from "./filter-chips";
+import { FilterSelect } from "./filter-select";
+import type { QuickFilter } from "./types";
 
 interface DesktopFiltersProps {
   showSearch?: boolean;
@@ -11,11 +12,7 @@ interface DesktopFiltersProps {
   onSearchChange?: (value: string) => void;
   searchPlaceholder?: string;
   showQuickFilters?: boolean;
-  quickFilters?: Array<{
-    key: string;
-    label: string;
-    values: Array<{ label: string; value: string }>;
-  }>;
+  quickFilters?: QuickFilter[];
   activeFilters?: Record<string, string>;
   onFilterChange?: (key: string, value: string) => void;
 }
@@ -52,23 +49,18 @@ export function DesktopFilters({
         {showQuickFilters && quickFilters.length > 0 && (
           <div className="flex items-center gap-2">
             {quickFilters.map((filter) => (
-              <Select
+              <FilterSelect
                 key={filter.key}
-                value={activeFilters[filter.key] || "__all__"}
-                onValueChange={(value) => onFilterChange?.(filter.key, value === "__all__" ? "" : value)}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder={filter.label} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="__all__">جميع {filter.label}</SelectItem>
-                  {filter.values.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                filterId={`desktop-${filter.key}`}
+                filterKey={filter.key}
+                label={filter.label}
+                options={filter.values}
+                value={activeFilters[filter.key] || ""}
+                onValueChange={onFilterChange || (() => {})}
+                placeholder={filter.label}
+                showLabel={false}
+                triggerClassName="w-[180px]"
+              />
             ))}
           </div>
         )}

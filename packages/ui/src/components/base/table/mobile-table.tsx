@@ -21,6 +21,7 @@ export function MobileTable<TData>({
   className = "",
   searchValue = "",
   onSearchChange,
+  onRowClick,
   mobileCardRenderer,
   enableVirtualScroll = true,
   virtualItemHeight = 72,
@@ -170,7 +171,7 @@ export function MobileTable<TData>({
                 >
                   <Filter className="h-4 w-4" />
                   {hasActiveFilters && (
-                    <span className="absolute pr-0.2 text-xs bg-primary text-primary-foreground rounded-full min-w-4 h-4 flex items-center justify-center top-[-5] left-[-5]">
+                    <span className="absolute top-[-5px] left-[-5px] pr-0.2 text-xs bg-primary text-primary-foreground rounded-full w-4 h-4 flex items-center justify-center">
                       {
                         Object.values(activeFilters).filter((v) => v !== "")
                           .length
@@ -219,7 +220,13 @@ export function MobileTable<TData>({
                       transform: `translateY(${virtualRow.start}px)`,
                     }}
                   >
-                    <div className="border-b border-border/20">
+                    <div
+                      className={cn(
+                        "border-b border-border/20",
+                        onRowClick && "cursor-pointer hover:bg-muted/30 transition-colors"
+                      )}
+                      onClick={() => onRowClick?.(row)}
+                    >
                       {mobileCardRenderer ? (
                         mobileCardRenderer(row)
                       ) : (
@@ -240,7 +247,11 @@ export function MobileTable<TData>({
               {rows.map((row) => (
                 <div
                   key={row.id}
-                  className="border-b border-border/20 last:border-b-0"
+                  className={cn(
+                    "border-b border-border/20 last:border-b-0",
+                    onRowClick && "cursor-pointer hover:bg-muted/30 transition-colors"
+                  )}
+                  onClick={() => onRowClick?.(row)}
                 >
                   {mobileCardRenderer ? (
                     mobileCardRenderer(row)

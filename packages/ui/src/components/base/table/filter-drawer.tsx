@@ -1,8 +1,6 @@
 "use client";
 
 import { Button } from "../../ui/button";
-import { Label } from "../../ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
 import {
   Drawer,
   DrawerClose,
@@ -12,7 +10,8 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "../../ui/drawer";
-import { Filter, X } from "lucide-react";
+import { Filter } from "lucide-react";
+import { FilterSelect } from "./filter-select";
 import type { FilterDrawerProps } from "./types";
 
 export function FilterDrawer({
@@ -38,27 +37,18 @@ export function FilterDrawer({
         
         <div className="px-4 py-2 space-y-4 max-h-[50vh] overflow-y-auto">
           {quickFilters.map((filter) => (
-            <div key={filter.key} className="space-y-2">
-              <Label htmlFor={filter.key} className="text-sm font-medium">
-                {filter.label}
-              </Label>
-              <Select
-                value={activeFilters[filter.key] || "__all__"}
-                onValueChange={(value) => onFilterChange(filter.key, value === "__all__" ? "" : value)}
-              >
-                <SelectTrigger id={filter.key} className="w-full">
-                  <SelectValue placeholder={`اختر ${filter.label}`} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="__all__">جميع {filter.label}</SelectItem>
-                  {filter.values.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <FilterSelect
+              key={filter.key}
+              filterId={filter.key}
+              filterKey={filter.key}
+              label={filter.label}
+              options={filter.values}
+              value={activeFilters[filter.key] || ""}
+              onValueChange={onFilterChange}
+              className="space-y-2"
+              showLabel={true}
+              triggerClassName="w-full"
+            />
           ))}
         </div>
 

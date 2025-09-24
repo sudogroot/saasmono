@@ -99,6 +99,8 @@ export const clientRouter = {
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
       const userId = getCurrentUserId(context)
+      console.log('Delete client input:', input)
+      console.log('Client ID:', input.clientId)
       try {
         return await clientService.deleteClient(input.clientId, orgId)
       } catch (error) {
@@ -107,6 +109,11 @@ export const clientRouter = {
     }),
 
   listClients: protectedProcedure
+    .input(
+      z.object({
+        includeDeleted: z.boolean().optional().describe('Include deleted clients'),
+      })
+    )
     .output(z.array(ClientListItemSchema))
     .route({
       method: 'GET',
@@ -115,10 +122,10 @@ export const clientRouter = {
       summary: 'List clients',
       description: 'Retrieves all clients for the organization',
     })
-    .handler(async ({ context }) => {
+    .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
       try {
-        return await clientService.listClients(orgId)
+        return await clientService.listClients(orgId, input.includeDeleted)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch clients')
       }

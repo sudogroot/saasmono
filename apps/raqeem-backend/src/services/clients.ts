@@ -105,7 +105,13 @@ export class ClientService {
     return { success: true }
   }
 
-  async listClients(orgId: string): Promise<ClientListItem[]> {
+  async listClients(orgId: string, includeDeleted?: boolean): Promise<ClientListItem[]> {
+    const whereConditions = [eq(clients.organizationId, orgId)]
+
+    if (!includeDeleted) {
+      whereConditions.push(isNull(clients.deletedAt))
+    }
+
     const result = await this.db
       .select({
         id: clients.id,
@@ -117,7 +123,7 @@ export class ClientService {
         updatedAt: clients.updatedAt,
       })
       .from(clients)
-      .where(and(eq(clients.organizationId, orgId), isNull(clients.deletedAt)))
+      .where(and(...whereConditions))
       .orderBy(clients.createdAt)
 
     return result as ClientListItem[]

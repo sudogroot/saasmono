@@ -33,6 +33,7 @@ export function DesktopTable<TData>({
   className = "",
   searchValue = "",
   onSearchChange,
+  onRowClick,
   showQuickFilters = false,
   quickFilters = [],
   activeFilters = {},
@@ -141,9 +142,10 @@ export function DesktopTable<TData>({
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
                     className={cn(
-                      "cursor-pointer hover:bg-muted/50 transition-colors",
+                      onRowClick && "cursor-pointer hover:bg-muted/50 transition-colors",
                       row.getIsSelected() && "bg-muted/50",
                     )}
+                    onClick={() => onRowClick?.(row)}
                   >
                     {isSelectable && (
                       <TableCell>
