@@ -1,4 +1,4 @@
-import { BookOpen, BookUser, FileText, GraduationCap, LayoutDashboard, Users } from 'lucide-react'
+import { BookOpen, BookUser, FileText, GraduationCap, LayoutDashboard, Users, Plus, Search, Bell, LogOut, Settings } from 'lucide-react'
 
 export const dashboardSidebarSections = [
   {
@@ -131,4 +131,94 @@ export const dashboardQuickActions = [
     icon: FileText,
     onClick: () => (window.location.href = '/dashboard/reports/new'),
   },
+]
+
+// Mobile Navigation Configuration
+export const dashboardMobileNavItems = [
+  {
+    title: 'الرئيسية',
+    href: '',
+    icon: LayoutDashboard,
+    color: 'text-primary',
+    bgColor: 'bg-primary/10'
+  },
+  {
+    title: 'الأقسام',
+    href: 'classrooms',
+    icon: GraduationCap,
+    color: 'text-blue-600',
+    bgColor: 'bg-blue-50'
+  },
+  {
+    title: 'المعلمون',
+    href: 'institution-settings/teachers',
+    icon: BookUser,
+    color: 'text-green-600',
+    bgColor: 'bg-green-50'
+  },
+  {
+    title: 'المناهج',
+    href: 'institution-settings/curriculum',
+    icon: BookOpen,
+    color: 'text-purple-600',
+    bgColor: 'bg-purple-50'
+  }
+]
+
+export const dashboardMobileQuickActions = [
+  {
+    title: 'إضافة طالب',
+    icon: Plus,
+    action: 'add-student',
+    color: 'bg-blue-600 text-white'
+  },
+  {
+    title: 'تقرير جديد',
+    icon: Plus,
+    action: 'new-report',
+    color: 'bg-green-600 text-white'
+  },
+  {
+    title: 'البحث السريع',
+    icon: Search,
+    action: 'search',
+    color: 'bg-gray-600 text-white'
+  },
+  {
+    title: 'الإعدادات',
+    icon: Settings,
+    action: 'settings',
+    color: 'bg-purple-600 text-white'
+  }
+]
+
+export const dashboardMobileDrawerItems = [
+  {
+    category: 'إدارة المؤسسة',
+    items: [
+      {
+        title: 'الطلاب',
+        href: 'students',
+        icon: Users,
+        description: 'إدارة ملفات الطلاب'
+      },
+      {
+        title: 'التقارير',
+        href: 'reports',
+        icon: FileText,
+        description: 'التقارير والإحصائيات'
+      }
+    ]
+  },
+  {
+    category: 'الإعدادات',
+    items: [
+      {
+        title: 'إعدادات المدرسة',
+        href: 'settings',
+        icon: Settings,
+        description: 'الإعدادات العامة للمؤسسة'
+      }
+    ]
+  }
 ]

@@ -1,16 +1,55 @@
 'use client'
 
-import { dashboardNotifications, dashboardQuickActions, dashboardSidebarSections } from '@/config/dashboard'
+import {
+  dashboardNotifications,
+  dashboardQuickActions,
+  dashboardSidebarSections,
+  dashboardMobileNavItems,
+  dashboardMobileQuickActions,
+  dashboardMobileDrawerItems
+} from '@/config/dashboard'
 
 import { useSessionStorage } from '@/hooks/use-session-storage'
 import { authClient } from '@/lib/auth-client'
-import { DashboardLayout, GenericSidebar, Header } from '@repo/ui'
+import { DashboardLayout, GenericSidebar, Header, MobileNav } from '@repo/ui'
 import { useRouter } from 'next/navigation'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
 
   const { data, isPending, clearStoredData } = useSessionStorage()
+
+  const handleMobileQuickAction = (action: string) => {
+    switch (action) {
+      case 'add-student':
+        router.push('/dashboard/students/new' as any)
+        break
+      case 'new-report':
+        router.push('/dashboard/reports/new' as any)
+        break
+      case 'search':
+        // TODO: Implement search functionality
+        console.log('Search action')
+        break
+      case 'settings':
+        router.push('/dashboard/settings' as any)
+        break
+      default:
+        break
+    }
+  }
+
+  const handleMobileLogout = async () => {
+    clearStoredData()
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push('/')
+        },
+      },
+    })
+  }
+
   console.log(data)
   return (
     <DashboardLayout
@@ -78,6 +117,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
+
+      {/* Mobile Navigation */}
+      <MobileNav
+        mainNavItems={dashboardMobileNavItems}
+        quickActions={dashboardMobileQuickActions}
+        drawerItems={dashboardMobileDrawerItems}
+        basePath="/dashboard"
+        onQuickAction={handleMobileQuickAction}
+        onLogout={handleMobileLogout}
+        notifications={{
+          count: dashboardNotifications.filter(n => !n.isRead).length,
+          variant: "destructive"
+        }}
+      />
     </DashboardLayout>
   )
 }

@@ -1,7 +1,7 @@
 // Re-export all components
 export * from "./components/ui";
 export { cn } from "./lib/utils";
-export { DashboardLayout, Header, GenericSidebar } from "./layout";
+export { DashboardLayout, Header, GenericSidebar, MobileNav } from "./layout";
 export {
   GenericTable,
   MobileTable,
@@ -30,4 +30,9 @@ export type {
   SidebarHeaderConfig,
   SidebarFooterConfig,
   SidebarSubItem,
+  MobileNavProps,
+  MobileNavItem,
+  DrawerCategory,
+  NotificationInfo,
+  MobileQuickAction,
 } from "./layout";

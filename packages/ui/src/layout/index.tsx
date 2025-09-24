@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 // Export the new generic components
 export { SiteHeader as Header } from "./site-header";
 export { AppSidebar as GenericSidebar } from "./app-sidebar";
+export { MobileNav } from "./mobile-nav";
 export type {
   HeaderProps,
   Notification,
@@ -20,6 +21,13 @@ export type {
   SidebarFooterConfig,
   SidebarSubItem,
 } from "./app-sidebar";
+export type {
+  MobileNavProps,
+  MobileNavItem,
+  DrawerCategory,
+  NotificationInfo,
+  QuickAction as MobileQuickAction,
+} from "./mobile-nav";
 
 export interface SidebarConfig {
   component?: React.ComponentType<any>;
