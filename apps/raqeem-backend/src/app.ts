@@ -15,9 +15,9 @@ const app = express()
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || '',
-    methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: process.env.CORS_ORIGIN || 'http://localhost:4001',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
     credentials: true,
   })
 )

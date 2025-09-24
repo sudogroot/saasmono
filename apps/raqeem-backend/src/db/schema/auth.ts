@@ -1,6 +1,6 @@
 import { boolean, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
-export const user = pgTable('users', {
+export const user = pgTable('user', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
@@ -23,7 +23,7 @@ export const user = pgTable('users', {
   displayUsername: text('display_username'),
 })
 
-export const session = pgTable('sessions', {
+export const session = pgTable('session', {
   id: text('id').primaryKey(),
   expiresAt: timestamp('expires_at').notNull(),
   token: text('token').notNull().unique(),
@@ -38,7 +38,7 @@ export const session = pgTable('sessions', {
   impersonatedBy: text('impersonated_by'),
 })
 
-export const accounts = pgTable('accounts', {
+export const account = pgTable('account', {
   id: text('id').primaryKey(),
   accountId: text('account_id').notNull(),
   providerId: text('provider_id').notNull(),
@@ -56,7 +56,7 @@ export const accounts = pgTable('accounts', {
   updatedAt: timestamp('updated_at').notNull(),
 })
 
-export const verification = pgTable('verifications', {
+export const verification = pgTable('verification', {
   id: text('id').primaryKey(),
   identifier: text('identifier').notNull(),
   value: text('value').notNull(),
@@ -65,7 +65,7 @@ export const verification = pgTable('verifications', {
   updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date()),
 })
 
-export const organization = pgTable('organizations', {
+export const organization = pgTable('organization', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
   slug: text('slug').unique(),
@@ -74,7 +74,7 @@ export const organization = pgTable('organizations', {
   metadata: text('metadata'),
 })
 
-export const member = pgTable('members', {
+export const member = pgTable('member', {
   id: text('id').primaryKey(),
   organizationId: text('organization_id')
     .notNull()
@@ -86,7 +86,7 @@ export const member = pgTable('members', {
   createdAt: timestamp('created_at').notNull(),
 })
 
-export const invitation = pgTable('invitations', {
+export const invitation = pgTable('invitation', {
   id: text('id').primaryKey(),
   organizationId: text('organization_id')
     .notNull()

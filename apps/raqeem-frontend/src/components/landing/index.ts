@@ -1,0 +1,10 @@
+export { Header } from "./header";
+export { Hero } from "./hero";
+export { FeaturesShowcase } from "./features-showcase";
+export { Features } from "./features";
+export { Testimonials } from "./testimonials";
+export { Pricing } from "./pricing";
+export { FinalCTA } from "./final-cta";
+export { Footer } from "./footer";
+export { CTASection1, CTASection2, CTASection3 } from "./cta-sections";
+export { CasesFeature, CalendarFeature, FilesFeature, ClientsFeature } from "./feature-components";

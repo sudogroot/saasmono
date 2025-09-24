@@ -1,5 +1,6 @@
 import type { RouterClient } from '@orpc/server'
 import { protectedProcedure, publicProcedure } from '../lib/orpc'
+import { caseRouter } from './cases'
 import { clientRouter } from './clients'
 import { courtRouter } from './courts'
 import { opponentRouter } from './opponents'
@@ -33,6 +34,7 @@ export const appRouter = {
     }),
 
   // Legal management routes
+  cases: caseRouter,
   clients: clientRouter,
   courts: courtRouter,
   opponents: opponentRouter,

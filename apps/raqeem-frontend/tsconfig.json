@@ -1,0 +1,16 @@
+{
+  "extends": "@repo/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "target": "ES2017",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["./**/*.ts", "./**/*.tsx", "./.next/types/**/*.ts", "./next-env.d.ts", ".next/types/**/*.ts"],
+  "exclude": ["./node_modules"],
+  "references": [
+    {
+      "path": "../raqeem-backend"
+    }
+  ]
+}

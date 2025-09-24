@@ -7,9 +7,12 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "turbo dev",
     "build": "turbo build",
     "check-types": "turbo check-types",
+    "dev:manarah": "turbo -F web -F server dev",
+    "dev:raqeem": "turbo -F raqeem-backend -F raqeem-frontend dev",
+    "build:manarah": "turbo -F web -F server build",
+    "build:raqeem": "turbo -F raqeem-backend -F raqeem-frontend build",
     "dev:native": "turbo -F native dev",
     "dev:web": "turbo -F web dev",
     "dev:server": "turbo -F server dev",
