@@ -15,7 +15,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@repo/ui";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import type { Opponent } from "@/types";

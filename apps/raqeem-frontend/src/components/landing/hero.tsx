@@ -1,6 +1,6 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@repo/ui";
+import { Badge } from "@repo/ui";
 import { Award, Scale, Gavel, Calendar, FileText, Clock, CheckCircle, TrendingUp } from "lucide-react";
 import Link from "next/link";
 

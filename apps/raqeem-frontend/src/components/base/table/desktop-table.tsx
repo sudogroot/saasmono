@@ -2,7 +2,7 @@
 
 import React from "react";
 import { flexRender } from "@tanstack/react-table";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@repo/ui";
 import { Loader2 } from "lucide-react";
 import {
   Table,
@@ -11,8 +11,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Separator } from "@/components/ui/separator";
+} from "@repo/ui";
+import { Separator } from "@repo/ui";
 import { cn } from "@/lib/utils";
 import type { DesktopTableProps } from "./types";
 import { DesktopFilters } from "./desktop-filters";

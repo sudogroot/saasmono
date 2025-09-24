@@ -2,12 +2,12 @@
 
 // import { casePriorityBadges, PriorityBadge } from '../base/badge';
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@repo/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/ui'
+import { Input } from '@repo/ui'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/ui'
+import { Textarea } from '@repo/ui'
 import type { Case } from '@/types'
 import { orpc } from '@/utils/orpc'
 import { zodResolver } from '@hookform/resolvers/zod'

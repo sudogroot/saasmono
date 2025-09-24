@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui";
 import { ArrowRight, X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { globalSheet } from "@/stores/global-sheet-store";
 

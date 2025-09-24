@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useRef, useCallback, useState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@repo/ui";
+import { Button } from "@repo/ui";
+import { Checkbox } from "@repo/ui";
 import { Search, Loader2, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { MobileTableProps } from "./types";

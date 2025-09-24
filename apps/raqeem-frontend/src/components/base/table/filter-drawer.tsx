@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@repo/ui";
+import { Label } from "@repo/ui";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui";
 import {
   Drawer,
   DrawerClose,
@@ -11,7 +11,7 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-} from "@/components/ui/drawer";
+} from "@repo/ui";
 import { Filter, X } from "lucide-react";
 import type { FilterDrawerProps } from "./types";
 

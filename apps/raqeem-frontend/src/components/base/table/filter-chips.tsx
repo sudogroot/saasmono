@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@repo/ui";
+import { Badge } from "@repo/ui";
 import { X } from "lucide-react";
 import type { FilterChipsProps } from "./types";
 

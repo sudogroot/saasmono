@@ -1,8 +1,8 @@
 'use client'
 
 import { GenericTable } from '@repo/ui'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Badge } from '@repo/ui'
+import { Button } from '@repo/ui'
 import {
   createColumnHelper,
   getCoreRowModel,

@@ -1,8 +1,8 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
+import { Badge } from '@repo/ui'
+import { Button } from '@repo/ui'
+import { Separator } from '@repo/ui'
 import { cn } from '@/lib/utils'
 import { globalSheet } from '@/stores/global-sheet-store'
 import { orpc } from '@/utils/orpc'

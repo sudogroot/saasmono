@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui";
 import { globalSheet } from "@/stores/global-sheet-store";
 
 export function TestSheet() {

@@ -21,8 +21,8 @@ import {
   Upload,
 } from 'lucide-react';
 import { navigationItems } from './config';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui';
+import { Button } from '@repo/ui';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,8 +30,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+} from '@repo/ui';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@repo/ui';
 import Image from 'next/image';
 
 // For-claude sidebar components

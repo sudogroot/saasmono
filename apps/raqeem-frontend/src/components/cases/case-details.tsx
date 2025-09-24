@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
+import { Button } from '@repo/ui';
 import { TrialsList } from '../trials/trials-list';
 import {
   Dialog,
@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from '@repo/ui';
 import {
   Drawer,
   DrawerContent,
@@ -19,9 +19,9 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from '@/components/ui/drawer';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+} from '@repo/ui';
+import { Badge } from '@repo/ui';
+import { Separator } from '@repo/ui';
 import { CaseAvatar } from './case-avatar';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { orpc } from '@/utils/orpc';

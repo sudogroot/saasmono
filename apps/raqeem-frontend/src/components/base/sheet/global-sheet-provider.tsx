@@ -11,8 +11,8 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+} from "@repo/ui";
+import { Button } from "@repo/ui";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Loader2, ArrowRight, X } from "lucide-react";
 import { SheetFooter } from "./sheet-footer";

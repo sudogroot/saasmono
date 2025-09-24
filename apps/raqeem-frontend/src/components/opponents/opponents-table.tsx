@@ -11,8 +11,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { GenericTable } from "@/components/base/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@repo/ui";
+import { Badge } from "@repo/ui";
 import type { Opponent } from "@/types";
 import { OpponentAvatar } from "./opponent-avatar";
 import { Eye, Edit, Trash2, Users, Plus } from "lucide-react";

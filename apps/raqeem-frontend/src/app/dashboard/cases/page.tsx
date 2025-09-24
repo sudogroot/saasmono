@@ -1,7 +1,7 @@
 "use client";
 
 import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui";
 import { CasesTable } from "@/components/cases/cases-table";
 import { globalSheet } from "@/stores/global-sheet-store";
 

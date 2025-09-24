@@ -1,9 +1,9 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import { Badge } from '@repo/ui';
+import { Button } from '@repo/ui';
+import { Separator } from '@repo/ui';
 import { CaseAvatar } from './case-avatar';
 import { orpc } from '@/utils/orpc';
 import { TrialsList } from '../trials/trials-list';

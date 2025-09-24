@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui";
 import { cn } from "@/lib/utils";
 import type { Case } from "@/types";
 import { FileText } from "lucide-react";

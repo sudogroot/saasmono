@@ -2,11 +2,11 @@
 
 import * as React from "react"
 import { Bell, Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@repo/ui"
 
 import { usePathname } from "next/navigation"
 
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@repo/ui"
 import Image from "next/image"
 import {breadcrumbs} from './config'
 

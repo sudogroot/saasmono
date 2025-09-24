@@ -1,7 +1,7 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Button } from '@repo/ui'
+import { Input } from '@repo/ui'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
@@ -10,9 +10,9 @@ import { z } from 'zod'
 
 import { globalSheet } from '@/stores/global-sheet-store'
 // import type { ClientData, Client } from '../../../../server/src/types/clients';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/ui'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/ui'
 import { orpc } from '@/utils/orpc'
 import { Loader2, Phone, Save, User } from 'lucide-react'
 import { toast } from 'sonner'

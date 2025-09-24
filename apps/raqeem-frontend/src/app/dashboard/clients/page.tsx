@@ -10,7 +10,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+} from '@repo/ui'
 import { authClient } from '@/lib/auth-client'
 import { globalSheet } from '@/stores/global-sheet-store'
 import { orpc } from '@/utils/orpc'
