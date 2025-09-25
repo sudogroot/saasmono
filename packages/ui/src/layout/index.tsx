@@ -7,6 +7,14 @@ import { usePathname } from "next/navigation";
 export { SiteHeader as Header } from "./site-header";
 export { AppSidebar as GenericSidebar } from "./app-sidebar";
 export { MobileNav } from "./mobile-nav";
+
+// Export Raqeem-specific components
+export { RaqeemDashboardLayout } from "./raqeem-dashboard-layout";
+export { RaqeemDashboardSidebar } from "./raqeem-sidebar";
+export { RaqeemNavbar } from "./raqeem-navbar";
+export { RaqeemMainContainer } from "./raqeem-main-container";
+export { RaqeemSidebarLayout } from "./raqeem-sidebar-layout";
+
 export type {
   HeaderProps,
   Notification,
@@ -28,6 +36,16 @@ export type {
   NotificationInfo,
   QuickAction as MobileQuickAction,
 } from "./mobile-nav";
+export type {
+  RaqeemDashboardLayoutProps,
+} from "./raqeem-dashboard-layout";
+export type {
+  NavigationItem,
+  RaqeemDashboardSidebarProps,
+} from "./raqeem-sidebar";
+export type {
+  RaqeemNavbarProps,
+} from "./raqeem-navbar";
 
 export interface SidebarConfig {
   component?: React.ComponentType<any>;
