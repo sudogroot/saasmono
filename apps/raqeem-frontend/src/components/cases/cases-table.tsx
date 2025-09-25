@@ -1,6 +1,8 @@
 'use client'
 
 import { GenericTable } from '@/components/base/table'
+import { cn } from '@/lib/utils'
+import { globalSheet } from '@/stores/global-sheet-store'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,13 +12,14 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  Badge,
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from '@repo/ui'
-import { Badge } from '@repo/ui'
-import { Button } from '@repo/ui'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@repo/ui'
-import { cn } from '@/lib/utils'
-import { globalSheet } from '@/stores/global-sheet-store'
-import type { Case } from '@/types'
+// import type { Case } from '@/types'
 import { orpc } from '@/utils/orpc'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
@@ -31,11 +34,12 @@ import { Edit, Eye, FileText, MoreHorizontal, Plus, Trash2, Users } from 'lucide
 import { usePathname } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import { casePriorityBadges, PriorityBadge } from '../base/badge'
+// import { casePriorityBadges, PriorityBadge } from '../base/badge'
 import { CaseAvatar } from './case-avatar'
 
 interface CasesTableProps {
-  cases?: Case[]
+  // cases?: Case[]
+  cases?: any
   isLoading?: boolean
   error?: Error | null
   onEdit?: (caseId: string) => void
@@ -46,7 +50,7 @@ interface CasesTableProps {
   slug?: string
 }
 
-const columnHelper = createColumnHelper<Case>()
+const columnHelper = createColumnHelper<any>() //Case
 
 const caseStatusColors = {
   new: 'bg-blue-50 text-blue-700 border-blue-200',
@@ -103,7 +107,7 @@ export function CasesTable({
     isLoading: fetchIsLoading,
     error: fetchError,
   } = useQuery({
-    ...orpc.cases.list.queryOptions({
+    ...orpc.cases.listCases.queryOptions({
       input: { includeDeleted: false },
     }),
     enabled: !propsCases, // Only fetch if no cases provided
@@ -115,10 +119,10 @@ export function CasesTable({
 
   // Delete mutation
   const deleteMutation = useMutation({
-    ...orpc.cases.delete.mutationOptions({
+    ...orpc.cases.deleteCase.mutationOptions({
       onSuccess: () => {
         toast.success('تم حذف القضية بنجاح')
-        queryClient.invalidateQueries({ queryKey: orpc.cases.list.key() })
+        queryClient.invalidateQueries({ queryKey: orpc.cases.listCases.key() })
         setDeletingCaseId(null)
       },
       onError: (error: any) => {
@@ -137,7 +141,7 @@ export function CasesTable({
 
   const confirmDelete = () => {
     if (deletingCaseId) {
-      deleteMutation.mutate({ id: deletingCaseId })
+      deleteMutation.mutate({ caseId: deletingCaseId })
     }
   }
 
@@ -171,14 +175,14 @@ export function CasesTable({
           )
         },
       }),
-      columnHelper.accessor('priority', {
-        id: 'priority',
-        header: 'الأولوية',
-        cell: ({ getValue }) => {
-          const priority = getValue()
-          return <PriorityBadge priority={priority as any} />
-        },
-      }),
+      // columnHelper.accessor('priority', {
+      //   id: 'priority',
+      //   header: 'الأولوية',
+      //   cell: ({ getValue }) => {
+      //     const priority = getValue()
+      //     return <PriorityBadge priority={priority as any} />
+      //   },
+      // }),
       columnHelper.display({
         id: 'client',
         header: 'العميل',
@@ -275,58 +279,59 @@ export function CasesTable({
     [onEdit, onDelete, onView, currentSlug]
   )
 
-  const quickFilters = useMemo(
-    () => [
-      {
-        key: 'caseStatus',
-        label: 'حالة القضية',
-        values: [
-          { label: 'جديدة', value: 'new' },
-          { label: 'قيد المراجعة', value: 'under-review' },
-          { label: 'مرفوعة للمحكمة', value: 'filed-to-court' },
-          { label: 'قيد النظر', value: 'under-consideration' },
-          { label: 'كسبت', value: 'won' },
-          { label: 'خسرت', value: 'lost' },
-          { label: 'مؤجلة', value: 'postponed' },
-          { label: 'مغلقة', value: 'closed' },
-          { label: 'منسحبة', value: 'withdrawn' },
-          { label: 'معلقة', value: 'suspended' },
-        ],
-      },
-      {
-        key: 'priority',
-        label: 'الأولوية',
-        values: Object.keys(casePriorityBadges).map((priority) => ({
-          label: priority,
-          value: priority,
-        })),
-      },
-    ],
-    []
-  )
+  // const quickFilters = useMemo(
+  //   () => [
+  //     {
+  //       key: 'caseStatus',
+  //       label: 'حالة القضية',
+  //       values: [
+  //         { label: 'جديدة', value: 'new' },
+  //         { label: 'قيد المراجعة', value: 'under-review' },
+  //         { label: 'مرفوعة للمحكمة', value: 'filed-to-court' },
+  //         { label: 'قيد النظر', value: 'under-consideration' },
+  //         { label: 'كسبت', value: 'won' },
+  //         { label: 'خسرت', value: 'lost' },
+  //         { label: 'مؤجلة', value: 'postponed' },
+  //         { label: 'مغلقة', value: 'closed' },
+  //         { label: 'منسحبة', value: 'withdrawn' },
+  //         { label: 'معلقة', value: 'suspended' },
+  //       ],
+  //     },
+  //     {
+  //       key: 'priority',
+  //       label: 'الأولوية',
+  //       values: Object.keys(casePriorityBadges).map((priority) => ({
+  //         label: priority,
+  //         value: priority,
+  //       })),
+  //     },
+  //   ],
+  //   []
+  // )
 
-  const filteredData = useMemo(() => {
-    let filtered = cases
+  // const filteredData = useMemo(() => {
+  //   let filtered = cases
 
-    // Apply active filters
-    Object.entries(activeFilters).forEach(([key, value]) => {
-      if (!value) return
+  //   // Apply active filters
+  //   Object.entries(activeFilters).forEach(([key, value]) => {
+  //     if (!value) return
 
-      switch (key) {
-        case 'caseStatus':
-          filtered = filtered.filter((case_) => case_.caseStatus === value)
-          break
-        case 'priority':
-          filtered = filtered.filter((case_) => case_.priority === value)
-          break
-      }
-    })
+  //     switch (key) {
+  //       case 'caseStatus':
+  //         filtered = filtered.filter((case_) => case_.caseStatus === value)
+  //         break
+  //       case 'priority':
+  //         filtered = filtered.filter((case_) => case_.priority === value)
+  //         break
+  //     }
+  //   })
 
-    return filtered
-  }, [cases, activeFilters])
+  //   return filtered
+  // }, [cases, activeFilters])
 
   const table = useReactTable({
-    data: filteredData,
+    // data: filteredData,
+    data: [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -378,7 +383,7 @@ export function CasesTable({
                 {caseStatusLabels[row.original.caseStatus as keyof typeof caseStatusLabels]}
               </Badge>
             </div>
-            <div className="text-muted-foreground mt-0.5 flex items-center gap-3 text-xs">
+            {/*<div className="text-muted-foreground mt-0.5 flex items-center gap-3 text-xs">
               <span className="font-mono">{row.original.caseNumber}</span>
               <PriorityBadge priority={row.original.priority as any} size="sm" />
               {row.original.client?.name && (
@@ -387,7 +392,7 @@ export function CasesTable({
                   <span className="max-w-[60px] truncate">{row.original.client.name}</span>
                 </div>
               )}
-            </div>
+            </div>*/}
           </div>
         </div>
 
@@ -460,7 +465,7 @@ export function CasesTable({
         noDataMessage="لا توجد قضايا مطابقة للبحث"
         mobileCardRenderer={mobileCardRenderer}
         showQuickFilters={true}
-        quickFilters={quickFilters}
+        // quickFilters={quickFilters}
         activeFilters={activeFilters}
         onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
         headerActions={headerActions}

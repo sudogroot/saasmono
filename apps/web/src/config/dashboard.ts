@@ -1,5 +1,82 @@
-import { BookOpen, BookUser, FileText, GraduationCap, LayoutDashboard, Users, Plus, Search, Bell, LogOut, Settings } from 'lucide-react'
+import {
+  BarChart3,
+  BookOpen,
+  BookUser,
+  Database,
+  FileText,
+  FileType,
+  Folder,
+  GraduationCap,
+  HelpCircle,
+  LayoutDashboard,
+  List,
+  Plus,
+  Search,
+  Settings,
+  Users,
+} from 'lucide-react'
 
+export const dashboardSidebarData = {
+  navMain: [
+    {
+      title: 'لوحة التحكم',
+      url: '/dashboard',
+      icon: LayoutDashboard,
+    },
+    {
+      title: 'الأقسام',
+      url: '/dashboard/classrooms',
+      icon: List,
+    },
+    {
+      title: 'المعلمون',
+      url: '/dashboard/institution-settings/teachers',
+      icon: Users,
+    },
+    {
+      title: 'المناهج',
+      url: '/dashboard/institution-settings/curriculum',
+      icon: Folder,
+    },
+  ],
+  navClouds: [],
+  navSecondary: [
+    {
+      title: 'الإعدادات',
+      url: '/dashboard/user/settings',
+      icon: Settings,
+    },
+    {
+      title: 'المساعدة',
+      url: '#',
+      icon: HelpCircle,
+    },
+    {
+      title: 'البحث',
+      url: '#',
+      icon: Search,
+    },
+  ],
+  documents: [
+    {
+      name: 'مكتبة البيانات',
+      url: '#',
+      icon: Database,
+    },
+    {
+      name: 'التقارير',
+      url: '#',
+      icon: BarChart3,
+    },
+    {
+      name: 'الوثائق',
+      url: '#',
+      icon: FileType,
+    },
+  ],
+}
+
+// Keep the old format for backward compatibility
 export const dashboardSidebarSections = [
   {
     title: 'القائمة الرئيسية',
@@ -14,47 +91,6 @@ export const dashboardSidebarSections = [
         icon: GraduationCap,
         url: '/dashboard/classrooms',
       },
-      // {
-      //   title: 'إدارة الطلاب',
-      //   icon: Users,
-      //   url: '/dashboard/students',
-      //   items: [
-      //     { title: 'قائمة الطلاب', url: '/dashboard/students' },
-      //     { title: 'إضافة طالب', url: '/dashboard/students/new' },
-      //   ]
-      // },
-      // {
-      //   title: 'إدارة المعلمين',
-      //   icon: GraduationCap,
-      //   url: '/dashboard/teachers',
-      //   items: [
-      //     { title: 'قائمة المعلمين', url: '/dashboard/teachers' },
-      //     { title: 'إضافة معلم', url: '/dashboard/teachers/new' },
-      //   ]
-      // },
-      // {
-      //   title: 'المناهج الدراسية',
-      //   icon: BookOpen,
-      //   url: '/dashboard/curriculum',
-      //   items: [
-      //     { title: 'المواد الدراسية', url: '/dashboard/curriculum/subjects' },
-      //     { title: 'الصفوف الدراسية', url: '/dashboard/curriculum/grades' },
-      //   ]
-      // },
-      // {
-      //   title: 'الجدول الدراسي',
-      //   icon: Calendar,
-      //   url: '/dashboard/schedule',
-      // },
-      // {
-      //   title: 'التقارير',
-      //   icon: BarChart3,
-      //   url: '/dashboard/reports',
-      //   items: [
-      //     { title: 'تقارير الحضور', url: '/dashboard/reports/attendance' },
-      //     { title: 'تقارير الدرجات', url: '/dashboard/reports/grades' },
-      //   ]
-      // },
     ],
   },
   {
@@ -70,16 +106,6 @@ export const dashboardSidebarSections = [
         icon: BookUser,
         url: '/dashboard/institution-settings/teachers',
       },
-      // {
-      //   title: 'إعدادات المدرسة',
-      //   icon: School,
-      //   url: '/dashboard/school-settings',
-      // },
-      // {
-      //   title: 'الإعدادات العامة',
-      //   icon: Settings,
-      //   url: '/dashboard/settings',
-      // },
     ],
   },
 ]
@@ -140,29 +166,29 @@ export const dashboardMobileNavItems = [
     href: '',
     icon: LayoutDashboard,
     color: 'text-primary',
-    bgColor: 'bg-primary/10'
+    bgColor: 'bg-primary/10',
   },
   {
     title: 'الأقسام',
     href: 'classrooms',
     icon: GraduationCap,
     color: 'text-blue-600',
-    bgColor: 'bg-blue-50'
+    bgColor: 'bg-blue-50',
   },
   {
     title: 'المعلمون',
     href: 'institution-settings/teachers',
     icon: BookUser,
     color: 'text-green-600',
-    bgColor: 'bg-green-50'
+    bgColor: 'bg-green-50',
   },
   {
     title: 'المناهج',
     href: 'institution-settings/curriculum',
     icon: BookOpen,
     color: 'text-purple-600',
-    bgColor: 'bg-purple-50'
-  }
+    bgColor: 'bg-purple-50',
+  },
 ]
 
 export const dashboardMobileQuickActions = [
@@ -170,26 +196,26 @@ export const dashboardMobileQuickActions = [
     title: 'إضافة طالب',
     icon: Plus,
     action: 'add-student',
-    color: 'bg-blue-600 text-white'
+    color: 'bg-blue-600 text-white',
   },
   {
     title: 'تقرير جديد',
     icon: Plus,
     action: 'new-report',
-    color: 'bg-green-600 text-white'
+    color: 'bg-green-600 text-white',
   },
   {
     title: 'البحث السريع',
     icon: Search,
     action: 'search',
-    color: 'bg-gray-600 text-white'
+    color: 'bg-gray-600 text-white',
   },
   {
     title: 'الإعدادات',
     icon: Settings,
     action: 'settings',
-    color: 'bg-purple-600 text-white'
-  }
+    color: 'bg-purple-600 text-white',
+  },
 ]
 
 export const dashboardMobileDrawerItems = [
@@ -200,15 +226,15 @@ export const dashboardMobileDrawerItems = [
         title: 'الطلاب',
         href: 'students',
         icon: Users,
-        description: 'إدارة ملفات الطلاب'
+        description: 'إدارة ملفات الطلاب',
       },
       {
         title: 'التقارير',
         href: 'reports',
         icon: FileText,
-        description: 'التقارير والإحصائيات'
-      }
-    ]
+        description: 'التقارير والإحصائيات',
+      },
+    ],
   },
   {
     category: 'الإعدادات',
@@ -217,8 +243,8 @@ export const dashboardMobileDrawerItems = [
         title: 'إعدادات المدرسة',
         href: 'settings',
         icon: Settings,
-        description: 'الإعدادات العامة للمؤسسة'
-      }
-    ]
-  }
+        description: 'الإعدادات العامة للمؤسسة',
+      },
+    ],
+  },
 ]

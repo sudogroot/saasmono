@@ -1,17 +1,16 @@
 'use client'
 
 import {
-  dashboardNotifications,
-  dashboardQuickActions,
-  dashboardSidebarSections,
+  dashboardMobileDrawerItems,
   dashboardMobileNavItems,
   dashboardMobileQuickActions,
-  dashboardMobileDrawerItems
+  dashboardNotifications,
+  dashboardSidebarData,
 } from '@/config/dashboard'
 
 import { useSessionStorage } from '@/hooks/use-session-storage'
 import { authClient } from '@/lib/auth-client'
-import { DashboardLayout, GenericSidebar, Header, MobileNav } from '@repo/ui'
+import { DashboardLayout, MobileNav } from '@repo/ui'
 import { useRouter } from 'next/navigation'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -53,68 +52,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   console.log(data)
   return (
     <DashboardLayout
-      sidebar={{
-        component: GenericSidebar,
-        props: {
-          sections: dashboardSidebarSections,
-          header: {
-            logo: {
-              src: '/logo.svg',
-              alt: 'منارة',
-              width: 32,
-              height: 32,
-            },
-            title: 'منارة',
-            subtitle: 'نظام إدارة المدارس',
-          },
-          footer: {
-            version: 'نسخة ٢.١.٠',
-            copyright: '© ٢٠٢٤ منصة منارة',
-          },
-          side: 'right',
-          defaultOpenMenus: ['القائمة الرئيسية'],
+      sidebarData={{
+        ...dashboardSidebarData,
+        user: {
+          name: data?.user?.name || 'User',
+          email: data?.user?.email || '',
+          avatar: data?.user?.image || '/logo.svg',
         },
       }}
-      header={{
-        component: Header,
-        props: {
-          notifications: dashboardNotifications,
-          user: !isPending
-            ? {
-                name: data?.user?.name,
-                email: data?.user?.email,
-                avatar: data?.user?.image,
-                initials: data?.user?.name
-                  ?.split(' ')
-                  .map((word) => word[0])
-                  .join(''),
-              }
-            : undefined,
-          quickActions: dashboardQuickActions,
-          showSearch: false,
-          // searchPlaceholder: 'البحث...',
-          // onNotificationClick: (notification: any) => {
-          //   console.log('Notification clicked:', notification)
-          // },
-          // onMarkAllAsRead: () => {
-          //   console.log('Mark all as read')
-          // },
-          onUserMenuClick: async (action: string) => {
-            if (action === 'logout') {
-              clearStoredData()
-              await authClient.signOut({
-                fetchOptions: {
-                  onSuccess: () => {
-                    router.push('/') // redirect to login page
-                  },
-                },
-              })
-            } else if (action === 'settings') {
-              router.push('/dashboard/user/settings')
-            }
-          },
-        },
-      }}
+      brandLogo={<img src="/logo-and-text.svg" alt="منارة" className="!w-24" />}
     >
       {children}
 
@@ -127,8 +73,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         onQuickAction={handleMobileQuickAction}
         onLogout={handleMobileLogout}
         notifications={{
-          count: dashboardNotifications.filter(n => !n.isRead).length,
-          variant: "destructive"
+          count: dashboardNotifications.filter((n) => !n.isRead).length,
+          variant: 'destructive',
         }}
       />
     </DashboardLayout>

@@ -1,11 +1,9 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { authClient } from "@/lib/auth-client";
-import { orpc } from "@/utils/orpc";
-import { OpponentsTable } from "@/components/opponents/opponents-table";
-import { globalSheet } from "@/stores/global-sheet-store";
+import { OpponentsTable } from '@/components/opponents/opponents-table'
+import { authClient } from '@/lib/auth-client'
+import { globalSheet } from '@/stores/global-sheet-store'
+import { orpc } from '@/utils/orpc'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,16 +13,17 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@repo/ui";
-import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
-import type { Opponent } from "@/types";
+} from '@repo/ui'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Loader2 } from 'lucide-react'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
 export default function OpponentsPage() {
-  const { data: session } = authClient.useSession();
-  const queryClient = useQueryClient();
+  const { data: session } = authClient.useSession()
+  const queryClient = useQueryClient()
 
-  const [deletingOpponentId, setDeletingOpponentId] = useState<string | null>(null);
+  const [deletingOpponentId, setDeletingOpponentId] = useState<string | null>(null)
 
   // Fetch opponents data
   const {
@@ -38,43 +37,41 @@ export default function OpponentsPage() {
       },
     }),
     enabled: !!session,
-  });
-
+  })
 
   // Delete mutation
   const deleteMutation = useMutation({
     ...orpc.opponents.softDelete.mutationOptions({
       onSuccess: () => {
-        toast.success("تم حذف الخصم بنجاح");
-        setDeletingOpponentId(null);
-        queryClient.invalidateQueries({ queryKey: orpc.opponents.list.key() });
+        toast.success('تم حذف الخصم بنجاح')
+        setDeletingOpponentId(null)
+        queryClient.invalidateQueries({ queryKey: orpc.opponents.list.key() })
       },
       onError: (error: any) => {
-        toast.error(`حدث خطأ في حذف الخصم: ${error.message}`);
+        toast.error(`حدث خطأ في حذف الخصم: ${error.message}`)
       },
     }),
-  });
+  })
 
   const handleCreateNew = () => {
     globalSheet.openOpponentForm({
       mode: 'create',
       slug: 'opponents',
-      size: 'lg'
-    });
-  };
+      size: 'lg',
+    })
+  }
 
   const handleDelete = (opponentId: string) => {
-    setDeletingOpponentId(opponentId);
-  };
+    setDeletingOpponentId(opponentId)
+  }
 
   const confirmDelete = () => {
     if (deletingOpponentId) {
       deleteMutation.mutate({
         id: deletingOpponentId,
-      });
+      })
     }
-  };
-
+  }
 
   return (
     <>
@@ -106,16 +103,16 @@ export default function OpponentsPage() {
             >
               {deleteMutation.isPending ? (
                 <>
-                  <Loader2 className="h-4 w-4 ml-1 animate-spin" />
+                  <Loader2 className="ml-1 h-4 w-4 animate-spin" />
                   جاري الحذف...
                 </>
               ) : (
-                "حذف"
+                'حذف'
               )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </>
-  );
+  )
 }

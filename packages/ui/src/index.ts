@@ -4,13 +4,17 @@ export { cn } from "./lib/utils";
 export {
   DashboardLayout,
   Header,
-  GenericSidebar,
+  AppSidebar,
   MobileNav,
   RaqeemDashboardLayout,
   RaqeemDashboardSidebar,
   RaqeemNavbar,
   RaqeemMainContainer,
-  RaqeemSidebarLayout
+  RaqeemSidebarLayout,
+  NavMain,
+  NavDocuments,
+  NavSecondary,
+  NavUser
 } from "./layout";
 export {
   GenericTable,
@@ -31,15 +35,7 @@ export type {
 } from "./components/base/table";
 export type {
   HeaderProps,
-  Notification,
-  UserInfo,
-  QuickAction,
   AppSidebarProps,
-  SidebarItem,
-  SidebarSection,
-  SidebarHeaderConfig,
-  SidebarFooterConfig,
-  SidebarSubItem,
   MobileNavProps,
   MobileNavItem,
   DrawerCategory,

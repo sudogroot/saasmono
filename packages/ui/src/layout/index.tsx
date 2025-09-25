@@ -1,11 +1,11 @@
+import { usePathname } from "next/navigation";
 import { SidebarInset, SidebarProvider } from "../components/ui/sidebar";
 import { AppSidebar } from "./app-sidebar";
 import { SiteHeader } from "./site-header";
-import { usePathname } from "next/navigation";
 
 // Export the new generic components
 export { SiteHeader as Header } from "./site-header";
-export { AppSidebar as GenericSidebar } from "./app-sidebar";
+export { AppSidebar } from "./app-sidebar";
 export { MobileNav } from "./mobile-nav";
 
 // Export Raqeem-specific components
@@ -15,20 +15,14 @@ export { RaqeemNavbar } from "./raqeem-navbar";
 export { RaqeemMainContainer } from "./raqeem-main-container";
 export { RaqeemSidebarLayout } from "./raqeem-sidebar-layout";
 
-export type {
-  HeaderProps,
-  Notification,
-  UserInfo,
-  QuickAction,
-} from "./site-header";
-export type {
-  AppSidebarProps,
-  SidebarItem,
-  SidebarSection,
-  SidebarHeaderConfig,
-  SidebarFooterConfig,
-  SidebarSubItem,
-} from "./app-sidebar";
+// Export navigation components
+export { NavMain } from "./nav-main";
+export { NavDocuments } from "./nav-documents";
+export { NavSecondary } from "./nav-secondary";
+export { NavUser } from "./nav-user";
+
+export type { HeaderProps } from "./site-header";
+export type { AppSidebarProps } from "./app-sidebar";
 export type {
   MobileNavProps,
   MobileNavItem,
@@ -36,99 +30,84 @@ export type {
   NotificationInfo,
   QuickAction as MobileQuickAction,
 } from "./mobile-nav";
-export type {
-  RaqeemDashboardLayoutProps,
-} from "./raqeem-dashboard-layout";
+export type { RaqeemDashboardLayoutProps } from "./raqeem-dashboard-layout";
 export type {
   NavigationItem,
   RaqeemDashboardSidebarProps,
 } from "./raqeem-sidebar";
-export type {
-  RaqeemNavbarProps,
-} from "./raqeem-navbar";
-
-export interface SidebarConfig {
-  component?: React.ComponentType<any>;
-  props?: any;
-}
-
-export interface HeaderConfig {
-  component?: React.ComponentType<any>;
-  props?: any;
-}
+export type { RaqeemNavbarProps } from "./raqeem-navbar";
 
 export interface DashboardLayoutProps {
   children: React.ReactNode;
-  sidebar?: SidebarConfig;
-  header?: HeaderConfig;
+  sidebarData?: any;
+  brandLogo: React.ReactNode;
+  brandName?: string;
+  headerTitle?: string;
   style?: React.CSSProperties;
-}
-
-function getActiveSidebarItemTitle(
-  pathname: string,
-  sections: any[],
-): string | undefined {
-  for (const section of sections) {
-    for (const item of section.items || []) {
-      if (item.url === pathname) {
-        return item.title;
-      }
-      // Check sub-items if they exist
-      if (item.items) {
-        for (const subItem of item.items) {
-          if (subItem.url === pathname) {
-            return subItem.title;
-          }
-        }
-      }
-    }
-  }
-  return undefined;
 }
 
 export function DashboardLayout({
   children,
-  sidebar,
-  header,
+  sidebarData,
+  brandLogo,
+  brandName,
   style,
 }: DashboardLayoutProps) {
-  const pathname = usePathname();
-  const SidebarComponent = sidebar?.component || AppSidebar;
-  const HeaderComponent = header?.component || SiteHeader;
-
   const defaultStyle = {
     "--sidebar-width": "calc(var(--spacing) * 72)",
     "--header-height": "calc(var(--spacing) * 12)",
   } as React.CSSProperties;
+  const pathName = usePathname();
 
-  // Default props for AppSidebar
-  const defaultSidebarProps = {
-    sections: [],
-    ...sidebar?.props,
+  // Get header title from sidebar data based on pathname
+  const getHeaderTitleFromPath = (pathname: string, sidebarData: any) => {
+    // Check navMain items
+    if (sidebarData.navMain) {
+      const mainItem = sidebarData.navMain.find(
+        (item: any) => item.url === pathname,
+      );
+      if (mainItem) return mainItem.title;
+    }
+
+    // Check navSecondary items
+    if (sidebarData.navSecondary) {
+      const secondaryItem = sidebarData.navSecondary.find(
+        (item: any) => item.url === pathname,
+      );
+      if (secondaryItem) return secondaryItem.title;
+    }
+
+    // Check documents items
+    if (sidebarData.documents) {
+      const documentItem = sidebarData.documents.find(
+        (item: any) => item.url === pathname,
+      );
+      if (documentItem) return documentItem.name;
+    }
   };
 
-  // Get active sidebar item title
-  const activeSidebarTitle = getActiveSidebarItemTitle(
-    pathname,
-    sidebar?.props?.sections || [],
-  );
-
-  // Default props for SiteHeader
-  const defaultHeaderProps = {
-    title: activeSidebarTitle,
-    ...header?.props,
-  };
+  const dynamicHeaderTitle = getHeaderTitleFromPath(pathName, sidebarData);
 
   return (
     <SidebarProvider
       style={style ? { ...defaultStyle, ...style } : defaultStyle}
     >
-      <SidebarComponent variant="inset" {...defaultSidebarProps} />
-      <SidebarInset>
-        <HeaderComponent {...defaultHeaderProps} />
-        <div className="flex flex-1 flex-col">
+      <AppSidebar
+        variant="inset"
+        data={sidebarData}
+        brandLogo={brandLogo}
+        brandName={brandName}
+      />
+      <SidebarInset
+        className="md:peer-data-[variant=inset]:m-2
+      md:peer-data-[variant=inset]:ms-0
+      md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ms-2
+"
+      >
+        <SiteHeader title={dynamicHeaderTitle} />
+        <div className="flex flex-1 flex-col p-2">
           <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col sm:gap-4 gap-0 sm:py-4 py-0 md:gap-6 md:py-6">
+            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
               {children}
             </div>
           </div>

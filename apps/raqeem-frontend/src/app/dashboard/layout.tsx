@@ -1,22 +1,23 @@
-'use client';
+'use client'
 
-import { authClient } from '@/lib/auth-client';
-import { RaqeemDashboardLayout } from '@repo/ui';
-import { useRouter, usePathname } from 'next/navigation';
-import { navigationItems, breadcrumbs, mainNavItems, quickActions, drawerItems } from '@/components/layout/config';
-import { useSheetUrlSync } from '@/hooks/use-sheet-url-sync';
-import { globalSheet } from '@/stores/global-sheet-store';
+import { drawerItems, mainNavItems, quickActions } from '@/components/layout/config'
+import { raqeemDashboardSidebarData } from '@/config/dashboard-sidebar'
+import { useSheetUrlSync } from '@/hooks/use-sheet-url-sync'
+import { authClient } from '@/lib/auth-client'
+import { globalSheet } from '@/stores/global-sheet-store'
+import { DashboardLayout, MobileNav } from '@repo/ui'
+import { usePathname, useRouter } from 'next/navigation'
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const { data: session, isPending } = authClient.useSession();
+export default function NewLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter()
+  const pathname = usePathname()
+  const { data: session, isPending } = authClient.useSession()
 
   // User handling functions
   const handleSignOut = async () => {
-    await authClient.signOut();
-    window.location.href = '/';
-  };
+    await authClient.signOut()
+    window.location.href = '/'
+  }
 
   // Quick action handlers that open forms in side sheets
   const handleNewClient = () => {
@@ -24,85 +25,95 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       mode: 'create',
       slug: 'clients',
       size: 'lg',
-    });
-  };
+    })
+  }
 
   const handleNewCase = () => {
     globalSheet.openCaseForm({
       mode: 'create',
       slug: 'cases',
       size: 'lg',
-    });
-  };
+    })
+  }
 
   const handleNewOpponent = () => {
     globalSheet.openOpponentForm({
       mode: 'create',
       slug: 'opponents',
       size: 'lg',
-    });
-  };
+    })
+  }
 
   const handleSearch = () => {
     // TODO: Implement global search functionality in a sheet
-    console.log('Global search functionality coming soon...');
-  };
+    console.log('Global search functionality coming soon...')
+  }
 
   const handleMobileQuickAction = (action: string) => {
     switch (action) {
       case 'create-case':
-        handleNewCase();
-        break;
+        handleNewCase()
+        break
       case 'create-client':
-        handleNewClient();
-        break;
+        handleNewClient()
+        break
       case 'create-appointment':
         // TODO: Add appointment form when available
-        console.log('Create appointment action');
-        break;
+        console.log('Create appointment action')
+        break
       case 'search':
-        handleSearch();
-        break;
+        handleSearch()
+        break
       default:
-        break;
+        break
     }
-  };
+  }
 
   const handleMobileLogout = async () => {
-    await authClient.signOut();
-    window.location.href = '/';
-  };
+    await authClient.signOut()
+    window.location.href = '/'
+  }
 
   // User data
-  const user = !isPending && session ? {
-    name: session.user?.name || '',
-    email: session.user?.email || '',
-    image: session.user?.image || ''
-  } : undefined;
+  const user =
+    !isPending && session
+      ? {
+          name: session.user?.name || '',
+          email: session.user?.email || '',
+          image: session.user?.image || '',
+        }
+      : undefined
+
+  // Initialize sheets from URL parameters
+  useSheetUrlSync()
 
   return (
-    <RaqeemDashboardLayout
-      navigationItems={navigationItems}
-      breadcrumbs={breadcrumbs}
-      pathname={pathname}
-      user={user}
-      onSignOut={handleSignOut}
-      onNewClient={handleNewClient}
-      onNewCase={handleNewCase}
-      onNewOpponent={handleNewOpponent}
-      onSearch={handleSearch}
-      mobileNavItems={mainNavItems}
-      mobileQuickActions={quickActions}
-      mobileDrawerItems={drawerItems}
-      onMobileQuickAction={handleMobileQuickAction}
-      onMobileLogout={handleMobileLogout}
-      mobileNotifications={{
-        count: 3,
-        variant: "destructive"
+    <DashboardLayout
+      sidebarData={{
+        ...raqeemDashboardSidebarData,
+        user: {
+          name: user?.name,
+          email: user?.email,
+          avatar: user?.image || '/raqeem-icon.svg',
+        },
       }}
-      useSheetUrlSync={useSheetUrlSync}
+      brandLogo={<img src="/logo.svg" alt="رقيم" className="!w-24" />}
     >
       {children}
-    </RaqeemDashboardLayout>
-  );
+
+      {/* Mobile Navigation */}
+      <MobileNav
+        mainNavItems={mainNavItems}
+        quickActions={quickActions}
+        drawerItems={drawerItems}
+        basePath="/dashboard"
+        onQuickAction={handleMobileQuickAction}
+        onLogout={handleMobileLogout}
+        notifications={{
+          count: 3,
+          variant: 'destructive',
+        }}
+      />
+    </DashboardLayout>
+  )
 }
