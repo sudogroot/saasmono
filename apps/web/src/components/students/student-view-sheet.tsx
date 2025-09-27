@@ -3,7 +3,7 @@
 import { orpc } from '@/utils/orpc'
 import { Badge, Sheet, SheetBody, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@repo/ui'
 import { useQuery } from '@tanstack/react-query'
-import { BookOpen, Building2, Calendar, Mail, Shield, User, Users, GraduationCap } from 'lucide-react'
+import { BookOpen, Building2, Calendar, GraduationCap, Mail, Shield, User, Users } from 'lucide-react'
 
 interface StudentEducationLevel {
   id: string
@@ -105,7 +105,7 @@ interface StudentViewSheetProps {
 
 export function StudentViewSheet({ student, open, onOpenChange }: StudentViewSheetProps) {
   const { data: detailedStudent, isLoading } = useQuery({
-    ...orpc.management.students.getStudentById.queryOptions({ studentId: student?.id || '' }),
+    ...orpc.management.students.getStudentById.queryOptions({ input: { studentId: student?.id || '' } }),
     enabled: !!student?.id && open && student.id.length > 0,
   })
 
@@ -116,8 +116,8 @@ export function StudentViewSheet({ student, open, onOpenChange }: StudentViewShe
       <SheetContent isMobileSheet className="sm:max-w-xl">
         <SheetHeader>
           <div className="flex items-center gap-3">
-            <div className="bg-blue-500/10 flex h-12 w-12 items-center justify-center rounded-lg">
-              <User className="text-blue-600 h-6 w-6" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-500/10">
+              <User className="h-6 w-6 text-blue-600" />
             </div>
             <div className="min-w-0 flex-1">
               <SheetTitle className="text-lg">
@@ -139,97 +139,101 @@ export function StudentViewSheet({ student, open, onOpenChange }: StudentViewShe
               <div className="space-y-2">
                 <div className="flex items-center justify-between rounded-lg border p-3">
                   <div className="flex items-center gap-2">
-                    <User className="h-4 w-4 text-muted-foreground" />
+                    <User className="text-muted-foreground h-4 w-4" />
                     <span className="text-sm">الاسم الكامل</span>
                   </div>
-                  <span className="text-sm font-medium">{student.name} {student.lastName}</span>
+                  <span className="text-sm font-medium">
+                    {student.name} {student.lastName}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between rounded-lg border p-3">
                   <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <Mail className="text-muted-foreground h-4 w-4" />
                     <span className="text-sm">البريد الإلكتروني</span>
                   </div>
                   <span className="text-sm font-medium">{student.email}</span>
                 </div>
                 <div className="flex items-center justify-between rounded-lg border p-3">
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <Calendar className="text-muted-foreground h-4 w-4" />
                     <span className="text-sm">تاريخ التسجيل</span>
                   </div>
-                  <span className="text-sm font-medium">
-                    {new Date(student.createdAt).toLocaleDateString('ar-SA')}
-                  </span>
+                  <span className="text-sm font-medium">{new Date(student.createdAt).toLocaleDateString('ar-SA')}</span>
                 </div>
               </div>
             </div>
 
             {/* Classroom Information */}
-            <div className="space-y-3 mt-6">
+            <div className="mt-6 space-y-3">
               <h3 className="text-muted-foreground text-sm font-medium">معلومات الفصل الدراسي</h3>
               {student.classroom ? (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between rounded-lg border p-3">
                     <div className="flex items-center gap-2">
-                      <Building2 className="h-4 w-4 text-muted-foreground" />
+                      <Building2 className="text-muted-foreground h-4 w-4" />
                       <span className="text-sm">اسم الفصل</span>
                     </div>
                     <span className="text-sm font-medium">{student.classroom.name}</span>
                   </div>
                   <div className="flex items-center justify-between rounded-lg border p-3">
                     <div className="flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-muted-foreground" />
+                      <Shield className="text-muted-foreground h-4 w-4" />
                       <span className="text-sm">كود الفصل</span>
                     </div>
                     <span className="text-sm font-medium">{student.classroom.code}</span>
                   </div>
                   <div className="flex items-center justify-between rounded-lg border p-3">
                     <div className="flex items-center gap-2">
-                      <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                      <GraduationCap className="text-muted-foreground h-4 w-4" />
                       <span className="text-sm">المستوى التعليمي</span>
                     </div>
                     <span className="text-sm font-medium">
-                      {student.classroom.educationLevel.displayNameAr || `الصف ${student.classroom.educationLevel.level}`}
+                      {student.classroom.educationLevel.displayNameAr ||
+                        `الصف ${student.classroom.educationLevel.level}`}
                     </span>
                   </div>
                   <div className="flex items-center justify-between rounded-lg border p-3">
                     <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <Calendar className="text-muted-foreground h-4 w-4" />
                       <span className="text-sm">العام الدراسي</span>
                     </div>
                     <span className="text-sm font-medium">{student.classroom.academicYear}</span>
                   </div>
                   <div className="flex items-center justify-between rounded-lg border p-3">
                     <div className="flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-muted-foreground" />
+                      <Shield className="text-muted-foreground h-4 w-4" />
                       <span className="text-sm">حالة التسجيل</span>
                     </div>
                     <Badge
                       variant={
-                        student.classroom.enrollmentStatus === 'active' ? 'default' :
-                        student.classroom.enrollmentStatus === 'inactive' ? 'secondary' :
-                        'destructive'
+                        student.classroom.enrollmentStatus === 'active'
+                          ? 'default'
+                          : student.classroom.enrollmentStatus === 'inactive'
+                            ? 'secondary'
+                            : 'destructive'
                       }
                     >
-                      {student.classroom.enrollmentStatus === 'active' ? 'نشط' :
-                       student.classroom.enrollmentStatus === 'inactive' ? 'غير نشط' :
-                       student.classroom.enrollmentStatus === 'transferred' ? 'محول' :
-                       student.classroom.enrollmentStatus}
+                      {student.classroom.enrollmentStatus === 'active'
+                        ? 'نشط'
+                        : student.classroom.enrollmentStatus === 'inactive'
+                          ? 'غير نشط'
+                          : student.classroom.enrollmentStatus === 'transferred'
+                            ? 'محول'
+                            : student.classroom.enrollmentStatus}
                     </Badge>
                   </div>
                 </div>
               ) : (
                 <div className="rounded-lg border border-dashed p-6 text-center">
-                  <Building2 className="mx-auto h-8 w-8 text-muted-foreground" />
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    الطالب غير مسجل في أي فصل دراسي
-                  </p>
+                  <Building2 className="text-muted-foreground mx-auto h-8 w-8" />
+                  <p className="text-muted-foreground mt-2 text-sm">الطالب غير مسجل في أي فصل دراسي</p>
                 </div>
               )}
             </div>
 
             {/* Parents Information */}
             {detailedStudent && (
-              <div className="space-y-3 mt-6">
+              <div className="mt-6 space-y-3">
                 <h3 className="text-muted-foreground text-sm font-medium">
                   أولياء الأمور ({detailedStudent.parents.length})
                 </h3>
@@ -239,7 +243,7 @@ export function StudentViewSheet({ student, open, onOpenChange }: StudentViewShe
                       <div key={parent.relationId} className="rounded-lg border p-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <User className="h-4 w-4 text-muted-foreground" />
+                            <User className="text-muted-foreground h-4 w-4" />
                             <span className="text-sm font-medium">
                               {parent.parentName} {parent.parentLastName}
                             </span>
@@ -248,7 +252,7 @@ export function StudentViewSheet({ student, open, onOpenChange }: StudentViewShe
                             {parent.relationshipType === 'parent' ? 'والد/والدة' : parent.relationshipType}
                           </Badge>
                         </div>
-                        <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+                        <div className="text-muted-foreground mt-1 flex items-center gap-1 text-xs">
                           <Mail className="h-3 w-3" />
                           {parent.parentemail}
                         </div>
@@ -257,10 +261,8 @@ export function StudentViewSheet({ student, open, onOpenChange }: StudentViewShe
                   </div>
                 ) : (
                   <div className="rounded-lg border border-dashed p-6 text-center">
-                    <Users className="mx-auto h-8 w-8 text-muted-foreground" />
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      لا توجد علاقات أولياء أمور مسجلة
-                    </p>
+                    <Users className="text-muted-foreground mx-auto h-8 w-8" />
+                    <p className="text-muted-foreground mt-2 text-sm">لا توجد علاقات أولياء أمور مسجلة</p>
                   </div>
                 )}
               </div>
@@ -268,7 +270,7 @@ export function StudentViewSheet({ student, open, onOpenChange }: StudentViewShe
 
             {/* Groups Information */}
             {detailedStudent && (
-              <div className="space-y-3 mt-6">
+              <div className="mt-6 space-y-3">
                 <h3 className="text-muted-foreground text-sm font-medium">
                   المجموعات ({detailedStudent.groups.length})
                 </h3>
@@ -278,20 +280,18 @@ export function StudentViewSheet({ student, open, onOpenChange }: StudentViewShe
                       <div key={group.id} className="rounded-lg border p-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <Users className="h-4 w-4 text-muted-foreground" />
+                            <Users className="text-muted-foreground h-4 w-4" />
                             <span className="text-sm font-medium">{group.name}</span>
                           </div>
                           <div className="flex gap-1">
                             <Badge variant={group.isActive ? 'default' : 'secondary'}>
                               {group.isActive ? 'نشط' : 'غير نشط'}
                             </Badge>
-                            {group.isDefault && (
-                              <Badge variant="outline">افتراضي</Badge>
-                            )}
+                            {group.isDefault && <Badge variant="outline">افتراضي</Badge>}
                           </div>
                         </div>
                         {group.subject && (
-                          <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+                          <div className="text-muted-foreground mt-1 flex items-center gap-1 text-xs">
                             <BookOpen className="h-3 w-3" />
                             {group.subject.displayNameAr || group.subject.name}
                           </div>
@@ -301,10 +301,8 @@ export function StudentViewSheet({ student, open, onOpenChange }: StudentViewShe
                   </div>
                 ) : (
                   <div className="rounded-lg border border-dashed p-6 text-center">
-                    <Users className="mx-auto h-8 w-8 text-muted-foreground" />
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      الطالب غير مسجل في أي مجموعات
-                    </p>
+                    <Users className="text-muted-foreground mx-auto h-8 w-8" />
+                    <p className="text-muted-foreground mt-2 text-sm">الطالب غير مسجل في أي مجموعات</p>
                   </div>
                 )}
               </div>
@@ -312,7 +310,7 @@ export function StudentViewSheet({ student, open, onOpenChange }: StudentViewShe
 
             {/* Subjects Information */}
             {detailedStudent && (
-              <div className="space-y-3 mt-6">
+              <div className="mt-6 space-y-3">
                 <h3 className="text-muted-foreground text-sm font-medium">
                   المواد الدراسية ({detailedStudent.subjects.length})
                 </h3>
@@ -320,11 +318,9 @@ export function StudentViewSheet({ student, open, onOpenChange }: StudentViewShe
                   <div className="space-y-3">
                     {detailedStudent.subjects.map((subject) => (
                       <div key={subject.id} className="rounded-lg border p-3">
-                        <div className="flex items-center gap-2 mb-2">
-                          <BookOpen className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm font-medium">
-                            {subject.displayNameAr || subject.name}
-                          </span>
+                        <div className="mb-2 flex items-center gap-2">
+                          <BookOpen className="text-muted-foreground h-4 w-4" />
+                          <span className="text-sm font-medium">{subject.displayNameAr || subject.name}</span>
                         </div>
                         <div className="space-y-1">
                           {subject.teachers.map((teacher) => (
@@ -350,10 +346,8 @@ export function StudentViewSheet({ student, open, onOpenChange }: StudentViewShe
                   </div>
                 ) : (
                   <div className="rounded-lg border border-dashed p-6 text-center">
-                    <BookOpen className="mx-auto h-8 w-8 text-muted-foreground" />
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      لا توجد مواد دراسية مسجلة
-                    </p>
+                    <BookOpen className="text-muted-foreground mx-auto h-8 w-8" />
+                    <p className="text-muted-foreground mt-2 text-sm">لا توجد مواد دراسية مسجلة</p>
                   </div>
                 )}
               </div>
