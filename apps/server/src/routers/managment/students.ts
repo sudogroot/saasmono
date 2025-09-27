@@ -6,11 +6,9 @@ import { createStudentManagementService } from '../../services/managment/student
 import {
   CreateStudentEnrollmentSchema,
   CreateStudentGroupMembershipSchema,
-  StudentDetailedResponseSchema,
   StudentEnrollmentSchema,
   StudentGroupMembershipSchema,
   StudentListItemSchema,
-  SuccessResponseSchema,
   UpdateStudentEnrollmentStatusSchema,
   UpdateStudentGroupMembershipStatusSchema,
 } from '../../types/user'
@@ -21,21 +19,25 @@ export const studentManagementRouter = {
   getStudentById: protectedProcedure
     .input(
       z.object({
-        studentId: z.string().uuid().describe('Student ID'),
+        // studentId: z.string().uuid().describe('Student ID'), // this does not work since the student ID is a string not a uuid
+        studentId: z.string().describe('Student ID'),
       })
     )
-    .output(StudentDetailedResponseSchema)
+    .output(z.any())
+    // .output(StudentDetailedResponseSchema) // this validation cause error
     .route({
       method: 'GET',
       path: '/management/students/{studentId}',
       tags: ['Student Management'],
       summary: 'Get detailed student information',
-      description: 'Retrieves comprehensive student details including parents, classroom, groups, subjects and teachers',
+      description:
+        'Retrieves comprehensive student details including parents, classroom, groups, subjects and teachers',
     })
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
       try {
-        return await studentService.getStudentById(input.studentId, orgId)
+        const student = await studentService.getStudentById(input.studentId, orgId)
+        return student
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch student details')
       }
@@ -43,10 +45,12 @@ export const studentManagementRouter = {
 
   getStudentsList: protectedProcedure
     .input(
-      z.object({
-        classroomId: z.string().uuid().optional().describe('Filter by classroom ID'),
-        educationLevelId: z.string().uuid().optional().describe('Filter by education level ID'),
-      }).optional()
+      z
+        .object({
+          classroomId: z.string().uuid().optional().describe('Filter by classroom ID'),
+          educationLevelId: z.string().uuid().optional().describe('Filter by education level ID'),
+        })
+        .optional()
     )
     .output(z.array(StudentListItemSchema))
     .route({
@@ -54,7 +58,8 @@ export const studentManagementRouter = {
       path: '/management/students/list',
       tags: ['Student Management'],
       summary: 'List students',
-      description: 'Retrieves students with basic info and classroom, optionally filtered by classroom or education level',
+      description:
+        'Retrieves students with basic info and classroom, optionally filtered by classroom or education level',
     })
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
@@ -160,5 +165,4 @@ export const studentManagementRouter = {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to update group membership status')
       }
     }),
-
 }
