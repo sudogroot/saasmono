@@ -34,6 +34,11 @@ export const dashboardSidebarData = {
       icon: Users,
     },
     {
+      title: 'الطلاب',
+      url: '/dashboard/institution-settings/students',
+      icon: Users,
+    },
+    {
       title: 'المناهج',
       url: '/dashboard/institution-settings/curriculum',
       icon: Folder,
@@ -105,6 +110,11 @@ export const dashboardSidebarSections = [
         title: 'قائمة الأساتذة',
         icon: BookUser,
         url: '/dashboard/institution-settings/teachers',
+      },
+      {
+        title: 'قائمة الطلاب',
+        icon: BookUser,
+        url: '/dashboard/institution-settings/students',
       },
     ],
   },
