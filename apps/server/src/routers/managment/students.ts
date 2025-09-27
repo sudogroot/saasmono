@@ -21,7 +21,7 @@ export const studentManagementRouter = {
   getStudentById: protectedProcedure
     .input(
       z.object({
-        studentId: z.string().min(1).describe('Student ID'),
+        studentId: z.string().uuid().describe('Student ID'),
       })
     )
     .output(StudentDetailedResponseSchema)

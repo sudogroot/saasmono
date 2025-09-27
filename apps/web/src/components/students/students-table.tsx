@@ -52,6 +52,12 @@ const columnHelper = createColumnHelper<StudentListItem>()
 export function StudentsTable({ onEdit, onCreateNew }: StudentsTableProps) {
   const [selectedStudent, setSelectedStudent] = useState<StudentListItem | null>(null)
   const [isViewSheetOpen, setIsViewSheetOpen] = useState(false)
+  const [searchValue, setSearchValue] = useState('')
+  const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 20,
+  })
 
   const { data: students = [], isLoading, error } = useQuery(orpc.management.students.getStudentsList.queryOptions({}))
 
@@ -167,13 +173,144 @@ export function StudentsTable({ onEdit, onCreateNew }: StudentsTableProps) {
     [onEdit]
   )
 
+  const quickFilters = useMemo(
+    () => [
+      {
+        key: 'enrollmentStatus',
+        label: 'حالة التسجيل',
+        values: [
+          { label: 'نشط', value: 'active' },
+          { label: 'غير نشط', value: 'inactive' },
+          { label: 'محول', value: 'transferred' },
+        ],
+      },
+      {
+        key: 'hasClassroom',
+        label: 'الفصل الدراسي',
+        values: [
+          { label: 'مسجل في فصل', value: 'true' },
+          { label: 'غير مسجل في فصل', value: 'false' },
+        ],
+      },
+      {
+        key: 'educationLevel',
+        label: 'المستوى التعليمي',
+        values: [
+          { label: 'المستوى 1', value: '1' },
+          { label: 'المستوى 2', value: '2' },
+          { label: 'المستوى 3', value: '3' },
+          { label: 'المستوى 4', value: '4' },
+          { label: 'المستوى 5', value: '5' },
+          { label: 'المستوى 6', value: '6' },
+        ],
+      },
+      {
+        key: 'classroom',
+        label: 'الفصل الدراسي',
+        values: [
+          // This would be dynamically populated from available classrooms
+          // For now, we'll use common classroom codes
+          { label: 'A', value: 'A' },
+          { label: 'B', value: 'B' },
+          { label: 'C', value: 'C' },
+        ],
+      },
+      {
+        key: 'joinedRecently',
+        label: 'تاريخ الانضمام',
+        values: [
+          { label: 'انضم خلال الشهر الماضي', value: 'month' },
+          { label: 'انضم خلال الـ 3 أشهر الماضية', value: 'quarter' },
+          { label: 'انضم خلال السنة الماضية', value: 'year' },
+        ],
+      },
+    ],
+    []
+  )
+
+  const filteredData = useMemo(() => {
+    let filtered = typedStudents
+
+    // Apply active filters
+    Object.entries(activeFilters).forEach(([key, value]) => {
+      if (!value) return
+
+      switch (key) {
+        case 'enrollmentStatus':
+          filtered = filtered.filter((student) =>
+            student.classroom?.enrollmentStatus === value
+          )
+          break
+        case 'hasClassroom':
+          const hasClassroom = value === 'true'
+          filtered = filtered.filter((student) =>
+            hasClassroom ? !!student.classroom : !student.classroom
+          )
+          break
+        case 'educationLevel':
+          filtered = filtered.filter((student) =>
+            student.classroom?.educationLevel.level.toString() === value
+          )
+          break
+        case 'classroom':
+          filtered = filtered.filter((student) =>
+            student.classroom?.code === value || student.classroom?.name.includes(value)
+          )
+          break
+        case 'joinedRecently':
+          const now = new Date()
+          let cutoffDate = new Date()
+
+          switch (value) {
+            case 'month':
+              cutoffDate.setMonth(now.getMonth() - 1)
+              break
+            case 'quarter':
+              cutoffDate.setMonth(now.getMonth() - 3)
+              break
+            case 'year':
+              cutoffDate.setFullYear(now.getFullYear() - 1)
+              break
+          }
+
+          filtered = filtered.filter((student) => new Date(student.createdAt) >= cutoffDate)
+          break
+      }
+    })
+
+    return filtered
+  }, [typedStudents, activeFilters])
+
   const table = useReactTable({
-    data: typedStudents,
+    data: filteredData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    globalFilterFn: (row, columnId, filterValue) => {
+      const student = row.original
+      const searchableText = [
+        student.name,
+        student.lastName,
+        student.email,
+        `${student.name} ${student.lastName}`,
+        student.classroom?.name,
+        student.classroom?.code,
+        student.classroom?.academicYear,
+        student.classroom?.educationLevel.displayNameAr || `المستوى ${student.classroom?.educationLevel.level}`,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+
+      return searchableText.includes(filterValue.toLowerCase())
+    },
+    state: {
+      globalFilter: searchValue,
+      pagination,
+    },
+    onPaginationChange: setPagination,
   })
 
   const handleViewStudent = (student: StudentListItem) => {
@@ -186,25 +323,24 @@ export function StudentsTable({ onEdit, onCreateNew }: StudentsTableProps) {
       <GenericTable
         table={table}
         isLoading={isLoading}
-        searchable={{
-          enabled: true,
-          placeholder: 'البحث عن طالب...',
-          searchableColumns: ['name', 'email'],
-        }}
-        pagination={{
-          enabled: true,
-          pageSizeOptions: [10, 20, 50],
-        }}
-        toolbar={{
-          actions: onCreateNew ? [
-            {
-              label: 'إضافة طالب جديد',
-              icon: Plus,
-              variant: 'default',
-              onClick: onCreateNew,
-            },
-          ] : [],
-        }}
+        error={error}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        searchPlaceholder="البحث عن طالب (الاسم، البريد، الفصل، المستوى...)"
+        noDataMessage="لا يوجد طلاب مطابقون للبحث"
+        showQuickFilters={true}
+        quickFilters={quickFilters}
+        activeFilters={activeFilters}
+        onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
+        headerActions={onCreateNew ? (
+          <Button onClick={onCreateNew}>
+            <Plus className="ml-1 h-4 w-4" />
+            إضافة طالب
+          </Button>
+        ) : undefined}
+        enableVirtualScroll={true}
+        virtualItemHeight={72}
+        className="w-full"
         emptyState={{
           icon: Users,
           title: 'لا توجد بيانات طلاب',

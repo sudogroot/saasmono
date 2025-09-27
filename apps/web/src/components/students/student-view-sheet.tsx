@@ -106,7 +106,7 @@ interface StudentViewSheetProps {
 export function StudentViewSheet({ student, open, onOpenChange }: StudentViewSheetProps) {
   const { data: detailedStudent, isLoading } = useQuery({
     ...orpc.management.students.getStudentById.queryOptions({ studentId: student?.id || '' }),
-    enabled: !!student?.id && open,
+    enabled: !!student?.id && open && student.id.length > 0,
   })
 
   if (!student) return null
