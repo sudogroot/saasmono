@@ -265,6 +265,49 @@ export const StudentGroupMembershipSchema = z.object({
   updatedAt: z.coerce.date().optional(),
 })
 
+// Parent schemas - following teacher pattern
+export const ParentChildSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  lastName: z.string(),
+  email: z.email(),
+  createdAt: z.coerce.date(),
+  relationshipType: z.string(),
+  relationId: z.string(),
+  relationCreatedAt: z.coerce.date(),
+  classroom: z.object({
+    id: z.string(),
+    name: z.string(),
+    code: z.string(),
+    academicYear: z.string(),
+    enrollmentStatus: z.string(),
+    enrollmentDate: z.coerce.date(),
+    educationLevel: z.object({
+      id: z.string(),
+      level: z.number(),
+      displayNameAr: z.string().nullable(),
+    }),
+  }).nullable(),
+})
+
+export const ParentWithChildrenSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  lastName: z.string(),
+  email: z.email(),
+  userType: z.literal('parent'),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  children: z.array(ParentChildSchema),
+})
+
+export const ParentDetailedResponseSchema = ParentWithChildrenSchema
+
+export const UpdateParentStudentRelationSchema = z.object({
+  relationId: z.uuid(),
+  relationshipType: z.string().optional(),
+})
+
 // Type exports
 export type UserUpdateInput = z.infer<typeof UserUpdateSchema>
 export type CreateParentStudentRelationInput = z.infer<typeof CreateParentStudentRelationSchema>
@@ -291,3 +334,7 @@ export type StudentTeacher = z.infer<typeof StudentTeacherSchema>
 export type StudentSubjectWithTeachers = z.infer<typeof StudentSubjectWithTeachersSchema>
 export type StudentEnrollment = z.infer<typeof StudentEnrollmentSchema>
 export type StudentGroupMembership = z.infer<typeof StudentGroupMembershipSchema>
+export type ParentChild = z.infer<typeof ParentChildSchema>
+export type ParentWithChildren = z.infer<typeof ParentWithChildrenSchema>
+export type ParentDetailedResponse = z.infer<typeof ParentDetailedResponseSchema>
+export type UpdateParentStudentRelationInput = z.infer<typeof UpdateParentStudentRelationSchema>

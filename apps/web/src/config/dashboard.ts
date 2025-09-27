@@ -7,6 +7,7 @@ import {
   FileType,
   Folder,
   GraduationCap,
+  Heart,
   HelpCircle,
   LayoutDashboard,
   List,
@@ -37,6 +38,11 @@ export const dashboardSidebarData = {
       title: 'الطلاب',
       url: '/dashboard/institution-settings/students',
       icon: Users,
+    },
+    {
+      title: 'أولياء الأمور',
+      url: '/dashboard/institution-settings/parents',
+      icon: Heart,
     },
     {
       title: 'المناهج',
@@ -115,6 +121,11 @@ export const dashboardSidebarSections = [
         title: 'قائمة الطلاب',
         icon: BookUser,
         url: '/dashboard/institution-settings/students',
+      },
+      {
+        title: 'قائمة أولياء الأمور',
+        icon: Heart,
+        url: '/dashboard/institution-settings/parents',
       },
     ],
   },
@@ -198,6 +209,13 @@ export const dashboardMobileNavItems = [
     icon: Users,
     color: 'text-orange-600',
     bgColor: 'bg-orange-50'
+  },
+  {
+    title: 'أولياء الأمور',
+    href: 'institution-settings/parents',
+    icon: Heart,
+    color: 'text-pink-600',
+    bgColor: 'bg-pink-50'
   },
   {
     title: 'المناهج',
