@@ -868,6 +868,9 @@ importers:
       lucide-react:
         specifier: ^0.487.0
         version: 0.487.0(react@19.1.1)
+      next:
+        specifier: ^15.5.0
+        version: 15.5.0(@babel/core@7.28.4)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -15807,7 +15810,6 @@ snapshots:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
-    optional: true
 
   node-addon-api@8.5.0: {}
 
@@ -17574,7 +17576,6 @@ snapshots:
       react: 19.1.1
     optionalDependencies:
       '@babel/core': 7.28.4
-    optional: true
 
   styleq@0.1.3: {}
 

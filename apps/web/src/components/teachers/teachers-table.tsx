@@ -57,7 +57,7 @@ interface TeachersTableProps {
 const columnHelper = createColumnHelper<TeacherWithAssignments>()
 
 export function TeachersTable({ onEdit, onDelete, onCreateNew }: TeachersTableProps) {
-  const { data: teachers = [], isLoading, error } = useQuery(orpc.management.users.getTeachersList.queryOptions())
+  const { data: teachers = [], isLoading, error } = useQuery(orpc.management.teachers.getTeachersList.queryOptions())
 
   // Type assertion for teachers data
   const typedTeachers = (teachers as TeacherWithAssignments[]) || []
