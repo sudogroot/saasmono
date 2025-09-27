@@ -11,7 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { BookOpen, Building2, Eye, Mail, Plus, User, Users } from 'lucide-react'
+import { Building2, Edit, Eye, GraduationCap, Mail, Plus, User, Users } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { StudentViewSheet } from './student-view-sheet'
 
@@ -50,8 +50,11 @@ interface StudentsTableProps {
 const columnHelper = createColumnHelper<StudentListItem>()
 
 export function StudentsTable({ onEdit, onCreateNew }: StudentsTableProps) {
-  const [selectedStudent, setSelectedStudent] = useState<StudentListItem | null>(null)
-  const [isViewSheetOpen, setIsViewSheetOpen] = useState(false)
+  const { data: students = [], isLoading, error } = useQuery(orpc.management.students.getStudentsList.queryOptions({}))
+
+  // Type assertion for students data
+  const typedStudents = (students as StudentListItem[]) || []
+
   const [searchValue, setSearchValue] = useState('')
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
   const [pagination, setPagination] = useState({
@@ -59,65 +62,100 @@ export function StudentsTable({ onEdit, onCreateNew }: StudentsTableProps) {
     pageSize: 20,
   })
 
-  const { data: students = [], isLoading, error } = useQuery(orpc.management.students.getStudentsList.queryOptions({}))
+  // Sheet state
+  const [selectedStudent, setSelectedStudent] = useState<StudentListItem | null>(null)
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
 
-  // Type assertion for students data
-  const typedStudents = (students as StudentListItem[]) || []
+  const handleViewStudent = (student: StudentListItem) => {
+    setSelectedStudent(student)
+    setIsSheetOpen(true)
+  }
 
   const columns = useMemo(
     () => [
       columnHelper.accessor('name', {
-        header: 'الاسم',
-        cell: (info) => (
+        id: 'student',
+        header: 'الطالب',
+        cell: ({ row }) => (
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-              <User className="w-4 h-4 text-blue-600" />
+            <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+              <User className="text-primary h-5 w-5" />
             </div>
             <div>
-              <div className="font-medium">{`${info.row.original.name} ${info.row.original.lastName}`}</div>
-              <div className="text-sm text-muted-foreground flex items-center gap-1">
-                <Mail className="w-3 h-3" />
-                {info.row.original.email}
+              <div className="text-foreground font-medium">
+                {row.original.name} {row.original.lastName}
+              </div>
+              <div className="text-muted-foreground flex items-center gap-1 text-sm">
+                <Mail className="h-3 w-3" />
+                {row.original.email}
               </div>
             </div>
           </div>
         ),
       }),
-      columnHelper.accessor('classroom', {
+      columnHelper.display({
+        id: 'classroom',
         header: 'الفصل الدراسي',
-        cell: (info) => {
-          const classroom = info.getValue()
+        cell: ({ row }) => {
+          const classroom = row.original.classroom
           if (!classroom) {
             return (
-              <Badge variant="secondary" className="gap-1">
-                <Building2 className="w-3 h-3" />
-                غير مسجل في فصل
-              </Badge>
+              <div className="space-y-1">
+                <Badge variant="secondary" className="text-xs">
+                  غير مسجل
+                </Badge>
+                <div className="text-muted-foreground text-xs">لا يوجد فصل</div>
+              </div>
             )
           }
           return (
             <div className="space-y-1">
-              <Badge variant="default" className="gap-1">
-                <Building2 className="w-3 h-3" />
-                {classroom.name}
-              </Badge>
-              <div className="text-xs text-muted-foreground">
-                الكود: {classroom.code} | العام الدراسي: {classroom.academicYear}
+              <div className="flex items-center gap-2">
+                <Building2 className="text-muted-foreground h-3 w-3" />
+                <span className="text-sm font-medium">{classroom.name}</span>
               </div>
-              <div className="text-xs text-muted-foreground">
-                المستوى: {classroom.educationLevel.displayNameAr || `الصف ${classroom.educationLevel.level}`}
+              <Badge variant="outline" className="text-xs">
+                المستوى {classroom.educationLevel.level}
+              </Badge>
+              <div className="text-muted-foreground text-xs">
+                {classroom.academicYear} • {classroom.code}
               </div>
             </div>
           )
         },
       }),
-      columnHelper.accessor('classroom.enrollmentStatus', {
+      columnHelper.display({
+        id: 'level',
+        header: 'المستوى التعليمي',
+        cell: ({ row }) => {
+          const classroom = row.original.classroom
+          if (!classroom) {
+            return (
+              <Badge variant="secondary" className="text-xs">
+                غير محدد
+              </Badge>
+            )
+          }
+          return (
+            <div className="space-y-1">
+              <Badge variant="outline" className="border-blue-200 bg-blue-50 text-xs font-medium text-blue-700">
+                المستوى {classroom.educationLevel.level}
+              </Badge>
+              {classroom.educationLevel.displayNameAr && (
+                <div className="text-muted-foreground text-xs">{classroom.educationLevel.displayNameAr}</div>
+              )}
+            </div>
+          )
+        },
+      }),
+      columnHelper.display({
+        id: 'status',
         header: 'حالة التسجيل',
-        cell: (info) => {
-          const status = info.getValue()
+        cell: ({ row }) => {
+          const status = row.original.classroom?.enrollmentStatus
           if (!status) {
             return (
-              <Badge variant="secondary">
+              <Badge variant="secondary" className="text-xs">
                 غير مسجل
               </Badge>
             )
@@ -135,7 +173,7 @@ export function StudentsTable({ onEdit, onCreateNew }: StudentsTableProps) {
           }
 
           return (
-            <Badge variant={config.variant}>
+            <Badge variant={config.variant} className="text-xs">
               {config.label}
             </Badge>
           )
@@ -144,26 +182,14 @@ export function StudentsTable({ onEdit, onCreateNew }: StudentsTableProps) {
       columnHelper.display({
         id: 'actions',
         header: 'الإجراءات',
-        cell: (info) => (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setSelectedStudent(info.row.original)
-                setIsViewSheetOpen(true)
-              }}
-            >
-              <Eye className="w-4 h-4" />
-              عرض
+        cell: ({ row }) => (
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="sm" onClick={() => handleViewStudent(row.original)} title="عرض">
+              <Eye className="h-4 w-4" />
             </Button>
             {onEdit && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onEdit(info.row.original.id)}
-              >
-                تعديل
+              <Button variant="ghost" size="sm" onClick={() => onEdit(row.original.id)} title="تعديل">
+                <Edit className="h-4 w-4" />
               </Button>
             )}
           </div>
@@ -189,43 +215,23 @@ export function StudentsTable({ onEdit, onCreateNew }: StudentsTableProps) {
         label: 'الفصل الدراسي',
         values: [
           { label: 'مسجل في فصل', value: 'true' },
-          { label: 'غير مسجل في فصل', value: 'false' },
+          { label: 'غير مسجل', value: 'false' },
         ],
       },
       {
         key: 'educationLevel',
         label: 'المستوى التعليمي',
-        values: [
-          { label: 'المستوى 1', value: '1' },
-          { label: 'المستوى 2', value: '2' },
-          { label: 'المستوى 3', value: '3' },
-          { label: 'المستوى 4', value: '4' },
-          { label: 'المستوى 5', value: '5' },
-          { label: 'المستوى 6', value: '6' },
-        ],
-      },
-      {
-        key: 'classroom',
-        label: 'الفصل الدراسي',
-        values: [
-          // This would be dynamically populated from available classrooms
-          // For now, we'll use common classroom codes
-          { label: 'A', value: 'A' },
-          { label: 'B', value: 'B' },
-          { label: 'C', value: 'C' },
-        ],
-      },
-      {
-        key: 'joinedRecently',
-        label: 'تاريخ الانضمام',
-        values: [
-          { label: 'انضم خلال الشهر الماضي', value: 'month' },
-          { label: 'انضم خلال الـ 3 أشهر الماضية', value: 'quarter' },
-          { label: 'انضم خلال السنة الماضية', value: 'year' },
-        ],
+        values: Array.from(new Set(
+          typedStudents
+            .filter(s => s.classroom?.educationLevel)
+            .map(s => s.classroom!.educationLevel.level)
+        )).map(level => ({
+          label: `المستوى ${level}`,
+          value: level.toString(),
+        })),
       },
     ],
-    []
+    [typedStudents]
   )
 
   const filteredData = useMemo(() => {
@@ -251,29 +257,6 @@ export function StudentsTable({ onEdit, onCreateNew }: StudentsTableProps) {
           filtered = filtered.filter((student) =>
             student.classroom?.educationLevel.level.toString() === value
           )
-          break
-        case 'classroom':
-          filtered = filtered.filter((student) =>
-            student.classroom?.code === value || student.classroom?.name.includes(value)
-          )
-          break
-        case 'joinedRecently':
-          const now = new Date()
-          let cutoffDate = new Date()
-
-          switch (value) {
-            case 'month':
-              cutoffDate.setMonth(now.getMonth() - 1)
-              break
-            case 'quarter':
-              cutoffDate.setMonth(now.getMonth() - 3)
-              break
-            case 'year':
-              cutoffDate.setFullYear(now.getFullYear() - 1)
-              break
-          }
-
-          filtered = filtered.filter((student) => new Date(student.createdAt) >= cutoffDate)
           break
       }
     })
@@ -313,9 +296,64 @@ export function StudentsTable({ onEdit, onCreateNew }: StudentsTableProps) {
     onPaginationChange: setPagination,
   })
 
-  const handleViewStudent = (student: StudentListItem) => {
-    setSelectedStudent(student)
-    setIsViewSheetOpen(true)
+  const mobileCardRenderer = (row: any) => (
+    <div
+      className="flex items-center bg-white px-4 py-3 transition-colors"
+      onClick={() => handleViewStudent(row.original)}
+    >
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 mr-3">
+        <User className="h-5 w-5 text-primary" />
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <div className="font-medium text-foreground text-base leading-tight">
+          {row.original.name} {row.original.lastName}
+        </div>
+        <div className="text-sm text-muted-foreground leading-tight mt-0.5">
+          {row.original.email}
+        </div>
+        {row.original.classroom && (
+          <div className="text-xs text-muted-foreground mt-1">
+            {row.original.classroom.name} • المستوى {row.original.classroom.educationLevel.level}
+          </div>
+        )}
+      </div>
+
+      <div className="ml-2 text-muted-foreground">
+        <Eye className="h-4 w-4" />
+      </div>
+    </div>
+  )
+
+  const emptyStateAction = onCreateNew ? (
+    <Button onClick={onCreateNew} className="mt-4">
+      <Plus className="ml-1 h-4 w-4" />
+      إضافة طالب جديد
+    </Button>
+  ) : null
+
+  const headerActions = onCreateNew ? (
+    <Button onClick={onCreateNew}>
+      <Plus className="ml-1 h-4 w-4" />
+      إضافة طالب
+    </Button>
+  ) : null
+
+  if (typedStudents.length === 0 && !isLoading) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <div className="space-y-4 text-center">
+          <div className="bg-muted mx-auto flex h-16 w-16 items-center justify-center rounded-full">
+            <Users className="text-muted-foreground h-8 w-8" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold">لا يوجد طلاب</h3>
+            <p className="text-muted-foreground mt-1">ابدأ بإضافة الطلاب لإدارة القوائم الطلابية</p>
+          </div>
+          {emptyStateAction}
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -328,37 +366,19 @@ export function StudentsTable({ onEdit, onCreateNew }: StudentsTableProps) {
         onSearchChange={setSearchValue}
         searchPlaceholder="البحث عن طالب (الاسم، البريد، الفصل، المستوى...)"
         noDataMessage="لا يوجد طلاب مطابقون للبحث"
+        mobileCardRenderer={mobileCardRenderer}
         showQuickFilters={true}
         quickFilters={quickFilters}
         activeFilters={activeFilters}
         onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
-        headerActions={onCreateNew ? (
-          <Button onClick={onCreateNew}>
-            <Plus className="ml-1 h-4 w-4" />
-            إضافة طالب
-          </Button>
-        ) : undefined}
+        headerActions={headerActions}
+        emptyStateAction={emptyStateAction}
         enableVirtualScroll={true}
         virtualItemHeight={72}
         className="w-full"
-        emptyState={{
-          icon: Users,
-          title: 'لا توجد بيانات طلاب',
-          description: 'لم يتم العثور على أي طلاب. قم بإضافة طالب جديد للبدء.',
-          action: onCreateNew ? {
-            label: 'إضافة طالب جديد',
-            onClick: onCreateNew,
-          } : undefined,
-        }}
       />
 
-      {selectedStudent && (
-        <StudentViewSheet
-          student={selectedStudent}
-          open={isViewSheetOpen}
-          onOpenChange={setIsViewSheetOpen}
-        />
-      )}
+      <StudentViewSheet student={selectedStudent} open={isSheetOpen} onOpenChange={setIsSheetOpen} />
     </>
   )
 }
