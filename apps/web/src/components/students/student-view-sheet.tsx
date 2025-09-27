@@ -1,7 +1,7 @@
 'use client'
 
 import { orpc } from '@/utils/orpc'
-import { Badge, Sheet, SheetBody, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@repo/ui'
+import { Badge, Sheet, SheetBody, SheetContent, SheetDescription, SheetHeader, SheetTitle, Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui'
 import { useQuery } from '@tanstack/react-query'
 import { BookOpen, Building2, Calendar, GraduationCap, Mail, Shield, User, Users } from 'lucide-react'
 
@@ -133,225 +133,242 @@ export function StudentViewSheet({ student, open, onOpenChange }: StudentViewShe
 
         <SheetBody>
           <div dir="rtl" className="py-2">
-            {/* Basic Information */}
-            <div className="space-y-3">
-              <h3 className="text-muted-foreground text-sm font-medium">المعلومات الأساسية</h3>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between rounded-lg border p-3">
-                  <div className="flex items-center gap-2">
-                    <User className="text-muted-foreground h-4 w-4" />
-                    <span className="text-sm">الاسم الكامل</span>
-                  </div>
-                  <span className="text-sm font-medium">
-                    {student.name} {student.lastName}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between rounded-lg border p-3">
-                  <div className="flex items-center gap-2">
-                    <Mail className="text-muted-foreground h-4 w-4" />
-                    <span className="text-sm">البريد الإلكتروني</span>
-                  </div>
-                  <span className="text-sm font-medium">{student.email}</span>
-                </div>
-                <div className="flex items-center justify-between rounded-lg border p-3">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="text-muted-foreground h-4 w-4" />
-                    <span className="text-sm">تاريخ التسجيل</span>
-                  </div>
-                  <span className="text-sm font-medium">{new Date(student.createdAt).toLocaleDateString('ar-SA')}</span>
-                </div>
-              </div>
-            </div>
+            <Tabs defaultValue="basic-info" className="space-y-6">
+              <TabsList>
+                <TabsTrigger value="basic-info" className="flex items-center gap-2">
+                  <Building2 className="h-4 w-4" />
+                  <span>المعلومات الأساسية</span>
+                </TabsTrigger>
+                <TabsTrigger value="subjects-info" className="flex items-center gap-2">
+                  <Building2 className="h-4 w-4" />
+                  <span>معلومات المواد الدراسية</span>
+                </TabsTrigger>
+              </TabsList>
 
-            {/* Classroom Information */}
-            <div className="mt-6 space-y-3">
-              <h3 className="text-muted-foreground text-sm font-medium">معلومات الفصل الدراسي</h3>
-              {student.classroom ? (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between rounded-lg border p-3">
-                    <div className="flex items-center gap-2">
-                      <Building2 className="text-muted-foreground h-4 w-4" />
-                      <span className="text-sm">اسم الفصل</span>
-                    </div>
-                    <span className="text-sm font-medium">{student.classroom.name}</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border p-3">
-                    <div className="flex items-center gap-2">
-                      <Shield className="text-muted-foreground h-4 w-4" />
-                      <span className="text-sm">كود الفصل</span>
-                    </div>
-                    <span className="text-sm font-medium">{student.classroom.code}</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border p-3">
-                    <div className="flex items-center gap-2">
-                      <GraduationCap className="text-muted-foreground h-4 w-4" />
-                      <span className="text-sm">المستوى التعليمي</span>
-                    </div>
-                    <span className="text-sm font-medium">
-                      {student.classroom.educationLevel.displayNameAr ||
-                        `الصف ${student.classroom.educationLevel.level}`}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border p-3">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="text-muted-foreground h-4 w-4" />
-                      <span className="text-sm">العام الدراسي</span>
-                    </div>
-                    <span className="text-sm font-medium">{student.classroom.academicYear}</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border p-3">
-                    <div className="flex items-center gap-2">
-                      <Shield className="text-muted-foreground h-4 w-4" />
-                      <span className="text-sm">حالة التسجيل</span>
-                    </div>
-                    <Badge
-                      variant={
-                        student.classroom.enrollmentStatus === 'active'
-                          ? 'default'
-                          : student.classroom.enrollmentStatus === 'inactive'
-                            ? 'secondary'
-                            : 'destructive'
-                      }
-                    >
-                      {student.classroom.enrollmentStatus === 'active'
-                        ? 'نشط'
-                        : student.classroom.enrollmentStatus === 'inactive'
-                          ? 'غير نشط'
-                          : student.classroom.enrollmentStatus === 'transferred'
-                            ? 'محول'
-                            : student.classroom.enrollmentStatus}
-                    </Badge>
-                  </div>
-                </div>
-              ) : (
-                <div className="rounded-lg border border-dashed p-6 text-center">
-                  <Building2 className="text-muted-foreground mx-auto h-8 w-8" />
-                  <p className="text-muted-foreground mt-2 text-sm">الطالب غير مسجل في أي فصل دراسي</p>
-                </div>
-              )}
-            </div>
-
-            {/* Parents Information */}
-            {detailedStudent && (
-              <div className="mt-6 space-y-3">
-                <h3 className="text-muted-foreground text-sm font-medium">
-                  أولياء الأمور ({detailedStudent.parents.length})
-                </h3>
-                {detailedStudent.parents.length > 0 ? (
+              <TabsContent dir="rtl" value="basic-info" className="space-y-6">
+                {/* Basic Information */}
+                <div className="space-y-3">
+                  <h3 className="text-muted-foreground text-sm font-medium">المعلومات الأساسية</h3>
                   <div className="space-y-2">
-                    {detailedStudent.parents.map((parent) => (
-                      <div key={parent.relationId} className="rounded-lg border p-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <User className="text-muted-foreground h-4 w-4" />
-                            <span className="text-sm font-medium">
-                              {parent.parentName} {parent.parentLastName}
-                            </span>
-                          </div>
-                          <Badge variant="outline">
-                            {parent.relationshipType === 'parent' ? 'والد/والدة' : parent.relationshipType}
-                          </Badge>
-                        </div>
-                        <div className="text-muted-foreground mt-1 flex items-center gap-1 text-xs">
-                          <Mail className="h-3 w-3" />
-                          {parent.parentemail}
-                        </div>
+                    <div className="flex items-center justify-between rounded-lg border p-3">
+                      <div className="flex items-center gap-2">
+                        <User className="text-muted-foreground h-4 w-4" />
+                        <span className="text-sm">الاسم الكامل</span>
                       </div>
-                    ))}
+                      <span className="text-sm font-medium">
+                        {student.name} {student.lastName}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-lg border p-3">
+                      <div className="flex items-center gap-2">
+                        <Mail className="text-muted-foreground h-4 w-4" />
+                        <span className="text-sm">البريد الإلكتروني</span>
+                      </div>
+                      <span className="text-sm font-medium">{student.email}</span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-lg border p-3">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="text-muted-foreground h-4 w-4" />
+                        <span className="text-sm">تاريخ التسجيل</span>
+                      </div>
+                      <span className="text-sm font-medium">{new Date(student.createdAt).toLocaleDateString('ar-SA')}</span>
+                    </div>
                   </div>
-                ) : (
-                  <div className="rounded-lg border border-dashed p-6 text-center">
-                    <Users className="text-muted-foreground mx-auto h-8 w-8" />
-                    <p className="text-muted-foreground mt-2 text-sm">لا توجد علاقات أولياء أمور مسجلة</p>
+                </div>
+
+                {/* Parents Information */}
+                {detailedStudent && (
+                  <div className="mt-6 space-y-3">
+                    <h3 className="text-muted-foreground text-sm font-medium">
+                      أولياء الأمور ({detailedStudent.parents.length})
+                    </h3>
+                    {detailedStudent.parents.length > 0 ? (
+                      <div className="space-y-2">
+                        {detailedStudent.parents.map((parent) => (
+                          <div key={parent.relationId} className="rounded-lg border p-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <User className="text-muted-foreground h-4 w-4" />
+                                <span className="text-sm font-medium">
+                                  {parent.parentName} {parent.parentLastName}
+                                </span>
+                              </div>
+                              <Badge variant="outline">
+                                {parent.relationshipType === 'parent' ? 'والد/والدة' : parent.relationshipType}
+                              </Badge>
+                            </div>
+                            <div className="text-muted-foreground mt-1 flex items-center gap-1 text-xs">
+                              <Mail className="h-3 w-3" />
+                              {parent.parentEmail}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="rounded-lg border border-dashed p-6 text-center">
+                        <Users className="text-muted-foreground mx-auto h-8 w-8" />
+                        <p className="text-muted-foreground mt-2 text-sm">لا توجد علاقات أولياء أمور مسجلة</p>
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
-            )}
 
-            {/* Groups Information */}
-            {detailedStudent && (
-              <div className="mt-6 space-y-3">
-                <h3 className="text-muted-foreground text-sm font-medium">
-                  المجموعات ({detailedStudent.groups.length})
-                </h3>
-                {detailedStudent.groups.length > 0 ? (
-                  <div className="space-y-2">
-                    {detailedStudent.groups.map((group) => (
-                      <div key={group.id} className="rounded-lg border p-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Users className="text-muted-foreground h-4 w-4" />
-                            <span className="text-sm font-medium">{group.name}</span>
-                          </div>
-                          <div className="flex gap-1">
-                            <Badge variant={group.isActive ? 'default' : 'secondary'}>
-                              {group.isActive ? 'نشط' : 'غير نشط'}
-                            </Badge>
-                            {group.isDefault && <Badge variant="outline">افتراضي</Badge>}
-                          </div>
+                {/* Classroom Information */}
+                <div className="mt-6 space-y-3">
+                  <h3 className="text-muted-foreground text-sm font-medium">معلومات الفصل الدراسي</h3>
+                  {student.classroom ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between rounded-lg border p-3">
+                        <div className="flex items-center gap-2">
+                          <Building2 className="text-muted-foreground h-4 w-4" />
+                          <span className="text-sm">اسم الفصل</span>
                         </div>
-                        {group.subject && (
-                          <div className="text-muted-foreground mt-1 flex items-center gap-1 text-xs">
-                            <BookOpen className="h-3 w-3" />
-                            {group.subject.displayNameAr || group.subject.name}
-                          </div>
-                        )}
+                        <span className="text-sm font-medium">{student.classroom.name}</span>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="rounded-lg border border-dashed p-6 text-center">
-                    <Users className="text-muted-foreground mx-auto h-8 w-8" />
-                    <p className="text-muted-foreground mt-2 text-sm">الطالب غير مسجل في أي مجموعات</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Subjects Information */}
-            {detailedStudent && (
-              <div className="mt-6 space-y-3">
-                <h3 className="text-muted-foreground text-sm font-medium">
-                  المواد الدراسية ({detailedStudent.subjects.length})
-                </h3>
-                {detailedStudent.subjects.length > 0 ? (
-                  <div className="space-y-3">
-                    {detailedStudent.subjects.map((subject) => (
-                      <div key={subject.id} className="rounded-lg border p-3">
-                        <div className="mb-2 flex items-center gap-2">
-                          <BookOpen className="text-muted-foreground h-4 w-4" />
-                          <span className="text-sm font-medium">{subject.displayNameAr || subject.name}</span>
+                      <div className="flex items-center justify-between rounded-lg border p-3">
+                        <div className="flex items-center gap-2">
+                          <Shield className="text-muted-foreground h-4 w-4" />
+                          <span className="text-sm">كود الفصل</span>
                         </div>
-                        <div className="space-y-1">
-                          {subject.teachers.map((teacher) => (
-                            <div key={teacher.id} className="flex items-center justify-between text-xs">
-                              <span className="text-muted-foreground">
-                                {teacher.name} {teacher.lastName}
-                              </span>
+                        <span className="text-sm font-medium">{student.classroom.code}</span>
+                      </div>
+                      <div className="flex items-center justify-between rounded-lg border p-3">
+                        <div className="flex items-center gap-2">
+                          <GraduationCap className="text-muted-foreground h-4 w-4" />
+                          <span className="text-sm">المستوى التعليمي</span>
+                        </div>
+                        <span className="text-sm font-medium">
+                          {student.classroom.educationLevel.displayNameAr ||
+                            `الصف ${student.classroom.educationLevel.level}`}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between rounded-lg border p-3">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="text-muted-foreground h-4 w-4" />
+                          <span className="text-sm">العام الدراسي</span>
+                        </div>
+                        <span className="text-sm font-medium">{student.classroom.academicYear}</span>
+                      </div>
+                      <div className="flex items-center justify-between rounded-lg border p-3">
+                        <div className="flex items-center gap-2">
+                          <Shield className="text-muted-foreground h-4 w-4" />
+                          <span className="text-sm">حالة التسجيل</span>
+                        </div>
+                        <Badge
+                          variant={
+                            student.classroom.enrollmentStatus === 'active'
+                              ? 'default'
+                              : student.classroom.enrollmentStatus === 'inactive'
+                                ? 'secondary'
+                                : 'destructive'
+                          }
+                        >
+                          {student.classroom.enrollmentStatus === 'active'
+                            ? 'نشط'
+                            : student.classroom.enrollmentStatus === 'inactive'
+                              ? 'غير نشط'
+                              : student.classroom.enrollmentStatus === 'transferred'
+                                ? 'محول'
+                                : student.classroom.enrollmentStatus}
+                        </Badge>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="rounded-lg border border-dashed p-6 text-center">
+                      <Building2 className="text-muted-foreground mx-auto h-8 w-8" />
+                      <p className="text-muted-foreground mt-2 text-sm">الطالب غير مسجل في أي فصل دراسي</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Groups Information */}
+                {detailedStudent && (
+                  <div className="mt-6 space-y-3">
+                    <h3 className="text-muted-foreground text-sm font-medium">
+                      المجموعات ({detailedStudent.groups.length})
+                    </h3>
+                    {detailedStudent.groups.length > 0 ? (
+                      <div className="space-y-2">
+                        {detailedStudent.groups.map((group) => (
+                          <div key={group.id} className="rounded-lg border p-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <Users className="text-muted-foreground h-4 w-4" />
+                                <span className="text-sm font-medium">{group.name}</span>
+                              </div>
                               <div className="flex gap-1">
-                                <Badge variant="outline" size="sm">
-                                  {teacher.role}
+                                <Badge variant={group.isActive ? 'default' : 'secondary'}>
+                                  {group.isActive ? 'نشط' : 'غير نشط'}
                                 </Badge>
-                                {teacher.isMainTeacher && (
-                                  <Badge variant="default" size="sm">
-                                    مدرس رئيسي
-                                  </Badge>
-                                )}
+                                {group.isDefault && <Badge variant="outline">افتراضي</Badge>}
                               </div>
                             </div>
-                          ))}
-                        </div>
+                            {group.subject && (
+                              <div className="text-muted-foreground mt-1 flex items-center gap-1 text-xs">
+                                <BookOpen className="h-3 w-3" />
+                                {group.subject.displayNameAr || group.subject.name}
+                              </div>
+                            )}
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="rounded-lg border border-dashed p-6 text-center">
-                    <BookOpen className="text-muted-foreground mx-auto h-8 w-8" />
-                    <p className="text-muted-foreground mt-2 text-sm">لا توجد مواد دراسية مسجلة</p>
+                    ) : (
+                      <div className="rounded-lg border border-dashed p-6 text-center">
+                        <Users className="text-muted-foreground mx-auto h-8 w-8" />
+                        <p className="text-muted-foreground mt-2 text-sm">الطالب غير مسجل في أي مجموعات</p>
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
-            )}
+              </TabsContent>
+
+              {/* Subjects Information */}
+              <TabsContent dir="rtl" value="subjects-info" className="space-y-6">
+                {detailedStudent && (
+                  <div className="mt-6 space-y-3">
+                    <h3 className="text-muted-foreground text-sm font-medium">
+                      المواد الدراسية ({detailedStudent.subjects.length})
+                    </h3>
+                    {detailedStudent.subjects.length > 0 ? (
+                      <div className="space-y-3">
+                        {detailedStudent.subjects.map((subject) => (
+                          <div key={subject.id} className="rounded-lg border p-3">
+                            <div className="mb-2 flex items-center gap-2">
+                              <BookOpen className="text-muted-foreground h-4 w-4" />
+                              <span className="text-sm font-medium">{subject.displayNameAr || subject.name}</span>
+                            </div>
+                            <div className="space-y-1">
+                              {subject.teachers.map((teacher) => (
+                                <div key={teacher.id} className="flex items-center justify-between text-xs">
+                                  <span className="text-muted-foreground">
+                                    {teacher.name} {teacher.lastName}
+                                  </span>
+                                  <div className="flex gap-1">
+                                    <Badge variant="outline" size="sm">
+                                      {teacher.role}
+                                    </Badge>
+                                    {teacher.isMainTeacher && (
+                                      <Badge variant="default" size="sm">
+                                        مدرس رئيسي
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="rounded-lg border border-dashed p-6 text-center">
+                        <BookOpen className="text-muted-foreground mx-auto h-8 w-8" />
+                        <p className="text-muted-foreground mt-2 text-sm">لا توجد مواد دراسية مسجلة</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
           </div>
         </SheetBody>
       </SheetContent>
