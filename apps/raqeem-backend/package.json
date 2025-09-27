@@ -26,8 +26,8 @@
     "db:watch": "docker compose up",
     "db:stop": "docker compose stop",
     "db:down": "docker compose down",
-    "seed:users": "tsx src/db/seeds/dev/users.ts",
-    "seed:courts": "tsx src/db/seeds/prod/courts.ts"
+    "seed:users": "tsx src/db/seeds/data/users.ts",
+    "seed:courts": "tsx src/db/seeds/data/courts.ts"
   },
   "dependencies": {
     "@better-auth/expo": "^1.3.12",
