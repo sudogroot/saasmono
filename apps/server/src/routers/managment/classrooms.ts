@@ -30,7 +30,7 @@ export const classroomManagementRouter = {
   getClassroomById: protectedProcedure
     .input(
       z.object({
-        classroomId: z.string().uuid().describe('Classroom ID'),
+        classroomId: z.uuid().describe('Classroom ID'),
       })
     )
     .output(ClassroomSchema)

@@ -21,13 +21,35 @@ export const CreateParentStudentRelationSchema = z.object({
 
 export const CreateTeacherAssignmentSchema = z.object({
   teacherId: z.string().min(1),
-  educationSubjectId: z.string().uuid(),
-  educationLevelId: z.string().uuid(),
+  educationSubjectId: z.uuid(),
+  educationLevelId: z.uuid(),
 })
 
 export const UpdateTeacherAssignmentSchema = z.object({
-  educationSubjectId: z.string().uuid().optional(),
-  educationLevelId: z.string().uuid().optional(),
+  educationSubjectId: z.uuid().optional(),
+  educationLevelId: z.uuid().optional(),
+})
+
+export const CreateStudentEnrollmentSchema = z.object({
+  studentId: z.string().min(1),
+  classroomId: z.uuid(),
+  enrollmentDate: z.coerce.date().optional(),
+})
+
+export const CreateStudentGroupMembershipSchema = z.object({
+  studentId: z.string().min(1),
+  classroomGroupId: z.uuid(),
+  educationSubjectId: z.uuid().optional(),
+})
+
+export const UpdateStudentEnrollmentStatusSchema = z.object({
+  enrollmentId: z.uuid(),
+  status: z.enum(['active', 'inactive', 'transferred']),
+})
+
+export const UpdateStudentGroupMembershipStatusSchema = z.object({
+  membershipId: z.uuid(),
+  isActive: z.boolean(),
 })
 
 // Output Schemas - Using coerce for date strings from API
@@ -58,7 +80,7 @@ export const UserResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
   lastName: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   userType: UserTypeSchema,
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
@@ -70,7 +92,7 @@ export const UserListItemSchema = z.object({
   id: z.string(),
   name: z.string(),
   lastName: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   userType: UserTypeSchema,
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
@@ -107,11 +129,140 @@ export const TeacherWithAssignmentsSchema = z.object({
   id: z.string(),
   name: z.string(),
   lastName: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   userType: z.literal('teacher'),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   classrooms: z.array(TeacherClassroomSchema),
+})
+
+// Student schemas
+export const StudentParentSchema = z.object({
+  relationId: z.string(),
+  parentId: z.string(),
+  parentName: z.string(),
+  parentLastName: z.string(),
+  parentemail: z.email(),
+  relationshipType: z.string(),
+  createdAt: z.coerce.date(),
+})
+
+export const StudentEducationLevelSchema = z.object({
+  id: z.string(),
+  level: z.number(),
+  displayNameAr: z.string().nullable(),
+  displayNameEn: z.string().nullable(),
+  displayNameFr: z.string().nullable(),
+  section: z.string().nullable(),
+})
+
+export const StudentClassroomSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  code: z.string(),
+  academicYear: z.string(),
+  capacity: z.number().nullable(),
+  enrollmentDate: z.coerce.date(),
+  enrollmentStatus: z.string(),
+  educationLevel: StudentEducationLevelSchema,
+})
+
+export const StudentSubjectSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  displayNameAr: z.string().nullable(),
+  displayNameEn: z.string().nullable(),
+  displayNameFr: z.string().nullable(),
+})
+
+export const StudentTeacherSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  lastName: z.string(),
+  email: z.email(),
+  role: z.string(),
+  isMainTeacher: z.boolean(),
+  assignmentId: z.string(),
+})
+
+export const StudentSubjectWithTeachersSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  displayNameAr: z.string().nullable(),
+  displayNameEn: z.string().nullable(),
+  displayNameFr: z.string().nullable(),
+  teachers: z.array(StudentTeacherSchema),
+})
+
+export const StudentGroupSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  code: z.string(),
+  description: z.string().nullable(),
+  maxCapacity: z.number().nullable(),
+  isDefault: z.boolean(),
+  isActive: z.boolean(),
+  subject: StudentSubjectSchema.nullable(),
+  membershipId: z.string(),
+})
+
+export const StudentDetailedResponseSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  lastName: z.string(),
+  email: z.email(),
+  userType: z.literal('student'),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  parents: z.array(StudentParentSchema),
+  classroom: StudentClassroomSchema.nullable(),
+  groups: z.array(StudentGroupSchema),
+  subjects: z.array(StudentSubjectWithTeachersSchema),
+})
+
+export const StudentListItemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  lastName: z.string(),
+  email: z.email(),
+  userType: z.literal('student'),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  classroom: z.object({
+    id: z.string(),
+    name: z.string(),
+    code: z.string(),
+    academicYear: z.string(),
+    enrollmentDate: z.coerce.date(),
+    enrollmentStatus: z.string(),
+    educationLevel: z.object({
+      id: z.string(),
+      level: z.number(),
+      displayNameAr: z.string().nullable(),
+    }),
+  }).nullable(),
+})
+
+export const StudentEnrollmentSchema = z.object({
+  id: z.string(),
+  studentId: z.string(),
+  classroomId: z.string(),
+  enrollmentDate: z.coerce.date(),
+  status: z.string(),
+  orgId: z.string(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().optional(),
+})
+
+export const StudentGroupMembershipSchema = z.object({
+  id: z.string(),
+  studentId: z.string(),
+  classroomGroupId: z.string(),
+  educationSubjectId: z.string().nullable(),
+  isActive: z.boolean(),
+  orgId: z.string(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().optional(),
 })
 
 // Type exports
@@ -119,6 +270,10 @@ export type UserUpdateInput = z.infer<typeof UserUpdateSchema>
 export type CreateParentStudentRelationInput = z.infer<typeof CreateParentStudentRelationSchema>
 export type CreateTeacherAssignmentInput = z.infer<typeof CreateTeacherAssignmentSchema>
 export type UpdateTeacherAssignmentInput = z.infer<typeof UpdateTeacherAssignmentSchema>
+export type CreateStudentEnrollmentInput = z.infer<typeof CreateStudentEnrollmentSchema>
+export type CreateStudentGroupMembershipInput = z.infer<typeof CreateStudentGroupMembershipSchema>
+export type UpdateStudentEnrollmentStatusInput = z.infer<typeof UpdateStudentEnrollmentStatusSchema>
+export type UpdateStudentGroupMembershipStatusInput = z.infer<typeof UpdateStudentGroupMembershipStatusSchema>
 export type UserResponse = z.infer<typeof UserResponseSchema>
 export type UserListItem = z.infer<typeof UserListItemSchema>
 export type ParentStudentRelation = z.infer<typeof ParentStudentRelationSchema>
@@ -126,3 +281,13 @@ export type TeacherAssignment = z.infer<typeof TeacherAssignmentSchema>
 export type TeacherWithAssignments = z.infer<typeof TeacherWithAssignmentsSchema>
 export type TeacherClassroom = z.infer<typeof TeacherClassroomSchema>
 export type TeacherSubjectAssignment = z.infer<typeof TeacherSubjectAssignmentSchema>
+export type StudentDetailedResponse = z.infer<typeof StudentDetailedResponseSchema>
+export type StudentListItem = z.infer<typeof StudentListItemSchema>
+export type StudentParent = z.infer<typeof StudentParentSchema>
+export type StudentClassroom = z.infer<typeof StudentClassroomSchema>
+export type StudentGroup = z.infer<typeof StudentGroupSchema>
+export type StudentSubject = z.infer<typeof StudentSubjectSchema>
+export type StudentTeacher = z.infer<typeof StudentTeacherSchema>
+export type StudentSubjectWithTeachers = z.infer<typeof StudentSubjectWithTeachersSchema>
+export type StudentEnrollment = z.infer<typeof StudentEnrollmentSchema>
+export type StudentGroupMembership = z.infer<typeof StudentGroupMembershipSchema>

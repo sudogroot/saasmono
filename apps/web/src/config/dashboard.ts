@@ -183,6 +183,13 @@ export const dashboardMobileNavItems = [
     bgColor: 'bg-green-50',
   },
   {
+    title: 'الطلاب',
+    href: 'institution-settings/students',
+    icon: Users,
+    color: 'text-orange-600',
+    bgColor: 'bg-orange-50'
+  },
+  {
     title: 'المناهج',
     href: 'institution-settings/curriculum',
     icon: BookOpen,

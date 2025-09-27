@@ -2,18 +2,18 @@ import { z } from 'zod'
 
 // Base Classroom Schema
 export const ClassroomSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string(),
   code: z.string(),
   academicYear: z.string(),
   capacity: z.number().nullable(),
-  educationLevelId: z.string().uuid(),
+  educationLevelId: z.uuid(),
   orgId: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
   educationLevel: z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
     level: z.number(),
     section: z.string().nullable(),
     displayNameAr: z.string().nullable(),
@@ -26,12 +26,12 @@ export const ClassroomSchema = z.object({
 
 // Classroom List Item Schema (simplified for list views)
 export const ClassroomListItemSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string(),
   academicYear: z.string(),
-  educationLevelId: z.string().uuid(),
+  educationLevelId: z.uuid(),
   educationLevel: z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
     level: z.number(),
     section: z.string().nullable(),
     displayNameAr: z.string().nullable(),
@@ -42,8 +42,8 @@ export const ClassroomListItemSchema = z.object({
 
 // Classroom Student Enrollment Schema
 export const ClassroomStudentEnrollmentSchema = z.object({
-  id: z.string().uuid(),
-  classroomId: z.string().uuid(),
+  id: z.uuid(),
+  classroomId: z.uuid(),
   studentId: z.string(),
   enrollmentDate: z.date(),
   status: z.string(),
@@ -52,16 +52,16 @@ export const ClassroomStudentEnrollmentSchema = z.object({
     id: z.string(),
     firstName: z.string().nullable(),
     lastName: z.string().nullable(),
-    email: z.string().email(),
+    email: z.email(),
   }),
 })
 
 // Classroom Teacher Assignment Schema
 export const ClassroomTeacherAssignmentSchema = z.object({
-  id: z.string().uuid(),
-  classroomId: z.string().uuid(),
+  id: z.uuid(),
+  classroomId: z.uuid(),
   teacherId: z.string(),
-  educationSubjectId: z.string().uuid(),
+  educationSubjectId: z.uuid(),
   role: z.string(),
   isMainTeacher: z.string(),
   createdAt: z.date(),
@@ -69,10 +69,10 @@ export const ClassroomTeacherAssignmentSchema = z.object({
     id: z.string(),
     firstName: z.string().nullable(),
     lastName: z.string().nullable(),
-    email: z.string().email(),
+    email: z.email(),
   }),
   educationSubject: z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
     name: z.string(),
     displayNameAr: z.string(),
   }),

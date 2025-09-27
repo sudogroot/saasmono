@@ -57,9 +57,9 @@ export const teacherManagementRouter = {
   updateTeacherAssignment: protectedProcedure
     .input(
       z.object({
-        assignmentId: z.string().uuid().describe('Assignment ID'),
-        educationSubjectId: z.string().uuid().optional(),
-        educationLevelId: z.string().uuid().optional(),
+        assignmentId: z.uuid().describe('Assignment ID'),
+        educationSubjectId: z.uuid().optional(),
+        educationLevelId: z.uuid().optional(),
       })
     )
     .output(TeacherAssignmentSchema)
@@ -87,7 +87,7 @@ export const teacherManagementRouter = {
   deleteTeacherAssignment: protectedProcedure
     .input(
       z.object({
-        assignmentId: z.string().uuid().describe('Assignment ID'),
+        assignmentId: z.uuid().describe('Assignment ID'),
       })
     )
     .output(SuccessResponseSchema)

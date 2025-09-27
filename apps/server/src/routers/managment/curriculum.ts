@@ -37,7 +37,7 @@ export const curriculumManagementRouter = {
   getEducationSubjectById: protectedProcedure
     .input(
       z.object({
-        subjectId: z.string().uuid().describe('Education Subject ID'),
+        subjectId: z.uuid().describe('Education Subject ID'),
       })
     )
     .output(EducationSubjectSchema)
@@ -80,7 +80,7 @@ export const curriculumManagementRouter = {
   getEducationLevelById: protectedProcedure
     .input(
       z.object({
-        levelId: z.string().uuid().describe('Education Level ID'),
+        levelId: z.uuid().describe('Education Level ID'),
       })
     )
     .output(EducationLevelSchema)
@@ -122,7 +122,7 @@ export const curriculumManagementRouter = {
   getInstitutionLevelById: protectedProcedure
     .input(
       z.object({
-        levelId: z.string().uuid().describe('Institution Level ID'),
+        levelId: z.uuid().describe('Institution Level ID'),
       })
     )
     .output(InstitutionLevelSchema)
@@ -164,7 +164,7 @@ export const curriculumManagementRouter = {
   getEducationLevelSubjectById: protectedProcedure
     .input(
       z.object({
-        associationId: z.string().uuid().describe('Education Level-Subject Association ID'),
+        associationId: z.uuid().describe('Education Level-Subject Association ID'),
       })
     )
     .output(EducationLevelSubjectSchema)

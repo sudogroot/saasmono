@@ -2,13 +2,13 @@ import { z } from 'zod'
 
 // Education Subject Schemas
 export const EducationSubjectSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string(),
   displayNameAr: z.string(),
   displayDescriptionAr: z.string().nullable(),
-  institutionLevelId: z.string().uuid(),
+  institutionLevelId: z.uuid(),
   educationLevels: z.array(z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
     level: z.number(),
     section: z.string().nullable(),
     displayNameAr: z.string().nullable(),
@@ -17,13 +17,13 @@ export const EducationSubjectSchema = z.object({
 })
 
 export const EducationSubjectListItemSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string(),
   displayNameAr: z.string(),
   displayDescriptionAr: z.string().nullable(),
-  institutionLevelId: z.string().uuid(),
+  institutionLevelId: z.uuid(),
   educationLevels: z.array(z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
     level: z.number(),
     section: z.string().nullable(),
     displayNameAr: z.string().nullable(),
@@ -33,17 +33,17 @@ export const EducationSubjectListItemSchema = z.object({
 
 // Education Level Schemas
 export const EducationLevelSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   level: z.number(),
   section: z.string().nullable(),
   displayNameAr: z.string().nullable(),
   displayNameEn: z.string().nullable(),
   displayNameFr: z.string().nullable(),
-  institutionLevelId: z.string().uuid(),
+  institutionLevelId: z.uuid(),
   isDefault: z.boolean(),
   createdAt: z.date(),
   educationSubjects: z.array(z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
     name: z.string(),
     displayNameAr: z.string(),
     displayDescriptionAr: z.string().nullable(),
@@ -52,17 +52,17 @@ export const EducationLevelSchema = z.object({
 })
 
 export const EducationLevelListItemSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   level: z.number(),
   section: z.string().nullable(),
   displayNameAr: z.string().nullable(),
   displayNameEn: z.string().nullable(),
   displayNameFr: z.string().nullable(),
-  institutionLevelId: z.string().uuid(),
+  institutionLevelId: z.uuid(),
   isDefault: z.boolean(),
   createdAt: z.date(),
   educationSubjects: z.array(z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
     name: z.string(),
     displayNameAr: z.string(),
     displayDescriptionAr: z.string().nullable(),
@@ -72,7 +72,7 @@ export const EducationLevelListItemSchema = z.object({
 
 // Institution Level Schemas
 export const InstitutionLevelSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.enum(['JARDIN', 'PRIMAIRE', 'COLLEGE', 'SECONDAIRE', 'SUPERIEUR']),
   displayNameAr: z.string(),
   displayNameEn: z.string(),
@@ -81,9 +81,9 @@ export const InstitutionLevelSchema = z.object({
 
 // Education Level-Subject Association Schemas
 export const EducationLevelSubjectSchema = z.object({
-  id: z.string().uuid(),
-  educationLevelId: z.string().uuid(),
-  educationSubjectId: z.string().uuid(),
+  id: z.uuid(),
+  educationLevelId: z.uuid(),
+  educationSubjectId: z.uuid(),
   isOptional: z.boolean(),
   createdAt: z.date(),
   levelDisplayNameAr: z.string().nullable(),

@@ -113,7 +113,7 @@ export const userManagementRouter = {
   deleteParentStudentRelation: protectedProcedure
     .input(
       z.object({
-        relationId: z.string().uuid().describe('Relation ID'),
+        relationId: z.uuid().describe('Relation ID'),
       })
     )
     .output(SuccessResponseSchema)
