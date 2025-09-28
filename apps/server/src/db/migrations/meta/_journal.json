@@ -8,6 +8,13 @@
       "when": 1758963659919,
       "tag": "0000_outgoing_dark_phoenix",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1759019656827,
+      "tag": "0001_red_white_tiger",
+      "breakpoints": true
     }
   ]
 }
