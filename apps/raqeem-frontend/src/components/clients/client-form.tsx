@@ -1,33 +1,32 @@
 'use client'
 
-import { Button } from '@repo/ui'
-import { Input } from '@repo/ui'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { Button, Input } from '@repo/ui'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 
 import { globalSheet } from '@/stores/global-sheet-store'
 // import type { ClientData, Client } from '../../../../server/src/types/clients';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/ui'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/ui'
 import { orpc } from '@/utils/orpc'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@repo/ui'
 import { Loader2, Phone, Save, User } from 'lucide-react'
 import { toast } from 'sonner'
-
-const clientFormSchema = z.object({
-  name: z.string().min(1, 'الاسم مطلوب'),
-  nationalId: z.string().optional(),
-  phone: z.string().optional(),
-  email: z.string().email('البريد الإلكتروني غير صحيح').optional().or(z.literal('')),
-  clientType: z
-    .enum(['individual', 'company', 'institution', 'organization', 'government', 'association'])
-    .default('individual'),
-})
-
-type ClientFormData = z.infer<typeof clientFormSchema>
 
 interface ClientFormProps {
   initialData?: Partial<any> // client type
@@ -41,8 +40,8 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
   const isEditing = !!clientId
   const queryClient = useQueryClient()
 
-  const form = useForm<ClientFormData>({
-    resolver: zodResolver(clientFormSchema),
+  const form = useForm({
+    // resolver: zodResolver(clientFormSchema),
     defaultValues: {
       name: initialData?.name || '',
       nationalId: initialData?.nationalId || '',
@@ -103,7 +102,7 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
     })
   )
 
-  const onSubmit = async (data: ClientFormData) => {
+  const onSubmit = async (data: any) => {
     setIsSubmitting(true)
 
     try {

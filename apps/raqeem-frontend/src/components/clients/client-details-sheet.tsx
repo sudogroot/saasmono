@@ -1,14 +1,11 @@
 'use client'
 
-import { Badge } from '@repo/ui'
-import { Button } from '@repo/ui'
-import { Separator } from '@repo/ui'
 import { cn } from '@/lib/utils'
 import { globalSheet } from '@/stores/global-sheet-store'
 import { orpc } from '@/utils/orpc'
+import { Badge, Separator, Text, ValueText } from '@repo/ui'
 import { useQuery } from '@tanstack/react-query'
-import { AlertCircle, Calendar, Edit, Loader2, Mail, Phone, Plus, User } from 'lucide-react'
-import { ClientAvatar } from './client-avatar'
+import { AlertCircle, Loader2, Mail, Phone, User } from 'lucide-react'
 
 interface ClientDetailsSheetProps {
   clientId: string
@@ -80,7 +77,7 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
       slug: 'clients',
       clientId: clientData.id,
       initialData: clientData,
-      size: 'xl',
+      size: 'md',
     })
   }
 
@@ -89,15 +86,59 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
       mode: 'create',
       slug: 'cases',
       clientId: clientData.id,
-      size: 'lg',
+      size: 'md',
     })
   }
 
   return (
     <div className="space-y-6 p-6">
+      <div className="space-y-3">
+        <h3 className="text-muted-foreground text-sm font-medium">معلومات المنوب الأساسية</h3>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between rounded-lg border p-3">
+            <div className="flex items-center gap-2">
+              <User className="text-muted-foreground h-4 w-4" />
+              <span className="text-sm">الاسم و الصفة</span>
+            </div>
+
+            <div className="flex gap-4">
+              <Badge
+                variant="outline"
+                className={cn('w-fit', clientTypeColors[clientData.clientType as keyof typeof clientTypeColors])}
+              >
+                {clientTypeLabels[clientData.clientType as keyof typeof clientTypeLabels]}
+              </Badge>
+              <div>
+                <Text size="sm" weight="semibold" as="span">{clientData.name}</Text>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center justify-between rounded-lg border p-3">
+            <div className="flex items-center gap-2">
+              <Mail className="text-muted-foreground h-4 w-4" />
+              <span className="text-sm">البريد الإلكتروني</span>
+            </div>
+            <ValueText value={clientData.email} size="sm" className="font-medium" fallbackText="غير محدد" />
+          </div>
+          <div className="flex items-center justify-between rounded-lg border p-3">
+            <div className="flex items-center gap-2">
+              <Phone className="text-muted-foreground h-4 w-4" />
+              <span className="text-sm">رقم الهاتف</span>
+            </div>
+            <ValueText value={clientData.phone} size="sm" className="font-medium" fallbackText="غير محدد" />
+          </div>
+          <div className="flex items-center justify-between rounded-lg border p-3">
+            <div className="flex items-center gap-2">
+              <Phone className="text-muted-foreground h-4 w-4" />
+              <span className="text-sm">رقم الهوية</span>
+            </div>
+            <ValueText value={clientData.nationalId} size="sm" className="font-medium" fallbackText="غير محدد" />
+          </div>
+        </div>
+      </div>
       {/* Header */}
-      <div className="flex items-start gap-4">
-        <ClientAvatar client={clientData} size="xl" />
+      {/*<div className="flex flex-col items-start gap-4 sm:flex-row">
+        <ClientAvatar client={clientData} size="lg" />
         <div className="flex-1 space-y-2">
           <div>
             <h2 className="text-foreground text-2xl font-bold">{clientData.name}</h2>
@@ -119,81 +160,14 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
             إضافة قضية
           </Button>
         </div>
-      </div>
+      </div>*/}
 
       <Separator />
-
-      {/* Basic Information */}
       <div className="space-y-4">
-        <h3 className="flex items-center gap-2 text-lg font-semibold">
-          <User className="h-5 w-5" />
-          المعلومات الأساسية
-        </h3>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {clientData.nationalId && (
-            <div className="space-y-1">
-              <label className="text-muted-foreground text-sm font-medium">رقم الهوية</label>
-              <p className="text-foreground font-mono">{clientData.nationalId}</p>
-            </div>
-          )}
-
-          <div className="space-y-1">
-            <label className="text-muted-foreground text-sm font-medium">نوع العميل</label>
-            <p className="text-foreground">
-              {clientTypeLabels[clientData.clientType as keyof typeof clientTypeLabels]}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Contact Information */}
-      {(clientData.phone || clientData.email) && (
-        <>
-          <Separator />
-          <div className="space-y-4">
-            <h3 className="flex items-center gap-2 text-lg font-semibold">
-              <Phone className="h-5 w-5" />
-              معلومات الاتصال
-            </h3>
-
-            <div className="space-y-3">
-              {clientData.phone && (
-                <div className="flex items-center gap-3">
-                  <Phone className="text-muted-foreground h-4 w-4" />
-                  <div>
-                    <p className="text-muted-foreground text-sm">رقم الهاتف</p>
-                    <p className="text-foreground font-mono">{clientData.phone}</p>
-                  </div>
-                </div>
-              )}
-
-              {clientData.email && (
-                <div className="flex items-center gap-3">
-                  <Mail className="text-muted-foreground h-4 w-4" />
-                  <div>
-                    <p className="text-muted-foreground text-sm">البريد الإلكتروني</p>
-                    <p className="text-foreground break-all">{clientData.email}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Timestamps */}
-      <Separator />
-      <div className="space-y-4">
-        <h3 className="flex items-center gap-2 text-lg font-semibold">
-          <Calendar className="h-5 w-5" />
-          التواريخ
-        </h3>
-
         <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
           <div>
             <p className="text-muted-foreground">تاريخ الإضافة</p>
-            <p className="text-foreground">
+            <Text size="sm">
               {new Date(clientData.createdAt).toLocaleDateString('ar-TN', {
                 year: 'numeric',
                 month: 'long',
@@ -201,12 +175,12 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                 hour: '2-digit',
                 minute: '2-digit',
               })}
-            </p>
+            </Text>
           </div>
 
           <div>
             <p className="text-muted-foreground">آخر تحديث</p>
-            <p className="text-foreground">
+            <Text size="sm">
               {new Date(clientData.updatedAt).toLocaleDateString('ar-TN', {
                 year: 'numeric',
                 month: 'long',
@@ -214,7 +188,7 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                 hour: '2-digit',
                 minute: '2-digit',
               })}
-            </p>
+            </Text>
           </div>
         </div>
       </div>

@@ -25,6 +25,12 @@ export {
   DesktopFilters,
   TablePagination,
 } from "./components/base/table";
+export {
+  ValueText,
+  Heading,
+  Text,
+  Code,
+} from "./components/base/typography";
 export type {
   GenericTableProps,
   TablePaginationProps,
@@ -33,6 +39,12 @@ export type {
   FilterDrawerProps,
   FilterChipsProps,
 } from "./components/base/table";
+export type {
+  ValueTextProps,
+  HeadingProps,
+  TextProps,
+  CodeProps,
+} from "./components/base/typography";
 export type {
   HeaderProps,
   AppSidebarProps,
