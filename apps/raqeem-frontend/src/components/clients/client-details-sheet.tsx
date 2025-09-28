@@ -281,10 +281,25 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                         </div>
 
                         {caseItem.trial && caseItem.trial.length > 0 && (
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2 text-sm font-medium">
-                              <Gavel className="h-4 w-4" />
-                              الجلسات ({caseItem.trial.length})
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2 text-sm font-medium">
+                                <Gavel className="h-4 w-4" />
+                                الجلسات ({caseItem.trial.length})
+                              </div>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => globalSheet.openTrialForm({
+                                  mode: 'create',
+                                  slug: 'trials',
+                                  caseId: caseItem.id,
+                                  size: 'md',
+                                })}
+                              >
+                                <Plus className="ml-1 h-3 w-3" />
+                                إضافة جلسة جديدة
+                              </Button>
                             </div>
                             <div className="space-y-2">
                               {caseItem.trial.map((trial) => (
