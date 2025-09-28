@@ -4,12 +4,12 @@ import { OrpcErrorHelper, getCurrentUserId, getOrgId } from '../lib/errors/orpc-
 import { protectedProcedure } from '../lib/orpc'
 import { createCaseService } from '../services/cases'
 import {
-  CreateCaseSchema,
-  UpdateCaseSchema,
+  CaseListItemSchema,
   CaseSchema,
   CaseWithRelationsSchema,
-  CaseListItemSchema,
+  CreateCaseSchema,
   SuccessResponseSchema,
+  UpdateCaseSchema,
 } from '../types/case'
 
 const caseService = createCaseService(db)
@@ -60,9 +60,11 @@ export const caseRouter = {
 
   updateCase: protectedProcedure
     .input(
-      z.object({
-        caseId: z.string().min(1).describe('Case ID'),
-      }).merge(UpdateCaseSchema)
+      z
+        .object({
+          caseId: z.string().min(1).describe('Case ID'),
+        })
+        .merge(UpdateCaseSchema)
     )
     .output(CaseSchema)
     .route({
