@@ -1,39 +1,39 @@
-import React from 'react';
-import { cn } from '../../../lib/utils';
+import React from "react";
+import { cn } from "../../../lib/utils";
 
 export interface ValueTextProps {
   value?: string | null;
   fallbackText?: string;
-  size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl';
+  size?: "xs" | "sm" | "base" | "lg" | "xl" | "2xl";
   className?: string;
   truncate?: boolean;
 }
 
 const sizeClasses = {
-  xs: 'text-xs',
-  sm: 'text-sm',
-  base: 'text-base',
-  lg: 'text-lg',
-  xl: 'text-xl',
-  '2xl': 'text-2xl'
+  xs: "text-xs",
+  sm: "text-sm",
+  base: "text-base",
+  lg: "text-lg",
+  xl: "text-xl",
+  "2xl": "text-2xl",
 };
 
 export const ValueText: React.FC<ValueTextProps> = ({
   value,
-  fallbackText = ':J1 E*HA1',
-  size = 'base',
+  fallbackText = "NO_VALUE",
+  size = "base",
   className,
-  truncate = false
+  truncate = false,
 }) => {
-  const isEmpty = !value || value.trim() === '';
+  const isEmpty = !value || value.trim() === "";
 
   return (
     <span
       className={cn(
         sizeClasses[size],
-        isEmpty ? 'text-muted-foreground italic' : 'text-foreground',
-        truncate && 'truncate',
-        className
+        isEmpty ? "text-muted-foreground italic" : "text-foreground",
+        truncate && "truncate",
+        className,
       )}
     >
       {isEmpty ? fallbackText : value}

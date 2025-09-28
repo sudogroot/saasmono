@@ -98,6 +98,7 @@ export default function NewLayout({ children }: { children: React.ReactNode }) {
         },
       }}
       brandLogo={<img src="/logo.svg" alt="رقيم" className="!w-24" />}
+      brandIcon={<img src="/raqeem-icon.svg" alt="رقيم" className="!w-[34px]" />}
     >
       {children}
 

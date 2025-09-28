@@ -60,7 +60,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           avatar: data?.user?.image || '/logo.svg',
         },
       }}
-      brandLogo={<img src="/logo-and-text.svg" alt="منارة" className="!w-24" />}
+      brandLogo={<img src="/logo-and-text.svg" alt="منارة" className="h-[34px] !w-24" />}
+      brandIcon={<img src="/logo.svg" alt="منارة" className="!w-[34px]" />}
     >
       {children}
 

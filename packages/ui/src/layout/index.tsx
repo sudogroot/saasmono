@@ -41,6 +41,7 @@ export interface DashboardLayoutProps {
   children: React.ReactNode;
   sidebarData?: any;
   brandLogo: React.ReactNode;
+  brandIcon: React.ReactNode;
   brandName?: string;
   headerTitle?: string;
   style?: React.CSSProperties;
@@ -50,6 +51,7 @@ export function DashboardLayout({
   children,
   sidebarData,
   brandLogo,
+  brandIcon,
   brandName,
   style,
 }: DashboardLayoutProps) {
@@ -96,6 +98,7 @@ export function DashboardLayout({
         variant="inset"
         data={sidebarData}
         brandLogo={brandLogo}
+        brandIcon={brandIcon}
         brandName={brandName}
       />
       <SidebarInset
