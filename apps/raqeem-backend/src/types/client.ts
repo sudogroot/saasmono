@@ -64,6 +64,20 @@ export const ClientSchema = z.object({
   updatedAt: z.coerce.date(),
   deletedAt: z.coerce.date().nullable(),
   createdBy: z.string().nullable(),
+})
+
+export const DetailedClientSchema = z.object({
+  id: z.string(),
+  organizationId: z.string(),
+  name: z.string(),
+  nationalId: z.string().nullable(),
+  phone: z.string().nullable(),
+  email: z.string().nullable(),
+  clientType: ClientTypeSchema,
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  deletedAt: z.coerce.date().nullable(),
+  createdBy: z.string().nullable(),
   case: z.array(ClientCaseSchema),
 })
 
@@ -86,5 +100,6 @@ export type ClientType = z.infer<typeof ClientTypeSchema>
 export type CreateClientInput = z.infer<typeof CreateClientSchema>
 export type UpdateClientInput = z.infer<typeof UpdateClientSchema>
 export type ClientResponse = z.infer<typeof ClientSchema>
+export type DetailedClientResponse = z.infer<typeof DetailedClientSchema>
 export type ClientListItem = z.infer<typeof ClientListItemSchema>
 export type SuccessResponse = z.infer<typeof SuccessResponseSchema>

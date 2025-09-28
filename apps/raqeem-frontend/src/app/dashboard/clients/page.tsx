@@ -1,6 +1,9 @@
 'use client'
 
 import { ClientsTable } from '@/components/clients/clients-table'
+import { authClient } from '@/lib/auth-client'
+import { globalSheet } from '@/stores/global-sheet-store'
+import { orpc } from '@/utils/orpc'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,9 +14,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@repo/ui'
-import { authClient } from '@/lib/auth-client'
-import { globalSheet } from '@/stores/global-sheet-store'
-import { orpc } from '@/utils/orpc'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
@@ -57,7 +57,7 @@ export default function ClientsPage() {
     globalSheet.openClientForm({
       mode: 'create',
       slug: 'clients',
-      size: 'xl',
+      size: 'md',
     })
   }
 

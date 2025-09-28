@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Input } from '@repo/ui'
+import { Button, Heading, Input } from '@repo/ui'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -9,10 +9,6 @@ import { globalSheet } from '@/stores/global-sheet-store'
 // import type { ClientData, Client } from '../../../../server/src/types/clients';
 import { orpc } from '@/utils/orpc'
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
   Form,
   FormControl,
   FormField,
@@ -61,7 +57,7 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
         globalSheet.openClientDetails({
           slug: 'clients',
           clientId: data.id,
-          size: 'lg',
+          size: 'md',
           reset: true,
         })
         onSuccess?.(data)
@@ -131,117 +127,107 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-4">
         {/* Basic Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5" />
-              المعلومات الأساسية
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>اسم العميل *</FormLabel>
+        <div className="flex gap-2">
+          <User className="h-5 w-5" />
+          <Heading level={5} className="flex">
+            المعلومات الأساسية
+          </Heading>
+        </div>
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>اسم العميل *</FormLabel>
+              <FormControl>
+                <Input placeholder="أدخل اسم العميل الكامل" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="clientType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>نوع العميل *</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <Input placeholder="أدخل اسم العميل الكامل" {...field} />
+                    <SelectTrigger>
+                      <SelectValue placeholder="اختر نوع العميل" />
+                    </SelectTrigger>
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                  <SelectContent>
+                    <SelectItem value="individual">فرد</SelectItem>
+                    <SelectItem value="company">شركة</SelectItem>
+                    <SelectItem value="institution">مؤسسة</SelectItem>
+                    <SelectItem value="organization">منظمة</SelectItem>
+                    <SelectItem value="government">حكومي</SelectItem>
+                    <SelectItem value="association">جمعية</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="nationalId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>رقم الهوية</FormLabel>
+                <FormControl>
+                  <Input placeholder="أدخل رقم الهوية" {...field} className="font-mono" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="nationalId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>رقم الهوية</FormLabel>
-                    <FormControl>
-                      <Input placeholder="أدخل رقم الهوية" {...field} className="font-mono" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+        <div className="flex gap-2">
+          <Phone className="h-5 w-5" />
+          <Heading level={5} className="flex">
+            معلومات الاتصال
+          </Heading>
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>رقم الهاتف</FormLabel>
+                <FormControl>
+                  <Input placeholder="أدخل رقم الهاتف" {...field} className="font-mono" type="tel" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-              <FormField
-                control={form.control}
-                name="clientType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>نوع العميل *</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="اختر نوع العميل" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="individual">فرد</SelectItem>
-                        <SelectItem value="company">شركة</SelectItem>
-                        <SelectItem value="institution">مؤسسة</SelectItem>
-                        <SelectItem value="organization">منظمة</SelectItem>
-                        <SelectItem value="government">حكومي</SelectItem>
-                        <SelectItem value="association">جمعية</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Contact Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Phone className="h-5 w-5" />
-              معلومات الاتصال
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>رقم الهاتف</FormLabel>
-                    <FormControl>
-                      <Input placeholder="أدخل رقم الهاتف" {...field} className="font-mono" type="tel" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>البريد الإلكتروني</FormLabel>
-                    <FormControl>
-                      <Input placeholder="أدخل البريد الإلكتروني" {...field} type="email" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </CardContent>
-        </Card>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>البريد الإلكتروني</FormLabel>
+                <FormControl>
+                  <Input placeholder="أدخل البريد الإلكتروني" {...field} type="email" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         {/* Form Actions */}
-        <div className="flex items-center gap-3 pt-6">
+        <div className="flex items-center justify-end gap-3 pt-6">
           <Button type="submit" disabled={isSubmitting} className="min-w-[120px]">
             {isSubmitting ? (
               <>

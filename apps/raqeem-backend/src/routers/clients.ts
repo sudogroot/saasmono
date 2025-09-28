@@ -4,11 +4,12 @@ import { OrpcErrorHelper, getCurrentUserId, getOrgId } from '../lib/errors/orpc-
 import { protectedProcedure } from '../lib/orpc'
 import { createClientService } from '../services/clients'
 import {
-  CreateClientSchema,
-  UpdateClientSchema,
-  ClientSchema,
   ClientListItemSchema,
+  ClientSchema,
+  CreateClientSchema,
+  DetailedClientSchema,
   SuccessResponseSchema,
+  UpdateClientSchema,
 } from '../types/client'
 
 const clientService = createClientService(db)
@@ -40,7 +41,7 @@ export const clientRouter = {
         clientId: z.string().min(1).describe('Client ID'),
       })
     )
-    .output(ClientSchema)
+    .output(DetailedClientSchema)
     .route({
       method: 'GET',
       path: '/clients/{clientId}',
@@ -59,9 +60,11 @@ export const clientRouter = {
 
   updateClient: protectedProcedure
     .input(
-      z.object({
-        clientId: z.string().min(1).describe('Client ID'),
-      }).merge(UpdateClientSchema)
+      z
+        .object({
+          clientId: z.string().min(1).describe('Client ID'),
+        })
+        .merge(UpdateClientSchema)
     )
     .output(ClientSchema)
     .route({
