@@ -12,22 +12,6 @@ export default function TimetablePage() {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">جدول الحصص</h1>
-          <p className="text-muted-foreground">عرض وتحميل جداول الحصص الأسبوعية</p>
-        </div>
-      </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>جدول الحصص الأسبوعي</CardTitle>
-          <CardDescription>اختر الفصل أو المجموعة لعرض جدول الحصص وتحميله كصورة</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <TimetableVisualization />
-        </CardContent>
-      </Card>
-    </div>
+    <TimetableVisualization />
   )
 }
