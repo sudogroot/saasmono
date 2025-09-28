@@ -3,7 +3,7 @@ import { db } from '../../db/index'
 import { OrpcErrorHelper, getOrgId } from '../../lib/errors/orpc-errors'
 import { protectedProcedure } from '../../lib/orpc'
 import { createClassroomManagementService } from '../../services/managment/classrooms'
-import { ClassroomListItemSchema, ClassroomSchema } from '../../types/classroom'
+import { ClassroomGroupListItemSchema, ClassroomListItemSchema, ClassroomSchema } from '../../types/classroom'
 
 const classroomService = createClassroomManagementService(db)
 
@@ -47,6 +47,24 @@ export const classroomManagementRouter = {
         return await classroomService.getClassroomById(input.classroomId, orgId)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch classroom')
+      }
+    }),
+
+  getClassroomGroupsList: protectedProcedure
+    .output(z.array(ClassroomGroupListItemSchema))
+    .route({
+      method: 'GET',
+      path: '/management/classroom-groups',
+      tags: ['Classroom Management'],
+      summary: 'List classroom groups',
+      description: 'Retrieves all classroom groups with their associated classroom information',
+    })
+    .handler(async ({ context }) => {
+      const orgId = getOrgId(context)
+      try {
+        return await classroomService.getClassroomGroupsList(orgId)
+      } catch (error) {
+        throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch classroom groups')
       }
     }),
 }

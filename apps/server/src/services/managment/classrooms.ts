@@ -1,6 +1,6 @@
-import { classroom, classroomStudentEnrollment, classroomTeacherAssignment } from '@/db/schema/classroom'
+import { classroom, classroomGroup, classroomStudentEnrollment, classroomTeacherAssignment } from '@/db/schema/classroom'
 import { educationLevel } from '@/db/schema/education'
-import type { ClassroomListItem } from '@/types/classroom'
+import type { ClassroomGroupListItem, ClassroomListItem } from '@/types/classroom'
 import { and, count, eq, isNull } from 'drizzle-orm'
 import { NodePgDatabase } from 'drizzle-orm/node-postgres'
 
@@ -155,6 +155,36 @@ export class ClassroomManagementService {
       studentCount: studentCount[0]?.count || 0,
       teacherCount: teacherCount[0]?.count || 0,
     }
+  }
+
+  async getClassroomGroupsList(orgId: string) {
+    const results = await this.db
+      .select({
+        groupId: classroomGroup.id,
+        groupName: classroomGroup.name,
+        groupCode: classroomGroup.code,
+        groupDescription: classroomGroup.description,
+        groupMaxCapacity: classroomGroup.maxCapacity,
+        groupIsDefault: classroomGroup.isDefault,
+        classroomId: classroomGroup.classroomId,
+        classroomName: classroom.name,
+        classroomAcademicYear: classroom.academicYear,
+      })
+      .from(classroomGroup)
+      .leftJoin(classroom, eq(classroomGroup.classroomId, classroom.id))
+      .where(and(eq(classroomGroup.orgId, orgId), isNull(classroomGroup.deletedAt)))
+
+    return results.map((row) => ({
+      id: row.groupId,
+      name: row.groupName,
+      code: row.groupCode,
+      description: row.groupDescription,
+      maxCapacity: row.groupMaxCapacity,
+      isDefault: row.groupIsDefault,
+      classroomId: row.classroomId,
+      classroomName: row.classroomName,
+      classroomAcademicYear: row.classroomAcademicYear,
+    })) as ClassroomGroupListItem[]
   }
 }
 

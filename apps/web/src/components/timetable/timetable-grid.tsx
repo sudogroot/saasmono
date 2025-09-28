@@ -83,8 +83,8 @@ export function TimetableGrid({ timetableData, isLoading, error, filters }: Time
     // Populate grid with sessions
     timetableData.forEach(session => {
       const startDate = new Date(session.startDateTime)
-      const dayOfWeek = startDate.getDay() // 0 = Sunday, 1 = Monday, etc.
-      const hour = startDate.getHours()
+      const dayOfWeek = startDate.getUTCDay() // 0 = Sunday, 1 = Monday, etc.
+      const hour = startDate.getUTCHours()
 
       // Map day of week to our weekday keys
       const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
@@ -200,11 +200,9 @@ function SessionCard({ session }: { session: TimetableSession }) {
   const endTime = new Date(session.endDateTime)
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('ar-SA', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    })
+    const hours = String(date.getUTCHours()).padStart(2, '0')
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0')
+    return `${hours}:${minutes}`
   }
 
   const getStatusColor = (status: string) => {

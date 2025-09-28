@@ -98,6 +98,10 @@ export const timetableImages = pgTable('timetable_images', {
   dataHash: text('data_hash').notNull().unique(), // MD5 hash of the timetable data
   imagePath: text('image_path').notNull(), // Path to the generated image file
 
+  // Flexible association - either classroom OR classroomGroup (at least one required)
+  classroomId: uuid('classroom_id').references(() => classroom.id, { onDelete: 'cascade' }),
+  classroomGroupId: uuid('classroom_group_id').references(() => classroomGroup.id, { onDelete: 'cascade' }),
+
   orgId: text('org_id')
     .notNull()
     .references(() => organization.id, { onDelete: 'cascade' }),
@@ -115,6 +119,10 @@ export const timetableImages = pgTable('timetable_images', {
     ),
     lastAccessedIdx: index('timetable_images_last_accessed_idx').on(
       table.lastAccessedAt
+    ),
+    classroomOrGroupIdx: index('timetable_images_classroom_or_group_idx').on(
+      table.classroomId,
+      table.classroomGroupId
     ),
   }
 })
@@ -164,6 +172,14 @@ export const timetableRelations = relations(timetable, ({ one }) => ({
   }),
 }))
 export const timetableImagesRelations = relations(timetableImages, ({ one }) => ({
+  classroom: one(classroom, {
+    fields: [timetableImages.classroomId],
+    references: [classroom.id],
+  }),
+  classroomGroup: one(classroomGroup, {
+    fields: [timetableImages.classroomGroupId],
+    references: [classroomGroup.id],
+  }),
   organization: one(organization, {
     fields: [timetableImages.orgId],
     references: [organization.id],

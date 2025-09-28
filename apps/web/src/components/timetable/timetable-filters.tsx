@@ -17,9 +17,10 @@ export function TimetableFilters({ filters, onFiltersChange }: TimetableFiltersP
     orpc.management.classroom.getClassroomsList.queryOptions()
   )
 
-  // Get classroom groups - we'll need to implement this API later
-  // For now, we'll mock some data or disable this filter
-  const classroomGroups: Array<{ id: string; name: string; classroomName: string }> = []
+  // Get classroom groups list
+  const { data: classroomGroups = [] } = useQuery(
+    orpc.management.classroom.getClassroomGroupsList.queryOptions()
+  )
 
   const handleClassroomChange = (classroomId: string) => {
     if (classroomId === 'clear') {
@@ -124,7 +125,7 @@ export function TimetableFilters({ filters, onFiltersChange }: TimetableFiltersP
                   <div className="flex flex-col">
                     <span>{group.name}</span>
                     <span className="text-xs text-muted-foreground">
-                      {group.classroomName}
+                      {group.classroomName} - {group.classroomAcademicYear}
                     </span>
                   </div>
                 </SelectItem>

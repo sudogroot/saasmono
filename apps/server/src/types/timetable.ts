@@ -138,6 +138,8 @@ export const TimetableImageSchema = z.object({
   id: z.uuid(),
   dataHash: z.string(),
   imagePath: z.string(),
+  classroomId: z.uuid().nullable(),
+  classroomGroupId: z.uuid().nullable(),
   orgId: z.string(),
   createdByUserId: z.string().nullable(),
   createdAt: z.date(),
@@ -147,7 +149,21 @@ export const TimetableImageSchema = z.object({
 export const CreateTimetableImageInputSchema = z.object({
   dataHash: z.string().min(1, 'Data hash is required'),
   imagePath: z.string().min(1, 'Image path is required'),
-})
+  classroomId: z.uuid().optional(),
+  classroomGroupId: z.uuid().optional(),
+}).refine(
+  (data) => data.classroomId || data.classroomGroupId,
+  {
+    message: "Either classroomId or classroomGroupId must be provided",
+    path: ["classroomId"],
+  }
+).refine(
+  (data) => !(data.classroomId && data.classroomGroupId),
+  {
+    message: "Cannot provide both classroomId and classroomGroupId",
+    path: ["classroomId"],
+  }
+)
 
 export const TimetableImageGenerationRequestSchema = z.object({
   classroomId: z.uuid().optional(),
