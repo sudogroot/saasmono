@@ -296,6 +296,7 @@ export const SHEET_COMPONENTS = {
       default: m.OpponentDetails,
     })),
   OpponentForm: () => import('../components/opponents/opponent-form').then((m) => ({ default: m.OpponentForm })),
+  TrialForm: () => import('../components/trials/trial-form').then((m) => ({ default: m.TrialForm })),
   CustomContent: () => Promise.resolve({ default: ({ content }: { content: ReactNode }) => content as any }),
 } as Record<string, () => Promise<{ default: React.ComponentType<any> }>>
 
@@ -454,6 +455,31 @@ export const globalSheet = {
     opponentId?: string
     size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
   }) => openSheet('form', 'opponent', props),
+
+  openTrialForm: (props: {
+    mode: 'create' | 'edit'
+    slug: string
+    trialId?: string
+    caseId?: string
+    size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
+  }) => {
+    const mode = props.mode || (props.trialId ? 'edit' : 'create')
+    const urlParams: Record<string, string> = {}
+    if (props.trialId) urlParams.trialId = props.trialId
+    if (props.caseId) urlParams.caseId = props.caseId
+
+    const sheetData: GlobalSheetData = {
+      id: `trial-form-${props.trialId || mode}-${Date.now()}`,
+      title: mode === 'create' ? 'إضافة جلسة جديدة' : 'تعديل الجلسة',
+      component: 'TrialForm',
+      props: { ...props },
+      controlled: true,
+      size: props.size || 'md',
+      urlParams,
+    }
+
+    useGlobalSheet.getState().pushSheet(sheetData)
+  },
 
   // Generic method for custom sheets
   open: (data: {

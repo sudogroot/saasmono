@@ -10,6 +10,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  Heading,
   Input,
   Select,
   SelectContent,
@@ -18,7 +19,7 @@ import {
   SelectValue,
 } from '@repo/ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Calendar, Clock, Loader2, Save } from 'lucide-react'
+import { Calendar, Clock, FileText, Gavel, Loader2, Save } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -85,7 +86,9 @@ export function TrialForm({ initialData, trialId, caseId, onSuccess, onCancel }:
       onSuccess: (data) => {
         toast.success('تم إنشاء الجلسة بنجاح')
         form.reset()
-        queryClient.invalidateQueries({ queryKey: orpc.trials.listTrials.key() })
+        queryClient.invalidateQueries({ queryKey: orpc.trials.listTrials?.key?.() || ['trials'] })
+        queryClient.invalidateQueries({ queryKey: orpc.clients.getClientById?.key?.() || ['clients'] })
+        queryClient.invalidateQueries({ queryKey: orpc.cases.listCases?.key?.() || ['cases'] })
         onSuccess?.(data)
       },
       onError: (error: any) => {
@@ -101,8 +104,10 @@ export function TrialForm({ initialData, trialId, caseId, onSuccess, onCancel }:
     ...orpc.trials.updateTrial.mutationOptions({
       onSuccess: (data) => {
         toast.success('تم تحديث الجلسة بنجاح')
-        queryClient.invalidateQueries({ queryKey: orpc.trials.listTrials.key() })
-        queryClient.invalidateQueries({ queryKey: orpc.trials.getTrialById.key({ input: { trialId: trialId! } }) })
+        queryClient.invalidateQueries({ queryKey: orpc.trials.listTrials?.key?.() || ['trials'] })
+        queryClient.invalidateQueries({ queryKey: orpc.trials.getTrialById?.key?.({ input: { trialId: trialId! } }) || ['trial', trialId] })
+        queryClient.invalidateQueries({ queryKey: orpc.clients.getClientById?.key?.() || ['clients'] })
+        queryClient.invalidateQueries({ queryKey: orpc.cases.listCases?.key?.() || ['cases'] })
         onSuccess?.(data)
       },
       onError: (error: any) => {
@@ -145,55 +150,75 @@ export function TrialForm({ initialData, trialId, caseId, onSuccess, onCancel }:
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <FormField
-            control={form.control}
-            name="caseId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>القضية *</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-4">
+        {/* Basic Information */}
+        <div className="flex gap-2">
+          <FileText className="h-5 w-5" />
+          <Heading level={5} className="flex">
+            معلومات القضية
+          </Heading>
+        </div>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="caseId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>القضية *</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!!caseId}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="اختر القضية" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {cases.map((caseItem: any) => (
+                        <SelectItem key={caseItem.id} value={caseItem.id}>
+                          {caseItem.caseNumber} - {caseItem.caseTitle}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {caseId && <p className="text-muted-foreground text-xs">القضية المحددة مسبقاً</p>}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="trialNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>رقم الجلسة *</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="اختر القضية" />
-                    </SelectTrigger>
+                    <Input
+                      type="number"
+                      placeholder="رقم الجلسة"
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                      value={field.value || ''}
+                      disabled={isEditing}
+                      className="font-mono"
+                    />
                   </FormControl>
-                  <SelectContent>
-                    {cases.map((caseItem: any) => (
-                      <SelectItem key={caseItem.id} value={caseItem.id}>
-                        {caseItem.caseNumber} - {caseItem.caseTitle}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  {isEditing && <p className="text-muted-foreground text-xs">لا يمكن تعديل رقم الجلسة</p>}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
 
-          <FormField
-            control={form.control}
-            name="trialNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>رقم الجلسة *</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="رقم الجلسة"
-                    {...field}
-                    onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                    value={field.value || ''}
-                    disabled={isEditing}
-                  />
-                </FormControl>
-                {isEditing && <p className="text-muted-foreground text-xs">لا يمكن تعديل رقم الجلسة</p>}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
+        {/* Court Information */}
+        <div className="flex gap-2">
+          <Gavel className="h-5 w-5" />
+          <Heading level={5} className="flex">
+            معلومات المحكمة
+          </Heading>
+        </div>
+        <div className="space-y-4">
           <FormField
             control={form.control}
             name="courtId"
@@ -220,44 +245,53 @@ export function TrialForm({ initialData, trialId, caseId, onSuccess, onCancel }:
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="trialDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>تاريخ الجلسة *</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Calendar className="text-muted-foreground absolute top-3 right-3 h-4 w-4" />
-                    <Input type="date" {...field} className="pr-10" />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        {/* Trial Schedule */}
+        <div className="flex gap-2">
+          <Calendar className="h-5 w-5" />
+          <Heading level={5} className="flex">
+            موعد الجلسة
+          </Heading>
+        </div>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="trialDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>تاريخ الجلسة *</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Calendar className="text-muted-foreground absolute top-3 right-3 h-4 w-4" />
+                      <Input type="date" {...field} className="pr-10" />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="trialTime"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>وقت الجلسة *</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Clock className="text-muted-foreground absolute top-3 right-3 h-4 w-4" />
-                    <Input type="time" {...field} className="pr-10" />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="trialTime"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>وقت الجلسة *</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Clock className="text-muted-foreground absolute top-3 right-3 h-4 w-4" />
+                      <Input type="time" {...field} className="pr-10" />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
 
         {/* Form Actions */}
-        <div className="flex items-center gap-3 pt-6">
+        <div className="flex items-center justify-end gap-3 pt-6">
           <Button type="submit" disabled={isSubmitting} className="min-w-[120px]">
             {isSubmitting ? (
               <>
