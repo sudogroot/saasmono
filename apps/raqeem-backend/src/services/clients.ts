@@ -1,7 +1,10 @@
-import { and, eq, isNull } from 'drizzle-orm'
+import { and, eq, isNull, inArray } from 'drizzle-orm'
 import { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import { member } from '../db/schema/auth'
 import { clients } from '../db/schema/clients'
+import { cases } from '../db/schema/cases'
+import { trials } from '../db/schema/trials'
+import { courts } from '../db/schema/courts'
 import type { ClientListItem, ClientResponse, CreateClientInput, UpdateClientInput } from '../types/client'
 
 export class ClientService {
@@ -112,7 +115,8 @@ export class ClientService {
       whereConditions.push(isNull(clients.deletedAt))
     }
 
-    const result = await this.db
+    // Get clients first
+    const clientsResult = await this.db
       .select({
         id: clients.id,
         name: clients.name,
@@ -126,7 +130,82 @@ export class ClientService {
       .where(and(...whereConditions))
       .orderBy(clients.createdAt)
 
-    return result as ClientListItem[]
+    // Get cases for all clients with their trials
+    const clientIds = clientsResult.map(client => client.id)
+
+    if (clientIds.length === 0) {
+      return []
+    }
+
+    // Get cases with trials for these clients
+    const casesWithTrials = await this.db
+      .select({
+        caseId: cases.id,
+        clientId: cases.clientId,
+        caseNumber: cases.caseNumber,
+        caseTitle: cases.caseTitle,
+        courtFileNumber: cases.courtFileNumber,
+        caseSubject: cases.caseSubject,
+        caseStatus: cases.caseStatus,
+        priority: cases.priority,
+        trialId: trials.id,
+        trialNumber: trials.trialNumber,
+        trialDateTime: trials.trialDateTime,
+        courtId: trials.courtId,
+        courtName: courts.name,
+      })
+      .from(cases)
+      .leftJoin(trials, and(eq(trials.caseId, cases.id), isNull(trials.deletedAt)))
+      .leftJoin(courts, eq(courts.id, trials.courtId))
+      .where(and(
+        eq(cases.organizationId, orgId),
+        isNull(cases.deletedAt),
+        inArray(cases.clientId, clientIds)
+      ))
+
+    // Group cases by client and trials by case
+    const clientCasesMap = new Map<string, any[]>()
+
+    for (const row of casesWithTrials) {
+      if (!clientCasesMap.has(row.clientId)) {
+        clientCasesMap.set(row.clientId, [])
+      }
+
+      const clientCases = clientCasesMap.get(row.clientId)!
+      let existingCase = clientCases.find(c => c.id === row.caseId)
+
+      if (!existingCase) {
+        existingCase = {
+          id: row.caseId,
+          caseNumber: row.caseNumber,
+          caseTitle: row.caseTitle,
+          courtFileNumber: row.courtFileNumber,
+          caseSubject: row.caseSubject,
+          caseStatus: row.caseStatus,
+          priority: row.priority,
+          trial: []
+        }
+        clientCases.push(existingCase)
+      }
+
+      if (row.trialId) {
+        existingCase.trial.push({
+          id: row.trialId,
+          trialNumber: row.trialNumber,
+          court: row.courtName ? {
+            name: row.courtName,
+            id: row.courtId
+          } : null,
+          trialDateTime: row.trialDateTime
+        })
+      }
+    }
+
+    // Combine clients with their cases
+    return clientsResult.map(client => ({
+      ...client,
+      case: clientCasesMap.get(client.id) || []
+    })) as ClientListItem[]
   }
 }
 

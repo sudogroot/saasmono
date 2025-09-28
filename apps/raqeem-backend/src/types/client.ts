@@ -1,7 +1,14 @@
 import { z } from 'zod'
 
 // Client Type Enum (matching the database enum)
-export const ClientTypeSchema = z.enum(['individual', 'company', 'institution', 'organization', 'government', 'association'])
+export const ClientTypeSchema = z.enum([
+  'individual',
+  'company',
+  'institution',
+  'organization',
+  'government',
+  'association',
+])
 
 // Input Schemas
 export const CreateClientSchema = z.object({
@@ -18,6 +25,30 @@ export const UpdateClientSchema = z.object({
   phone: z.string().optional(),
   nationalId: z.string().optional(),
   clientType: ClientTypeSchema.optional(),
+})
+
+export const ClientTrialSchema = z.object({
+  id: z.string(),
+  trialNumber: z.number(),
+  court: z
+    .object({
+      name: z.string().min(1),
+      id: z.string().nullable(),
+    })
+    .nullable(),
+  trialDateTime: z.coerce.date(),
+})
+
+// Output Schemas
+export const ClientCaseSchema = z.object({
+  id: z.string(),
+  caseNumber: z.string(),
+  caseTitle: z.string(),
+  courtFileNumber: z.string().nullable(),
+  caseSubject: z.string(),
+  caseStatus: z.string(), // TODO :we have a bette schema for this
+  priority: z.string(), // TODO :same
+  trial: z.array(ClientTrialSchema).nullable(),
 })
 
 // Output Schemas
@@ -43,6 +74,7 @@ export const ClientListItemSchema = z.object({
   clientType: ClientTypeSchema,
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
+  case: z.array(ClientCaseSchema),
 })
 
 export const SuccessResponseSchema = z.object({

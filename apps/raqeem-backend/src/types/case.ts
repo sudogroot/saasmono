@@ -86,22 +86,28 @@ export const CaseWithRelationsSchema = z.object({
     email: z.string().nullable(),
     phone: z.string().nullable(),
   }),
-  opponent: z.object({
-    id: z.string(),
-    name: z.string(),
-    opponentType: z.string(),
-  }).nullable(),
-  court: z.object({
-    id: z.string(),
-    name: z.string(),
-    state: z.string(),
-    courtType: z.string(),
-  }).nullable(),
-  createdByUser: z.object({
-    id: z.string(),
-    name: z.string(),
-    email: z.string(),
-  }).nullable(),
+  opponent: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      opponentType: z.string(),
+    })
+    .nullable(),
+  court: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      state: z.string(),
+      courtType: z.string(),
+    })
+    .nullable(),
+  createdByUser: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      email: z.string(),
+    })
+    .nullable(),
 })
 
 export const CaseListItemSchema = z.object({
