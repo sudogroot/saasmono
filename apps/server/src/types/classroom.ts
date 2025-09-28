@@ -78,8 +78,22 @@ export const ClassroomTeacherAssignmentSchema = z.object({
   }),
 })
 
+// Classroom Group Schema
+export const ClassroomGroupListItemSchema = z.object({
+  id: z.uuid(),
+  name: z.string(),
+  code: z.string(),
+  description: z.string().nullable(),
+  maxCapacity: z.number().nullable(),
+  isDefault: z.boolean(),
+  classroomId: z.uuid(),
+  classroomName: z.string(),
+  classroomAcademicYear: z.string(),
+})
+
 // Type exports
 export type Classroom = z.infer<typeof ClassroomSchema>
 export type ClassroomListItem = z.infer<typeof ClassroomListItemSchema>
 export type ClassroomStudentEnrollment = z.infer<typeof ClassroomStudentEnrollmentSchema>
 export type ClassroomTeacherAssignment = z.infer<typeof ClassroomTeacherAssignmentSchema>
+export type ClassroomGroupListItem = z.infer<typeof ClassroomGroupListItemSchema>

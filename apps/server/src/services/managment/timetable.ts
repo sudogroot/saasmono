@@ -375,7 +375,9 @@ export class TimetableManagementService {
       // Save image record to database
       await this.saveTimetableImage({
         dataHash,
-        imagePath
+        imagePath,
+        classroomId: request.classroomId,
+        classroomGroupId: request.classroomGroupId
       }, orgId, userId)
 
       return {
@@ -427,6 +429,8 @@ export class TimetableManagementService {
       .values({
         dataHash: input.dataHash,
         imagePath: input.imagePath,
+        classroomId: input.classroomId || null,
+        classroomGroupId: input.classroomGroupId || null,
         orgId,
         createdByUserId: userId,
       })
@@ -437,23 +441,6 @@ export class TimetableManagementService {
     console.log('Creating timetable image with data:', timetableData.length, 'sessions')
     console.log('========== timetableData.length', timetableData);
 
-    // Debug timezone information
-    console.log('=== TIMEZONE DEBUG ===')
-    console.log('Server timezone offset (minutes):', new Date().getTimezoneOffset())
-    console.log('Server local time:', new Date().toString())
-
-    timetableData.forEach((session, index) => {
-      const sessionDate = new Date(session.startDateTime)
-      console.log(`Session ${index + 1}:`)
-      console.log(`  - Raw startDateTime: ${session.startDateTime}`)
-      console.log(`  - JavaScript Date: ${sessionDate.toString()}`)
-      console.log(`  - UTC hours: ${sessionDate.getUTCHours()}`)
-      console.log(`  - Local hours: ${sessionDate.getHours()}`)
-      console.log(`  - UTC day: ${sessionDate.getUTCDay()}`)
-      console.log(`  - Local day: ${sessionDate.getDay()}`)
-    })
-    console.log('====================');
-    
     const canvas = createCanvas(1400, 900)
     const ctx = canvas.getContext('2d')
 
@@ -552,7 +539,7 @@ export class TimetableManagementService {
 
           return matches
         })
-        
+
         if (sessionForSlot) {
           console.log('Found session:', sessionForSlot.title, 'for day', dayNumber, 'hour', timeIndex + 8)
 

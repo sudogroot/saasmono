@@ -311,6 +311,19 @@ CREATE TABLE "timetable" (
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
+CREATE TABLE "timetable_images" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"data_hash" text NOT NULL,
+	"image_path" text NOT NULL,
+	"classroom_id" uuid,
+	"classroom_group_id" uuid,
+	"org_id" text NOT NULL,
+	"created_by_user_id" text,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"last_accessed_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "timetable_images_data_hash_unique" UNIQUE("data_hash")
+);
+--> statement-breakpoint
 CREATE TABLE "organization_config" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"org_id" text NOT NULL,
@@ -419,6 +432,10 @@ ALTER TABLE "timetable" ADD CONSTRAINT "timetable_org_id_organization_id_fk" FOR
 ALTER TABLE "timetable" ADD CONSTRAINT "timetable_created_by_user_id_user_id_fk" FOREIGN KEY ("created_by_user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "timetable" ADD CONSTRAINT "timetable_updated_by_user_id_user_id_fk" FOREIGN KEY ("updated_by_user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "timetable" ADD CONSTRAINT "timetable_deleted_by_user_id_user_id_fk" FOREIGN KEY ("deleted_by_user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "timetable_images" ADD CONSTRAINT "timetable_images_classroom_id_classroom_id_fk" FOREIGN KEY ("classroom_id") REFERENCES "public"."classroom"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "timetable_images" ADD CONSTRAINT "timetable_images_classroom_group_id_classroom_group_id_fk" FOREIGN KEY ("classroom_group_id") REFERENCES "public"."classroom_group"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "timetable_images" ADD CONSTRAINT "timetable_images_org_id_organization_id_fk" FOREIGN KEY ("org_id") REFERENCES "public"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "timetable_images" ADD CONSTRAINT "timetable_images_created_by_user_id_user_id_fk" FOREIGN KEY ("created_by_user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "organization_config" ADD CONSTRAINT "organization_config_org_id_organization_id_fk" FOREIGN KEY ("org_id") REFERENCES "public"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "parent_student_relation" ADD CONSTRAINT "parent_student_relation_parent_id_user_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "parent_student_relation" ADD CONSTRAINT "parent_student_relation_student_id_user_id_fk" FOREIGN KEY ("student_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -439,4 +456,7 @@ CREATE INDEX "timetable_start_datetime_status_idx" ON "timetable" USING btree ("
 CREATE INDEX "timetable_teacher_datetime_idx" ON "timetable" USING btree ("teacher_id","start_datetime");--> statement-breakpoint
 CREATE INDEX "timetable_org_datetime_idx" ON "timetable" USING btree ("org_id","start_datetime");--> statement-breakpoint
 CREATE INDEX "timetable_classroom_datetime_idx" ON "timetable" USING btree ("classroom_id","start_datetime");--> statement-breakpoint
-CREATE INDEX "timetable_subject_datetime_idx" ON "timetable" USING btree ("education_subject_id","start_datetime");
+CREATE INDEX "timetable_subject_datetime_idx" ON "timetable" USING btree ("education_subject_id","start_datetime");--> statement-breakpoint
+CREATE INDEX "timetable_images_org_hash_idx" ON "timetable_images" USING btree ("org_id","data_hash");--> statement-breakpoint
+CREATE INDEX "timetable_images_last_accessed_idx" ON "timetable_images" USING btree ("last_accessed_at");--> statement-breakpoint
+CREATE INDEX "timetable_images_classroom_or_group_idx" ON "timetable_images" USING btree ("classroom_id","classroom_group_id");
