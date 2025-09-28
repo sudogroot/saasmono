@@ -2,6 +2,7 @@ import {
   BarChart3,
   BookOpen,
   BookUser,
+  Calendar,
   Database,
   FileText,
   FileType,
@@ -28,6 +29,11 @@ export const dashboardSidebarData = {
       title: 'الأقسام',
       url: '/dashboard/classrooms',
       icon: List,
+    },
+    {
+      title: 'جدول الحصص',
+      url: '/dashboard/timetable',
+      icon: Calendar,
     },
     {
       title: 'المعلمون',
@@ -101,6 +107,11 @@ export const dashboardSidebarSections = [
         title: 'الأقسام',
         icon: GraduationCap,
         url: '/dashboard/classrooms',
+      },
+      {
+        title: 'جدول الحصص',
+        icon: Calendar,
+        url: '/dashboard/timetable',
       },
     ],
   },
@@ -195,6 +206,13 @@ export const dashboardMobileNavItems = [
     icon: GraduationCap,
     color: 'text-blue-600',
     bgColor: 'bg-blue-50',
+  },
+  {
+    title: 'جدول الحصص',
+    href: 'timetable',
+    icon: Calendar,
+    color: 'text-indigo-600',
+    bgColor: 'bg-indigo-50',
   },
   {
     title: 'المعلمون',

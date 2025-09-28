@@ -4,6 +4,7 @@ import { curriculumManagementRouter } from './curriculum'
 import { parentManagementRouter } from './parents'
 import { studentManagementRouter } from './students'
 import { teacherManagementRouter } from './teachers'
+import { timetableManagementRouter } from './timetable'
 import { userManagementRouter } from './user'
 
 export const managementRouter = {
@@ -13,4 +14,5 @@ export const managementRouter = {
   parents: parentManagementRouter,
   curriculum: curriculumManagementRouter,
   classroom: classroomManagementRouter,
+  timetables: timetableManagementRouter,
 }

@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { db } from '../../db/index'
 import { OrpcErrorHelper, getOrgId } from '../../lib/errors/orpc-errors'
 import { protectedProcedure } from '../../lib/orpc'
-import { createTimetableManagementService } from '../../services/managment/timetables'
+import { createTimetableManagementService } from '../../services/managment/timetable'
 import {
   CreateTimetableInputSchema,
   TimetableListItemSchema,
