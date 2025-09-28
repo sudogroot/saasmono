@@ -1,20 +1,16 @@
-'use client';
+'use client'
 
-import { useQuery } from '@tanstack/react-query';
-import { Badge } from '@repo/ui';
-import { Button } from '@repo/ui';
-import { Separator } from '@repo/ui';
-import { CaseAvatar } from './case-avatar';
-import { orpc } from '@/utils/orpc';
-import { TrialsList } from '../trials/trials-list';
-import { globalSheet } from '@/stores/global-sheet-store';
-import { FileText, Users, Gavel, Calendar, Loader2, AlertCircle, Edit, Plus } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils'
+import { globalSheet } from '@/stores/global-sheet-store'
+import { orpc } from '@/utils/orpc'
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Separator, Tabs, TabsContent, TabsList, TabsTrigger, Text, ValueText } from '@repo/ui'
+import { useQuery } from '@tanstack/react-query'
+import { AlertCircle, Calendar, Clock, Edit, FileText, Gavel, Loader2, Mail, Phone, Plus, Scale, User } from 'lucide-react'
 
 interface CaseDetailsSheetProps {
-  caseId: string;
-  organizationId?: string;
-  renderMode?: 'content' | 'full';
+  caseId: string
+  organizationId?: string
+  renderMode?: 'content' | 'full'
 }
 
 const caseStatusColors = {
@@ -61,23 +57,18 @@ const priorityLabels = {
   critical: 'حرجة',
 } as const;
 
-export function CaseDetails({
-  caseId,
-  organizationId,
-  renderMode = 'content'
-}: CaseDetailsSheetProps) {
+export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: CaseDetailsSheetProps) {
   const {
     data: caseData,
     isLoading,
     error,
   } = useQuery({
-    ...orpc.cases.getByIdWithDetails.queryOptions({
+    ...orpc.cases.getCaseById.queryOptions({
       input: {
-        id: caseId,
-        includeDeleted: false,
+        caseId: caseId,
       },
     }),
-  });
+  })
 
   if (isLoading) {
     return (
@@ -111,188 +102,136 @@ export function CaseDetails({
       slug: 'cases',
       caseId: caseData.id,
       initialData: caseData,
-      size: 'lg'
-    });
-  };
+      size: 'lg',
+    })
+  }
 
   const handleAddTrial = () => {
-    // Note: This would open a trial form - implementation depends on if you have a trial form component
-    console.log('Add trial for case:', caseData.id);
-  };
+    globalSheet.openTrialForm({
+      mode: 'create',
+      slug: 'trials',
+      caseId: caseData.id,
+      size: 'md',
+    })
+  }
 
   return (
-    <div className='space-y-6 p-6'>
-      {/* Header */}
-      <div className='flex items-start gap-4'>
-        <CaseAvatar case_={caseData} size='xl' />
-        <div className='flex-1 space-y-2'>
-          <div>
-            <h2 className='text-2xl font-bold text-foreground'>{caseData.caseTitle}</h2>
-            <p className='text-muted-foreground font-mono'>{caseData.caseNumber}</p>
-          </div>
-          <div className='flex gap-2'>
-            <Badge
-              variant='outline'
-              className={cn(
-                'w-fit',
-                caseStatusColors[caseData.caseStatus as keyof typeof caseStatusColors]
-              )}
-            >
-              {caseStatusLabels[caseData.caseStatus as keyof typeof caseStatusLabels]}
-            </Badge>
-            <Badge
-              variant='outline'
-              className={cn(
-                'w-fit',
-                priorityColors[caseData.priority as keyof typeof priorityColors]
-              )}
-            >
-              {priorityLabels[caseData.priority as keyof typeof priorityLabels]}
-            </Badge>
-          </div>
-        </div>
-        <div className='flex gap-2'>
-          <Button
-            variant='outline'
-            size='sm'
-            onClick={handleEdit}
-          >
-            <Edit className='h-4 w-4 ml-1' />
-            تعديل
-          </Button>
-          <Button
-            variant='default'
-            size='sm'
-            onClick={handleAddTrial}
-          >
-            <Plus className='h-4 w-4 ml-1' />
-            إضافة جلسة
-          </Button>
-        </div>
-      </div>
-
-      <Separator />
-
-      {/* Case Information */}
-      <div className='space-y-4'>
-        <h3 className='text-lg font-semibold flex items-center gap-2'>
-          <FileText className='h-5 w-5' />
-          معلومات القضية
-        </h3>
-
-        <div className='space-y-3'>
-          <div className='space-y-1'>
-            <label className='text-sm font-medium text-muted-foreground'>موضوع القضية</label>
-            <p className='text-foreground'>{caseData.caseSubject}</p>
-          </div>
-
-          {caseData.courtFileNumber && (
-            <div className='space-y-1'>
-              <label className='text-sm font-medium text-muted-foreground'>
-                رقم الملف بالمحكمة
-              </label>
-              <p className='text-foreground font-mono'>{caseData.courtFileNumber}</p>
+    <div className="space-y-6 p-2">
+      <Tabs dir="rtl" defaultValue="info">
+        <TabsList className="mb-2">
+          <TabsTrigger value={'info'} className="text-muted-foreground text-sm font-medium">
+            معلومات القضية
+          </TabsTrigger>
+          <TabsTrigger value={'trials'} className="text-muted-foreground text-sm font-medium">
+            الجلسات
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="info">
+          <div className="space-y-3">
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" size="sm" onClick={handleEdit}>
+                <Edit className="ml-1 h-4 w-4" />
+                تعديل
+              </Button>
             </div>
-          )}
-        </div>
-      </div>
-
-      {/* Parties Information */}
-      <Separator />
-      <div className='space-y-4'>
-        <h3 className='text-lg font-semibold flex items-center gap-2'>
-          <Users className='h-5 w-5' />
-          الأطراف
-        </h3>
-
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-          {caseData.client && (
-            <div className='space-y-1'>
-              <label className='text-sm font-medium text-muted-foreground'>العميل</label>
-              <p className='text-foreground'>{caseData.client.name}</p>
-              <p className='text-xs text-muted-foreground'>{caseData.client.clientType}</p>
-            </div>
-          )}
-
-          {caseData.opponent && (
-            <div className='space-y-1'>
-              <label className='text-sm font-medium text-muted-foreground'>الخصم</label>
-              <p className='text-foreground'>{caseData.opponent.name}</p>
-              <p className='text-xs text-muted-foreground'>{caseData.opponent.opponentType}</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Court Information */}
-      {caseData.court && (
-        <>
-          <Separator />
-          <div className='space-y-4'>
-            <h3 className='text-lg font-semibold flex items-center gap-2'>
-              <Gavel className='h-5 w-5' />
-              معلومات المحكمة
-            </h3>
-
-            <div className='space-y-2'>
-              <div>
-                <p className='text-foreground font-medium'>{caseData.court.name}</p>
-                <p className='text-sm text-muted-foreground'>
-                  {caseData.court.state} • {caseData.court.courtType}
-                </p>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between rounded-lg border p-3">
+                <div className="flex items-center gap-2">
+                  <FileText className="text-muted-foreground h-4 w-4" />
+                  <span className="text-sm">عنوان القضية</span>
+                </div>
+                <div className="flex gap-4">
+                  <Badge
+                    variant="outline"
+                    className={cn('w-fit', caseStatusColors[caseData.caseStatus as keyof typeof caseStatusColors])}
+                  >
+                    {caseStatusLabels[caseData.caseStatus as keyof typeof caseStatusLabels]}
+                  </Badge>
+                  <Badge
+                    variant="outline"
+                    className={cn('w-fit', priorityColors[caseData.priority as keyof typeof priorityColors])}
+                  >
+                    {priorityLabels[caseData.priority as keyof typeof priorityLabels]}
+                  </Badge>
+                  <div>
+                    <Text size="sm" weight="semibold" as="span">
+                      {caseData.caseTitle}
+                    </Text>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center justify-between rounded-lg border p-3">
+                <div className="flex items-center gap-2">
+                  <FileText className="text-muted-foreground h-4 w-4" />
+                  <span className="text-sm">رقم القضية</span>
+                </div>
+                <ValueText value={caseData.caseNumber} size="sm" className="font-mono" />
+              </div>
+              <div className="flex items-center justify-between rounded-lg border p-3">
+                <div className="flex items-center gap-2">
+                  <FileText className="text-muted-foreground h-4 w-4" />
+                  <span className="text-sm">موضوع القضية</span>
+                </div>
+                <ValueText value={caseData.caseSubject} size="sm" className="font-medium" />
+              </div>
+              <div className="flex items-center justify-between rounded-lg border p-3">
+                <div className="flex items-center gap-2">
+                  <Gavel className="text-muted-foreground h-4 w-4" />
+                  <span className="text-sm">رقم الملف بالمحكمة</span>
+                </div>
+                <ValueText value={caseData.courtFileNumber} size="sm" className="font-mono" fallbackText="غير محدد" />
               </div>
             </div>
           </div>
-        </>
-      )}
+          <Separator className="my-2" />
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
+              <div>
+                <p className="text-muted-foreground">تاريخ الإضافة</p>
+                <Text size="sm">
+                  {new Date(caseData.createdAt).toLocaleDateString('ar-TN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </Text>
+              </div>
 
-      {/* Trials Section */}
-      <Separator />
-      <div className='space-y-4'>
-        <h3 className='text-lg font-semibold flex items-center gap-2'>
-          <Gavel className='h-5 w-5' />
-          الجلسات
-        </h3>
-
-        <TrialsList caseId={caseData.id} />
-      </div>
-
-      {/* Timestamps */}
-      <Separator />
-      <div className='space-y-4'>
-        <h3 className='text-lg font-semibold flex items-center gap-2'>
-          <Calendar className='h-5 w-5' />
-          التواريخ
-        </h3>
-
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-4 text-sm'>
-          <div>
-            <p className='text-muted-foreground'>تاريخ الإضافة</p>
-            <p className='text-foreground'>
-              {new Date(caseData.createdAt).toLocaleDateString('ar-TN', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
-            </p>
+              <div>
+                <p className="text-muted-foreground">آخر تحديث</p>
+                <Text size="sm">
+                  {new Date(caseData.updatedAt).toLocaleDateString('ar-TN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </Text>
+              </div>
+            </div>
           </div>
+        </TabsContent>
+        <TabsContent value="trials">
+          <div className="space-y-4">
+            <div className="flex justify-end gap-2">
+              <Button variant="default" size="sm" onClick={handleAddTrial}>
+                <Plus className="ml-1 h-4 w-4" />
+                إضافة جلسة
+              </Button>
+            </div>
 
-          <div>
-            <p className='text-muted-foreground'>آخر تحديث</p>
-            <p className='text-foreground'>
-              {new Date(caseData.updatedAt).toLocaleDateString('ar-TN', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
-            </p>
+            {/* TODO: Replace with actual trials data from API */}
+            <div className="text-center py-8 text-muted-foreground">
+              <Gavel className="h-12 w-12 mx-auto mb-3 opacity-50" />
+              <p className="text-lg font-medium mb-1">لا توجد جلسات</p>
+              <p className="text-sm">لم يتم إنشاء أي جلسات لهذه القضية بعد</p>
+            </div>
           </div>
-        </div>
-      </div>
+        </TabsContent>
+      </Tabs>
     </div>
-  );
+  )
 }

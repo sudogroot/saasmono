@@ -78,6 +78,24 @@ const caseStatusLabels = {
   suspended: 'معلقة',
 } as const
 
+const priorityColors = {
+  low: 'bg-gray-50 text-gray-700 border-gray-200',
+  normal: 'bg-blue-50 text-blue-700 border-blue-200',
+  medium: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+  high: 'bg-orange-50 text-orange-700 border-orange-200',
+  urgent: 'bg-red-50 text-red-700 border-red-200',
+  critical: 'bg-red-100 text-red-800 border-red-300',
+} as const
+
+const priorityLabels = {
+  low: 'منخفضة',
+  normal: 'عادية',
+  medium: 'متوسطة',
+  high: 'عالية',
+  urgent: 'عاجلة',
+  critical: 'حرجة',
+} as const
+
 export function CasesTable({
   cases: propsCases,
   isLoading: propsIsLoading = false,
@@ -175,14 +193,18 @@ export function CasesTable({
           )
         },
       }),
-      // columnHelper.accessor('priority', {
-      //   id: 'priority',
-      //   header: 'الأولوية',
-      //   cell: ({ getValue }) => {
-      //     const priority = getValue()
-      //     return <PriorityBadge priority={priority as any} />
-      //   },
-      // }),
+      columnHelper.accessor('priority', {
+        id: 'priority',
+        header: 'الأولوية',
+        cell: ({ getValue }) => {
+          const priority = getValue() as keyof typeof priorityColors
+          return (
+            <Badge variant="outline" className={cn('font-medium', priorityColors[priority])}>
+              {priorityLabels[priority]}
+            </Badge>
+          )
+        },
+      }),
       columnHelper.display({
         id: 'client',
         header: 'العميل',
@@ -279,59 +301,89 @@ export function CasesTable({
     [onEdit, onDelete, onView, currentSlug]
   )
 
-  // const quickFilters = useMemo(
-  //   () => [
-  //     {
-  //       key: 'caseStatus',
-  //       label: 'حالة القضية',
-  //       values: [
-  //         { label: 'جديدة', value: 'new' },
-  //         { label: 'قيد المراجعة', value: 'under-review' },
-  //         { label: 'مرفوعة للمحكمة', value: 'filed-to-court' },
-  //         { label: 'قيد النظر', value: 'under-consideration' },
-  //         { label: 'كسبت', value: 'won' },
-  //         { label: 'خسرت', value: 'lost' },
-  //         { label: 'مؤجلة', value: 'postponed' },
-  //         { label: 'مغلقة', value: 'closed' },
-  //         { label: 'منسحبة', value: 'withdrawn' },
-  //         { label: 'معلقة', value: 'suspended' },
-  //       ],
-  //     },
-  //     {
-  //       key: 'priority',
-  //       label: 'الأولوية',
-  //       values: Object.keys(casePriorityBadges).map((priority) => ({
-  //         label: priority,
-  //         value: priority,
-  //       })),
-  //     },
-  //   ],
-  //   []
-  // )
+  const quickFilters = useMemo(
+    () => [
+      {
+        key: 'caseStatus',
+        label: 'حالة القضية',
+        values: [
+          {
+            label: (
+              <Badge variant="outline" className={cn('font-medium', caseStatusColors.new)}>
+                جديدة
+              </Badge>
+            ),
+            value: 'new',
+          },
+          {
+            label: (
+              <Badge variant="outline" className={cn('font-medium', caseStatusColors['under-review'])}>
+                قيد المراجعة
+              </Badge>
+            ),
+            value: 'under-review',
+          },
+          {
+            label: (
+              <Badge variant="outline" className={cn('font-medium', caseStatusColors['filed-to-court'])}>
+                مرفوعة للمحكمة
+              </Badge>
+            ),
+            value: 'filed-to-court',
+          },
+          {
+            label: (
+              <Badge variant="outline" className={cn('font-medium', caseStatusColors['under-consideration'])}>
+                قيد النظر
+              </Badge>
+            ),
+            value: 'under-consideration',
+          },
+          {
+            label: (
+              <Badge variant="outline" className={cn('font-medium', caseStatusColors.won)}>
+                كسبت
+              </Badge>
+            ),
+            value: 'won',
+          },
+          {
+            label: (
+              <Badge variant="outline" className={cn('font-medium', caseStatusColors.lost)}>
+                خسرت
+              </Badge>
+            ),
+            value: 'lost',
+          },
+        ],
+      },
+    ],
+    []
+  )
 
-  // const filteredData = useMemo(() => {
-  //   let filtered = cases
 
-  //   // Apply active filters
-  //   Object.entries(activeFilters).forEach(([key, value]) => {
-  //     if (!value) return
+  const filteredData = useMemo(() => {
+    let filtered = cases
 
-  //     switch (key) {
-  //       case 'caseStatus':
-  //         filtered = filtered.filter((case_) => case_.caseStatus === value)
-  //         break
-  //       case 'priority':
-  //         filtered = filtered.filter((case_) => case_.priority === value)
-  //         break
-  //     }
-  //   })
+    // Apply active filters
+    Object.entries(activeFilters).forEach(([key, value]) => {
+      if (!value) return
 
-  //   return filtered
-  // }, [cases, activeFilters])
+      switch (key) {
+        case 'caseStatus':
+          filtered = filtered.filter((case_) => case_.caseStatus === value)
+          break
+        case 'priority':
+          filtered = filtered.filter((case_) => case_.priority === value)
+          break
+      }
+    })
+
+    return filtered
+  }, [cases, activeFilters])
 
   const table = useReactTable({
-    // data: filteredData,
-    data: [],
+    data: filteredData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -383,16 +435,15 @@ export function CasesTable({
                 {caseStatusLabels[row.original.caseStatus as keyof typeof caseStatusLabels]}
               </Badge>
             </div>
-            {/*<div className="text-muted-foreground mt-0.5 flex items-center gap-3 text-xs">
+            <div className="text-muted-foreground mt-0.5 flex items-center gap-3 text-xs">
               <span className="font-mono">{row.original.caseNumber}</span>
-              <PriorityBadge priority={row.original.priority as any} size="sm" />
               {row.original.client?.name && (
                 <div className="flex items-center gap-1">
                   <Users className="h-2.5 w-2.5" />
                   <span className="max-w-[60px] truncate">{row.original.client.name}</span>
                 </div>
               )}
-            </div>*/}
+            </div>
           </div>
         </div>
 
@@ -465,7 +516,7 @@ export function CasesTable({
         noDataMessage="لا توجد قضايا مطابقة للبحث"
         mobileCardRenderer={mobileCardRenderer}
         showQuickFilters={true}
-        // quickFilters={quickFilters}
+        quickFilters={quickFilters}
         activeFilters={activeFilters}
         onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
         headerActions={headerActions}
