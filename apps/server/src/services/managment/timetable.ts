@@ -436,6 +436,23 @@ export class TimetableManagementService {
   private async createTimetableImage(timetableData: TimetableListItem[], request: TimetableImageGenerationRequest, orgId: string): Promise<string> {
     console.log('Creating timetable image with data:', timetableData.length, 'sessions')
     console.log('========== timetableData.length', timetableData);
+
+    // Debug timezone information
+    console.log('=== TIMEZONE DEBUG ===')
+    console.log('Server timezone offset (minutes):', new Date().getTimezoneOffset())
+    console.log('Server local time:', new Date().toString())
+
+    timetableData.forEach((session, index) => {
+      const sessionDate = new Date(session.startDateTime)
+      console.log(`Session ${index + 1}:`)
+      console.log(`  - Raw startDateTime: ${session.startDateTime}`)
+      console.log(`  - JavaScript Date: ${sessionDate.toString()}`)
+      console.log(`  - UTC hours: ${sessionDate.getUTCHours()}`)
+      console.log(`  - Local hours: ${sessionDate.getHours()}`)
+      console.log(`  - UTC day: ${sessionDate.getUTCDay()}`)
+      console.log(`  - Local day: ${sessionDate.getDay()}`)
+    })
+    console.log('====================');
     
     const canvas = createCanvas(1400, 900)
     const ctx = canvas.getContext('2d')
@@ -523,14 +540,14 @@ export class TimetableManagementService {
 
         const sessionForSlot = timetableData.find(session => {
           const sessionDate = new Date(session.startDateTime)
-          const sessionDay = sessionDate.getDay()
-          const sessionHour = sessionDate.getHours()
+          const sessionDay = sessionDate.getUTCDay() // Use UTC day
+          const sessionHour = sessionDate.getUTCHours() // Use UTC hours
 
           const matches = sessionDay === dayNumber && sessionHour === (timeIndex + 8)
 
           if (timeIndex < 2) { // Only log first few slots to avoid spam
             console.log(`Checking slot [${timeIndex}]: dayNumber=${dayNumber}, expectedHour=${timeIndex + 8}`)
-            console.log(`Session "${session.title}": date=${session.startDateTime}, day=${sessionDay}, hour=${sessionHour}, matches=${matches}`)
+            console.log(`Session "${session.title}": date=${session.startDateTime}, UTCday=${sessionDay}, UTChour=${sessionHour}, matches=${matches}`)
           }
 
           return matches
@@ -588,7 +605,7 @@ export class TimetableManagementService {
     // Show session times for debugging
     timetableData.forEach((session, index) => {
       const sessionDate = new Date(session.startDateTime)
-      const debugText = `S${index + 1}: ${session.title} - Day:${sessionDate.getDay()} Hour:${sessionDate.getHours()}`
+      const debugText = `S${index + 1}: ${session.title} - UTCDay:${sessionDate.getUTCDay()} UTCHour:${sessionDate.getUTCHours()}`
       ctx.fillText(debugText, 20, 880 + (index * 12))
     })
 
