@@ -38,6 +38,7 @@
     "seed:student-enrollments": "tsx src/db/seeds/dev/studentEnrollments.ts",
     "seed:group-memberships": "tsx src/db/seeds/dev/groupMemberships.ts",
     "seed:classroom-complete": "tsx src/db/seeds/dev/seedClassroomComplete.ts",
+    "seed:timetables": "tsx src/db/seeds/dev/timetables.ts",
     "db:show-tables": "tsx src/db/seeds/utils/showTables.ts"
   },
   "dependencies": {

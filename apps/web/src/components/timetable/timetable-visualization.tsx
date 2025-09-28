@@ -7,7 +7,7 @@ import { Calendar, Download, Filter } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { TimetableFilters } from './timetable-filters'
 import { TimetableGrid } from './timetable-grid'
-import { generateTimetableImage } from './timetable-image-generator'
+import { formatFileSize, generateTimetableImage } from './timetable-image-generator'
 
 export interface TimetableFilterState {
   classroomId?: string
@@ -35,13 +35,24 @@ export function TimetableVisualization() {
     if (!timetableRef.current) return
 
     try {
-      await generateTimetableImage(timetableRef.current, {
+      const result = await generateTimetableImage(timetableRef.current, {
         filename: `timetable-${new Date().toISOString().split('T')[0]}.png`,
         format: 'png',
         quality: 1.0,
+        scale: 1.5, // Reduce scale to avoid memory issues
       })
+
+      if (result.success) {
+        console.log(`تم تحميل الجدول بنجاح: ${result.filename} (${formatFileSize(result.size)})`)
+      }
     } catch (error) {
       console.error('Failed to generate timetable image:', error)
+
+      // Show user-friendly error message
+      const errorMessage = error instanceof Error ? error.message : 'حدث خطأ غير متوقع'
+
+      // You could replace this with a toast notification or modal
+      alert(`خطأ في تحميل الجدول: ${errorMessage}`)
     }
   }
 
