@@ -92,6 +92,33 @@ export const timetable = pgTable('timetable', {
   }
 })
 
+// Timetable images cache table
+export const timetableImages = pgTable('timetable_images', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  dataHash: text('data_hash').notNull().unique(), // MD5 hash of the timetable data
+  imagePath: text('image_path').notNull(), // Path to the generated image file
+
+  orgId: text('org_id')
+    .notNull()
+    .references(() => organization.id, { onDelete: 'cascade' }),
+
+  // Audit fields
+  createdByUserId: text('created_by_user_id').references(() => user.id),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  lastAccessedAt: timestamp('last_accessed_at').defaultNow().notNull(),
+}, (table) => {
+  return {
+    // Performance indexes
+    orgHashIdx: index('timetable_images_org_hash_idx').on(
+      table.orgId,
+      table.dataHash
+    ),
+    lastAccessedIdx: index('timetable_images_last_accessed_idx').on(
+      table.lastAccessedAt
+    ),
+  }
+})
+
 // Relations
 export const timetableRelations = relations(timetable, ({ one }) => ({
   classroom: one(classroom, {
@@ -134,5 +161,16 @@ export const timetableRelations = relations(timetable, ({ one }) => ({
     fields: [timetable.deletedByUserId],
     references: [user.id],
     relationName: 'timetableDeletedBy',
+  }),
+}))
+export const timetableImagesRelations = relations(timetableImages, ({ one }) => ({
+  organization: one(organization, {
+    fields: [timetableImages.orgId],
+    references: [organization.id],
+  }),
+  createdBy: one(user, {
+    fields: [timetableImages.createdByUserId],
+    references: [user.id],
+    relationName: 'timetableImageCreatedBy',
   }),
 }))

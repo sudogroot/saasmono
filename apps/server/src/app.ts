@@ -7,6 +7,7 @@ import { toNodeHandler } from 'better-auth/node'
 import cors from 'cors'
 import 'dotenv/config'
 import express from 'express'
+import path from 'path'
 import { auth } from './lib/auth'
 import { createContext } from './lib/context'
 import { appRouter } from './routers'
@@ -61,6 +62,9 @@ app.use(async (req, res, next) => {
 })
 
 app.use(express.json())
+
+// Serve static images
+app.use('/images', express.static(path.join(process.cwd(), 'src', 'images')))
 
 app.get('/', (_req, res) => {
   res.status(200).send('OK')
