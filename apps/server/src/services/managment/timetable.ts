@@ -1,6 +1,6 @@
 import { user } from '@/db/schema/auth'
 import { classroom, classroomGroup } from '@/db/schema/classroom'
-import { educationSubject, institutionLevel } from '@/db/schema/education'
+import { educationSubject, educationLevel, institutionLevel } from '@/db/schema/education'
 import { room } from '@/db/schema/room'
 import { timetable, timetableImages } from '@/db/schema/timetable'
 import type {
@@ -70,6 +70,9 @@ export class TimetableManagementService {
         subjectId: educationSubject.id,
         subjectName: educationSubject.name,
         subjectDisplayNameEn: educationSubject.displayNameEn,
+        // Institution level data
+        institutionLevelId: institutionLevel.id,
+        institutionLevelName: institutionLevel.name,
         // Room data
         roomId: room.id,
         roomName: room.name,
@@ -84,9 +87,10 @@ export class TimetableManagementService {
       .from(timetable)
       .leftJoin(user, eq(timetable.teacherId, user.id))
       .leftJoin(educationSubject, eq(timetable.educationSubjectId, educationSubject.id))
-      .leftJoin(institutionLevel, eq(educationSubject.institutionLevelId, institutionLevel.id))
       .leftJoin(room, eq(timetable.roomId, room.id))
       .leftJoin(classroom, eq(timetable.classroomId, classroom.id))
+      .leftJoin(educationLevel, eq(classroom.educationLevelId, educationLevel.id))
+      .leftJoin(institutionLevel, eq(educationLevel.institutionLevelId, institutionLevel.id))
       .leftJoin(classroomGroup, eq(timetable.classroomGroupId, classroomGroup.id))
       .where(and(...whereConditions))
 
@@ -106,6 +110,10 @@ export class TimetableManagementService {
         name: row.subjectName!,
         displayNameEn: row.subjectDisplayNameEn!,
       },
+      institutionLevel: row.institutionLevelId ? {
+        id: row.institutionLevelId,
+        name: row.institutionLevelName!,
+      } : null,
       room: {
         id: row.roomId!,
         name: row.roomName!,
@@ -427,7 +435,8 @@ export class TimetableManagementService {
 
   private async createTimetableImage(timetableData: TimetableListItem[], request: TimetableImageGenerationRequest, orgId: string): Promise<string> {
     console.log('Creating timetable image with data:', timetableData.length, 'sessions')
-
+    console.log('========== timetableData.length', timetableData);
+    
     const canvas = createCanvas(1400, 900)
     const ctx = canvas.getContext('2d')
 
@@ -519,7 +528,8 @@ export class TimetableManagementService {
 
           return sessionDay === dayNumber && sessionHour === (timeIndex + 8)
         })
-
+        console.log('========== sessionForSlot', sessionForSlot);
+        
         if (sessionForSlot) {
           console.log('Found session:', sessionForSlot.title, 'for day', dayNumber, 'hour', timeIndex + 8)
 
@@ -575,8 +585,12 @@ export class TimetableManagementService {
     // Build path structure based on classroom or classroomGroup
     let pathSegments = ['organization', orgId]
 
-    // Add institution level (using a default for now - you may need to get this from context)
-    pathSegments.push('institution-level', 'default')
+    // Get institution level from the first timetable session (they should all have the same institution level)
+    const institutionLevelId = timetableData.length > 0 && timetableData[0].institutionLevel
+      ? timetableData[0].institutionLevel.id
+      : 'default'
+
+    pathSegments.push('institution-level', institutionLevelId)
 
     if (request.classroomId) {
       pathSegments.push('classroom', request.classroomId)

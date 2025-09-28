@@ -68,6 +68,10 @@ export const TimetableListItemSchema = z.object({
     name: z.string(),
     displayNameEn: z.string(),
   }),
+  institutionLevel: z.object({
+    id: z.uuid(),
+    name: z.string(),
+  }).nullable(),
   room: z.object({
     id: z.uuid(),
     name: z.string(),
