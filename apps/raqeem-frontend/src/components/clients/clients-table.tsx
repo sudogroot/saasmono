@@ -1,8 +1,6 @@
 'use client'
 
-import { GenericTable } from '@repo/ui'
-import { Badge } from '@repo/ui'
-import { Button } from '@repo/ui'
+import { Badge, Button, GenericTable } from '@repo/ui'
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -148,7 +146,7 @@ export function ClientsTable({
                 globalSheet.openClientDetails({
                   slug: currentSlug,
                   clientId: row.original.id,
-                  size: 'lg',
+                  size: 'md',
                 })
               }}
               title="عرض"
@@ -167,7 +165,8 @@ export function ClientsTable({
                     mode: 'edit',
                     slug: currentSlug,
                     clientId: row.original.id,
-                    size: 'lg',
+                    size: 'md',
+                    initialData: row.original,
                   })
                 }
               }}
@@ -203,28 +202,52 @@ export function ClientsTable({
         label: 'نوع العميل',
         values: [
           {
-            label: <Badge variant="outline" className={cn('font-medium', clientTypeColors.individual)}>فرد</Badge>,
-            value: 'individual'
+            label: (
+              <Badge variant="outline" className={cn('font-medium', clientTypeColors.individual)}>
+                فرد
+              </Badge>
+            ),
+            value: 'individual',
           },
           {
-            label: <Badge variant="outline" className={cn('font-medium', clientTypeColors.company)}>شركة</Badge>,
-            value: 'company'
+            label: (
+              <Badge variant="outline" className={cn('font-medium', clientTypeColors.company)}>
+                شركة
+              </Badge>
+            ),
+            value: 'company',
           },
           {
-            label: <Badge variant="outline" className={cn('font-medium', clientTypeColors.institution)}>مؤسسة</Badge>,
-            value: 'institution'
+            label: (
+              <Badge variant="outline" className={cn('font-medium', clientTypeColors.institution)}>
+                مؤسسة
+              </Badge>
+            ),
+            value: 'institution',
           },
           {
-            label: <Badge variant="outline" className={cn('font-medium', clientTypeColors.organization)}>منظمة</Badge>,
-            value: 'organization'
+            label: (
+              <Badge variant="outline" className={cn('font-medium', clientTypeColors.organization)}>
+                منظمة
+              </Badge>
+            ),
+            value: 'organization',
           },
           {
-            label: <Badge variant="outline" className={cn('font-medium', clientTypeColors.government)}>حكومي</Badge>,
-            value: 'government'
+            label: (
+              <Badge variant="outline" className={cn('font-medium', clientTypeColors.government)}>
+                حكومي
+              </Badge>
+            ),
+            value: 'government',
           },
           {
-            label: <Badge variant="outline" className={cn('font-medium', clientTypeColors.association)}>جمعية</Badge>,
-            value: 'association'
+            label: (
+              <Badge variant="outline" className={cn('font-medium', clientTypeColors.association)}>
+                جمعية
+              </Badge>
+            ),
+            value: 'association',
           },
         ],
       },
@@ -359,7 +382,7 @@ export function ClientsTable({
         globalSheet.openClientDetails({
           slug: currentSlug,
           clientId: row.original.id,
-          size: 'lg',
+          size: 'md',
         })
       }}
       searchPlaceholder="البحث عن عميل (الاسم، الهوية، الهاتف، البريد الإلكتروني...)"
