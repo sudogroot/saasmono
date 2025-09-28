@@ -526,9 +526,15 @@ export class TimetableManagementService {
           const sessionDay = sessionDate.getDay()
           const sessionHour = sessionDate.getHours()
 
-          return sessionDay === dayNumber && sessionHour === (timeIndex + 8)
+          const matches = sessionDay === dayNumber && sessionHour === (timeIndex + 8)
+
+          if (timeIndex < 2) { // Only log first few slots to avoid spam
+            console.log(`Checking slot [${timeIndex}]: dayNumber=${dayNumber}, expectedHour=${timeIndex + 8}`)
+            console.log(`Session "${session.title}": date=${session.startDateTime}, day=${sessionDay}, hour=${sessionHour}, matches=${matches}`)
+          }
+
+          return matches
         })
-        console.log('========== sessionForSlot', sessionForSlot);
         
         if (sessionForSlot) {
           console.log('Found session:', sessionForSlot.title, 'for day', dayNumber, 'hour', timeIndex + 8)
@@ -573,11 +579,18 @@ export class TimetableManagementService {
       currentY += slotHeight
     })
 
-    // Debug: Add total data count
+    // Debug: Add total data count and session times
     ctx.fillStyle = '#6b7280'
     ctx.font = '10px Arial'
     ctx.textAlign = 'left'
     ctx.fillText(`Total sessions: ${timetableData.length}`, 20, 870)
+
+    // Show session times for debugging
+    timetableData.forEach((session, index) => {
+      const sessionDate = new Date(session.startDateTime)
+      const debugText = `S${index + 1}: ${session.title} - Day:${sessionDate.getDay()} Hour:${sessionDate.getHours()}`
+      ctx.fillText(debugText, 20, 880 + (index * 12))
+    })
 
     // Create structured file path
     const timestamp = Date.now()
