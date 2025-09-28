@@ -1,6 +1,6 @@
 import { user } from '@/db/schema/auth'
 import { classroom, classroomGroup } from '@/db/schema/classroom'
-import { educationSubject } from '@/db/schema/education'
+import { educationSubject, institutionLevel } from '@/db/schema/education'
 import { room } from '@/db/schema/room'
 import { timetable, timetableImages } from '@/db/schema/timetable'
 import type {
@@ -84,6 +84,7 @@ export class TimetableManagementService {
       .from(timetable)
       .leftJoin(user, eq(timetable.teacherId, user.id))
       .leftJoin(educationSubject, eq(timetable.educationSubjectId, educationSubject.id))
+      .leftJoin(institutionLevel, eq(educationSubject.institutionLevelId, institutionLevel.id))
       .leftJoin(room, eq(timetable.roomId, room.id))
       .leftJoin(classroom, eq(timetable.classroomId, classroom.id))
       .leftJoin(classroomGroup, eq(timetable.classroomGroupId, classroomGroup.id))
