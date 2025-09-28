@@ -181,6 +181,53 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
                 </div>
                 <ValueText value={caseData.courtFileNumber} size="sm" className="font-mono" fallbackText="غير محدد" />
               </div>
+              {caseData.client && (
+                <div className="flex items-center justify-between rounded-lg border p-3">
+                  <div className="flex items-center gap-2">
+                    <User className="text-muted-foreground h-4 w-4" />
+                    <span className="text-sm">العميل</span>
+                  </div>
+                  <div className="text-right">
+                    <Text size="sm" weight="semibold" as="span">
+                      {caseData.client.name}
+                    </Text>
+                    <p className="text-xs text-muted-foreground">{caseData.client.clientType}</p>
+                    {caseData.client.email && (
+                      <p className="text-xs text-muted-foreground">{caseData.client.email}</p>
+                    )}
+                  </div>
+                </div>
+              )}
+              {caseData.opponent && (
+                <div className="flex items-center justify-between rounded-lg border p-3">
+                  <div className="flex items-center gap-2">
+                    <User className="text-muted-foreground h-4 w-4" />
+                    <span className="text-sm">الخصم</span>
+                  </div>
+                  <div className="text-right">
+                    <Text size="sm" weight="semibold" as="span">
+                      {caseData.opponent.name}
+                    </Text>
+                    <p className="text-xs text-muted-foreground">{caseData.opponent.opponentType}</p>
+                  </div>
+                </div>
+              )}
+              {caseData.court && (
+                <div className="flex items-center justify-between rounded-lg border p-3">
+                  <div className="flex items-center gap-2">
+                    <Gavel className="text-muted-foreground h-4 w-4" />
+                    <span className="text-sm">المحكمة</span>
+                  </div>
+                  <div className="text-right">
+                    <Text size="sm" weight="semibold" as="span">
+                      {caseData.court.name}
+                    </Text>
+                    <p className="text-xs text-muted-foreground">
+                      {caseData.court.state} • {caseData.court.courtType}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <Separator className="my-2" />
@@ -223,12 +270,79 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
               </Button>
             </div>
 
-            {/* TODO: Replace with actual trials data from API */}
-            <div className="text-center py-8 text-muted-foreground">
-              <Gavel className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p className="text-lg font-medium mb-1">لا توجد جلسات</p>
-              <p className="text-sm">لم يتم إنشاء أي جلسات لهذه القضية بعد</p>
-            </div>
+            {caseData.trial && caseData.trial.length > 0 ? (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm font-medium">
+                    <Gavel className="h-4 w-4" />
+                    الجلسات ({caseData.trial.length})
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddTrial}
+                  >
+                    <Plus className="ml-1 h-3 w-3" />
+                    إضافة جلسة جديدة
+                  </Button>
+                </div>
+                <div className="space-y-2">
+                  {caseData.trial.map((trial) => (
+                    <div
+                      key={trial.id}
+                      className="flex items-center justify-between rounded-lg border bg-muted/30 p-3"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                          <Scale className="h-4 w-4 text-primary" />
+                        </div>
+                        <div className="space-y-1">
+                          <div className="text-sm font-medium">
+                            الجلسة رقم {trial.trialNumber}
+                          </div>
+                          {trial.court && (
+                            <div className="text-xs text-muted-foreground">
+                              {trial.court.name}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-left">
+                        <div className="flex items-center gap-1 text-sm">
+                          <Calendar className="h-4 w-4" />
+                          {new Date(trial.trialDateTime).toLocaleDateString('ar-TN', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </div>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Clock className="h-3 w-3" />
+                          {new Date(trial.trialDateTime).toLocaleTimeString('ar-TN', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground space-y-3">
+                <Gavel className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                <p className="text-lg font-medium mb-1">لا توجد جلسات</p>
+                <p className="text-sm">لم يتم جدولة أي جلسات لهذه القضية بعد</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddTrial}
+                >
+                  <Plus className="ml-1 h-4 w-4" />
+                  إضافة جلسة
+                </Button>
+              </div>
+            )}
           </div>
         </TabsContent>
       </Tabs>

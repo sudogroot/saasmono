@@ -85,6 +85,8 @@ export const CaseWithRelationsSchema = z.object({
     name: z.string(),
     email: z.string().nullable(),
     phone: z.string().nullable(),
+    nationalId: z.string().nullable(),
+    clientType: z.string(),
   }),
   opponent: z
     .object({
@@ -108,6 +110,15 @@ export const CaseWithRelationsSchema = z.object({
       email: z.string(),
     })
     .nullable(),
+  trial: z.array(z.object({
+    id: z.string(),
+    trialNumber: z.number(),
+    trialDateTime: z.coerce.date(),
+    court: z.object({
+      id: z.string(),
+      name: z.string(),
+    }).nullable(),
+  })),
 })
 
 export const CaseListItemSchema = z.object({

@@ -4,6 +4,7 @@ import { cases } from '../db/schema/cases'
 import { clients } from '../db/schema/clients'
 import { courts } from '../db/schema/courts'
 import { opponents } from '../db/schema/opponents'
+import { trials } from '../db/schema/trials'
 import { member, user } from '../db/schema/auth'
 import type { CreateCaseInput, UpdateCaseInput, CaseResponse, CaseListItem, CaseWithRelations } from '../types/case'
 
@@ -88,6 +89,7 @@ export class CaseService {
   }
 
   async getCaseById(caseId: string, orgId: string): Promise<CaseWithRelations> {
+    // First get the case with related data
     const result = await this.db
       .select({
         case: cases,
@@ -96,6 +98,8 @@ export class CaseService {
           name: clients.name,
           email: clients.email,
           phone: clients.phone,
+          nationalId: clients.nationalId,
+          clientType: clients.clientType,
         },
         opponent: {
           id: opponents.id,
@@ -136,12 +140,45 @@ export class CaseService {
       throw new Error('Case data not found')
     }
 
+    // Get trials for this case
+    const trialsResult = await this.db
+      .select({
+        trial: {
+          id: trials.id,
+          trialNumber: trials.trialNumber,
+          trialDateTime: trials.trialDateTime,
+        },
+        trialCourt: {
+          id: courts.id,
+          name: courts.name,
+        },
+      })
+      .from(trials)
+      .leftJoin(courts, eq(trials.courtId, courts.id))
+      .where(
+        and(
+          eq(trials.caseId, caseId),
+          eq(trials.organizationId, orgId),
+          isNull(trials.deletedAt)
+        )
+      )
+      .orderBy(trials.trialNumber)
+
+    // Format trials data
+    const trialsData = trialsResult.map(row => ({
+      id: row.trial.id,
+      trialNumber: row.trial.trialNumber,
+      trialDateTime: row.trial.trialDateTime,
+      court: row.trialCourt,
+    }))
+
     return {
       ...caseData.case,
       client: caseData.client,
       opponent: caseData.opponent,
       court: caseData.court,
       createdByUser: caseData.createdByUser,
+      trial: trialsData,
     } as CaseWithRelations
   }
 
