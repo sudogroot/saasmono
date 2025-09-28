@@ -64,7 +64,7 @@ export const attendanceManagementRouter = {
     .input(CreateAttendanceInputSchema)
     .output(AttendanceSchema.omit({
       student: true,
-      sessionInstance: true,
+      timetable: true,
     }))
     .route({
       method: 'POST',
@@ -95,7 +95,7 @@ export const attendanceManagementRouter = {
         id: z.uuid(),
         status: z.enum(['PRESENT', 'ABSENT', 'LATE', 'EXCUSED', 'SICK']),
         studentId: z.string(),
-        sessionInstanceId: z.uuid(),
+        timetableId: z.uuid(),
       }))
     }))
     .route({
@@ -127,7 +127,7 @@ export const attendanceManagementRouter = {
     )
     .output(AttendanceSchema.omit({
       student: true,
-      sessionInstance: true,
+      timetable: true,
     }))
     .route({
       method: 'PUT',
@@ -180,13 +180,13 @@ export const attendanceManagementRouter = {
   getSessionAttendanceSummary: protectedProcedure
     .input(
       z.object({
-        sessionInstanceId: z.uuid().describe('Session Instance ID'),
+        timetableId: z.uuid().describe('Session Instance ID'),
       })
     )
     .output(AttendanceSummarySchema)
     .route({
       method: 'GET',
-      path: '/management/attendances/sessions/{sessionInstanceId}/summary',
+      path: '/management/attendances/sessions/{timetableId}/summary',
       tags: ['Attendance Management'],
       summary: 'Get session attendance summary',
       description: 'Retrieves attendance summary for a specific session',
@@ -194,7 +194,7 @@ export const attendanceManagementRouter = {
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
       try {
-        return await attendanceService.getSessionAttendanceSummary(input.sessionInstanceId, orgId)
+        return await attendanceService.getSessionAttendanceSummary(input.timetableId, orgId)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch session attendance summary')
       }

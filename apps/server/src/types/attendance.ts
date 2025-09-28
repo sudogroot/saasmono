@@ -6,7 +6,7 @@ export const AttendanceSchema = z.object({
   status: z.enum(['PRESENT', 'ABSENT', 'LATE', 'EXCUSED', 'SICK']),
   note: z.string().nullable(),
   studentId: z.string(),
-  sessionInstanceId: z.uuid(),
+  timetableId: z.uuid(),
   orgId: z.string(),
   markedAt: z.date(),
   arrivedAt: z.date().nullable(),
@@ -20,7 +20,7 @@ export const AttendanceSchema = z.object({
     lastName: z.string(),
     email: z.string(),
   }),
-  sessionInstance: z.object({
+  timetable: z.object({
     id: z.uuid(),
     title: z.string(),
     startDateTime: z.date(),
@@ -34,7 +34,7 @@ export const AttendanceListItemSchema = z.object({
   status: z.enum(['PRESENT', 'ABSENT', 'LATE', 'EXCUSED', 'SICK']),
   note: z.string().nullable(),
   studentId: z.string(),
-  sessionInstanceId: z.uuid(),
+  timetableId: z.uuid(),
   markedAt: z.date(),
   arrivedAt: z.date().nullable(),
   student: z.object({
@@ -42,7 +42,7 @@ export const AttendanceListItemSchema = z.object({
     name: z.string(),
     lastName: z.string(),
   }),
-  sessionInstance: z.object({
+  timetable: z.object({
     id: z.uuid(),
     title: z.string(),
     startDateTime: z.date(),
@@ -54,18 +54,18 @@ export const CreateAttendanceInputSchema = z.object({
   status: z.enum(['PRESENT', 'ABSENT', 'LATE', 'EXCUSED', 'SICK']),
   note: z.string().optional(),
   studentId: z.string().min(1, 'Student is required'),
-  sessionInstanceId: z.uuid(),
+  timetableId: z.uuid(),
   arrivedAt: z.date().optional(),
 })
 
 export const UpdateAttendanceInputSchema = CreateAttendanceInputSchema.partial().omit({
   studentId: true,
-  sessionInstanceId: true
+  timetableId: true
 })
 
 // Bulk attendance creation for multiple students
 export const CreateBulkAttendanceInputSchema = z.object({
-  sessionInstanceId: z.uuid(),
+  timetableId: z.uuid(),
   attendances: z.array(z.object({
     studentId: z.string().min(1, 'Student is required'),
     status: z.enum(['PRESENT', 'ABSENT', 'LATE', 'EXCUSED', 'SICK']),
@@ -76,7 +76,7 @@ export const CreateBulkAttendanceInputSchema = z.object({
 
 // Query Schemas
 export const AttendanceQuerySchema = z.object({
-  sessionInstanceId: z.uuid().optional(),
+  timetableId: z.uuid().optional(),
   studentId: z.string().optional(),
   status: z.enum(['PRESENT', 'ABSENT', 'LATE', 'EXCUSED', 'SICK']).optional(),
   startDate: z.date().optional(),
@@ -87,7 +87,7 @@ export const AttendanceQuerySchema = z.object({
 
 // Attendance summary schemas
 export const AttendanceSummarySchema = z.object({
-  sessionInstanceId: z.uuid(),
+  timetableId: z.uuid(),
   sessionTitle: z.string(),
   sessionStartDateTime: z.date(),
   totalStudents: z.number(),

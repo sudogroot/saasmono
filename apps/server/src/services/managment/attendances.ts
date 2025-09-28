@@ -2,7 +2,7 @@ import { user } from '@/db/schema/auth'
 import { attendance } from '@/db/schema/attendance'
 import { classroom, classroomStudentEnrollment } from '@/db/schema/classroom'
 import { educationSubject } from '@/db/schema/education'
-import { sessionInstance } from '@/db/schema/sessionInstance'
+import { timetable } from '@/db/schema/timetable'
 import type {
   AttendanceListItem,
   AttendanceQuery,
@@ -26,8 +26,8 @@ export class AttendanceManagementService {
     let whereConditions = [eq(attendance.orgId, orgId), isNull(attendance.deletedAt)]
 
     // Add query filters
-    if (query?.sessionInstanceId) {
-      whereConditions.push(eq(attendance.sessionInstanceId, query.sessionInstanceId))
+    if (query?.timetableId) {
+      whereConditions.push(eq(attendance.timetableId, query.timetableId))
     }
     if (query?.studentId) {
       whereConditions.push(eq(attendance.studentId, query.studentId))
@@ -36,16 +36,16 @@ export class AttendanceManagementService {
       whereConditions.push(eq(attendance.status, query.status))
     }
     if (query?.startDate) {
-      whereConditions.push(gte(sessionInstance.startDateTime, query.startDate))
+      whereConditions.push(gte(timetable.startDateTime, query.startDate))
     }
     if (query?.endDate) {
-      whereConditions.push(lte(sessionInstance.startDateTime, query.endDate))
+      whereConditions.push(lte(timetable.startDateTime, query.endDate))
     }
     if (query?.classroomId) {
-      whereConditions.push(eq(sessionInstance.classroomId, query.classroomId))
+      whereConditions.push(eq(timetable.classroomId, query.classroomId))
     }
     if (query?.educationSubjectId) {
-      whereConditions.push(eq(sessionInstance.educationSubjectId, query.educationSubjectId))
+      whereConditions.push(eq(timetable.educationSubjectId, query.educationSubjectId))
     }
 
     const results = await this.db
@@ -54,7 +54,7 @@ export class AttendanceManagementService {
         attendanceStatus: attendance.status,
         attendanceNote: attendance.note,
         attendanceStudentId: attendance.studentId,
-        attendanceSessionInstanceId: attendance.sessionInstanceId,
+        attendanceTimetableId: attendance.timetableId,
         attendanceMarkedAt: attendance.markedAt,
         attendanceArrivedAt: attendance.arrivedAt,
         // Student data
@@ -62,13 +62,13 @@ export class AttendanceManagementService {
         studentName: user.name,
         studentLastName: user.lastName,
         // Session instance data
-        sessionId: sessionInstance.id,
-        sessionTitle: sessionInstance.title,
-        sessionStartDateTime: sessionInstance.startDateTime,
+        sessionId: timetable.id,
+        sessionTitle: timetable.title,
+        sessionStartDateTime: timetable.startDateTime,
       })
       .from(attendance)
       .leftJoin(user, eq(attendance.studentId, user.id))
-      .leftJoin(sessionInstance, eq(attendance.sessionInstanceId, sessionInstance.id))
+      .leftJoin(timetable, eq(attendance.timetableId, timetable.id))
       .where(and(...whereConditions))
 
     return results.map((row) => ({
@@ -76,7 +76,7 @@ export class AttendanceManagementService {
       status: row.attendanceStatus,
       note: row.attendanceNote,
       studentId: row.attendanceStudentId,
-      sessionInstanceId: row.attendanceSessionInstanceId,
+      timetableId: row.attendanceTimetableId,
       markedAt: row.attendanceMarkedAt,
       arrivedAt: row.attendanceArrivedAt,
       student: {
@@ -84,7 +84,7 @@ export class AttendanceManagementService {
         name: row.studentName!,
         lastName: row.studentLastName!,
       },
-      sessionInstance: {
+      timetable: {
         id: row.sessionId!,
         title: row.sessionTitle!,
         startDateTime: row.sessionStartDateTime!,
@@ -99,7 +99,7 @@ export class AttendanceManagementService {
         attendanceStatus: attendance.status,
         attendanceNote: attendance.note,
         attendanceStudentId: attendance.studentId,
-        attendanceSessionInstanceId: attendance.sessionInstanceId,
+        attendanceTimetableId: attendance.timetableId,
         attendanceOrgId: attendance.orgId,
         attendanceMarkedAt: attendance.markedAt,
         attendanceArrivedAt: attendance.arrivedAt,
@@ -112,14 +112,14 @@ export class AttendanceManagementService {
         studentLastName: user.lastName,
         studentEmail: user.email,
         // Session instance data
-        sessionId: sessionInstance.id,
-        sessionTitle: sessionInstance.title,
-        sessionStartDateTime: sessionInstance.startDateTime,
-        sessionEndDateTime: sessionInstance.endDateTime,
+        sessionId: timetable.id,
+        sessionTitle: timetable.title,
+        sessionStartDateTime: timetable.startDateTime,
+        sessionEndDateTime: timetable.endDateTime,
       })
       .from(attendance)
       .leftJoin(user, eq(attendance.studentId, user.id))
-      .leftJoin(sessionInstance, eq(attendance.sessionInstanceId, sessionInstance.id))
+      .leftJoin(timetable, eq(attendance.timetableId, timetable.id))
       .where(and(
         eq(attendance.id, attendanceId),
         eq(attendance.orgId, orgId),
@@ -137,7 +137,7 @@ export class AttendanceManagementService {
       status: row.attendanceStatus,
       note: row.attendanceNote,
       studentId: row.attendanceStudentId,
-      sessionInstanceId: row.attendanceSessionInstanceId,
+      timetableId: row.attendanceTimetableId,
       orgId: row.attendanceOrgId,
       markedAt: row.attendanceMarkedAt,
       arrivedAt: row.attendanceArrivedAt,
@@ -150,7 +150,7 @@ export class AttendanceManagementService {
         lastName: row.studentLastName!,
         email: row.studentEmail!,
       },
-      sessionInstance: {
+      timetable: {
         id: row.sessionId!,
         title: row.sessionTitle!,
         startDateTime: row.sessionStartDateTime!,
@@ -166,7 +166,7 @@ export class AttendanceManagementService {
       .from(attendance)
       .where(and(
         eq(attendance.studentId, input.studentId),
-        eq(attendance.sessionInstanceId, input.sessionInstanceId),
+        eq(attendance.timetableId, input.timetableId),
         eq(attendance.orgId, orgId),
         isNull(attendance.deletedAt)
       ))
@@ -181,7 +181,7 @@ export class AttendanceManagementService {
         status: input.status,
         note: input.note || null,
         studentId: input.studentId,
-        sessionInstanceId: input.sessionInstanceId,
+        timetableId: input.timetableId,
         arrivedAt: input.arrivedAt || null,
         orgId,
         createdByUserId: userId,
@@ -191,7 +191,7 @@ export class AttendanceManagementService {
         status: attendance.status,
         note: attendance.note,
         studentId: attendance.studentId,
-        sessionInstanceId: attendance.sessionInstanceId,
+        timetableId: attendance.timetableId,
         orgId: attendance.orgId,
         markedAt: attendance.markedAt,
         arrivedAt: attendance.arrivedAt,
@@ -213,11 +213,11 @@ export class AttendanceManagementService {
     const existingAttendances = await this.db
       .select({
         studentId: attendance.studentId,
-        sessionInstanceId: attendance.sessionInstanceId
+        timetableId: attendance.timetableId
       })
       .from(attendance)
       .where(and(
-        eq(attendance.sessionInstanceId, input.sessionInstanceId),
+        eq(attendance.timetableId, input.timetableId),
         eq(attendance.orgId, orgId),
         isNull(attendance.deletedAt)
       ))
@@ -233,7 +233,7 @@ export class AttendanceManagementService {
       status: a.status,
       note: a.note || null,
       studentId: a.studentId,
-      sessionInstanceId: input.sessionInstanceId,
+      timetableId: input.timetableId,
       arrivedAt: a.arrivedAt || null,
       orgId,
       createdByUserId: userId,
@@ -246,7 +246,7 @@ export class AttendanceManagementService {
         id: attendance.id,
         status: attendance.status,
         studentId: attendance.studentId,
-        sessionInstanceId: attendance.sessionInstanceId,
+        timetableId: attendance.timetableId,
       })
 
     return {
@@ -273,7 +273,7 @@ export class AttendanceManagementService {
         status: attendance.status,
         note: attendance.note,
         studentId: attendance.studentId,
-        sessionInstanceId: attendance.sessionInstanceId,
+        timetableId: attendance.timetableId,
         orgId: attendance.orgId,
         markedAt: attendance.markedAt,
         arrivedAt: attendance.arrivedAt,
@@ -310,20 +310,20 @@ export class AttendanceManagementService {
     return { success: true }
   }
 
-  async getSessionAttendanceSummary(sessionInstanceId: string, orgId: string): Promise<AttendanceSummary> {
+  async getSessionAttendanceSummary(timetableId: string, orgId: string): Promise<AttendanceSummary> {
     // Get session info and total enrolled students
     const sessionInfo = await this.db
       .select({
-        sessionId: sessionInstance.id,
-        sessionTitle: sessionInstance.title,
-        sessionStartDateTime: sessionInstance.startDateTime,
-        classroomId: sessionInstance.classroomId,
+        sessionId: timetable.id,
+        sessionTitle: timetable.title,
+        sessionStartDateTime: timetable.startDateTime,
+        classroomId: timetable.classroomId,
       })
-      .from(sessionInstance)
+      .from(timetable)
       .where(and(
-        eq(sessionInstance.id, sessionInstanceId),
-        eq(sessionInstance.orgId, orgId),
-        isNull(sessionInstance.deletedAt)
+        eq(timetable.id, timetableId),
+        eq(timetable.orgId, orgId),
+        isNull(timetable.deletedAt)
       ))
 
     if (!sessionInfo[0]) {
@@ -338,7 +338,7 @@ export class AttendanceManagementService {
       })
       .from(attendance)
       .where(and(
-        eq(attendance.sessionInstanceId, sessionInstanceId),
+        eq(attendance.timetableId, timetableId),
         eq(attendance.orgId, orgId),
         isNull(attendance.deletedAt)
       ))
@@ -364,7 +364,7 @@ export class AttendanceManagementService {
     const totalMarked = attendanceCounts.reduce((sum, ac) => sum + ac.count, 0)
 
     return {
-      sessionInstanceId,
+      timetableId,
       sessionTitle: sessionInfo[0].sessionTitle,
       sessionStartDateTime: sessionInfo[0].sessionStartDateTime,
       totalStudents,
@@ -385,10 +385,10 @@ export class AttendanceManagementService {
     ]
 
     if (startDate) {
-      whereConditions.push(gte(sessionInstance.startDateTime, startDate))
+      whereConditions.push(gte(timetable.startDateTime, startDate))
     }
     if (endDate) {
-      whereConditions.push(lte(sessionInstance.startDateTime, endDate))
+      whereConditions.push(lte(timetable.startDateTime, endDate))
     }
 
     // Get student info
@@ -412,7 +412,7 @@ export class AttendanceManagementService {
         count: count(attendance.id),
       })
       .from(attendance)
-      .leftJoin(sessionInstance, eq(attendance.sessionInstanceId, sessionInstance.id))
+      .leftJoin(timetable, eq(attendance.timetableId, timetable.id))
       .where(and(...whereConditions))
       .groupBy(attendance.status)
 

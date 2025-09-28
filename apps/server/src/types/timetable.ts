@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 // Session Instance Schema
-export const SessionInstanceSchema = z.object({
+export const TimetableSchema = z.object({
   id: z.uuid(),
   title: z.string(),
   startDateTime: z.date(),
@@ -52,7 +52,7 @@ export const SessionInstanceSchema = z.object({
 })
 
 // Session Instance List Item Schema (simplified for list views)
-export const SessionInstanceListItemSchema = z.object({
+export const TimetableListItemSchema = z.object({
   id: z.uuid(),
   title: z.string(),
   startDateTime: z.date(),
@@ -84,7 +84,7 @@ export const SessionInstanceListItemSchema = z.object({
 })
 
 // Input Schemas for Creating/Updating
-export const CreateSessionInstanceInputSchema = z.object({
+export const CreateTimetableInputSchema = z.object({
   title: z.string().min(1, 'Session title is required'),
   startDateTime: z.date(),
   endDateTime: z.date(),
@@ -115,10 +115,10 @@ export const CreateSessionInstanceInputSchema = z.object({
   }
 )
 
-export const UpdateSessionInstanceInputSchema = CreateSessionInstanceInputSchema.partial()
+export const UpdateTimetableInputSchema = CreateTimetableInputSchema.partial()
 
 // Query Schemas
-export const SessionInstanceQuerySchema = z.object({
+export const TimetableQuerySchema = z.object({
   startDate: z.date().optional(),
   endDate: z.date().optional(),
   teacherId: z.string().optional(),
@@ -130,8 +130,8 @@ export const SessionInstanceQuerySchema = z.object({
 })
 
 // Type exports
-export type SessionInstance = z.infer<typeof SessionInstanceSchema>
-export type SessionInstanceListItem = z.infer<typeof SessionInstanceListItemSchema>
-export type CreateSessionInstanceInput = z.infer<typeof CreateSessionInstanceInputSchema>
-export type UpdateSessionInstanceInput = z.infer<typeof UpdateSessionInstanceInputSchema>
-export type SessionInstanceQuery = z.infer<typeof SessionInstanceQuerySchema>
+export type Timetable = z.infer<typeof TimetableSchema>
+export type TimetableListItem = z.infer<typeof TimetableListItemSchema>
+export type CreateTimetableInput = z.infer<typeof CreateTimetableInputSchema>
+export type UpdateTimetableInput = z.infer<typeof UpdateTimetableInputSchema>
+export type TimetableQuery = z.infer<typeof TimetableQuerySchema>

@@ -15,6 +15,13 @@
       "when": 1759019656827,
       "tag": "0001_red_white_tiger",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1759022107988,
+      "tag": "0002_bizarre_caretaker",
+      "breakpoints": true
     }
   ]
 }

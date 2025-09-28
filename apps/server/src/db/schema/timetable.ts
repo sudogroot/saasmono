@@ -15,7 +15,7 @@ export const sessionStatusEnum = pgEnum('session_status', [
 ])
 
 // Session instances - specific timetable sessions with full datetime
-export const sessionInstance = pgTable('session_instance', {
+export const timetable = pgTable('timetable', {
   id: uuid('id').primaryKey().defaultRandom(),
   title: text('title').notNull(), // "Math Class", "Physics Lab"
 
@@ -64,28 +64,28 @@ export const sessionInstance = pgTable('session_instance', {
 }, (table) => {
   return {
     // Ensure either classroom or classroomGroup is set, not both
-    classroomOrGroupIdx: index('session_instance_classroom_or_group_idx').on(
+    classroomOrGroupIdx: index('timetable_classroom_or_group_idx').on(
       table.classroomId,
       table.classroomGroupId
     ),
     // Performance indexes for common queries
-    startDateTimeStatusIdx: index('session_instance_start_datetime_status_idx').on(
+    startDateTimeStatusIdx: index('timetable_start_datetime_status_idx').on(
       table.startDateTime,
       table.status
     ),
-    teacherDateTimeIdx: index('session_instance_teacher_datetime_idx').on(
+    teacherDateTimeIdx: index('timetable_teacher_datetime_idx').on(
       table.teacherId,
       table.startDateTime
     ),
-    orgDateTimeIdx: index('session_instance_org_datetime_idx').on(
+    orgDateTimeIdx: index('timetable_org_datetime_idx').on(
       table.orgId,
       table.startDateTime
     ),
-    classroomDateTimeIdx: index('session_instance_classroom_datetime_idx').on(
+    classroomDateTimeIdx: index('timetable_classroom_datetime_idx').on(
       table.classroomId,
       table.startDateTime
     ),
-    subjectDateTimeIdx: index('session_instance_subject_datetime_idx').on(
+    subjectDateTimeIdx: index('timetable_subject_datetime_idx').on(
       table.educationSubjectId,
       table.startDateTime
     ),
@@ -93,46 +93,46 @@ export const sessionInstance = pgTable('session_instance', {
 })
 
 // Relations
-export const sessionInstanceRelations = relations(sessionInstance, ({ one }) => ({
+export const timetableRelations = relations(timetable, ({ one }) => ({
   classroom: one(classroom, {
-    fields: [sessionInstance.classroomId],
+    fields: [timetable.classroomId],
     references: [classroom.id],
   }),
   classroomGroup: one(classroomGroup, {
-    fields: [sessionInstance.classroomGroupId],
+    fields: [timetable.classroomGroupId],
     references: [classroomGroup.id],
   }),
   teacher: one(user, {
-    fields: [sessionInstance.teacherId],
+    fields: [timetable.teacherId],
     references: [user.id],
-    relationName: 'sessionInstanceTeacher',
+    relationName: 'timetableTeacher',
   }),
   educationSubject: one(educationSubject, {
-    fields: [sessionInstance.educationSubjectId],
+    fields: [timetable.educationSubjectId],
     references: [educationSubject.id],
   }),
   room: one(room, {
-    fields: [sessionInstance.roomId],
+    fields: [timetable.roomId],
     references: [room.id],
   }),
   organization: one(organization, {
-    fields: [sessionInstance.orgId],
+    fields: [timetable.orgId],
     references: [organization.id],
   }),
 
   createdBy: one(user, {
-    fields: [sessionInstance.createdByUserId],
+    fields: [timetable.createdByUserId],
     references: [user.id],
-    relationName: 'sessionInstanceCreatedBy',
+    relationName: 'timetableCreatedBy',
   }),
   updatedBy: one(user, {
-    fields: [sessionInstance.updatedByUserId],
+    fields: [timetable.updatedByUserId],
     references: [user.id],
-    relationName: 'sessionInstanceUpdatedBy',
+    relationName: 'timetableUpdatedBy',
   }),
   deletedBy: one(user, {
-    fields: [sessionInstance.deletedByUserId],
+    fields: [timetable.deletedByUserId],
     references: [user.id],
-    relationName: 'sessionInstanceDeletedBy',
+    relationName: 'timetableDeletedBy',
   }),
 }))

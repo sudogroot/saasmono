@@ -62,7 +62,7 @@ export const sessionNoteManagementRouter = {
   createSessionNote: protectedProcedure
     .input(CreateSessionNoteInputSchema)
     .output(SessionNoteSchema.omit({
-      sessionInstance: true,
+      timetable: true,
       attachments: true,
     }))
     .route({
@@ -93,7 +93,7 @@ export const sessionNoteManagementRouter = {
       })
     )
     .output(SessionNoteSchema.omit({
-      sessionInstance: true,
+      timetable: true,
       attachments: true,
     }))
     .route({

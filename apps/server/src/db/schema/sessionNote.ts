@@ -1,7 +1,7 @@
 import { relations } from 'drizzle-orm'
 import { boolean, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 import { organization, user } from './auth'
-import { sessionInstance } from './sessionInstance'
+import { timetable } from './timetable'
 
 // Session notes - for tracking what happened in a session
 export const sessionNote = pgTable('session_note', {
@@ -10,9 +10,9 @@ export const sessionNote = pgTable('session_note', {
   content: text('content').notNull(),
   isPrivate: boolean('is_private').default(false).notNull(), // Private to teacher vs visible to students/parents
 
-  sessionInstanceId: uuid('session_instance_id')
+  timetableId: uuid('timetable_id')
     .notNull()
-    .references(() => sessionInstance.id, { onDelete: 'cascade' }),
+    .references(() => timetable.id, { onDelete: 'cascade' }),
 
   orgId: text('org_id')
     .notNull()
@@ -69,9 +69,9 @@ export const sessionNoteAttachment = pgTable('session_note_attachment', {
 export const sessionNoteRelations = relations(sessionNote, ({ many, one }) => ({
   attachments: many(sessionNoteAttachment),
 
-  sessionInstance: one(sessionInstance, {
-    fields: [sessionNote.sessionInstanceId],
-    references: [sessionInstance.id],
+  timetable: one(timetable, {
+    fields: [sessionNote.timetableId],
+    references: [timetable.id],
   }),
   organization: one(organization, {
     fields: [sessionNote.orgId],

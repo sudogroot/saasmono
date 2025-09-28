@@ -2,22 +2,22 @@ import { z } from 'zod'
 import { db } from '../../db/index'
 import { OrpcErrorHelper, getOrgId } from '../../lib/errors/orpc-errors'
 import { protectedProcedure } from '../../lib/orpc'
-import { createSessionInstanceManagementService } from '../../services/managment/sessionInstances'
+import { createTimetableManagementService } from '../../services/managment/timetables'
 import {
-  CreateSessionInstanceInputSchema,
-  SessionInstanceListItemSchema,
-  SessionInstanceQuerySchema,
-  SessionInstanceSchema,
-  UpdateSessionInstanceInputSchema
-} from '../../types/sessionInstance'
+  CreateTimetableInputSchema,
+  TimetableListItemSchema,
+  TimetableQuerySchema,
+  TimetableSchema,
+  UpdateTimetableInputSchema
+} from '../../types/timetable'
 
-const sessionInstanceService = createSessionInstanceManagementService(db)
+const timetableService = createTimetableManagementService(db)
 
-export const sessionInstanceManagementRouter = {
+export const timetableManagementRouter = {
   // Session Instances
-  getSessionInstancesList: protectedProcedure
-    .input(SessionInstanceQuerySchema.optional())
-    .output(z.array(SessionInstanceListItemSchema))
+  getTimetablesList: protectedProcedure
+    .input(TimetableQuerySchema.optional())
+    .output(z.array(TimetableListItemSchema))
     .route({
       method: 'GET',
       path: '/management/session-instances',
@@ -28,22 +28,22 @@ export const sessionInstanceManagementRouter = {
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
       try {
-        return await sessionInstanceService.getSessionInstancesList(orgId, input)
+        return await timetableService.getTimetablesList(orgId, input)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch session instances')
       }
     }),
 
-  getSessionInstanceById: protectedProcedure
+  getTimetableById: protectedProcedure
     .input(
       z.object({
-        sessionInstanceId: z.uuid().describe('Session Instance ID'),
+        timetableId: z.uuid().describe('Session Instance ID'),
       })
     )
-    .output(SessionInstanceSchema)
+    .output(TimetableSchema)
     .route({
       method: 'GET',
-      path: '/management/session-instances/{sessionInstanceId}',
+      path: '/management/session-instances/{timetableId}',
       tags: ['Session Instance Management'],
       summary: 'Get session instance',
       description: 'Retrieves a single session instance by ID',
@@ -51,15 +51,15 @@ export const sessionInstanceManagementRouter = {
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
       try {
-        return await sessionInstanceService.getSessionInstanceById(input.sessionInstanceId, orgId)
+        return await timetableService.getTimetableById(input.timetableId, orgId)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch session instance')
       }
     }),
 
-  createSessionInstance: protectedProcedure
-    .input(CreateSessionInstanceInputSchema)
-    .output(SessionInstanceSchema.omit({
+  createTimetable: protectedProcedure
+    .input(CreateTimetableInputSchema)
+    .output(TimetableSchema.omit({
       teacher: true,
       educationSubject: true,
       room: true,
@@ -80,20 +80,20 @@ export const sessionInstanceManagementRouter = {
         throw OrpcErrorHelper.unauthorized('User ID is required')
       }
       try {
-        return await sessionInstanceService.createSessionInstance(input, orgId, userId)
+        return await timetableService.createTimetable(input, orgId, userId)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to create session instance')
       }
     }),
 
-  updateSessionInstance: protectedProcedure
+  updateTimetable: protectedProcedure
     .input(
       z.object({
-        sessionInstanceId: z.uuid().describe('Session Instance ID'),
-        data: UpdateSessionInstanceInputSchema,
+        timetableId: z.uuid().describe('Session Instance ID'),
+        data: UpdateTimetableInputSchema,
       })
     )
-    .output(SessionInstanceSchema.omit({
+    .output(TimetableSchema.omit({
       teacher: true,
       educationSubject: true,
       room: true,
@@ -102,7 +102,7 @@ export const sessionInstanceManagementRouter = {
     }))
     .route({
       method: 'PUT',
-      path: '/management/session-instances/{sessionInstanceId}',
+      path: '/management/session-instances/{timetableId}',
       tags: ['Session Instance Management'],
       summary: 'Update session instance',
       description: 'Updates an existing session instance',
@@ -114,22 +114,22 @@ export const sessionInstanceManagementRouter = {
         throw OrpcErrorHelper.unauthorized('User ID is required')
       }
       try {
-        return await sessionInstanceService.updateSessionInstance(input.sessionInstanceId, input.data, orgId, userId)
+        return await timetableService.updateTimetable(input.timetableId, input.data, orgId, userId)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to update session instance')
       }
     }),
 
-  deleteSessionInstance: protectedProcedure
+  deleteTimetable: protectedProcedure
     .input(
       z.object({
-        sessionInstanceId: z.uuid().describe('Session Instance ID'),
+        timetableId: z.uuid().describe('Session Instance ID'),
       })
     )
     .output(z.object({ success: z.boolean() }))
     .route({
       method: 'DELETE',
-      path: '/management/session-instances/{sessionInstanceId}',
+      path: '/management/session-instances/{timetableId}',
       tags: ['Session Instance Management'],
       summary: 'Delete session instance',
       description: 'Deletes a session instance (soft delete)',
@@ -141,7 +141,7 @@ export const sessionInstanceManagementRouter = {
         throw OrpcErrorHelper.unauthorized('User ID is required')
       }
       try {
-        return await sessionInstanceService.deleteSessionInstance(input.sessionInstanceId, orgId, userId)
+        return await timetableService.deleteTimetable(input.timetableId, orgId, userId)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to delete session instance')
       }

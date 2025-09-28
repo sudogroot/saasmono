@@ -1,4 +1,4 @@
-import { sessionInstance } from '@/db/schema/sessionInstance'
+import { timetable } from '@/db/schema/timetable'
 import { sessionNote, sessionNoteAttachment } from '@/db/schema/sessionNote'
 import type {
   CreateSessionNoteAttachmentInput,
@@ -21,17 +21,17 @@ export class SessionNoteManagementService {
     let whereConditions = [eq(sessionNote.orgId, orgId), isNull(sessionNote.deletedAt)]
 
     // Add query filters
-    if (query?.sessionInstanceId) {
-      whereConditions.push(eq(sessionNote.sessionInstanceId, query.sessionInstanceId))
+    if (query?.timetableId) {
+      whereConditions.push(eq(sessionNote.timetableId, query.timetableId))
     }
     if (query?.isPrivate !== undefined) {
       whereConditions.push(eq(sessionNote.isPrivate, query.isPrivate))
     }
     if (query?.startDate) {
-      whereConditions.push(gte(sessionInstance.startDateTime, query.startDate))
+      whereConditions.push(gte(timetable.startDateTime, query.startDate))
     }
     if (query?.endDate) {
-      whereConditions.push(lte(sessionInstance.startDateTime, query.endDate))
+      whereConditions.push(lte(timetable.startDateTime, query.endDate))
     }
 
     const results = await this.db
@@ -39,15 +39,15 @@ export class SessionNoteManagementService {
         noteId: sessionNote.id,
         noteTitle: sessionNote.title,
         noteIsPrivate: sessionNote.isPrivate,
-        noteSessionInstanceId: sessionNote.sessionInstanceId,
+        noteTimetableId: sessionNote.timetableId,
         noteCreatedAt: sessionNote.createdAt,
         // Session instance data
-        sessionId: sessionInstance.id,
-        sessionTitle: sessionInstance.title,
-        sessionStartDateTime: sessionInstance.startDateTime,
+        sessionId: timetable.id,
+        sessionTitle: timetable.title,
+        sessionStartDateTime: timetable.startDateTime,
       })
       .from(sessionNote)
-      .leftJoin(sessionInstance, eq(sessionNote.sessionInstanceId, sessionInstance.id))
+      .leftJoin(timetable, eq(sessionNote.timetableId, timetable.id))
       .where(and(...whereConditions))
 
     // Get attachment counts for each note
@@ -74,9 +74,9 @@ export class SessionNoteManagementService {
       id: row.noteId,
       title: row.noteTitle,
       isPrivate: row.noteIsPrivate,
-      sessionInstanceId: row.noteSessionInstanceId,
+      timetableId: row.noteTimetableId,
       createdAt: row.noteCreatedAt,
-      sessionInstance: {
+      timetable: {
         id: row.sessionId!,
         title: row.sessionTitle!,
         startDateTime: row.sessionStartDateTime!,
@@ -92,19 +92,19 @@ export class SessionNoteManagementService {
         noteTitle: sessionNote.title,
         noteContent: sessionNote.content,
         noteIsPrivate: sessionNote.isPrivate,
-        noteSessionInstanceId: sessionNote.sessionInstanceId,
+        noteTimetableId: sessionNote.timetableId,
         noteOrgId: sessionNote.orgId,
         noteCreatedAt: sessionNote.createdAt,
         noteUpdatedAt: sessionNote.updatedAt,
         noteDeletedAt: sessionNote.deletedAt,
         // Session instance data
-        sessionId: sessionInstance.id,
-        sessionTitle: sessionInstance.title,
-        sessionStartDateTime: sessionInstance.startDateTime,
-        sessionEndDateTime: sessionInstance.endDateTime,
+        sessionId: timetable.id,
+        sessionTitle: timetable.title,
+        sessionStartDateTime: timetable.startDateTime,
+        sessionEndDateTime: timetable.endDateTime,
       })
       .from(sessionNote)
-      .leftJoin(sessionInstance, eq(sessionNote.sessionInstanceId, sessionInstance.id))
+      .leftJoin(timetable, eq(sessionNote.timetableId, timetable.id))
       .where(and(
         eq(sessionNote.id, sessionNoteId),
         eq(sessionNote.orgId, orgId),
@@ -139,12 +139,12 @@ export class SessionNoteManagementService {
       title: row.noteTitle,
       content: row.noteContent,
       isPrivate: row.noteIsPrivate,
-      sessionInstanceId: row.noteSessionInstanceId,
+      timetableId: row.noteTimetableId,
       orgId: row.noteOrgId,
       createdAt: row.noteCreatedAt,
       updatedAt: row.noteUpdatedAt,
       deletedAt: row.noteDeletedAt,
-      sessionInstance: {
+      timetable: {
         id: row.sessionId!,
         title: row.sessionTitle!,
         startDateTime: row.sessionStartDateTime!,
@@ -161,7 +161,7 @@ export class SessionNoteManagementService {
         title: input.title,
         content: input.content,
         isPrivate: input.isPrivate,
-        sessionInstanceId: input.sessionInstanceId,
+        timetableId: input.timetableId,
         orgId,
         createdByUserId: userId,
       })
@@ -170,7 +170,7 @@ export class SessionNoteManagementService {
         title: sessionNote.title,
         content: sessionNote.content,
         isPrivate: sessionNote.isPrivate,
-        sessionInstanceId: sessionNote.sessionInstanceId,
+        timetableId: sessionNote.timetableId,
         orgId: sessionNote.orgId,
         createdAt: sessionNote.createdAt,
         updatedAt: sessionNote.updatedAt,
@@ -201,7 +201,7 @@ export class SessionNoteManagementService {
         title: sessionNote.title,
         content: sessionNote.content,
         isPrivate: sessionNote.isPrivate,
-        sessionInstanceId: sessionNote.sessionInstanceId,
+        timetableId: sessionNote.timetableId,
         orgId: sessionNote.orgId,
         createdAt: sessionNote.createdAt,
         updatedAt: sessionNote.updatedAt,

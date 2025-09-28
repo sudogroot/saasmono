@@ -6,13 +6,13 @@ export const SessionNoteSchema = z.object({
   title: z.string(),
   content: z.string(),
   isPrivate: z.boolean(),
-  sessionInstanceId: z.uuid(),
+  timetableId: z.uuid(),
   orgId: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
   // Joined data
-  sessionInstance: z.object({
+  timetable: z.object({
     id: z.uuid(),
     title: z.string(),
     startDateTime: z.date(),
@@ -33,9 +33,9 @@ export const SessionNoteListItemSchema = z.object({
   id: z.uuid(),
   title: z.string(),
   isPrivate: z.boolean(),
-  sessionInstanceId: z.uuid(),
+  timetableId: z.uuid(),
   createdAt: z.date(),
-  sessionInstance: z.object({
+  timetable: z.object({
     id: z.uuid(),
     title: z.string(),
     startDateTime: z.date(),
@@ -63,10 +63,10 @@ export const CreateSessionNoteInputSchema = z.object({
   title: z.string().min(1, 'Note title is required'),
   content: z.string().min(1, 'Note content is required'),
   isPrivate: z.boolean().default(false),
-  sessionInstanceId: z.uuid(),
+  timetableId: z.uuid(),
 })
 
-export const UpdateSessionNoteInputSchema = CreateSessionNoteInputSchema.partial().omit({ sessionInstanceId: true })
+export const UpdateSessionNoteInputSchema = CreateSessionNoteInputSchema.partial().omit({ timetableId: true })
 
 export const CreateSessionNoteAttachmentInputSchema = z.object({
   fileName: z.string().min(1, 'File name is required'),
@@ -79,7 +79,7 @@ export const CreateSessionNoteAttachmentInputSchema = z.object({
 
 // Query Schemas
 export const SessionNoteQuerySchema = z.object({
-  sessionInstanceId: z.uuid().optional(),
+  timetableId: z.uuid().optional(),
   isPrivate: z.boolean().optional(),
   startDate: z.date().optional(),
   endDate: z.date().optional(),

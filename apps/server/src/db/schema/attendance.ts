@@ -1,7 +1,7 @@
 import { relations } from 'drizzle-orm'
 import { index, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 import { organization, user } from './auth'
-import { sessionInstance } from './sessionInstance'
+import { timetable } from './timetable'
 
 // Enums for attendance status
 export const attendanceStatusEnum = pgEnum('attendance_status', [
@@ -22,9 +22,9 @@ export const attendance = pgTable('attendance', {
   studentId: text('student_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  sessionInstanceId: uuid('session_instance_id')
+  timetableId: uuid('timetable_id')
     .notNull()
-    .references(() => sessionInstance.id, { onDelete: 'cascade' }),
+    .references(() => timetable.id, { onDelete: 'cascade' }),
 
   orgId: text('org_id')
     .notNull()
@@ -50,11 +50,11 @@ export const attendance = pgTable('attendance', {
     // Unique constraint: one attendance record per student per session
     studentSessionIdx: index('attendance_student_session_idx').on(
       table.studentId,
-      table.sessionInstanceId
+      table.timetableId
     ),
     // Performance indexes
     sessionStatusIdx: index('attendance_session_status_idx').on(
-      table.sessionInstanceId,
+      table.timetableId,
       table.status
     ),
     studentMarkedAtIdx: index('attendance_student_marked_at_idx').on(
@@ -75,9 +75,9 @@ export const attendanceRelations = relations(attendance, ({ one }) => ({
     references: [user.id],
     relationName: 'attendanceStudent',
   }),
-  sessionInstance: one(sessionInstance, {
-    fields: [attendance.sessionInstanceId],
-    references: [sessionInstance.id],
+  timetable: one(timetable, {
+    fields: [attendance.timetableId],
+    references: [timetable.id],
   }),
   organization: one(organization, {
     fields: [attendance.orgId],
