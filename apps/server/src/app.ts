@@ -25,6 +25,9 @@ app.use(
 
 app.all('/api/auth{/*path}', toNodeHandler(auth))
 
+// Serve static images - must be before orpc handlers
+app.use('/images', express.static(path.join(process.cwd(), 'src', 'images')))
+
 const rpcHandler = new RPCHandler(appRouter, {
   interceptors: [
     onError((error) => {
@@ -62,9 +65,6 @@ app.use(async (req, res, next) => {
 })
 
 app.use(express.json())
-
-// Serve static images
-app.use('/images', express.static(path.join(process.cwd(), 'src', 'images')))
 
 app.get('/', (_req, res) => {
   res.status(200).send('OK')

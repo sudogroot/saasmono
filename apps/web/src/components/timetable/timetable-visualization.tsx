@@ -44,11 +44,11 @@ export function TimetableVisualization() {
       })
 
       if (result.success && result.imagePath) {
-        // Create download link for the generated image
-        const imageUrl = `${window.location.origin}/images/${result.imagePath.split('/').pop()}`
+        // Backend now returns full URL, use it directly for download
         const link = document.createElement('a')
-        link.href = imageUrl
+        link.href = result.imagePath
         link.download = `timetable-${new Date().toISOString().split('T')[0]}.png`
+        link.target = '_blank' // Open in new tab to ensure download
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
