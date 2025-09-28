@@ -87,7 +87,7 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
         globalSheet.openClientDetails({
           slug: 'clients',
           clientId: data.id,
-          size: 'lg',
+          size: 'md',
           reset: true,
         })
 

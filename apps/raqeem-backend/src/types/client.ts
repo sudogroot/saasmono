@@ -64,6 +64,7 @@ export const ClientSchema = z.object({
   updatedAt: z.coerce.date(),
   deletedAt: z.coerce.date().nullable(),
   createdBy: z.string().nullable(),
+  case: z.array(ClientCaseSchema),
 })
 
 export const ClientListItemSchema = z.object({
@@ -74,7 +75,6 @@ export const ClientListItemSchema = z.object({
   clientType: ClientTypeSchema,
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-  case: z.array(ClientCaseSchema),
 })
 
 export const SuccessResponseSchema = z.object({
