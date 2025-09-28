@@ -4,6 +4,7 @@ import { OrpcErrorHelper, getCurrentUserId, getOrgId } from '../lib/errors/orpc-
 import { protectedProcedure } from '../lib/orpc'
 import { createCourtService } from '../services/courts'
 import {
+  CourtsByStateSchema,
   CreateCourtSchema,
   UpdateCourtSchema,
   CourtSchema,
@@ -121,6 +122,24 @@ export const courtRouter = {
         return await courtService.listCourts(orgId)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch courts')
+      }
+    }),
+
+  getCourtsForDropdown: protectedProcedure
+    .output(z.array(CourtsByStateSchema))
+    .route({
+      method: 'GET',
+      path: '/courts/dropdown',
+      tags: ['Courts'],
+      summary: 'Get courts for dropdown',
+      description: 'Retrieves courts grouped by state for dropdowns (state, courts with id and name)',
+    })
+    .handler(async ({ context }) => {
+      const orgId = getOrgId(context)
+      try {
+        return await courtService.getCourtsForDropdown()
+      } catch (error) {
+        throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch courts for dropdown')
       }
     }),
 }

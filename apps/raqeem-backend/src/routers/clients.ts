@@ -4,6 +4,7 @@ import { OrpcErrorHelper, getCurrentUserId, getOrgId } from '../lib/errors/orpc-
 import { protectedProcedure } from '../lib/orpc'
 import { createClientService } from '../services/clients'
 import {
+  ClientDropdownItemSchema,
   ClientListItemSchema,
   ClientSchema,
   CreateClientSchema,
@@ -131,6 +132,24 @@ export const clientRouter = {
         return await clientService.listClients(orgId, input.includeDeleted)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch clients')
+      }
+    }),
+
+  getClientsForDropdown: protectedProcedure
+    .output(z.array(ClientDropdownItemSchema))
+    .route({
+      method: 'GET',
+      path: '/clients/dropdown',
+      tags: ['Clients'],
+      summary: 'Get clients for dropdown',
+      description: 'Retrieves simplified client data for dropdowns (id, name, type)',
+    })
+    .handler(async ({ context }) => {
+      const orgId = getOrgId(context)
+      try {
+        return await clientService.getClientsForDropdown(orgId)
+      } catch (error) {
+        throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch clients for dropdown')
       }
     }),
 }

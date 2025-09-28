@@ -2,7 +2,7 @@ import { and, eq } from 'drizzle-orm'
 import { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import { member } from '../db/schema/auth'
 import { courts } from '../db/schema/courts'
-import type { CourtListItem, CourtResponse, CreateCourtInput, UpdateCourtInput } from '../types/court'
+import type { CourtsByState, CourtListItem, CourtResponse, CreateCourtInput, UpdateCourtInput } from '../types/court'
 
 export class CourtService {
   private db: NodePgDatabase
@@ -106,6 +106,36 @@ export class CourtService {
       .orderBy(courts.createdAt)
 
     return result as CourtListItem[]
+  }
+
+  async getCourtsForDropdown(): Promise<CourtsByState[]> {
+    const result = await this.db
+      .select({
+        id: courts.id,
+        name: courts.name,
+        state: courts.state,
+      })
+      .from(courts)
+      .orderBy(courts.state, courts.name)
+
+    // Group courts by state
+    const courtsByState = new Map<string, { id: string; name: string }[]>()
+
+    for (const court of result) {
+      if (!courtsByState.has(court.state)) {
+        courtsByState.set(court.state, [])
+      }
+      courtsByState.get(court.state)!.push({
+        id: court.id,
+        name: court.name,
+      })
+    }
+
+    // Convert to array format
+    return Array.from(courtsByState.entries()).map(([state, courts]) => ({
+      state,
+      courts,
+    }))
   }
 }
 

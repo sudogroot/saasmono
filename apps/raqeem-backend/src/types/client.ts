@@ -91,6 +91,12 @@ export const ClientListItemSchema = z.object({
   updatedAt: z.coerce.date(),
 })
 
+export const ClientDropdownItemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  clientType: ClientTypeSchema,
+})
+
 export const SuccessResponseSchema = z.object({
   success: z.boolean(),
 })
@@ -102,4 +108,5 @@ export type UpdateClientInput = z.infer<typeof UpdateClientSchema>
 export type ClientResponse = z.infer<typeof ClientSchema>
 export type DetailedClientResponse = z.infer<typeof DetailedClientSchema>
 export type ClientListItem = z.infer<typeof ClientListItemSchema>
+export type ClientDropdownItem = z.infer<typeof ClientDropdownItemSchema>
 export type SuccessResponse = z.infer<typeof SuccessResponseSchema>

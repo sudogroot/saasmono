@@ -18,7 +18,7 @@ import {
   SelectValue,
   Textarea,
 } from '@repo/ui'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { FileText, Gavel, Loader2, Save, Users } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -79,26 +79,20 @@ export function CaseForm({ initialData, caseId, onSuccess, onCancel }: CaseFormP
     },
   })
 
-  // // Fetch clients for dropdown
-  // const { data: clients = [] } = useQuery({
-  //   ...orpc.clients.listClients.queryOptions({
-  //     input: { includeDeleted: false },
-  //   }),
-  // })
+  // Fetch clients for dropdown
+  const { data: clients = [] } = useQuery({
+    ...orpc.clients.getClientsForDropdown.queryOptions(),
+  })
 
-  // Fetch opponents for dropdown - disabled until API is available
-  // const { data: opponents = [] } = useQuery({
-  //   queryKey: ['opponents'],
-  //   queryFn: () => Promise.resolve([]),
-  //   enabled: false, // Disable until opponents API is implemented
-  // })
+  // Fetch opponents for dropdown
+  const { data: opponents = [] } = useQuery({
+    ...orpc.opponents.getOpponentsForDropdown.queryOptions(),
+  })
 
-  // // Fetch courts for dropdown - disabled until API is available
-  // const { data: courts = [] } = useQuery({
-  //   queryKey: ['courts'],
-  //   queryFn: () => Promise.resolve([]),
-  //   enabled: false, // Disable until courts API is implemented
-  // })
+  // Fetch courts for dropdown (grouped by state)
+  const { data: courtsByState = [] } = useQuery({
+    ...orpc.courts.getCourtsForDropdown.queryOptions(),
+  })
 
   const createMutation = useMutation(
     orpc.cases.createCase.mutationOptions({
@@ -310,13 +304,13 @@ export function CaseForm({ initialData, caseId, onSuccess, onCancel }: CaseFormP
                         <SelectValue placeholder="اختر العميل" />
                       </SelectTrigger>
                     </FormControl>
-                    {/*<SelectContent>
+                    <SelectContent>
                       {clients.map((client) => (
                         <SelectItem key={client.id} value={client.id}>
-                          {client.name}
+                          {client.name} ({client.clientType})
                         </SelectItem>
                       ))}
-                    </SelectContent>*/}
+                    </SelectContent>
                   </Select>
                   <FormMessage />
                 </FormItem>
@@ -335,14 +329,14 @@ export function CaseForm({ initialData, caseId, onSuccess, onCancel }: CaseFormP
                         <SelectValue placeholder="اختر الخصم (اختياري)" />
                       </SelectTrigger>
                     </FormControl>
-                    {/*<SelectContent>*/}
-                    {/*<SelectItem value="none">بدون خصم</SelectItem>
+                    <SelectContent>
+                      <SelectItem value="none">بدون خصم</SelectItem>
                       {opponents.map((opponent) => (
                         <SelectItem key={opponent.id} value={opponent.id}>
-                          {opponent.name}
+                          {opponent.name} ({opponent.opponentType})
                         </SelectItem>
                       ))}
-                    </SelectContent>*/}
+                    </SelectContent>
                   </Select>
                   <FormMessage />
                 </FormItem>
@@ -370,14 +364,21 @@ export function CaseForm({ initialData, caseId, onSuccess, onCancel }: CaseFormP
                       <SelectValue placeholder="اختر المحكمة (اختياري)" />
                     </SelectTrigger>
                   </FormControl>
-                  {/*<SelectContent>
+                  <SelectContent>
                     <SelectItem value="none">بدون محكمة</SelectItem>
-                    {courts.map((court) => (
-                      <SelectItem key={court.id} value={court.id}>
-                        {court.name} - {court.state}
-                      </SelectItem>
+                    {courtsByState.map((stateGroup) => (
+                      <div key={stateGroup.state}>
+                        <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
+                          {stateGroup.state}
+                        </div>
+                        {stateGroup.courts.map((court) => (
+                          <SelectItem key={court.id} value={court.id} className="pl-6">
+                            {court.name}
+                          </SelectItem>
+                        ))}
+                      </div>
                     ))}
-                  </SelectContent>*/}
+                  </SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>

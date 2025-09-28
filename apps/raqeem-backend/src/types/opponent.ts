@@ -36,6 +36,12 @@ export const OpponentListItemSchema = z.object({
   updatedAt: z.coerce.date(),
 })
 
+export const OpponentDropdownItemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  opponentType: OpponentTypeSchema,
+})
+
 export const SuccessResponseSchema = z.object({
   success: z.boolean(),
 })
@@ -46,4 +52,5 @@ export type CreateOpponentInput = z.infer<typeof CreateOpponentSchema>
 export type UpdateOpponentInput = z.infer<typeof UpdateOpponentSchema>
 export type OpponentResponse = z.infer<typeof OpponentSchema>
 export type OpponentListItem = z.infer<typeof OpponentListItemSchema>
+export type OpponentDropdownItem = z.infer<typeof OpponentDropdownItemSchema>
 export type SuccessResponse = z.infer<typeof SuccessResponseSchema>

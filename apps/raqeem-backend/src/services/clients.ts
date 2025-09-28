@@ -5,7 +5,7 @@ import { clients } from '../db/schema/clients'
 import { cases } from '../db/schema/cases'
 import { trials } from '../db/schema/trials'
 import { courts } from '../db/schema/courts'
-import type { ClientListItem, ClientResponse, CreateClientInput, UpdateClientInput } from '../types/client'
+import type { ClientDropdownItem, ClientListItem, ClientResponse, CreateClientInput, UpdateClientInput } from '../types/client'
 
 export class ClientService {
   private db: NodePgDatabase
@@ -193,6 +193,20 @@ export class ClientService {
       .orderBy(clients.createdAt)
 
     return result as ClientListItem[]
+  }
+
+  async getClientsForDropdown(orgId: string): Promise<ClientDropdownItem[]> {
+    const result = await this.db
+      .select({
+        id: clients.id,
+        name: clients.name,
+        clientType: clients.clientType,
+      })
+      .from(clients)
+      .where(and(eq(clients.organizationId, orgId), isNull(clients.deletedAt)))
+      .orderBy(clients.name)
+
+    return result as ClientDropdownItem[]
   }
 }
 

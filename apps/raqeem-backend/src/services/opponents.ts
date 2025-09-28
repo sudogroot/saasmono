@@ -2,7 +2,7 @@ import { and, eq, isNull } from 'drizzle-orm'
 import { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import { member } from '../db/schema/auth'
 import { opponents } from '../db/schema/opponents'
-import type { CreateOpponentInput, OpponentListItem, OpponentResponse, UpdateOpponentInput } from '../types/opponent'
+import type { CreateOpponentInput, OpponentDropdownItem, OpponentListItem, OpponentResponse, UpdateOpponentInput } from '../types/opponent'
 
 export class OpponentService {
   private db: NodePgDatabase
@@ -126,6 +126,20 @@ export class OpponentService {
       .orderBy(opponents.createdAt)
 
     return opponent as OpponentListItem[]
+  }
+
+  async getOpponentsForDropdown(orgId: string): Promise<OpponentDropdownItem[]> {
+    const result = await this.db
+      .select({
+        id: opponents.id,
+        name: opponents.name,
+        opponentType: opponents.opponentType,
+      })
+      .from(opponents)
+      .where(and(eq(opponents.organizationId, orgId), isNull(opponents.deletedAt)))
+      .orderBy(opponents.name)
+
+    return result as OpponentDropdownItem[]
   }
 }
 

@@ -5,6 +5,7 @@ import { protectedProcedure } from '../lib/orpc'
 import { createOpponentService } from '../services/opponents'
 import {
   CreateOpponentSchema,
+  OpponentDropdownItemSchema,
   UpdateOpponentSchema,
   OpponentSchema,
   OpponentListItemSchema,
@@ -121,6 +122,24 @@ export const opponentRouter = {
         return await opponentService.listOpponents(orgId)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch opponents')
+      }
+    }),
+
+  getOpponentsForDropdown: protectedProcedure
+    .output(z.array(OpponentDropdownItemSchema))
+    .route({
+      method: 'GET',
+      path: '/opponents/dropdown',
+      tags: ['Opponents'],
+      summary: 'Get opponents for dropdown',
+      description: 'Retrieves simplified opponent data for dropdowns (id, name, type)',
+    })
+    .handler(async ({ context }) => {
+      const orgId = getOrgId(context)
+      try {
+        return await opponentService.getOpponentsForDropdown(orgId)
+      } catch (error) {
+        throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch opponents for dropdown')
       }
     }),
 }
