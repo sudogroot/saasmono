@@ -7,6 +7,7 @@ import { toNodeHandler } from 'better-auth/node'
 import cors from 'cors'
 import 'dotenv/config'
 import express from 'express'
+import path from 'path'
 import { auth } from './lib/auth'
 import { createContext } from './lib/context'
 import { appRouter } from './routers'
@@ -23,6 +24,9 @@ app.use(
 )
 
 app.all('/api/auth{/*path}', toNodeHandler(auth))
+
+// Serve static images - must be before orpc handlers
+app.use('/images', express.static(path.join(process.cwd(), 'src', 'images')))
 
 const rpcHandler = new RPCHandler(appRouter, {
   interceptors: [

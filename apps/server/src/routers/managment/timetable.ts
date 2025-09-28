@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { db } from '../../db/index'
-import { OrpcErrorHelper, getOrgId } from '../../lib/errors/orpc-errors'
+import { OrpcErrorHelper, getCurrentUserId, getOrgId } from '../../lib/errors/orpc-errors'
 import { protectedProcedure } from '../../lib/orpc'
 import { createTimetableManagementService } from '../../services/managment/timetable'
 import {
@@ -8,7 +8,9 @@ import {
   TimetableListItemSchema,
   TimetableQuerySchema,
   TimetableSchema,
-  UpdateTimetableInputSchema
+  UpdateTimetableInputSchema,
+  TimetableImageGenerationRequestSchema,
+  TimetableImageResponseSchema
 } from '../../types/timetable'
 
 const timetableService = createTimetableManagementService(db)
@@ -75,7 +77,7 @@ export const timetableManagementRouter = {
     })
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
-      const userId = context.user?.id
+      const userId = getCurrentUserId(context)
       if (!userId) {
         throw OrpcErrorHelper.unauthorized('User ID is required')
       }
@@ -109,7 +111,7 @@ export const timetableManagementRouter = {
     })
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
-      const userId = context.user?.id
+      const userId = getCurrentUserId(context)
       if (!userId) {
         throw OrpcErrorHelper.unauthorized('User ID is required')
       }
@@ -136,7 +138,7 @@ export const timetableManagementRouter = {
     })
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
-      const userId = context.user?.id
+      const userId = getCurrentUserId(context)
       if (!userId) {
         throw OrpcErrorHelper.unauthorized('User ID is required')
       }
@@ -144,6 +146,29 @@ export const timetableManagementRouter = {
         return await timetableService.deleteTimetable(input.timetableId, orgId, userId)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to delete session instance')
+      }
+    }),
+
+  generateTimetableImage: protectedProcedure
+    .input(TimetableImageGenerationRequestSchema)
+    .output(TimetableImageResponseSchema)
+    .route({
+      method: 'POST',
+      path: '/management/session-instances/generate-image',
+      tags: ['Session Instance Management'],
+      summary: 'Generate timetable image',
+      description: 'Generates a timetable image with caching support',
+    })
+    .handler(async ({ input, context }) => {
+      const orgId = getOrgId(context)
+      const userId = getCurrentUserId(context)
+      if (!userId) {
+        throw OrpcErrorHelper.unauthorized('User ID is required')
+      }
+      try {
+        return await timetableService.generateTimetableImage(input, orgId, userId)
+      } catch (error) {
+        throw OrpcErrorHelper.handleServiceError(error, 'Failed to generate timetable image')
       }
     }),
 }

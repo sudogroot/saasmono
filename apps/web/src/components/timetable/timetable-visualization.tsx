@@ -2,12 +2,11 @@
 
 import { orpc } from '@/utils/orpc'
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { Calendar, Download, Filter } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { TimetableFilters } from './timetable-filters'
 import { TimetableGrid } from './timetable-grid'
-import { formatFileSize, generateTimetableImage } from './timetable-image-generator'
 
 export interface TimetableFilterState {
   classroomId?: string
@@ -19,7 +18,6 @@ export interface TimetableFilterState {
 export function TimetableVisualization() {
   const [filters, setFilters] = useState<TimetableFilterState>({})
   const [showFilters, setShowFilters] = useState(true)
-  const timetableRef = useRef<HTMLDivElement>(null)
 
   // Get timetable data based on filters
   const { data: timetableData = [], isLoading, error } = useQuery(
@@ -31,19 +29,33 @@ export function TimetableVisualization() {
     })
   )
 
-  const handleDownload = async () => {
-    if (!timetableRef.current) return
+  // Mutation for generating timetable image
+  const generateImageMutation = useMutation(
+    orpc.management.timetables.generateTimetableImage.mutationOptions()
+  )
 
+  const handleDownload = async () => {
     try {
-      const result = await generateTimetableImage(timetableRef.current, {
-        filename: `timetable-${new Date().toISOString().split('T')[0]}.png`,
-        format: 'png',
-        quality: 1.0,
-        scale: 1.5, // Reduce scale to avoid memory issues
+      const result = await generateImageMutation.mutateAsync({
+        classroomId: filters.classroomId,
+        classroomGroupId: filters.classroomGroupId,
+        startDate: filters.startDate,
+        endDate: filters.endDate,
       })
 
-      if (result.success) {
-        console.log(`تم تحميل الجدول بنجاح: ${result.filename} (${formatFileSize(result.size)})`)
+      if (result.success && result.imagePath) {
+        // Backend now returns full URL, use it directly for download
+        const link = document.createElement('a')
+        link.href = result.imagePath
+        link.download = `timetable-${new Date().toISOString().split('T')[0]}.png`
+        link.target = '_blank' // Open in new tab to ensure download
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+
+        console.log(`تم تحميل الجدول بنجاح: ${result.message}`)
+      } else {
+        throw new Error(result.message || 'فشل في إنشاء صورة جدول الحصص')
       }
     } catch (error) {
       console.error('Failed to generate timetable image:', error)
@@ -108,16 +120,16 @@ export function TimetableVisualization() {
               </div>
               <Button
                 onClick={handleDownload}
-                disabled={isLoading || timetableData.length === 0}
+                disabled={isLoading || timetableData.length === 0 || generateImageMutation.isPending}
                 className="flex items-center gap-2"
               >
                 <Download className="h-4 w-4" />
-                تحميل كصورة
+                {generateImageMutation.isPending ? 'جاري إنشاء الصورة...' : 'تحميل كصورة'}
               </Button>
             </div>
           </CardHeader>
           <CardContent>
-            <div ref={timetableRef}>
+            <div className="bg-white">
               <TimetableGrid
                 timetableData={timetableData}
                 isLoading={isLoading}

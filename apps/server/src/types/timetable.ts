@@ -68,6 +68,10 @@ export const TimetableListItemSchema = z.object({
     name: z.string(),
     displayNameEn: z.string(),
   }),
+  institutionLevel: z.object({
+    id: z.uuid(),
+    name: z.string(),
+  }).nullable(),
   room: z.object({
     id: z.uuid(),
     name: z.string(),
@@ -129,9 +133,48 @@ export const TimetableQuerySchema = z.object({
   status: z.enum(['SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'RESCHEDULED']).optional(),
 })
 
+// Timetable Image Schemas
+export const TimetableImageSchema = z.object({
+  id: z.uuid(),
+  dataHash: z.string(),
+  imagePath: z.string(),
+  orgId: z.string(),
+  createdByUserId: z.string().nullable(),
+  createdAt: z.date(),
+  lastAccessedAt: z.date(),
+})
+
+export const CreateTimetableImageInputSchema = z.object({
+  dataHash: z.string().min(1, 'Data hash is required'),
+  imagePath: z.string().min(1, 'Image path is required'),
+})
+
+export const TimetableImageGenerationRequestSchema = z.object({
+  classroomId: z.uuid().optional(),
+  classroomGroupId: z.uuid().optional(),
+  startDate: z.date().optional(),
+  endDate: z.date().optional(),
+}).refine(
+  (data) => data.classroomId || data.classroomGroupId,
+  {
+    message: "Either classroomId or classroomGroupId must be provided",
+    path: ["classroomId"],
+  }
+)
+
+export const TimetableImageResponseSchema = z.object({
+  success: z.boolean(),
+  imagePath: z.string().optional(),
+  message: z.string().optional(),
+})
+
 // Type exports
 export type Timetable = z.infer<typeof TimetableSchema>
 export type TimetableListItem = z.infer<typeof TimetableListItemSchema>
 export type CreateTimetableInput = z.infer<typeof CreateTimetableInputSchema>
 export type UpdateTimetableInput = z.infer<typeof UpdateTimetableInputSchema>
 export type TimetableQuery = z.infer<typeof TimetableQuerySchema>
+export type TimetableImage = z.infer<typeof TimetableImageSchema>
+export type CreateTimetableImageInput = z.infer<typeof CreateTimetableImageInputSchema>
+export type TimetableImageGenerationRequest = z.infer<typeof TimetableImageGenerationRequestSchema>
+export type TimetableImageResponse = z.infer<typeof TimetableImageResponseSchema>

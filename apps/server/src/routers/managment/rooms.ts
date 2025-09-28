@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { db } from '../../db/index'
-import { OrpcErrorHelper, getOrgId } from '../../lib/errors/orpc-errors'
+import { OrpcErrorHelper, getCurrentUserId, getOrgId } from '../../lib/errors/orpc-errors'
 import { protectedProcedure } from '../../lib/orpc'
 import { createRoomManagementService } from '../../services/managment/rooms'
 import { CreateRoomInputSchema, RoomListItemSchema, RoomSchema, UpdateRoomInputSchema } from '../../types/room'
@@ -62,7 +62,7 @@ export const roomManagementRouter = {
     })
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
-      const userId = context.user?.id
+      const userId = getCurrentUserId(context)
       if (!userId) {
         throw OrpcErrorHelper.unauthorized('User ID is required')
       }
@@ -90,7 +90,7 @@ export const roomManagementRouter = {
     })
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
-      const userId = context.user?.id
+      const userId = getCurrentUserId(context)
       if (!userId) {
         throw OrpcErrorHelper.unauthorized('User ID is required')
       }
@@ -117,7 +117,7 @@ export const roomManagementRouter = {
     })
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
-      const userId = context.user?.id
+      const userId = getCurrentUserId(context)
       if (!userId) {
         throw OrpcErrorHelper.unauthorized('User ID is required')
       }

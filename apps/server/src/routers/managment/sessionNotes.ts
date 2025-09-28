@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { db } from '../../db/index'
-import { OrpcErrorHelper, getOrgId } from '../../lib/errors/orpc-errors'
+import { OrpcErrorHelper, getCurrentUserId, getOrgId } from '../../lib/errors/orpc-errors'
 import { protectedProcedure } from '../../lib/orpc'
 import { createSessionNoteManagementService } from '../../services/managment/sessionNotes'
 import {
@@ -74,7 +74,7 @@ export const sessionNoteManagementRouter = {
     })
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
-      const userId = context.user?.id
+      const userId = getCurrentUserId(context)
       if (!userId) {
         throw OrpcErrorHelper.unauthorized('User ID is required')
       }
@@ -105,7 +105,7 @@ export const sessionNoteManagementRouter = {
     })
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
-      const userId = context.user?.id
+      const userId = getCurrentUserId(context)
       if (!userId) {
         throw OrpcErrorHelper.unauthorized('User ID is required')
       }
@@ -132,7 +132,7 @@ export const sessionNoteManagementRouter = {
     })
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
-      const userId = context.user?.id
+      const userId = getCurrentUserId(context)
       if (!userId) {
         throw OrpcErrorHelper.unauthorized('User ID is required')
       }
@@ -156,7 +156,7 @@ export const sessionNoteManagementRouter = {
     })
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
-      const userId = context.user?.id
+      const userId = getCurrentUserId(context)
       if (!userId) {
         throw OrpcErrorHelper.unauthorized('User ID is required')
       }
@@ -183,7 +183,7 @@ export const sessionNoteManagementRouter = {
     })
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
-      const userId = context.user?.id
+      const userId = getCurrentUserId(context)
       if (!userId) {
         throw OrpcErrorHelper.unauthorized('User ID is required')
       }
