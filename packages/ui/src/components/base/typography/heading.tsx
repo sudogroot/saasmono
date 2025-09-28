@@ -1,5 +1,5 @@
-import React from 'react';
-import { cn } from '../../../lib/utils';
+import React from "react";
+import { cn } from "../../../lib/utils";
 
 export interface HeadingProps {
   children: React.ReactNode;
@@ -9,31 +9,27 @@ export interface HeadingProps {
 }
 
 const headingClasses = {
-  1: 'text-4xl font-bold tracking-tight',
-  2: 'text-3xl font-semibold tracking-tight',
-  3: 'text-2xl font-semibold tracking-tight',
-  4: 'text-xl font-medium tracking-tight',
-  5: 'text-lg font-medium',
-  6: 'text-base font-medium'
+  1: "text-4xl font-bold tracking-tight",
+  2: "text-3xl font-semibold tracking-tight",
+  3: "text-2xl font-semibold tracking-tight",
+  4: "text-xl font-medium tracking-tight",
+  5: "text-lg font-medium",
+  6: "text-base font-medium",
 };
 
 export const Heading: React.FC<HeadingProps> = ({
   children,
   level = 1,
   className,
-  truncate = false
+  truncate = false,
 }) => {
-  const Component = `h${level}` as keyof JSX.IntrinsicElements;
+  const Component = `h${level}` as React.ElementType;
 
-  return (
-    <Component
-      className={cn(
-        headingClasses[level],
-        truncate && 'truncate',
-        className
-      )}
-    >
-      {children}
-    </Component>
+  return React.createElement(
+    Component,
+    {
+      className: cn(headingClasses[level], truncate && "truncate", className),
+    },
+    children
   );
 };
