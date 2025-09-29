@@ -1,0 +1,244 @@
+/* React Big Calendar Custom Styles with Tailwind */
+.rbc-calendar-custom {
+  @apply rounded-lg bg-card;
+}
+
+/* Toolbar */
+.rbc-toolbar {
+  @apply mb-4 flex flex-wrap items-center justify-between gap-4;
+}
+
+.rbc-toolbar button {
+  @apply rounded-md px-3 py-2 text-sm font-medium transition-colors;
+  @apply hover:bg-accent hover:text-accent-foreground;
+}
+
+.rbc-toolbar button:active,
+.rbc-toolbar button.rbc-active {
+  @apply bg-primary text-primary-foreground;
+}
+
+/* Month View */
+.rbc-month-view {
+  @apply rounded-lg border border-border bg-card;
+}
+
+.rbc-header {
+  @apply border-b border-border bg-muted/50 py-3 text-center text-sm font-semibold text-foreground;
+}
+
+.rbc-header + .rbc-header {
+  @apply border-r border-border;
+}
+
+.rbc-month-row {
+  @apply border-b border-border;
+}
+
+.rbc-day-bg {
+  @apply border-r border-border bg-card transition-colors hover:bg-accent/50;
+}
+
+.rbc-off-range-bg {
+  @apply bg-muted/30;
+}
+
+.rbc-today {
+  @apply bg-primary/5;
+}
+
+.rbc-date-cell {
+  @apply p-2 text-right;
+}
+
+.rbc-date-cell > a {
+  @apply inline-flex size-8 items-center justify-center rounded-full text-sm font-medium transition-colors;
+  @apply hover:bg-accent hover:text-accent-foreground;
+}
+
+.rbc-now > a {
+  @apply bg-primary text-primary-foreground font-semibold;
+}
+
+.rbc-off-range > a {
+  @apply text-muted-foreground opacity-50;
+}
+
+/* Events */
+.rbc-event {
+  @apply rounded-md text-right;
+}
+
+.rbc-event-label {
+  @apply text-xs font-medium;
+}
+
+.rbc-event-content {
+  @apply truncate text-xs;
+}
+
+.rbc-event.rbc-selected {
+  @apply ring-2 ring-primary ring-offset-1;
+}
+
+.rbc-show-more {
+  @apply rounded-md px-2 py-1 text-xs font-medium text-primary hover:bg-primary/10;
+}
+
+/* Week & Day Views */
+.rbc-time-view {
+  @apply rounded-lg border border-border bg-card;
+}
+
+.rbc-time-header {
+  @apply border-b border-border bg-muted/50;
+}
+
+.rbc-time-header-content {
+  @apply border-r border-border;
+}
+
+.rbc-time-header-cell {
+  @apply py-2 text-center;
+}
+
+.rbc-allday-cell {
+  @apply border-r border-border bg-muted/30;
+}
+
+.rbc-time-content {
+  @apply border-t border-border;
+}
+
+.rbc-time-column {
+  @apply border-r border-border;
+}
+
+.rbc-timeslot-group {
+  @apply border-b border-border/50;
+}
+
+.rbc-time-slot {
+  @apply text-xs text-muted-foreground;
+}
+
+.rbc-current-time-indicator {
+  @apply bg-destructive;
+}
+
+.rbc-day-slot .rbc-time-slot {
+  @apply border-t border-border/30;
+}
+
+.rbc-label {
+  @apply px-2 text-xs text-muted-foreground;
+}
+
+/* Agenda View */
+.rbc-agenda-view {
+  @apply rounded-lg border border-border bg-card;
+}
+
+.rbc-agenda-view table {
+  @apply w-full;
+}
+
+.rbc-agenda-view table thead > tr > th {
+  @apply border-b border-border bg-muted/50 px-4 py-3 text-right text-sm font-semibold text-foreground;
+}
+
+.rbc-agenda-view table tbody > tr > td {
+  @apply border-b border-border px-4 py-3 text-sm text-foreground;
+}
+
+.rbc-agenda-view table tbody > tr > td + td {
+  @apply border-r border-border;
+}
+
+.rbc-agenda-view table tbody > tr:hover {
+  @apply bg-accent/50;
+}
+
+.rbc-agenda-date-cell,
+.rbc-agenda-time-cell {
+  @apply text-muted-foreground;
+}
+
+.rbc-agenda-event-cell {
+  @apply font-medium;
+}
+
+/* Overlay (for event details popup - we won't use this as we have our sheet) */
+.rbc-overlay {
+  @apply rounded-lg border border-border bg-card p-4 shadow-lg;
+}
+
+.rbc-overlay-header {
+  @apply mb-2 border-b border-border pb-2 font-semibold text-foreground;
+}
+
+/* Responsive Improvements */
+@media (max-width: 640px) {
+  .rbc-header {
+    @apply py-2 text-xs;
+  }
+
+  .rbc-date-cell > a {
+    @apply size-7 text-xs;
+  }
+
+  .rbc-toolbar {
+    @apply flex-col items-stretch;
+  }
+
+  .rbc-event {
+    @apply text-[10px];
+  }
+
+  .rbc-show-more {
+    @apply text-[10px];
+  }
+}
+
+/* RTL Specific Adjustments */
+[dir="rtl"] .rbc-header + .rbc-header {
+  @apply border-l border-r-0;
+}
+
+[dir="rtl"] .rbc-day-bg {
+  @apply border-l border-r-0;
+}
+
+[dir="rtl"] .rbc-time-header-content {
+  @apply border-l border-r-0;
+}
+
+[dir="rtl"] .rbc-time-column {
+  @apply border-l border-r-0;
+}
+
+[dir="rtl"] .rbc-allday-cell {
+  @apply border-l border-r-0;
+}
+
+[dir="rtl"] .rbc-agenda-view table tbody > tr > td + td {
+  @apply border-l border-r-0;
+}
+
+/* Animations */
+.rbc-event {
+  @apply transition-all duration-150;
+}
+
+.rbc-event:hover {
+  @apply scale-[1.02] shadow-sm;
+}
+
+.rbc-day-bg {
+  @apply transition-colors duration-150;
+}
+
+/* Empty state */
+.rbc-month-view .rbc-show-more {
+  @apply mt-1;
+}

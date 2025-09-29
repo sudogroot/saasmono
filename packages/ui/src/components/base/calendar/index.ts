@@ -1,4 +1,5 @@
 export { Calendar as FullCalendar } from "./calendar";
+export { BigCalendarWrapper } from "./big-calendar";
 export { CalendarHeader } from "./calendar-header";
 export { MonthView } from "./month-view";
 export { WeekView } from "./week-view";

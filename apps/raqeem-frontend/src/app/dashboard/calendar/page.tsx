@@ -2,9 +2,11 @@
 
 import { authClient } from '@/lib/auth-client'
 import { orpc } from '@/utils/orpc'
-import { CalendarEvent, FullCalendar } from '@repo/ui'
+import { CalendarEvent, BigCalendarWrapper } from '@repo/ui'
+import '@repo/ui/calendar.css'
+import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { useQuery } from '@tanstack/react-query'
-import { Loader2 } from 'lucide-react'
+import { Loader2, CalendarX } from 'lucide-react'
 import { useMemo } from 'react'
 
 export default function CalendarPage() {
@@ -48,7 +50,10 @@ export default function CalendarPage() {
   if (isLoading) {
     return (
       <div className="flex h-[calc(100vh-200px)] items-center justify-center">
-        <Loader2 className="text-primary h-8 w-8 animate-spin" />
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">جاري تحميل التقويم...</p>
+        </div>
       </div>
     )
   }
@@ -56,21 +61,25 @@ export default function CalendarPage() {
   if (error) {
     return (
       <div className="flex h-[calc(100vh-200px)] items-center justify-center">
-        <div className="text-center">
-          <p className="text-destructive">حدث خطأ في تحميل البيانات</p>
-          <p className="text-muted-foreground mt-2 text-sm">
-            {error instanceof Error ? error.message : 'خطأ غير معروف'}
-          </p>
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="rounded-full bg-destructive/10 p-4">
+            <CalendarX className="h-8 w-8 text-destructive" />
+          </div>
+          <div>
+            <p className="text-lg font-semibold text-foreground">حدث خطأ في تحميل البيانات</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {error instanceof Error ? error.message : 'خطأ غير معروف'}
+            </p>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="flex h-[calc(100vh-120px)] flex-col rounded-lg border border-border bg-card shadow-sm">
-      <FullCalendar
+    <div className="flex h-[calc(100vh-120px)] flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+      <BigCalendarWrapper
         events={calendarEvents}
-        view="month"
         onEventClick={(event) => {
           console.log('Event clicked:', event)
           // You can add navigation to trial details here if needed
