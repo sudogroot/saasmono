@@ -31,21 +31,17 @@ export default function OpponentsPage() {
     isLoading,
     error,
   } = useQuery({
-    ...orpc.opponents.list.queryOptions({
-      input: {
-        includeDeleted: false,
-      },
-    }),
+    ...orpc.opponents.listOpponents.queryOptions(),
     enabled: !!session,
   })
 
   // Delete mutation
   const deleteMutation = useMutation({
-    ...orpc.opponents.softDelete.mutationOptions({
+    ...orpc.opponents.deleteOpponent.mutationOptions({
       onSuccess: () => {
         toast.success('تم حذف الخصم بنجاح')
         setDeletingOpponentId(null)
-        queryClient.invalidateQueries({ queryKey: orpc.opponents.list.key() })
+        queryClient.invalidateQueries({ queryKey: orpc.opponents.listOpponents.key() })
       },
       onError: (error: any) => {
         toast.error(`حدث خطأ في حذف الخصم: ${error.message}`)
@@ -68,7 +64,7 @@ export default function OpponentsPage() {
   const confirmDelete = () => {
     if (deletingOpponentId) {
       deleteMutation.mutate({
-        id: deletingOpponentId,
+        opponentId: deletingOpponentId,
       })
     }
   }

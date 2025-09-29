@@ -47,10 +47,9 @@ export function OpponentDetails({
   renderMode = 'content'
 }: OpponentDetailsSheetProps) {
   const { data: opponentData, isLoading, error } = useQuery({
-    ...orpc.opponents.getById.queryOptions({
+    ...orpc.opponents.getOpponentById.queryOptions({
       input: {
-        id: opponentId,
-        includeDeleted: false,
+        opponentId: opponentId,
       },
     }),
   });
@@ -86,7 +85,6 @@ export function OpponentDetails({
       mode: 'edit',
       slug: 'opponents',
       opponentId: opponentData.id,
-      initialData: opponentData,
       size: 'lg'
     });
   };

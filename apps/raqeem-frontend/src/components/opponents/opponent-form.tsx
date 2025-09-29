@@ -61,11 +61,11 @@ export function OpponentForm({
   });
 
   const createMutation = useMutation({
-    ...orpc.opponents.create.mutationOptions({
+    ...orpc.opponents.createOpponent.mutationOptions({
       onSuccess: (data) => {
         toast.success("تم إنشاء الخصم بنجاح");
         form.reset();
-        queryClient.invalidateQueries({ queryKey: orpc.opponents.list.key() });
+        queryClient.invalidateQueries({ queryKey: orpc.opponents.listOpponents.key() });
         onSuccess?.(data);
       },
       onError: (error: any) => {
@@ -78,11 +78,11 @@ export function OpponentForm({
   });
 
   const updateMutation = useMutation({
-    ...orpc.opponents.update.mutationOptions({
+    ...orpc.opponents.updateOpponent.mutationOptions({
       onSuccess: (data) => {
         toast.success("تم تحديث الخصم بنجاح");
-        queryClient.invalidateQueries({ queryKey: orpc.opponents.list.key() });
-        queryClient.invalidateQueries({ queryKey: orpc.opponents.getById.key({ input: { id: opponentId! } }) });
+        queryClient.invalidateQueries({ queryKey: orpc.opponents.listOpponents.key() });
+        queryClient.invalidateQueries({ queryKey: orpc.opponents.getOpponentById.key({ input: { opponentId: opponentId! } }) });
         onSuccess?.(data);
       },
       onError: (error: any) => {
@@ -100,16 +100,12 @@ export function OpponentForm({
     try {
       if (isEditing && opponentId) {
         updateMutation.mutate({
-          id: opponentId,
-          data: {
-            ...data,
-          },
+          opponentId: opponentId,
+          ...data,
         });
       } else {
         createMutation.mutate({
-          data: {
-            ...data,
-          },
+          ...data,
         });
       }
     } catch (error) {
