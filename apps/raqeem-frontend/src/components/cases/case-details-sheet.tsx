@@ -111,6 +111,10 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
       mode: 'create',
       slug: 'trials',
       caseId: caseData.id,
+      presetData: {
+        caseId: caseData.id,
+        ...(caseData.court && { courtId: caseData.court.id }),
+      },
       size: 'md',
     })
   }

@@ -130,6 +130,9 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
       mode: 'create',
       slug: 'cases',
       clientId: clientData.id,
+      presetData: {
+        clientId: clientData.id,
+      },
       size: 'md',
     })
   }
@@ -294,6 +297,9 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                                   mode: 'create',
                                   slug: 'trials',
                                   caseId: caseItem.id,
+                                  presetData: {
+                                    caseId: caseItem.id,
+                                  },
                                   size: 'md',
                                 })}
                               >
@@ -356,6 +362,9 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                                 mode: 'create',
                                 slug: 'trials',
                                 caseId: caseItem.id,
+                                presetData: {
+                                  caseId: caseItem.id,
+                                },
                                 size: 'md',
                               })}
                             >

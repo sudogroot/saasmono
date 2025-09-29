@@ -248,7 +248,7 @@ export const useGlobalSheet = create<GlobalSheetState>((set, get) => ({
       const paramsToRemove: Record<string, null> = { view: null }
 
       // Remove known sheet-related parameters
-      const sheetParams = ['clientId', 'caseId', 'opponentId']
+      const sheetParams = ['clientId', 'caseId', 'opponentId', 'courtId', 'trialId']
       sheetParams.forEach((param) => {
         if (currentParams[param]) {
           paramsToRemove[param] = null
@@ -318,6 +318,8 @@ const openSheet = (type: 'details' | 'form', entity: 'case' | 'client' | 'oppone
   const urlParams: Record<string, string> = {}
   if (entityId) urlParams[`${entity}Id`] = entityId
   if (props.clientId && entity !== 'client') urlParams.clientId = props.clientId
+  if (props.opponentId) urlParams.opponentId = props.opponentId
+  if (props.courtId) urlParams.courtId = props.courtId
 
   // Build sheet data
   const sheetData: GlobalSheetData = {
@@ -392,6 +394,8 @@ const createSheetFromUrl = (componentName: string, urlParams: Record<string, str
   const sheetUrlParams: Record<string, string> = {}
   if (entityId) sheetUrlParams[`${entity}Id`] = entityId
   if (urlParams.clientId && entity !== 'client') sheetUrlParams.clientId = urlParams.clientId
+  if (urlParams.opponentId) sheetUrlParams.opponentId = urlParams.opponentId
+  if (urlParams.courtId) sheetUrlParams.courtId = urlParams.courtId
 
   return {
     id: `${entity}-${type}-${entityId || mode}-${Date.now()}`,
@@ -408,6 +412,13 @@ const createSheetFromUrl = (componentName: string, urlParams: Record<string, str
             slug,
             [`${entity}Id`]: entityId,
             clientId: urlParams.clientId || undefined,
+            opponentId: urlParams.opponentId || undefined,
+            courtId: urlParams.courtId || undefined,
+            presetData: {
+              ...(urlParams.clientId && { clientId: urlParams.clientId }),
+              ...(urlParams.opponentId && { opponentId: urlParams.opponentId }),
+              ...(urlParams.courtId && { courtId: urlParams.courtId }),
+            },
           },
     controlled: type === 'form',
     size: getDefaultSizeForSheet(entity!, type!),
@@ -428,6 +439,14 @@ export const globalSheet = {
     slug: string
     caseId?: string
     clientId?: string
+    opponentId?: string
+    courtId?: string
+    presetData?: {
+      clientId?: string
+      opponentId?: string
+      courtId?: string
+      [key: string]: any
+    }
     size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
   }) => openSheet('form', 'case', props),
 
@@ -461,12 +480,19 @@ export const globalSheet = {
     slug: string
     trialId?: string
     caseId?: string
+    courtId?: string
+    presetData?: {
+      caseId?: string
+      courtId?: string
+      [key: string]: any
+    }
     size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
   }) => {
     const mode = props.mode || (props.trialId ? 'edit' : 'create')
     const urlParams: Record<string, string> = {}
     if (props.trialId) urlParams.trialId = props.trialId
     if (props.caseId) urlParams.caseId = props.caseId
+    if (props.courtId) urlParams.courtId = props.courtId
 
     const sheetData: GlobalSheetData = {
       id: `trial-form-${props.trialId || mode}-${Date.now()}`,

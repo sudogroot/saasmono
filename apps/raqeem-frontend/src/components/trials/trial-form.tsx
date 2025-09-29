@@ -3,6 +3,7 @@
 import { orpc } from '@/utils/orpc'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
+  Badge,
   Button,
   Form,
   FormControl,
@@ -19,12 +20,11 @@ import {
   SelectValue,
 } from '@repo/ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Calendar, Clock, FileText, Gavel, Loader2, Save } from 'lucide-react'
+import { Calendar, Clock, FileText, Gavel, Loader2, Save, Briefcase, User } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
-// Remove unused import
 
 const trialFormSchema = z.object({
   caseId: z.string().min(1, 'يجب اختيار قضية'),
@@ -40,11 +40,16 @@ interface TrialFormProps {
   initialData?: any
   trialId?: string
   caseId?: string
+  presetData?: {
+    caseId?: string
+    courtId?: string
+    [key: string]: any
+  }
   onSuccess?: (trial: any) => void
   onCancel?: () => void
 }
 
-export function TrialForm({ initialData, trialId, caseId, onSuccess, onCancel }: TrialFormProps) {
+export function TrialForm({ initialData, trialId, caseId, presetData, onSuccess, onCancel }: TrialFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const isEditing = !!trialId
   const queryClient = useQueryClient()
@@ -56,9 +61,9 @@ export function TrialForm({ initialData, trialId, caseId, onSuccess, onCancel }:
   const form = useForm<TrialFormData>({
     resolver: zodResolver(trialFormSchema),
     defaultValues: {
-      caseId: caseId || initialData?.caseId || '',
+      caseId: presetData?.caseId || caseId || initialData?.caseId || '',
       trialNumber: initialData?.trialNumber || 1,
-      courtId: initialData?.courtId || '',
+      courtId: presetData?.courtId || initialData?.courtId || '',
       trialDate: initialDate,
       trialTime: initialTime,
     },
@@ -79,6 +84,17 @@ export function TrialForm({ initialData, trialId, caseId, onSuccess, onCancel }:
   // Fetch cases for dropdown
   const { data: cases = [] } = useQuery({
     ...(orpc.cases?.listCases?.queryOptions() || { queryKey: ['cases'], queryFn: () => [] }),
+  })
+
+  // Fetch full case details if we have a preset case (to get client info)
+  const presetCaseIdValue = presetData?.caseId || caseId
+  const { data: presetCaseDetails } = useQuery({
+    ...orpc.cases.getCaseById.queryOptions({
+      input: {
+        caseId: presetCaseIdValue!,
+      },
+    }),
+    enabled: !!presetCaseIdValue,
   })
 
   const createMutation = useMutation({
@@ -148,9 +164,29 @@ export function TrialForm({ initialData, trialId, caseId, onSuccess, onCancel }:
     }
   }
 
+  // Get preset entity names for display
+  const presetCase = presetCaseDetails || cases.find((c: any) => c.id === (presetData?.caseId || caseId))
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-4">
+        {/* Preset Context Banner */}
+        {presetCase && (
+          <div className="bg-muted/50 border-border -mt-2 mb-4 flex flex-wrap items-center gap-2 rounded-lg border px-4 py-3">
+            <span className="text-muted-foreground text-sm font-medium">إضافة جلسة لـ:</span>
+            <Badge variant="secondary" className="gap-1.5">
+              <Briefcase className="h-3 w-3" />
+              <span>{presetCase.caseNumber} - {presetCase.caseTitle}</span>
+            </Badge>
+            {(presetCase as any).client?.name && (
+              <Badge variant="secondary" className="gap-1.5">
+                <User className="h-3 w-3" />
+                <span>{(presetCase as any).client.name}</span>
+              </Badge>
+            )}
+          </div>
+        )}
+
         {/* Basic Information */}
         <div className="flex gap-2">
           <FileText className="h-5 w-5" />
@@ -166,7 +202,7 @@ export function TrialForm({ initialData, trialId, caseId, onSuccess, onCancel }:
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>القضية *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!!caseId}>
+                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!!(presetData?.caseId || caseId)}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="اختر القضية" />
@@ -180,7 +216,6 @@ export function TrialForm({ initialData, trialId, caseId, onSuccess, onCancel }:
                       ))}
                     </SelectContent>
                   </Select>
-                  {caseId && <p className="text-muted-foreground text-xs">القضية المحددة مسبقاً</p>}
                   <FormMessage />
                 </FormItem>
               )}

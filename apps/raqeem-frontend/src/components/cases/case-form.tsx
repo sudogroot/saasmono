@@ -2,6 +2,7 @@
 
 import { orpc } from '@/utils/orpc'
 import {
+  Badge,
   Button,
   Form,
   FormControl,
@@ -19,7 +20,7 @@ import {
   Textarea,
 } from '@repo/ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { FileText, Gavel, Loader2, Save, Users } from 'lucide-react'
+import { FileText, Gavel, Loader2, Save, User, UserX, Scale } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -55,11 +56,17 @@ const caseFormSchema = z.object({
 interface CaseFormProps {
   initialData?: Partial<any>
   caseId?: string
+  presetData?: {
+    clientId?: string
+    opponentId?: string
+    courtId?: string
+    [key: string]: any
+  }
   onSuccess?: (case_: any) => void
   onCancel?: () => void
 }
 
-export function CaseForm({ initialData, caseId, onSuccess, onCancel }: CaseFormProps) {
+export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel }: CaseFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const isEditing = !!caseId
   const queryClient = useQueryClient()
@@ -70,9 +77,9 @@ export function CaseForm({ initialData, caseId, onSuccess, onCancel }: CaseFormP
       caseNumber: initialData?.caseNumber || '',
       caseTitle: initialData?.caseTitle || '',
       caseSubject: initialData?.caseSubject || '',
-      clientId: initialData?.clientId || '',
-      opponentId: initialData?.opponentId || '',
-      courtId: initialData?.courtId || '',
+      clientId: presetData?.clientId || initialData?.clientId || '',
+      opponentId: presetData?.opponentId || initialData?.opponentId || '',
+      courtId: presetData?.courtId || initialData?.courtId || '',
       courtFileNumber: initialData?.courtFileNumber || '',
       caseStatus: initialData?.caseStatus || 'new',
       priority: initialData?.priority || 'medium',
@@ -155,9 +162,40 @@ export function CaseForm({ initialData, caseId, onSuccess, onCancel }: CaseFormP
     }
   }
 
+  // Get preset entity names for display
+  const presetClient = clients.find((c) => c.id === presetData?.clientId)
+  const presetOpponent = opponents.find((o) => o.id === presetData?.opponentId)
+  const courtsByStateFlat = courtsByState.flatMap((group) => group.courts)
+  const presetCourt = courtsByStateFlat.find((c) => c.id === presetData?.courtId)
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-4">
+        {/* Preset Context Banner */}
+        {(presetClient || presetOpponent || presetCourt) && (
+          <div className="bg-muted/50 border-border -mt-2 mb-4 flex flex-wrap items-center gap-2 rounded-lg border px-4 py-3">
+            <span className="text-muted-foreground text-sm font-medium">إضافة قضية لـ:</span>
+            {presetClient && (
+              <Badge variant="secondary" className="gap-1.5">
+                <User className="h-3 w-3" />
+                <span>{presetClient.name}</span>
+              </Badge>
+            )}
+            {presetOpponent && (
+              <Badge variant="secondary" className="gap-1.5">
+                <UserX className="h-3 w-3" />
+                <span>ضد: {presetOpponent.name}</span>
+              </Badge>
+            )}
+            {presetCourt && (
+              <Badge variant="secondary" className="gap-1.5">
+                <Scale className="h-3 w-3" />
+                <span>{presetCourt.name}</span>
+              </Badge>
+            )}
+          </div>
+        )}
+
         {/* Basic Information */}
         <div className="flex gap-2">
           <FileText className="h-5 w-5" />
@@ -285,7 +323,7 @@ export function CaseForm({ initialData, caseId, onSuccess, onCancel }: CaseFormP
         </div>
 
         <div className="flex gap-2">
-          <Users className="h-5 w-5" />
+          <User className="h-5 w-5" />
           <Heading level={5} className="flex">
             الأطراف
           </Heading>
@@ -298,7 +336,7 @@ export function CaseForm({ initialData, caseId, onSuccess, onCancel }: CaseFormP
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>العميل *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!!presetData?.clientId}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="اختر العميل" />
@@ -323,7 +361,7 @@ export function CaseForm({ initialData, caseId, onSuccess, onCancel }: CaseFormP
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>الخصم</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!!presetData?.opponentId}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="اختر الخصم (اختياري)" />
@@ -358,7 +396,7 @@ export function CaseForm({ initialData, caseId, onSuccess, onCancel }: CaseFormP
             render={({ field }) => (
               <FormItem>
                 <FormLabel>المحكمة</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!!presetData?.courtId}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="اختر المحكمة (اختياري)" />
