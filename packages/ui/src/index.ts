@@ -14,7 +14,7 @@ export {
   NavMain,
   NavDocuments,
   NavSecondary,
-  NavUser
+  NavUser,
 } from "./layout";
 export {
   GenericTable,
@@ -25,12 +25,7 @@ export {
   DesktopFilters,
   TablePagination,
 } from "./components/base/table";
-export {
-  ValueText,
-  Heading,
-  Text,
-  Code,
-} from "./components/base/typography";
+export { ValueText, Heading, Text, Code } from "./components/base/typography";
 export type {
   GenericTableProps,
   TablePaginationProps,
@@ -58,3 +53,4 @@ export type {
   RaqeemDashboardSidebarProps,
   RaqeemNavbarProps,
 } from "./layout";
+export * from "./components/base/calendar";

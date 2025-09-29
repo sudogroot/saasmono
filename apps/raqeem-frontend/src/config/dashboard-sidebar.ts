@@ -1,4 +1,4 @@
-import { Calendar, Gavel, LayoutDashboard, UserPlus, Users } from 'lucide-react'
+import { Calendar, CalendarDays, Gavel, LayoutDashboard, UserPlus, Users } from 'lucide-react'
 
 export const raqeemDashboardSidebarData = {
   navMain: [
@@ -26,6 +26,11 @@ export const raqeemDashboardSidebarData = {
       title: 'الجلسات',
       url: '/dashboard/trials',
       icon: Calendar,
+    },
+    {
+      title: 'التقويم',
+      url: '/dashboard/calendar',
+      icon: CalendarDays,
     },
   ],
   // navClouds: [],
