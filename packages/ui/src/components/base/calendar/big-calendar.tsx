@@ -99,46 +99,51 @@ export function BigCalendarWrapper({
     setView(newView);
   };
 
-  // Custom event style getter
+  // Custom event style getter with data attributes for CSS styling
   const eventStyleGetter = (event: RBCEvent) => {
     const calendarEvent = event.resource;
-    const colorMap: Record<string, { bg: string; border: string }> = {
-      blue: { bg: "bg-blue-50", border: "border-blue-500" },
-      pink: { bg: "bg-pink-50", border: "border-pink-500" },
-      indigo: { bg: "bg-indigo-50", border: "border-indigo-500" },
-      gray: { bg: "bg-gray-100", border: "border-gray-500" },
-      green: { bg: "bg-green-50", border: "border-green-500" },
-      yellow: { bg: "bg-yellow-50", border: "border-yellow-500" },
-      red: { bg: "bg-red-50", border: "border-red-500" },
-    };
-
-    const colors = colorMap[calendarEvent.color || "indigo"];
 
     return {
       className: cn(
-        "rounded-md border-r-4 px-2 py-1 text-xs font-medium transition-colors hover:opacity-80",
-        colors?.bg || "bg-indigo-50",
-        colors?.border || "border-indigo-500"
+        "group cursor-pointer",
+        `data-[color=${calendarEvent.color || "indigo"}]`
       ),
       style: {},
     };
   };
 
-  // Custom toolbar
+  // Custom event wrapper to add data attributes
+  const EventWrapper = ({ event, children }: any) => {
+    return (
+      <div data-color={event.resource?.color || "indigo"}>
+        {children}
+      </div>
+    );
+  };
+
+  // Custom toolbar with modern design
   const CustomToolbar = ({ label, onNavigate, onView }: any) => {
     return (
-      <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
-          <h2 className="text-xl font-bold text-foreground">{label}</h2>
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10">
+            <CalendarIcon className="size-5 text-primary" />
+          </div>
+          <h2 className="bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-2xl font-bold text-transparent">
+            {label}
+          </h2>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-3">
           {/* View Selector */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2">
-                <CalendarIcon className="size-4" />
-                <span>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 shadow-sm transition-all hover:shadow-md"
+              >
+                <span className="font-medium">
                   {view === Views.MONTH
                     ? "عرض الشهر"
                     : view === Views.WEEK
@@ -147,51 +152,67 @@ export function BigCalendarWrapper({
                         ? "عرض اليوم"
                         : "جدول الأعمال"}
                 </span>
-                <ChevronDownIcon className="size-4" />
+                <ChevronDownIcon className="size-4 opacity-50" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuItem onClick={() => onView(Views.MONTH)}>
+            <DropdownMenuContent align="start" className="w-40">
+              <DropdownMenuItem
+                onClick={() => onView(Views.MONTH)}
+                className="cursor-pointer"
+              >
                 عرض الشهر
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onView(Views.WEEK)}>
+              <DropdownMenuItem
+                onClick={() => onView(Views.WEEK)}
+                className="cursor-pointer"
+              >
                 عرض الأسبوع
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onView(Views.DAY)}>
+              <DropdownMenuItem
+                onClick={() => onView(Views.DAY)}
+                className="cursor-pointer"
+              >
                 عرض اليوم
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onView(Views.AGENDA)}>
+              <DropdownMenuItem
+                onClick={() => onView(Views.AGENDA)}
+                className="cursor-pointer"
+              >
                 جدول الأعمال
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
           {/* Navigation */}
-          <div className="flex items-center gap-1 rounded-md border border-border bg-card">
+          <div className="flex items-center overflow-hidden rounded-lg border border-border bg-card shadow-sm">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => onNavigate("NEXT")}
-              className="h-9 w-9"
+              className="h-9 w-9 rounded-none hover:bg-accent"
             >
               <ChevronLeftIcon className="size-5" />
               <span className="sr-only">التالي</span>
             </Button>
 
+            <div className="h-6 w-px bg-border" />
+
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onNavigate("TODAY")}
-              className="h-9 px-3"
+              className="h-9 rounded-none px-4 font-medium hover:bg-accent"
             >
               اليوم
             </Button>
+
+            <div className="h-6 w-px bg-border" />
 
             <Button
               variant="ghost"
               size="icon"
               onClick={() => onNavigate("PREV")}
-              className="h-9 w-9"
+              className="h-9 w-9 rounded-none hover:bg-accent"
             >
               <ChevronRightIcon className="size-5" />
               <span className="sr-only">السابق</span>
@@ -218,6 +239,7 @@ export function BigCalendarWrapper({
         eventPropGetter={eventStyleGetter}
         components={{
           toolbar: CustomToolbar,
+          eventWrapper: EventWrapper,
         }}
         className="rbc-calendar-custom"
         style={{ height: "100%" }}

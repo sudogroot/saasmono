@@ -1,206 +1,322 @@
-/* React Big Calendar Custom Styles with Tailwind */
+/* Modern React Big Calendar Styles - Shadcn Aesthetic */
+
+/* Base Calendar Container */
 .rbc-calendar-custom {
-  @apply rounded-lg bg-card;
+  @apply relative rounded-xl border border-border/60 bg-gradient-to-br from-card to-card/95 shadow-lg backdrop-blur-sm;
 }
 
-/* Toolbar */
+/* ========== TOOLBAR ========== */
 .rbc-toolbar {
-  @apply mb-4 flex flex-wrap items-center justify-between gap-4;
+  @apply hidden; /* We use custom toolbar */
 }
 
-.rbc-toolbar button {
-  @apply rounded-md px-3 py-2 text-sm font-medium transition-colors;
-  @apply hover:bg-accent hover:text-accent-foreground;
-}
-
-.rbc-toolbar button:active,
-.rbc-toolbar button.rbc-active {
-  @apply bg-primary text-primary-foreground;
-}
-
-/* Month View */
+/* ========== MONTH VIEW ========== */
 .rbc-month-view {
-  @apply rounded-lg border border-border bg-card;
+  @apply overflow-hidden rounded-lg border-0 bg-transparent;
 }
 
+/* Header Row - Day Names */
 .rbc-header {
-  @apply border-b border-border bg-muted/50 py-3 text-center text-sm font-semibold text-foreground;
+  @apply border-b border-border/40 bg-muted/30 py-4 text-center text-sm font-semibold tracking-wide text-muted-foreground backdrop-blur-sm transition-colors;
 }
 
 .rbc-header + .rbc-header {
-  @apply border-r border-border;
+  @apply border-r border-border/20;
 }
 
+/* Month Grid Rows */
 .rbc-month-row {
-  @apply border-b border-border;
+  @apply border-b border-border/30 transition-colors;
 }
 
+.rbc-month-row:last-child {
+  @apply border-b-0;
+}
+
+/* Day Cells */
 .rbc-day-bg {
-  @apply border-r border-border bg-card transition-colors hover:bg-accent/50;
+  @apply border-r border-border/20 bg-card/50 transition-all duration-200 hover:bg-accent/30;
 }
 
+.rbc-day-bg:last-child {
+  @apply border-r-0;
+}
+
+/* Off-range (previous/next month days) */
 .rbc-off-range-bg {
-  @apply bg-muted/30;
+  @apply bg-muted/20;
 }
 
+/* Today Highlight */
 .rbc-today {
-  @apply bg-primary/5;
+  @apply relative bg-primary/5 ring-1 ring-primary/20 ring-inset;
 }
 
+.rbc-today::before {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none;
+}
+
+/* Date Cell */
 .rbc-date-cell {
   @apply p-2 text-right;
 }
 
-.rbc-date-cell > a {
-  @apply inline-flex size-8 items-center justify-center rounded-full text-sm font-medium transition-colors;
-  @apply hover:bg-accent hover:text-accent-foreground;
+.rbc-date-cell > a,
+.rbc-button-link {
+  @apply inline-flex size-9 items-center justify-center rounded-full text-sm font-medium text-foreground/80 transition-all duration-200 hover:bg-accent hover:text-foreground hover:scale-110 hover:shadow-sm;
 }
 
-.rbc-now > a {
-  @apply bg-primary text-primary-foreground font-semibold;
+/* Current Day Number */
+.rbc-now > a,
+.rbc-now > .rbc-button-link {
+  @apply bg-primary text-primary-foreground font-bold shadow-md hover:bg-primary/90 hover:shadow-lg;
 }
 
-.rbc-off-range > a {
-  @apply text-muted-foreground opacity-50;
+/* Off-range Day Numbers */
+.rbc-off-range > a,
+.rbc-off-range > .rbc-button-link {
+  @apply text-muted-foreground/40 hover:text-muted-foreground/60;
 }
 
-/* Events */
+/* ========== EVENTS ========== */
 .rbc-event {
-  @apply rounded-md text-right;
+  @apply rounded-lg border-0 px-2.5 py-1.5 text-right shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.02] hover:z-10;
+  background: linear-gradient(135deg, var(--event-bg) 0%, var(--event-bg-end) 100%);
 }
 
 .rbc-event-label {
-  @apply text-xs font-medium;
+  @apply hidden;
 }
 
 .rbc-event-content {
-  @apply truncate text-xs;
+  @apply truncate text-xs font-medium leading-relaxed;
 }
 
 .rbc-event.rbc-selected {
-  @apply ring-2 ring-primary ring-offset-1;
+  @apply ring-2 ring-primary ring-offset-2 ring-offset-card shadow-lg;
 }
 
+.rbc-event:focus {
+  @apply outline-none ring-2 ring-ring ring-offset-2;
+}
+
+/* Show More Button */
 .rbc-show-more {
-  @apply rounded-md px-2 py-1 text-xs font-medium text-primary hover:bg-primary/10;
+  @apply mt-1 rounded-md px-2 py-1 text-xs font-medium text-primary transition-all hover:bg-primary/10 hover:shadow-sm;
 }
 
-/* Week & Day Views */
+/* ========== WEEK & DAY VIEWS ========== */
 .rbc-time-view {
-  @apply rounded-lg border border-border bg-card;
+  @apply overflow-hidden rounded-lg border-0 bg-transparent;
 }
 
+/* Time Header */
 .rbc-time-header {
-  @apply border-b border-border bg-muted/50;
+  @apply border-b-2 border-border/40 bg-muted/20 backdrop-blur-sm;
 }
 
 .rbc-time-header-content {
-  @apply border-r border-border;
+  @apply border-r border-border/30;
 }
 
-.rbc-time-header-cell {
-  @apply py-2 text-center;
+.rbc-time-header-content:last-child {
+  @apply border-r-0;
 }
 
+/* Day Column Headers */
+.rbc-header.rbc-today {
+  @apply bg-primary/10 text-primary font-bold;
+}
+
+/* All Day Section */
 .rbc-allday-cell {
-  @apply border-r border-border bg-muted/30;
+  @apply border-r border-border/30 bg-muted/10;
 }
 
+/* Time Slots */
 .rbc-time-content {
-  @apply border-t border-border;
-}
-
-.rbc-time-column {
-  @apply border-r border-border;
-}
-
-.rbc-timeslot-group {
-  @apply border-b border-border/50;
-}
-
-.rbc-time-slot {
-  @apply text-xs text-muted-foreground;
-}
-
-.rbc-current-time-indicator {
-  @apply bg-destructive;
-}
-
-.rbc-day-slot .rbc-time-slot {
   @apply border-t border-border/30;
 }
 
-.rbc-label {
-  @apply px-2 text-xs text-muted-foreground;
+.rbc-time-content > * + * > * {
+  @apply border-r border-border/20;
 }
 
-/* Agenda View */
+.rbc-time-column {
+  @apply min-h-full;
+}
+
+.rbc-timeslot-group {
+  @apply border-b border-border/20;
+}
+
+.rbc-time-slot {
+  @apply flex items-start justify-end px-2 py-1 text-xs text-muted-foreground/70 transition-colors;
+}
+
+.rbc-time-slot:hover {
+  @apply bg-accent/30;
+}
+
+/* Current Time Indicator */
+.rbc-current-time-indicator {
+  @apply bg-destructive shadow-sm;
+  height: 2px;
+}
+
+.rbc-current-time-indicator::before {
+  content: '';
+  @apply absolute -left-1 -top-1 size-3 rounded-full bg-destructive shadow-md;
+}
+
+/* Time Labels */
+.rbc-label {
+  @apply px-3 text-xs font-medium text-muted-foreground/80;
+}
+
+/* Time Slot Interaction */
+.rbc-day-slot .rbc-time-slot {
+  @apply border-t border-border/10;
+}
+
+.rbc-day-slot .rbc-event {
+  @apply border-r-4 shadow-lg;
+}
+
+/* ========== AGENDA VIEW ========== */
 .rbc-agenda-view {
-  @apply rounded-lg border border-border bg-card;
+  @apply overflow-hidden rounded-lg border border-border/40 bg-card/50 backdrop-blur-sm;
 }
 
 .rbc-agenda-view table {
   @apply w-full;
 }
 
+.rbc-agenda-view table.rbc-agenda-table {
+  @apply border-separate border-spacing-0;
+}
+
 .rbc-agenda-view table thead > tr > th {
-  @apply border-b border-border bg-muted/50 px-4 py-3 text-right text-sm font-semibold text-foreground;
+  @apply border-b-2 border-border/40 bg-muted/30 px-6 py-4 text-right text-sm font-semibold text-foreground backdrop-blur-sm;
 }
 
 .rbc-agenda-view table tbody > tr > td {
-  @apply border-b border-border px-4 py-3 text-sm text-foreground;
+  @apply border-b border-border/20 px-6 py-4 text-sm text-foreground transition-colors;
 }
 
 .rbc-agenda-view table tbody > tr > td + td {
-  @apply border-r border-border;
+  @apply border-r border-border/20;
 }
 
 .rbc-agenda-view table tbody > tr:hover {
-  @apply bg-accent/50;
+  @apply bg-accent/30;
 }
 
-.rbc-agenda-date-cell,
+.rbc-agenda-view table tbody > tr:last-child > td {
+  @apply border-b-0;
+}
+
+.rbc-agenda-date-cell {
+  @apply font-semibold text-foreground;
+}
+
 .rbc-agenda-time-cell {
-  @apply text-muted-foreground;
+  @apply text-muted-foreground/80;
 }
 
 .rbc-agenda-event-cell {
-  @apply font-medium;
+  @apply font-medium text-foreground;
 }
 
-/* Overlay (for event details popup - we won't use this as we have our sheet) */
+/* Empty Agenda Message */
+.rbc-agenda-empty {
+  @apply py-12 text-center text-sm text-muted-foreground;
+}
+
+/* ========== OVERLAY (Popup) ========== */
 .rbc-overlay {
-  @apply rounded-lg border border-border bg-card p-4 shadow-lg;
+  @apply z-50 max-w-sm rounded-xl border border-border/60 bg-card/95 p-4 shadow-2xl backdrop-blur-md;
 }
 
 .rbc-overlay-header {
-  @apply mb-2 border-b border-border pb-2 font-semibold text-foreground;
+  @apply mb-3 border-b border-border/40 pb-3 font-semibold text-foreground;
 }
 
-/* Responsive Improvements */
-@media (max-width: 640px) {
+/* ========== ANIMATIONS ========== */
+.rbc-event {
+  animation: fadeInScale 0.2s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.rbc-event:hover {
+  animation: pulse 0.3s ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1.02);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
   .rbc-header {
-    @apply py-2 text-xs;
+    @apply py-3 text-xs;
   }
 
-  .rbc-date-cell > a {
-    @apply size-7 text-xs;
-  }
-
-  .rbc-toolbar {
-    @apply flex-col items-stretch;
+  .rbc-date-cell > a,
+  .rbc-date-cell > .rbc-button-link {
+    @apply size-8 text-xs;
   }
 
   .rbc-event {
-    @apply text-[10px];
+    @apply px-1.5 py-1 text-[10px];
   }
 
   .rbc-show-more {
+    @apply px-1.5 py-0.5 text-[10px];
+  }
+
+  .rbc-time-header {
+    @apply text-xs;
+  }
+
+  .rbc-time-slot {
     @apply text-[10px];
+  }
+
+  .rbc-agenda-view table thead > tr > th,
+  .rbc-agenda-view table tbody > tr > td {
+    @apply px-3 py-2 text-xs;
   }
 }
 
-/* RTL Specific Adjustments */
+@media (max-width: 640px) {
+  .rbc-date-cell > a,
+  .rbc-date-cell > .rbc-button-link {
+    @apply size-7;
+  }
+
+  .rbc-event-content {
+    @apply text-[9px];
+  }
+}
+
+/* ========== RTL ADJUSTMENTS ========== */
 [dir="rtl"] .rbc-header + .rbc-header {
   @apply border-l border-r-0;
 }
@@ -213,10 +329,6 @@
   @apply border-l border-r-0;
 }
 
-[dir="rtl"] .rbc-time-column {
-  @apply border-l border-r-0;
-}
-
 [dir="rtl"] .rbc-allday-cell {
   @apply border-l border-r-0;
 }
@@ -225,20 +337,97 @@
   @apply border-l border-r-0;
 }
 
-/* Animations */
-.rbc-event {
-  @apply transition-all duration-150;
+[dir="rtl"] .rbc-event {
+  @apply border-l-4 border-r-0;
 }
 
-.rbc-event:hover {
-  @apply scale-[1.02] shadow-sm;
+/* ========== GLASSMORPHISM EFFECTS ========== */
+.rbc-month-view,
+.rbc-time-view,
+.rbc-agenda-view {
+  @apply backdrop-blur-sm;
 }
 
-.rbc-day-bg {
-  @apply transition-colors duration-150;
+/* ========== CUSTOM EVENT COLORS (via CSS variables) ========== */
+.rbc-event[data-color="blue"] {
+  --event-bg: hsl(var(--blue-100));
+  --event-bg-end: hsl(var(--blue-50));
+  @apply text-blue-700 border-blue-500;
 }
 
-/* Empty state */
-.rbc-month-view .rbc-show-more {
-  @apply mt-1;
+.rbc-event[data-color="indigo"] {
+  --event-bg: hsl(var(--primary) / 0.1);
+  --event-bg-end: hsl(var(--primary) / 0.05);
+  @apply text-primary border-primary;
+}
+
+.rbc-event[data-color="pink"] {
+  --event-bg: hsl(var(--pink-100));
+  --event-bg-end: hsl(var(--pink-50));
+  @apply text-pink-700 border-pink-500;
+}
+
+.rbc-event[data-color="green"] {
+  --event-bg: hsl(var(--green-100));
+  --event-bg-end: hsl(var(--green-50));
+  @apply text-green-700 border-green-500;
+}
+
+.rbc-event[data-color="yellow"] {
+  --event-bg: hsl(var(--yellow-100));
+  --event-bg-end: hsl(var(--yellow-50));
+  @apply text-yellow-700 border-yellow-500;
+}
+
+.rbc-event[data-color="red"] {
+  --event-bg: hsl(var(--destructive) / 0.1);
+  --event-bg-end: hsl(var(--destructive) / 0.05);
+  @apply text-destructive border-destructive;
+}
+
+.rbc-event[data-color="gray"] {
+  --event-bg: hsl(var(--muted));
+  --event-bg-end: hsl(var(--muted) / 0.5);
+  @apply text-muted-foreground border-muted-foreground;
+}
+
+/* ========== SELECTION STATES ========== */
+.rbc-day-bg.rbc-selected-cell {
+  @apply bg-primary/10 ring-1 ring-primary/30;
+}
+
+/* ========== LOADING STATES ========== */
+.rbc-calendar-custom.loading {
+  @apply pointer-events-none opacity-60;
+}
+
+/* ========== MODERN SCROLLBAR ========== */
+.rbc-time-content::-webkit-scrollbar,
+.rbc-agenda-content::-webkit-scrollbar {
+  @apply w-2;
+}
+
+.rbc-time-content::-webkit-scrollbar-track,
+.rbc-agenda-content::-webkit-scrollbar-track {
+  @apply bg-muted/30 rounded-full;
+}
+
+.rbc-time-content::-webkit-scrollbar-thumb,
+.rbc-agenda-content::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/30 rounded-full hover:bg-muted-foreground/50;
+}
+
+/* ========== DARK MODE ENHANCEMENTS ========== */
+@media (prefers-color-scheme: dark) {
+  .rbc-calendar-custom {
+    @apply shadow-2xl;
+  }
+
+  .rbc-event {
+    @apply shadow-lg;
+  }
+
+  .rbc-today::before {
+    @apply opacity-50;
+  }
 }
