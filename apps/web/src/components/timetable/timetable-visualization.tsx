@@ -19,15 +19,20 @@ export function TimetableVisualization() {
   const [filters, setFilters] = useState<TimetableFilterState>({})
   const [showFilters, setShowFilters] = useState(true)
 
-  // Get timetable data based on filters
-  const { data: timetableData = [], isLoading, error } = useQuery(
-    orpc.management.timetables.getTimetablesList.queryOptions({
-      classroomId: filters.classroomId,
-      classroomGroupId: filters.classroomGroupId,
-      startDate: filters.startDate,
-      endDate: filters.endDate,
-    })
-  )
+  // Only fetch timetable data when there's a valid filter (classroomId or classroomGroupId)
+  const hasValidFilter = Boolean(filters.classroomId || filters.classroomGroupId)
+
+  const { data: timetableData = [], isLoading, error } = useQuery({
+    ...orpc.management.timetables.getTimetablesList.queryOptions({
+      input: {
+        classroomId: filters.classroomId,
+        classroomGroupId: filters.classroomGroupId,
+        startDate: filters.startDate,
+        endDate: filters.endDate,
+      }
+    }),
+    enabled: hasValidFilter, // Only run query when we have a valid filter
+  })
 
   // Mutation for generating timetable image
   const generateImageMutation = useMutation(
@@ -67,8 +72,6 @@ export function TimetableVisualization() {
       alert(`خطأ في تحميل الجدول: ${errorMessage}`)
     }
   }
-
-  const hasValidFilter = filters.classroomId || filters.classroomGroupId
 
   return (
     <div className="space-y-6">

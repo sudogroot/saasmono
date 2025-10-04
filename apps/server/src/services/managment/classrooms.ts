@@ -1,7 +1,7 @@
 import { classroom, classroomGroup, classroomStudentEnrollment, classroomTeacherAssignment } from '@/db/schema/classroom'
 import { educationLevel } from '@/db/schema/education'
 import type { ClassroomGroupListItem, ClassroomListItem } from '@/types/classroom'
-import { and, count, eq, isNull } from 'drizzle-orm'
+import { and, count, eq, isNull, or, ilike } from 'drizzle-orm'
 import { NodePgDatabase } from 'drizzle-orm/node-postgres'
 
 export class ClassroomManagementService {
@@ -11,7 +11,22 @@ export class ClassroomManagementService {
     this.db = db
   }
 
-  async getClassroomsList(orgId: string) {
+  async getClassroomsList(orgId: string, search?: string) {
+    // Build where conditions
+    const conditions = [eq(classroom.orgId, orgId), isNull(classroom.deletedAt)]
+
+    // Add search condition if provided
+    if (search && search.trim().length > 0) {
+      const searchTerm = `%${search.trim()}%`
+      conditions.push(
+        or(
+          ilike(classroom.name, searchTerm),
+          ilike(classroom.academicYear, searchTerm),
+          ilike(educationLevel.displayNameAr, searchTerm)
+        )!
+      )
+    }
+
     const results = await this.db
       .select({
         classroomId: classroom.id,
@@ -25,7 +40,7 @@ export class ClassroomManagementService {
       })
       .from(classroom)
       .leftJoin(educationLevel, eq(classroom.educationLevelId, educationLevel.id))
-      .where(and(eq(classroom.orgId, orgId), isNull(classroom.deletedAt)))
+      .where(and(...conditions))
 
     // Get student and teacher counts for each classroom
     const classroomIds = results.map((r) => r.classroomId)
@@ -157,7 +172,22 @@ export class ClassroomManagementService {
     }
   }
 
-  async getClassroomGroupsList(orgId: string) {
+  async getClassroomGroupsList(orgId: string, search?: string) {
+    // Build where conditions
+    const conditions = [eq(classroomGroup.orgId, orgId), isNull(classroomGroup.deletedAt)]
+
+    // Add search condition if provided
+    if (search && search.trim().length > 0) {
+      const searchTerm = `%${search.trim()}%`
+      conditions.push(
+        or(
+          ilike(classroomGroup.name, searchTerm),
+          ilike(classroom.name, searchTerm),
+          ilike(classroom.academicYear, searchTerm)
+        )!
+      )
+    }
+
     const results = await this.db
       .select({
         groupId: classroomGroup.id,
@@ -172,9 +202,9 @@ export class ClassroomManagementService {
       })
       .from(classroomGroup)
       .leftJoin(classroom, eq(classroomGroup.classroomId, classroom.id))
-      .where(and(eq(classroomGroup.orgId, orgId), isNull(classroomGroup.deletedAt)))
+      .where(and(...conditions))
 
-    return results.map((row) => ({
+      return results.map((row) => ({
       id: row.groupId,
       name: row.groupName,
       code: row.groupCode,

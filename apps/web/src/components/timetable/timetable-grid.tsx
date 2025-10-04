@@ -19,7 +19,7 @@ interface TimetableSession {
   educationSubject: {
     id: string
     name: string
-    displayNameEn: string
+    displayNameAr: string
   }
   room: {
     id: string
@@ -229,10 +229,6 @@ function SessionCard({ session }: { session: TimetableSession }) {
         <div className="font-medium">
           {session.educationSubject.name}
         </div>
-        <div className="flex items-center gap-1 text-muted-foreground">
-          <Clock className="h-3 w-3" />
-          <span>{formatTime(startTime)} - {formatTime(endTime)}</span>
-        </div>
 
         {/* Teacher */}
         <div className="flex items-center gap-1 text-muted-foreground">
@@ -246,12 +242,6 @@ function SessionCard({ session }: { session: TimetableSession }) {
           <span>{session.room.name}</span>
         </div>
 
-        {/* Classroom or Group */}
-        {session.classroom && (
-          <Badge variant="outline" className="text-xs">
-            {session.classroom.name}
-          </Badge>
-        )}
         {session.classroomGroup && (
           <Badge variant="outline" className="text-xs">
             {session.classroomGroup.name}
