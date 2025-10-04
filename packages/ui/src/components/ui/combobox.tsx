@@ -17,23 +17,83 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "./popover"
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTrigger,
+} from "./drawer"
 import { cn } from "../../lib/utils"
+import { useMediaQuery } from "../../hooks/use-media-query"
+
+// Context for sharing state between Combobox components
+const ComboboxContext = React.createContext<{
+  open: boolean
+  setOpen: (open: boolean) => void
+  isDesktop: boolean
+} | null>(null)
+
+function useComboboxContext() {
+  const context = React.useContext(ComboboxContext)
+  if (!context) {
+    throw new Error("Combobox components must be used within a Combobox")
+  }
+  return context
+}
 
 function Combobox({
+  open: controlledOpen,
+  onOpenChange,
+  children,
   ...props
-}: React.ComponentProps<typeof Popover>) {
-  return <Popover data-slot="combobox" {...props} />
+}: {
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  children: React.ReactNode
+}) {
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(false)
+  const isDesktop = useMediaQuery("(min-width: 768px)")
+
+  const open = controlledOpen ?? uncontrolledOpen
+  const setOpen = onOpenChange ?? setUncontrolledOpen
+
+  return (
+    <ComboboxContext.Provider value={{ open, setOpen, isDesktop }}>
+      {isDesktop ? (
+        <Popover data-slot="combobox" open={open} onOpenChange={setOpen} {...props}>
+          {children}
+        </Popover>
+      ) : (
+        <Drawer data-slot="combobox" direction="bottom" open={open} onOpenChange={setOpen} {...props}>
+          {children}
+        </Drawer>
+      )}
+    </ComboboxContext.Provider>
+  )
 }
 
 function ComboboxTrigger({
   className,
   children,
+  asChild,
   ...props
-}: React.ComponentProps<typeof PopoverTrigger>) {
+}: {
+  className?: string
+  children: React.ReactNode
+  asChild?: boolean
+}) {
+  const { isDesktop } = useComboboxContext()
+
+  const TriggerComponent = isDesktop ? PopoverTrigger : DrawerTrigger
+
   return (
-    <PopoverTrigger data-slot="combobox-trigger" className={className} {...props}>
+    <TriggerComponent
+      data-slot="combobox-trigger"
+      className={className}
+      asChild={asChild}
+      {...props}
+    >
       {children}
-    </PopoverTrigger>
+    </TriggerComponent>
   )
 }
 
@@ -41,16 +101,40 @@ function ComboboxContent({
   className,
   align = "start",
   sideOffset = 4,
+  children,
   ...props
-}: React.ComponentProps<typeof PopoverContent>) {
+}: {
+  className?: string
+  align?: "start" | "center" | "end"
+  sideOffset?: number
+  children: React.ReactNode
+}) {
+  const { isDesktop } = useComboboxContext()
+
+  if (isDesktop) {
+    return (
+      <PopoverContent
+        data-slot="combobox-content"
+        align={align}
+        sideOffset={sideOffset}
+        className={cn("w-full min-w-[var(--radix-popover-trigger-width)] p-0", className)}
+        {...props}
+      >
+        {children}
+      </PopoverContent>
+    )
+  }
+
   return (
-    <PopoverContent
+    <DrawerContent
       data-slot="combobox-content"
-      align={align}
-      sideOffset={sideOffset}
-      className={cn("w-full min-w-[var(--radix-popover-trigger-width)] p-0", className)}
+      className={cn("p-0", className)}
       {...props}
-    />
+    >
+      <div className="mt-4 border-t">
+        {children}
+      </div>
+    </DrawerContent>
   )
 }
 

@@ -281,3 +281,6 @@ export {
   TooltipProvider,
   TooltipTrigger,
 } from "./tooltip";
+
+// Hooks
+export { useMediaQuery } from "../../hooks/use-media-query";

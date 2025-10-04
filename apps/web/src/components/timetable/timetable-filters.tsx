@@ -24,9 +24,16 @@ import { useDebouncedSearch } from '@/lib/utils'
 interface TimetableFiltersProps {
   filters: TimetableFilterState
   onFiltersChange: (filters: TimetableFilterState) => void
+  groupClassroomsByLevel?: boolean // Optional: group classrooms by education level
+  groupClassroomGroupsByClassroom?: boolean // Optional: group classroom groups by classroom
 }
 
-export function TimetableFilters({ filters, onFiltersChange }: TimetableFiltersProps) {
+export function TimetableFilters({
+  filters,
+  onFiltersChange,
+  groupClassroomsByLevel = true,
+  groupClassroomGroupsByClassroom = true
+}: TimetableFiltersProps) {
   // Debounced search for classrooms
   const classroomSearch = useDebouncedSearch({})
 
@@ -96,6 +103,26 @@ export function TimetableFilters({ filters, onFiltersChange }: TimetableFiltersP
 
   const hasActiveFilters = filters.classroomId || filters.classroomGroupId
 
+  // Group classrooms by education level if enabled
+  const groupedClassrooms = groupClassroomsByLevel
+    ? displayedClassrooms.reduce((groups, classroom) => {
+        const level = classroom.educationLevel.displayNameAr
+        if (!groups[level]) groups[level] = []
+        groups[level].push(classroom)
+        return groups
+      }, {} as Record<string, typeof displayedClassrooms>)
+    : null
+
+  // Group classroom groups by classroom if enabled
+  const groupedClassroomGroups = groupClassroomGroupsByClassroom
+    ? displayedClassroomGroups.reduce((groups, group) => {
+        const classroomName = `${group.classroomName} - ${group.classroomAcademicYear}`
+        if (!groups[classroomName]) groups[classroomName] = []
+        groups[classroomName].push(group)
+        return groups
+      }, {} as Record<string, typeof displayedClassroomGroups>)
+    : null
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -130,9 +157,11 @@ export function TimetableFilters({ filters, onFiltersChange }: TimetableFiltersP
                   ) : (
                     <ComboboxEmpty>لا توجد فصول مطابقة</ComboboxEmpty>
                   )}
-                  <ComboboxGroup>
-                    {filters.classroomId && (
-                      <>
+
+                  {/* Clear option (ungrouped) */}
+                  {filters.classroomId && (
+                    <>
+                      <ComboboxGroup>
                         <ComboboxItem
                           onSelect={() => handleClassroomChange('clear')}
                           className="text-muted-foreground"
@@ -140,25 +169,52 @@ export function TimetableFilters({ filters, onFiltersChange }: TimetableFiltersP
                           <X className="h-4 w-4" />
                           مسح الاختيار
                         </ComboboxItem>
-                        <ComboboxSeparator />
-                      </>
-                    )}
-                    {displayedClassrooms.map((classroom) => (
-                      <ComboboxItem
-                        key={classroom.id}
-                        value={`${classroom.name} ${classroom.educationLevel.displayNameAr} ${classroom.academicYear}`}
-                        selected={filters.classroomId === classroom.id}
-                        onSelect={() => handleClassroomChange(classroom.id)}
-                      >
-                        <div className="flex flex-col">
-                          <span>{classroom.name}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {classroom.educationLevel.displayNameAr} - {classroom.academicYear}
-                          </span>
-                        </div>
-                      </ComboboxItem>
-                    ))}
-                  </ComboboxGroup>
+                      </ComboboxGroup>
+                      <ComboboxSeparator />
+                    </>
+                  )}
+
+                  {/* Grouped by education level */}
+                  {groupedClassrooms ? (
+                    Object.entries(groupedClassrooms).map(([level, classrooms]) => (
+                      <ComboboxGroup key={level} heading={level}>
+                        {classrooms.map((classroom) => (
+                          <ComboboxItem
+                            key={classroom.id}
+                            value={`${classroom.name} ${classroom.educationLevel.displayNameAr} ${classroom.academicYear}`}
+                            selected={filters.classroomId === classroom.id}
+                            onSelect={() => handleClassroomChange(classroom.id)}
+                          >
+                            <div className="flex flex-col">
+                              <span>{classroom.name}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {classroom.academicYear}
+                              </span>
+                            </div>
+                          </ComboboxItem>
+                        ))}
+                      </ComboboxGroup>
+                    ))
+                  ) : (
+                    /* Ungrouped list */
+                    <ComboboxGroup>
+                      {displayedClassrooms.map((classroom) => (
+                        <ComboboxItem
+                          key={classroom.id}
+                          value={`${classroom.name} ${classroom.educationLevel.displayNameAr} ${classroom.academicYear}`}
+                          selected={filters.classroomId === classroom.id}
+                          onSelect={() => handleClassroomChange(classroom.id)}
+                        >
+                          <div className="flex flex-col">
+                            <span>{classroom.name}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {classroom.educationLevel.displayNameAr} - {classroom.academicYear}
+                            </span>
+                          </div>
+                        </ComboboxItem>
+                      ))}
+                    </ComboboxGroup>
+                  )}
                 </ComboboxList>
               </ComboboxCommand>
             </ComboboxContent>
@@ -199,9 +255,11 @@ export function TimetableFilters({ filters, onFiltersChange }: TimetableFiltersP
                       {classroomGroups.length === 0 ? "لا توجد مجموعات متاحة" : "لا توجد مجموعات مطابقة"}
                     </ComboboxEmpty>
                   )}
-                  <ComboboxGroup>
-                    {filters.classroomGroupId && (
-                      <>
+
+                  {/* Clear option (ungrouped) */}
+                  {filters.classroomGroupId && (
+                    <>
+                      <ComboboxGroup>
                         <ComboboxItem
                           onSelect={() => handleClassroomGroupChange('clear')}
                           className="text-muted-foreground"
@@ -209,25 +267,47 @@ export function TimetableFilters({ filters, onFiltersChange }: TimetableFiltersP
                           <X className="h-4 w-4" />
                           مسح الاختيار
                         </ComboboxItem>
-                        <ComboboxSeparator />
-                      </>
-                    )}
-                    {displayedClassroomGroups.map((group) => (
-                      <ComboboxItem
-                        key={group.id}
-                        value={`${group.name} ${group.classroomName} ${group.classroomAcademicYear}`}
-                        selected={filters.classroomGroupId === group.id}
-                        onSelect={() => handleClassroomGroupChange(group.id)}
-                      >
-                        <div className="flex flex-col">
-                          <span>{group.name}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {group.classroomName} - {group.classroomAcademicYear}
-                          </span>
-                        </div>
-                      </ComboboxItem>
-                    ))}
-                  </ComboboxGroup>
+                      </ComboboxGroup>
+                      <ComboboxSeparator />
+                    </>
+                  )}
+
+                  {/* Grouped by classroom */}
+                  {groupedClassroomGroups ? (
+                    Object.entries(groupedClassroomGroups).map(([classroomName, groups]) => (
+                      <ComboboxGroup key={classroomName} heading={classroomName}>
+                        {groups.map((group) => (
+                          <ComboboxItem
+                            key={group.id}
+                            value={`${group.name} ${group.classroomName} ${group.classroomAcademicYear}`}
+                            selected={filters.classroomGroupId === group.id}
+                            onSelect={() => handleClassroomGroupChange(group.id)}
+                          >
+                            {group.name}
+                          </ComboboxItem>
+                        ))}
+                      </ComboboxGroup>
+                    ))
+                  ) : (
+                    /* Ungrouped list */
+                    <ComboboxGroup>
+                      {displayedClassroomGroups.map((group) => (
+                        <ComboboxItem
+                          key={group.id}
+                          value={`${group.name} ${group.classroomName} ${group.classroomAcademicYear}`}
+                          selected={filters.classroomGroupId === group.id}
+                          onSelect={() => handleClassroomGroupChange(group.id)}
+                        >
+                          <div className="flex flex-col">
+                            <span>{group.name}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {group.classroomName} - {group.classroomAcademicYear}
+                            </span>
+                          </div>
+                        </ComboboxItem>
+                      ))}
+                    </ComboboxGroup>
+                  )}
                 </ComboboxList>
               </ComboboxCommand>
             </ComboboxContent>
