@@ -45,6 +45,21 @@ export {
   CarouselNext,
   CarouselPrevious,
 } from "./carousel";
+
+export {
+  Combobox,
+  ComboboxTrigger,
+  ComboboxContent,
+  ComboboxButton,
+  ComboboxCommand,
+  ComboboxInput,
+  ComboboxList,
+  ComboboxEmpty,
+  ComboboxLoading,
+  ComboboxGroup,
+  ComboboxItem,
+  ComboboxSeparator,
+} from "./combobox";
 // Chart
 export {
   ChartContainer,

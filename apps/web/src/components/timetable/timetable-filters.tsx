@@ -1,10 +1,25 @@
 'use client'
 
 import { orpc } from '@/utils/orpc'
-import { Button, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/ui'
+import {
+  Button,
+  Combobox,
+  ComboboxTrigger,
+  ComboboxContent,
+  ComboboxButton,
+  ComboboxCommand,
+  ComboboxInput,
+  ComboboxList,
+  ComboboxEmpty,
+  ComboboxLoading,
+  ComboboxGroup,
+  ComboboxItem,
+  ComboboxSeparator
+} from '@repo/ui'
 import { useQuery } from '@tanstack/react-query'
 import { Building2, Users, X } from 'lucide-react'
 import { TimetableFilterState } from './timetable-visualization'
+import { useDebouncedSearch } from '@/lib/utils'
 
 interface TimetableFiltersProps {
   filters: TimetableFilterState
@@ -12,15 +27,38 @@ interface TimetableFiltersProps {
 }
 
 export function TimetableFilters({ filters, onFiltersChange }: TimetableFiltersProps) {
-  // Get classrooms list
-  const { data: classrooms = [] } = useQuery(
-    orpc.management.classroom.getClassroomsList.queryOptions()
+  // Debounced search for classrooms
+  const classroomSearch = useDebouncedSearch({})
+
+  // Debounced search for classroom groups
+  const classroomGroupSearch = useDebouncedSearch({})
+
+  // Get classrooms list with search
+  const { data: classrooms = [], isLoading: isLoadingClassrooms } = useQuery(
+    orpc.management.classroom.getClassroomsList.queryOptions({
+      input: classroomSearch.shouldSearch
+        ? { search: classroomSearch.debouncedSearchTerm }
+        : undefined
+    })
   )
 
-  // Get classroom groups list
-  const { data: classroomGroups = [] } = useQuery(
-    orpc.management.classroom.getClassroomGroupsList.queryOptions()
+  // Get classroom groups list with search
+  const { data: classroomGroups = [], isLoading: isLoadingClassroomGroups } = useQuery(
+    orpc.management.classroom.getClassroomGroupsList.queryOptions({
+      input: classroomGroupSearch.shouldSearch
+        ? { search: classroomGroupSearch.debouncedSearchTerm }
+        : undefined
+    })
   )
+
+  // Limit initial results to 10 items when no search is active
+  const displayedClassrooms = classroomSearch.shouldSearch
+    ? classrooms
+    : classrooms.slice(0, 10)
+
+  const displayedClassroomGroups = classroomGroupSearch.shouldSearch
+    ? classroomGroups
+    : classroomGroups.slice(0, 10)
 
   const handleClassroomChange = (classroomId: string) => {
     if (classroomId === 'clear') {
@@ -67,34 +105,64 @@ export function TimetableFilters({ filters, onFiltersChange }: TimetableFiltersP
             <Building2 className="h-4 w-4" />
             الفصل الدراسي
           </label>
-          <Select
-            value={filters.classroomId || ''}
-            onValueChange={handleClassroomChange}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="اختر فصل دراسي" />
-            </SelectTrigger>
-            <SelectContent>
-              {filters.classroomId && (
-                <SelectItem value="clear" className="text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <X className="h-3 w-3" />
-                    مسح الاختيار
-                  </div>
-                </SelectItem>
-              )}
-              {classrooms.map((classroom) => (
-                <SelectItem key={classroom.id} value={classroom.id}>
-                  <div className="flex flex-col">
-                    <span>{classroom.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {classroom.educationLevel.displayNameAr} - {classroom.academicYear}
-                    </span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Combobox>
+            <ComboboxTrigger asChild>
+              <ComboboxButton
+                placeholder="اختر فصل دراسي"
+                clearable={true}
+                onClear={() => handleClassroomChange('clear')}
+                selectedLabel={
+                  filters.classroomId
+                    ? classrooms.find(c => c.id === filters.classroomId)?.name
+                    : undefined
+                }
+              />
+            </ComboboxTrigger>
+            <ComboboxContent>
+              <ComboboxCommand>
+                <ComboboxInput
+                  placeholder="البحث في الفصول..."
+                  onValueChange={classroomSearch.setSearchTerm}
+                />
+                <ComboboxList>
+                  {isLoadingClassrooms ? (
+                    <ComboboxLoading>جاري التحميل...</ComboboxLoading>
+                  ) : (
+                    <ComboboxEmpty>لا توجد فصول مطابقة</ComboboxEmpty>
+                  )}
+                  <ComboboxGroup>
+                    {filters.classroomId && (
+                      <>
+                        <ComboboxItem
+                          onSelect={() => handleClassroomChange('clear')}
+                          className="text-muted-foreground"
+                        >
+                          <X className="h-4 w-4" />
+                          مسح الاختيار
+                        </ComboboxItem>
+                        <ComboboxSeparator />
+                      </>
+                    )}
+                    {displayedClassrooms.map((classroom) => (
+                      <ComboboxItem
+                        key={classroom.id}
+                        value={`${classroom.name} ${classroom.educationLevel.displayNameAr} ${classroom.academicYear}`}
+                        selected={filters.classroomId === classroom.id}
+                        onSelect={() => handleClassroomChange(classroom.id)}
+                      >
+                        <div className="flex flex-col">
+                          <span>{classroom.name}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {classroom.educationLevel.displayNameAr} - {classroom.academicYear}
+                          </span>
+                        </div>
+                      </ComboboxItem>
+                    ))}
+                  </ComboboxGroup>
+                </ComboboxList>
+              </ComboboxCommand>
+            </ComboboxContent>
+          </Combobox>
         </div>
 
         {/* Classroom Group Filter */}
@@ -103,40 +171,67 @@ export function TimetableFilters({ filters, onFiltersChange }: TimetableFiltersP
             <Users className="h-4 w-4" />
             مجموعة الفصل
           </label>
-          <Select
-            value={filters.classroomGroupId || ''}
-            onValueChange={handleClassroomGroupChange}
-            disabled={classroomGroups.length === 0}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="اختر مجموعة" />
-            </SelectTrigger>
-            <SelectContent>
-              {filters.classroomGroupId && (
-                <SelectItem value="clear" className="text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <X className="h-3 w-3" />
-                    مسح الاختيار
-                  </div>
-                </SelectItem>
-              )}
-              {classroomGroups.map((group) => (
-                <SelectItem key={group.id} value={group.id}>
-                  <div className="flex flex-col">
-                    <span>{group.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {group.classroomName} - {group.classroomAcademicYear}
-                    </span>
-                  </div>
-                </SelectItem>
-              ))}
-              {classroomGroups.length === 0 && (
-                <SelectItem value="disabled" disabled>
-                  لا توجد مجموعات متاحة
-                </SelectItem>
-              )}
-            </SelectContent>
-          </Select>
+          <Combobox>
+            <ComboboxTrigger asChild>
+              <ComboboxButton
+                placeholder="اختر مجموعة"
+                clearable={true}
+                onClear={() => handleClassroomGroupChange('clear')}
+                selectedLabel={
+                  filters.classroomGroupId
+                    ? classroomGroups.find(g => g.id === filters.classroomGroupId)?.name
+                    : undefined
+                }
+                disabled={classroomGroups.length === 0}
+              />
+            </ComboboxTrigger>
+            <ComboboxContent>
+              <ComboboxCommand>
+                <ComboboxInput
+                  placeholder="البحث في المجموعات..."
+                  onValueChange={classroomGroupSearch.setSearchTerm}
+                />
+                <ComboboxList>
+                  {isLoadingClassroomGroups ? (
+                    <ComboboxLoading>جاري التحميل...</ComboboxLoading>
+                  ) : (
+                    <ComboboxEmpty>
+                      {classroomGroups.length === 0 ? "لا توجد مجموعات متاحة" : "لا توجد مجموعات مطابقة"}
+                    </ComboboxEmpty>
+                  )}
+                  <ComboboxGroup>
+                    {filters.classroomGroupId && (
+                      <>
+                        <ComboboxItem
+                          onSelect={() => handleClassroomGroupChange('clear')}
+                          className="text-muted-foreground"
+                        >
+                          <X className="h-4 w-4" />
+                          مسح الاختيار
+                        </ComboboxItem>
+                        <ComboboxSeparator />
+                      </>
+                    )}
+                    {displayedClassroomGroups.map((group) => (
+                      <ComboboxItem
+                        key={group.id}
+                        value={`${group.name} ${group.classroomName} ${group.classroomAcademicYear}`}
+                        selected={filters.classroomGroupId === group.id}
+                        onSelect={() => handleClassroomGroupChange(group.id)}
+                      >
+                        <div className="flex flex-col">
+                          <span>{group.name}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {group.classroomName} - {group.classroomAcademicYear}
+                          </span>
+                        </div>
+                      </ComboboxItem>
+                    ))}
+                  </ComboboxGroup>
+                </ComboboxList>
+              </ComboboxCommand>
+            </ComboboxContent>
+          </Combobox>
         </div>
 
         {/* Clear Filters Button */}

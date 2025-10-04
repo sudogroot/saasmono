@@ -10,6 +10,11 @@ const classroomService = createClassroomManagementService(db)
 export const classroomManagementRouter = {
   // Classrooms
   getClassroomsList: protectedProcedure
+    .input(
+      z.object({
+        search: z.string().optional().describe('Search term to filter classrooms by name, education level, or academic year'),
+      }).optional()
+    )
     .output(z.array(ClassroomListItemSchema))
     .route({
       method: 'GET',
@@ -18,10 +23,10 @@ export const classroomManagementRouter = {
       summary: 'List classrooms',
       description: 'Retrieves all classrooms with their education levels and student/teacher counts',
     })
-    .handler(async ({ context }) => {
+    .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
       try {
-        return await classroomService.getClassroomsList(orgId)
+        return await classroomService.getClassroomsList(orgId, input?.search)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch classrooms')
       }
@@ -51,6 +56,11 @@ export const classroomManagementRouter = {
     }),
 
   getClassroomGroupsList: protectedProcedure
+    .input(
+      z.object({
+        search: z.string().optional().describe('Search term to filter classroom groups by name, classroom name, or academic year'),
+      }).optional()
+    )
     .output(z.array(ClassroomGroupListItemSchema))
     .route({
       method: 'GET',
@@ -59,10 +69,10 @@ export const classroomManagementRouter = {
       summary: 'List classroom groups',
       description: 'Retrieves all classroom groups with their associated classroom information',
     })
-    .handler(async ({ context }) => {
+    .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
       try {
-        return await classroomService.getClassroomGroupsList(orgId)
+        return await classroomService.getClassroomGroupsList(orgId, input?.search)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch classroom groups')
       }
