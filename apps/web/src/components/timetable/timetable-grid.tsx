@@ -19,7 +19,7 @@ interface TimetableSession {
   educationSubject: {
     id: string
     name: string
-    displayNameEn: string
+    displayNameAr: string
   }
   room: {
     id: string

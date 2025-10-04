@@ -69,7 +69,7 @@ export class TimetableManagementService {
         // Subject data
         subjectId: educationSubject.id,
         subjectName: educationSubject.name,
-        subjectDisplayNameEn: educationSubject.displayNameEn,
+        subjectDisplayNameAr: educationSubject.displayNameAr,
         // Institution level data
         institutionLevelId: institutionLevel.id,
         institutionLevelName: institutionLevel.name,
@@ -108,7 +108,7 @@ export class TimetableManagementService {
       educationSubject: {
         id: row.subjectId!,
         name: row.subjectName!,
-        displayNameEn: row.subjectDisplayNameEn!,
+        displayNameAr: row.subjectDisplayNameAr!,
       },
       institutionLevel: row.institutionLevelId ? {
         id: row.institutionLevelId,
@@ -452,8 +452,24 @@ export class TimetableManagementService {
     ctx.font = '16px Arial'
     ctx.fillStyle = '#000000'
 
-    // Title
-    const title = request.classroomId ? 'جدول حصص الفصل' : 'جدول حصص المجموعة'
+    // Title - include classroom or classroom group name
+    let title = ''
+    if (!timetableData || !timetableData.length) {
+      title = 'لا توجد حصص مجدولة'
+      return title
+    }
+
+    const firstSession: any = timetableData[0] || {}
+    if (request.classroomId && firstSession.classroom) {
+      title = `جدول حصص الفصل: ${firstSession.classroom.name}`
+    } else if (request.classroomGroupId && firstSession.classroomGroup) {
+      title = `جدول حصص المجموعة: ${firstSession.classroomGroup.name}`
+    } else {
+      // Fallback
+      title = request.classroomId ? 'جدول حصص الفصل' : 'جدول حصص المجموعة'
+    }
+
+
     ctx.font = 'bold 24px Arial'
     ctx.textAlign = 'center'
     ctx.fillText(title, 700, 40)
@@ -532,16 +548,10 @@ export class TimetableManagementService {
 
           const matches = sessionDay === dayNumber && sessionHour === (timeIndex + 8)
 
-          if (timeIndex < 2) { // Only log first few slots to avoid spam
-            console.log(`Checking slot [${timeIndex}]: dayNumber=${dayNumber}, expectedHour=${timeIndex + 8}`)
-            console.log(`Session "${session.title}": date=${session.startDateTime}, UTCday=${sessionDay}, UTChour=${sessionHour}, matches=${matches}`)
-          }
-
           return matches
         })
 
         if (sessionForSlot) {
-          console.log('Found session:', sessionForSlot.title, 'for day', dayNumber, 'hour', timeIndex + 8)
 
           // Fill cell with session info (light gray background)
           ctx.fillStyle = '#f3f4f6'
@@ -551,16 +561,12 @@ export class TimetableManagementService {
           ctx.fillStyle = '#000000'
           ctx.font = 'bold 12px Arial'
           ctx.textAlign = 'center'
-          ctx.fillText(sessionForSlot.title, x + dayWidth / 2, y + 16)
+          ctx.fillText(sessionForSlot.educationSubject.displayNameAr || sessionForSlot.educationSubject.name, x +  dayWidth / 2, y + 16)
 
           // Teacher name (dark gray)
           ctx.font = '10px Arial'
           ctx.fillStyle = '#374151'
-          ctx.fillText(`${sessionForSlot.teacher.name} ${sessionForSlot.teacher.lastName}`, x + dayWidth / 2, y + 30)
-
-          // Subject (gray)
-          ctx.fillStyle = '#6b7280'
-          ctx.fillText(sessionForSlot.educationSubject.displayNameEn || sessionForSlot.educationSubject.name, x + dayWidth / 2, y + 42)
+          ctx.fillText(`${sessionForSlot.teacher.name} ${sessionForSlot.teacher.lastName}`, x + dayWidth / 2, y + 35)
 
           // Room (gray)
           ctx.fillText(`${sessionForSlot.room.name}`, x + dayWidth / 2, y + 54)
@@ -630,7 +636,7 @@ export class TimetableManagementService {
     fs.writeFileSync(fullPath, buffer)
 
     // Return full URL including server origin
-    const serverUrl = process.env.SERVER_URL || 'http://localhost:3000'
+    const serverUrl = process.env.SERVER_URL
     return `${serverUrl}${urlPath}`
   }
 }

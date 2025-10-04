@@ -66,7 +66,7 @@ export const TimetableListItemSchema = z.object({
   educationSubject: z.object({
     id: z.uuid(),
     name: z.string(),
-    displayNameEn: z.string(),
+    displayNameAr: z.string(),
   }),
   institutionLevel: z.object({
     id: z.uuid(),
