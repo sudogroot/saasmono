@@ -53,4 +53,3 @@ export type {
   RaqeemDashboardSidebarProps,
   RaqeemNavbarProps,
 } from "./layout";
-export * from "./components/base/calendar";
