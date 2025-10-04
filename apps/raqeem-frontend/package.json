@@ -13,6 +13,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@fullcalendar/daygrid": "^6.1.19",
+    "@fullcalendar/interaction": "^6.1.19",
+    "@fullcalendar/list": "^6.1.19",
+    "@fullcalendar/react": "^6.1.19",
+    "@fullcalendar/timegrid": "^6.1.19",
     "@hookform/resolvers": "^5.2.2",
     "@orpc/client": "^1.8.9",
     "@orpc/tanstack-query": "^1.8.9",
@@ -39,6 +44,7 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@next/eslint-plugin-next": "^15.5.4",
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",

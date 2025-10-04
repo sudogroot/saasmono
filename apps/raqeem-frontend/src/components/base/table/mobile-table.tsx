@@ -64,13 +64,13 @@ export function MobileTable<TData>({
   const offsetY = visibleStartIndex * virtualItemHeight;
 
   const handleTouchStart = useCallback((e: TouchEvent) => {
-    if (enablePullToRefresh && containerRef.current?.scrollTop === 0) {
+    if (enablePullToRefresh && containerRef.current?.scrollTop === 0 && e.touches[0]) {
       pullStartY.current = e.touches[0].clientY;
     }
   }, [enablePullToRefresh]);
 
   const handleTouchMove = useCallback((e: TouchEvent) => {
-    if (enablePullToRefresh && pullStartY.current > 0) {
+    if (enablePullToRefresh && pullStartY.current > 0 && e.touches[0]) {
       const currentY = e.touches[0].clientY;
       const distance = Math.max(0, (currentY - pullStartY.current) * 0.5);
       setPullDistance(Math.min(distance, 80));
@@ -136,8 +136,10 @@ export function MobileTable<TData>({
     if (!enableVirtualScroll || !virtualScrollRef.current) return;
 
     const resizeObserver = new ResizeObserver((entries) => {
-      const { width, height } = entries[0].contentRect;
-      setContainerSize({ width, height });
+      if (entries[0]) {
+        const { width, height } = entries[0].contentRect;
+        setContainerSize({ width, height });
+      }
     });
 
     resizeObserver.observe(virtualScrollRef.current);

@@ -2,23 +2,17 @@
 
 import { authClient } from '@/lib/auth-client'
 import { orpc } from '@/utils/orpc'
-import { useQuery } from '@tanstack/react-query'
-import { Loader2, CalendarX, X } from 'lucide-react'
-import { useMemo, useRef, useState } from 'react'
-import FullCalendar from '@fullcalendar/react'
+import type { DateSelectArg, EventClickArg, EventDropArg } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
+import type { EventResizeDoneArg } from '@fullcalendar/interaction'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
-import type { EventClickArg, DateSelectArg, EventDropArg } from '@fullcalendar/core'
-import type { EventResizeDoneArg } from '@fullcalendar/interaction'
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from '@repo/ui/components/ui/sheet'
+import FullCalendar from '@fullcalendar/react'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@repo/ui/components/ui/sheet'
+import { useQuery } from '@tanstack/react-query'
+import { CalendarX, Loader2 } from 'lucide-react'
+import { useMemo, useRef, useState } from 'react'
 import './fullcalendar-styles.css'
 
 // Arabic locale
@@ -106,9 +100,9 @@ export default function CalendarPage() {
         title: `${trial.caseTitle} - جلسة ${trial.trialNumber}`,
         start: startTime,
         end: endTime,
-        backgroundColor: colors.bg,
-        borderColor: colors.border,
-        textColor: colors.text,
+        // backgroundColor: colors.bg,
+        // borderColor: colors.border,
+        // textColor: colors.text,
         extendedProps: {
           trialNumber: trial.trialNumber,
           caseNumber: trial.caseNumber,
@@ -156,8 +150,8 @@ export default function CalendarPage() {
     return (
       <div className="flex h-[calc(100vh-200px)] items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">جاري تحميل التقويم...</p>
+          <Loader2 className="text-primary h-8 w-8 animate-spin" />
+          <p className="text-muted-foreground text-sm">جاري تحميل التقويم...</p>
         </div>
       </div>
     )
@@ -167,12 +161,12 @@ export default function CalendarPage() {
     return (
       <div className="flex h-[calc(100vh-200px)] items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-center">
-          <div className="rounded-full bg-destructive/10 p-4">
-            <CalendarX className="h-8 w-8 text-destructive" />
+          <div className="bg-destructive/10 rounded-full p-4">
+            <CalendarX className="text-destructive h-8 w-8" />
           </div>
           <div>
-            <p className="text-lg font-semibold text-foreground">حدث خطأ في تحميل البيانات</p>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="text-foreground text-lg font-semibold">حدث خطأ في تحميل البيانات</p>
+            <p className="text-muted-foreground mt-2 text-sm">
               {error instanceof Error ? error.message : 'خطأ غير معروف'}
             </p>
           </div>
@@ -184,7 +178,7 @@ export default function CalendarPage() {
   return (
     <>
       <div className="h-[calc(100vh-80px)] w-full p-4" dir="rtl">
-        <div className="h-full w-full overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+        <div className="border-border bg-card h-full w-full overflow-hidden rounded-xl border shadow-sm">
           <FullCalendar
             ref={calendarRef}
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
@@ -252,40 +246,38 @@ export default function CalendarPage() {
         <SheetContent side="left" className="w-[400px] sm:w-[540px]">
           <SheetHeader>
             <SheetTitle>{selectedEvent?.title}</SheetTitle>
-            <SheetDescription>
-              تفاصيل الجلسة
-            </SheetDescription>
+            <SheetDescription>تفاصيل الجلسة</SheetDescription>
           </SheetHeader>
 
           {selectedEvent && (
             <div className="mt-6 space-y-4" dir="rtl">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">رقم الجلسة</p>
+                <p className="text-muted-foreground text-sm font-medium">رقم الجلسة</p>
                 <p className="text-lg">{selectedEvent.extendedProps.trialNumber}</p>
               </div>
 
               <div>
-                <p className="text-sm font-medium text-muted-foreground">رقم القضية</p>
+                <p className="text-muted-foreground text-sm font-medium">رقم القضية</p>
                 <p className="text-lg">{selectedEvent.extendedProps.caseNumber}</p>
               </div>
 
               <div>
-                <p className="text-sm font-medium text-muted-foreground">عنوان القضية</p>
+                <p className="text-muted-foreground text-sm font-medium">عنوان القضية</p>
                 <p className="text-lg">{selectedEvent.extendedProps.caseTitle}</p>
               </div>
 
               <div>
-                <p className="text-sm font-medium text-muted-foreground">اسم الموكل</p>
+                <p className="text-muted-foreground text-sm font-medium">اسم الموكل</p>
                 <p className="text-lg">{selectedEvent.extendedProps.clientName}</p>
               </div>
 
               <div>
-                <p className="text-sm font-medium text-muted-foreground">المحكمة</p>
+                <p className="text-muted-foreground text-sm font-medium">المحكمة</p>
                 <p className="text-lg">{selectedEvent.extendedProps.courtName}</p>
               </div>
 
               <div>
-                <p className="text-sm font-medium text-muted-foreground">وقت البداية</p>
+                <p className="text-muted-foreground text-sm font-medium">وقت البداية</p>
                 <p className="text-lg">
                   {selectedEvent.start.toLocaleString('ar-SA', {
                     dateStyle: 'full',
@@ -295,7 +287,7 @@ export default function CalendarPage() {
               </div>
 
               <div>
-                <p className="text-sm font-medium text-muted-foreground">وقت النهاية</p>
+                <p className="text-muted-foreground text-sm font-medium">وقت النهاية</p>
                 <p className="text-lg">
                   {selectedEvent.end.toLocaleString('ar-SA', {
                     dateStyle: 'full',

@@ -20,7 +20,7 @@ const sizeClasses = {
 
 export function CaseAvatar({ case_, size = "md", className }: CaseAvatarProps) {
   const caseNumberParts = case_.caseNumber.split(/[^\w]/);
-  const initials = caseNumberParts.length >= 2 
+  const initials = caseNumberParts.length >= 2 && caseNumberParts[0] && caseNumberParts[1]
     ? `${caseNumberParts[0].substring(0, 1)}${caseNumberParts[1].substring(0, 1)}`.toUpperCase()
     : case_.caseNumber.substring(0, 2).toUpperCase();
   

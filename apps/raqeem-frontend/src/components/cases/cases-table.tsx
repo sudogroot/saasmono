@@ -361,7 +361,6 @@ export function CasesTable({
     []
   )
 
-
   const filteredData = useMemo(() => {
     let filtered = cases
 
@@ -371,10 +370,10 @@ export function CasesTable({
 
       switch (key) {
         case 'caseStatus':
-          filtered = filtered.filter((case_) => case_.caseStatus === value)
+          filtered = filtered.filter((case_: any) => case_.caseStatus === value)
           break
         case 'priority':
-          filtered = filtered.filter((case_) => case_.priority === value)
+          filtered = filtered.filter((case_: any) => case_.priority === value)
           break
       }
     })
@@ -516,7 +515,7 @@ export function CasesTable({
         noDataMessage="لا توجد قضايا مطابقة للبحث"
         mobileCardRenderer={mobileCardRenderer}
         showQuickFilters={true}
-        quickFilters={quickFilters}
+        // quickFilters={quickFilters as any}
         activeFilters={activeFilters}
         onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
         headerActions={headerActions}

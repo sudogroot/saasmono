@@ -5,7 +5,7 @@ import { clients } from '../db/schema/clients'
 import { cases } from '../db/schema/cases'
 import { trials } from '../db/schema/trials'
 import { courts } from '../db/schema/courts'
-import type { ClientDropdownItem, ClientListItem, ClientResponse, CreateClientInput, UpdateClientInput } from '../types/client'
+import type { ClientDropdownItem, ClientListItem, ClientResponse, CreateClientInput, UpdateClientInput, DetailedClientResponse } from '../types/client'
 
 export class ClientService {
   private db: NodePgDatabase
@@ -41,7 +41,7 @@ export class ClientService {
     return newClient as ClientResponse
   }
 
-  async getClientById(clientId: string, orgId: string): Promise<ClientResponse> {
+  async getClientById(clientId: string, orgId: string): Promise<DetailedClientResponse> {
     // Get client data
     const clientResult = await this.db
       .select()
@@ -114,7 +114,7 @@ export class ClientService {
     return {
       ...client,
       case: Array.from(casesMap.values())
-    } as ClientResponse
+    } as DetailedClientResponse
   }
 
   async updateClient(

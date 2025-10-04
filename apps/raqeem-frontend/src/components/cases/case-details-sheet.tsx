@@ -101,7 +101,6 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
       mode: 'edit',
       slug: 'cases',
       caseId: caseData.id,
-      initialData: caseData,
       size: 'lg',
     })
   }

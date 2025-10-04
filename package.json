@@ -28,6 +28,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.44.0",
     "@typescript-eslint/parser": "^8.44.0",
+    "@vercel/style-guide": "^6.0.0",
     "eslint-plugin-jest": "^28.14.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "turbo": "^2.5.6"

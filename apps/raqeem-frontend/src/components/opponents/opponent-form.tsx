@@ -1,121 +1,121 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@repo/ui";
-import { Input } from "@repo/ui";
+import type { Opponent } from '@/types'
+import { orpc } from '@/utils/orpc'
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@repo/ui";
-import {
+  Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@repo/ui";
-import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui";
-import { orpc } from "@/utils/orpc";
-import { toast } from "sonner";
-import { Loader2, Save, Users } from "lucide-react";
-import type { OpponentData, Opponent } from "@/types";
+} from '@repo/ui'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Loader2, Save, Users } from 'lucide-react'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
 
 const opponentFormSchema = z.object({
-  name: z.string().min(1, "اسم الخصم مطلوب"),
-  opponentType: z.enum(["individual", "company", "institution", "organization", "government", "association"]).default("individual"),
-});
+  name: z.string().min(1, 'اسم الخصم مطلوب'),
+  opponentType: z
+    .enum(['individual', 'company', 'institution', 'organization', 'government', 'association'])
+    .default('individual'),
+})
 
-type OpponentFormData = z.infer<typeof opponentFormSchema>;
+type OpponentFormData = z.infer<typeof opponentFormSchema>
 
 interface OpponentFormProps {
-  initialData?: Partial<Opponent>;
-  opponentId?: string;
-  onSuccess?: (opponent: Opponent) => void;
-  onCancel?: () => void;
+  initialData?: Partial<Opponent>
+  opponentId?: string
+  onSuccess?: (opponent: Opponent) => void
+  onCancel?: () => void
 }
 
-export function OpponentForm({
-  initialData,
-  opponentId,
-  onSuccess,
-  onCancel
-}: OpponentFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const isEditing = !!opponentId;
-  const queryClient = useQueryClient();
+export function OpponentForm({ initialData, opponentId, onSuccess, onCancel }: OpponentFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const isEditing = !!opponentId
+  const queryClient = useQueryClient()
 
   const form = useForm<OpponentFormData>({
-    resolver: zodResolver(opponentFormSchema),
+    resolver: zodResolver(opponentFormSchema) as any,
     defaultValues: {
-      name: initialData?.name || "",
-      opponentType: initialData?.opponentType || "individual",
+      name: initialData?.name || '',
+      opponentType: initialData?.opponentType || 'individual',
     },
-  });
+  })
 
   const createMutation = useMutation({
     ...orpc.opponents.createOpponent.mutationOptions({
       onSuccess: (data) => {
-        toast.success("تم إنشاء الخصم بنجاح");
-        form.reset();
-        queryClient.invalidateQueries({ queryKey: orpc.opponents.listOpponents.key() });
-        onSuccess?.(data);
+        toast.success('تم إنشاء الخصم بنجاح')
+        form.reset()
+        queryClient.invalidateQueries({ queryKey: orpc.opponents.listOpponents.key() })
+        onSuccess?.(data)
       },
       onError: (error: any) => {
-        toast.error(`حدث خطأ: ${error.message}`);
+        toast.error(`حدث خطأ: ${error.message}`)
       },
       onSettled: () => {
-        setIsSubmitting(false);
+        setIsSubmitting(false)
       },
     }),
-  });
+  })
 
   const updateMutation = useMutation({
     ...orpc.opponents.updateOpponent.mutationOptions({
       onSuccess: (data) => {
-        toast.success("تم تحديث الخصم بنجاح");
-        queryClient.invalidateQueries({ queryKey: orpc.opponents.listOpponents.key() });
-        queryClient.invalidateQueries({ queryKey: orpc.opponents.getOpponentById.key({ input: { opponentId: opponentId! } }) });
-        onSuccess?.(data);
+        toast.success('تم تحديث الخصم بنجاح')
+        queryClient.invalidateQueries({ queryKey: orpc.opponents.listOpponents.key() })
+        queryClient.invalidateQueries({
+          queryKey: orpc.opponents.getOpponentById.key({ input: { opponentId: opponentId! } }),
+        })
+        onSuccess?.(data)
       },
       onError: (error: any) => {
-        toast.error(`حدث خطأ: ${error.message}`);
+        toast.error(`حدث خطأ: ${error.message}`)
       },
       onSettled: () => {
-        setIsSubmitting(false);
+        setIsSubmitting(false)
       },
     }),
-  });
+  })
 
   const onSubmit = async (data: OpponentFormData) => {
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     try {
       if (isEditing && opponentId) {
         updateMutation.mutate({
           opponentId: opponentId,
           ...data,
-        });
+        })
       } else {
         createMutation.mutate({
           ...data,
-        });
+        })
       }
     } catch (error) {
       // Error handling is done in mutation callbacks
     }
-  };
+  }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-6">
         {/* Basic Information */}
         <Card>
           <CardHeader>
@@ -126,7 +126,7 @@ export function OpponentForm({
           </CardHeader>
           <CardContent className="space-y-4">
             <FormField
-              control={form.control}
+              control={form.control as any}
               name="name"
               render={({ field }) => (
                 <FormItem>
@@ -140,7 +140,7 @@ export function OpponentForm({
             />
 
             <FormField
-              control={form.control}
+              control={form.control as any}
               name="opponentType"
               render={({ field }) => (
                 <FormItem>
@@ -169,36 +169,27 @@ export function OpponentForm({
 
         {/* Form Actions */}
         <div className="flex items-center gap-3 pt-6">
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="min-w-[120px]"
-          >
+          <Button type="submit" disabled={isSubmitting} className="min-w-[120px]">
             {isSubmitting ? (
               <>
-                <Loader2 className="h-4 w-4 ml-1 animate-spin" />
-                {isEditing ? "جاري التحديث..." : "جاري الحفظ..."}
+                <Loader2 className="ml-1 h-4 w-4 animate-spin" />
+                {isEditing ? 'جاري التحديث...' : 'جاري الحفظ...'}
               </>
             ) : (
               <>
-                <Save className="h-4 w-4 ml-1" />
-                {isEditing ? "تحديث الخصم" : "حفظ الخصم"}
+                <Save className="ml-1 h-4 w-4" />
+                {isEditing ? 'تحديث الخصم' : 'حفظ الخصم'}
               </>
             )}
           </Button>
 
           {onCancel && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onCancel}
-              disabled={isSubmitting}
-            >
+            <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
               إلغاء
             </Button>
           )}
         </div>
       </form>
     </Form>
-  );
+  )
 }
