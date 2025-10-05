@@ -13,6 +13,10 @@ export default function NewLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const { data: session, isPending } = authClient.useSession()
 
+  if (!session) {
+    router.push('/login')
+  }
+
   // User handling functions
   const handleSignOut = async () => {
     await authClient.signOut()
