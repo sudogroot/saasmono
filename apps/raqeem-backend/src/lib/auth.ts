@@ -3,18 +3,24 @@ import { betterAuth, type BetterAuthOptions } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 // import { nextCookies } from 'better-auth/next-js';
 import { db } from '../db'
+import { getBetterAuthSecret } from './secrets'
 
 import { openAPI } from 'better-auth/plugins'
 
 import { admin, anonymous, organization, username } from 'better-auth/plugins'
 import * as schema from '../db/schema/auth'
+
 const betterAuthOptions: BetterAuthOptions = {
   database: drizzleAdapter(db, {
     provider: 'pg',
-
     schema: schema,
   }),
-  trustedOrigins: [process.env.CORS_ORIGIN || 'http://localhost:3001', 'mybettertapp://', 'exp://'],
+  secret: getBetterAuthSecret(),
+  trustedOrigins: [
+    process.env.CORS_ORIGIN || 'http://localhost:3001',
+    'mybettertapp://',
+    'exp://',
+  ],
   emailAndPassword: {
     enabled: true,
   },

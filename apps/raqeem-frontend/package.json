@@ -18,6 +18,7 @@
     "@fullcalendar/list": "^6.1.19",
     "@fullcalendar/react": "^6.1.19",
     "@fullcalendar/timegrid": "^6.1.19",
+    "@fullcalendar/core": "^6.1.19",
     "@hookform/resolvers": "^5.2.2",
     "@orpc/client": "^1.8.9",
     "@orpc/tanstack-query": "^1.8.9",

@@ -1,0 +1,133 @@
+version: '3.8'
+
+secrets:
+  postgres_user:
+    external: true
+    name: raqeem_production_postgres_user
+  postgres_password:
+    external: true
+    name: raqeem_production_postgres_password
+  better_auth_secret:
+    external: true
+    name: raqeem_production_better_auth_secret
+  database_url:
+    external: true
+    name: raqeem_production_database_url
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: raqeem_production
+      POSTGRES_USER_FILE: /run/secrets/postgres_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets:
+      - postgres_user
+      - postgres_password
+    volumes:
+      - type: volume
+        source: postgres_data
+        target: /var/lib/postgresql/data
+    networks:
+      - raqeem-network
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$(cat /run/secrets/postgres_user)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  raqeem-backend:
+    image: ${DOCKER_REGISTRY:-}raqeem-backend:${IMAGE_TAG:-production}
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-false}
+      # Secrets will be read from files
+      DATABASE_URL_FILE: /run/secrets/database_url
+      BETTER_AUTH_SECRET_FILE: /run/secrets/better_auth_secret
+    secrets:
+      - database_url
+      - better_auth_secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - raqeem-network
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.raqeem-backend.rule=Host(`${BACKEND_DOMAIN}`)"
+        - "traefik.http.routers.raqeem-backend.entrypoints=websecure"
+        - "traefik.http.routers.raqeem-backend.tls.certresolver=letsencrypt"
+        - "traefik.http.services.raqeem-backend.loadbalancer.server.port=4000"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  raqeem-frontend:
+    image: ${DOCKER_REGISTRY:-}raqeem-frontend:${IMAGE_TAG:-production}
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
+    depends_on:
+      - raqeem-backend
+    networks:
+      - raqeem-network
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.raqeem-frontend.rule=Host(`${FRONTEND_DOMAIN}`)"
+        - "traefik.http.routers.raqeem-frontend.entrypoints=websecure"
+        - "traefik.http.routers.raqeem-frontend.tls.certresolver=letsencrypt"
+        - "traefik.http.services.raqeem-frontend.loadbalancer.server.port=3000"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  raqeem-network:
+    driver: overlay
+    attachable: true
+
+volumes:
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/projects/raqeem/production/postgres-data

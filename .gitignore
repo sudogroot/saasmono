@@ -2,5 +2,14 @@ node_modules
 .turbo
 .alchemy
 .env
+.env*.local
+.env.production
+.env.staging
+.env.develop
 tmp/
 apps/server/src/images
+dist/
+build/
+
+# Docker Swarm secrets
+raqeem-deployment/secrets-*.env
