@@ -302,7 +302,7 @@ export function ClientsTable({
           <ClientAvatar client={row.original} size="md" />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="text-foreground text-md truncate font-medium md:text-sm">{row.original.name}</span>
+              <span className="text-foreground truncate text-lg font-medium md:text-sm">{row.original.name}</span>
               <Badge
                 variant="outline"
                 className={cn(

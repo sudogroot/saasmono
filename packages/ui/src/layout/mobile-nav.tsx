@@ -158,7 +158,7 @@ export function MobileNav({
   return (
     <>
       {/* Mobile Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 lg:hidden pb-2.5">
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 lg:hidden pb-3">
         <div
           className={`grid h-16 ${mainNavItems.length >= 5 ? "grid-cols-5" : `grid-cols-${mainNavItems.length + 1}`}`}
         >
