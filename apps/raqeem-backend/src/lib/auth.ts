@@ -16,11 +16,7 @@ const betterAuthOptions: BetterAuthOptions = {
     schema: schema,
   }),
   secret: getBetterAuthSecret(),
-  trustedOrigins: [
-    process.env.CORS_ORIGIN || 'http://localhost:3001',
-    'mybettertapp://',
-    'exp://',
-  ],
+  trustedOrigins: [process.env.CORS_ORIGIN || 'http://localhost:3001', 'mybettertapp://', 'exp://'],
   emailAndPassword: {
     enabled: true,
   },
@@ -29,6 +25,7 @@ const betterAuthOptions: BetterAuthOptions = {
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
+      domain: process.env.COOKIE_DOMAIN,
     },
   },
   plugins: [

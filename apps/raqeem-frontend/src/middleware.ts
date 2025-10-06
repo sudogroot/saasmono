@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
 
   if (pathname.startsWith('/dashboard')) {
     const sessionCookie = getSessionCookie(request, {
-      cookiePrefix: process.env.NODE_ENV === 'production' ? '__Secure' : '',
+      //cookiePrefix: process.env.NODE_ENV === 'production' ? '__Secure' : '',
     })
     console.log('---------------------')
     console.log('cookie', sessionCookie)
