@@ -10,7 +10,7 @@ export function middleware(request: NextRequest) {
     })
     console.log('---------------------')
     console.log('cookie', sessionCookie)
-    console.log(request.cookies.getAll())
+    console.log(request.headers)
     console.log('---------------------')
     if (!sessionCookie) {
       const loginUrl = new URL('/login', request.url)
