@@ -329,14 +329,22 @@
     --safe-area-inset-top: env(safe-area-inset-top);
     --safe-area-inset-bottom: env(safe-area-inset-bottom);
   }
+}
 
-  /* Prevent zoom on input focus */
-  input[type='text'],
-  input[type='email'],
-  input[type='password'],
-  input[type='number'],
-  input[type='tel'],
-  textarea {
+/* Prevent zoom on input focus on iOS - applies to ALL modes (browser and PWA) */
+@supports (-webkit-touch-callout: none) {
+  input,
+  textarea,
+  select {
+    font-size: max(16px, 1rem) !important;
+  }
+}
+
+/* Fallback for all mobile touch devices */
+@media (hover: none) and (pointer: coarse) {
+  input,
+  textarea,
+  select {
     font-size: 16px !important;
   }
 }
