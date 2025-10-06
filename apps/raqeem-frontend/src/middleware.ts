@@ -5,7 +5,9 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   if (pathname.startsWith('/dashboard')) {
-    const sessionCookie = getSessionCookie(request)
+    const sessionCookie = getSessionCookie(request, {
+      cookiePrefix: process.env.NODE_ENV === 'production' ? '__Secure' : '',
+    })
     if (!sessionCookie) {
       const loginUrl = new URL('/login', request.url)
       loginUrl.searchParams.set('redirect', pathname)
