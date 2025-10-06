@@ -140,7 +140,7 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>اسم العميل *</FormLabel>
+              <FormLabel>اسم العميل ***</FormLabel>
               <FormControl>
                 <Input placeholder="أدخل اسم العميل الكامل" {...field} />
               </FormControl>

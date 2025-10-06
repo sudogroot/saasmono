@@ -331,21 +331,54 @@
   }
 }
 
-/* Prevent zoom on input focus on iOS - applies to ALL modes (browser and PWA) */
+/* CRITICAL: Prevent zoom on input focus on iOS - applies to ALL modes */
 @supports (-webkit-touch-callout: none) {
-  input,
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="search"],
+  input[type="url"],
   textarea,
-  select {
-    font-size: max(16px, 1rem) !important;
+  select,
+  input {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100% !important;
   }
 }
 
 /* Fallback for all mobile touch devices */
 @media (hover: none) and (pointer: coarse) {
-  input,
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="search"],
+  input[type="url"],
   textarea,
-  select {
+  select,
+  input {
     font-size: 16px !important;
+    -webkit-text-size-adjust: 100% !important;
+  }
+}
+
+/* Extra aggressive fix for all viewports under 768px */
+@media (max-width: 767px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="search"],
+  input[type="url"],
+  textarea,
+  select,
+  input {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100% !important;
   }
 }
 
