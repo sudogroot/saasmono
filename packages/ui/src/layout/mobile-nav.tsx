@@ -158,20 +158,26 @@ export function MobileNav({
   return (
     <>
       {/* Mobile Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 lg:hidden">
-        <div className={`grid h-16 ${mainNavItems.length >= 5 ? 'grid-cols-5' : `grid-cols-${mainNavItems.length + 1}`}`}>
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 lg:hidden pb-2">
+        <div
+          className={`grid h-16 ${mainNavItems.length >= 5 ? "grid-cols-5" : `grid-cols-${mainNavItems.length + 1}`}`}
+        >
           {/* Main Navigation Items */}
           {mainNavItems.map((item) => {
             const active = checkIsActive(item.href, pathname);
-            const ItemComponent = ({ children, ...props }: { children: React.ReactNode; [key: string]: any }) => (
+            const ItemComponent = ({
+              children,
+              ...props
+            }: {
+              children: React.ReactNode;
+              [key: string]: any;
+            }) => (
               <a
                 {...props}
                 href={item.href ? `${basePath}/${item.href}` : basePath}
                 className={cn(
                   "flex flex-col items-center justify-center py-2 px-1 transition-colors relative",
-                  active
-                    ? "text-primary"
-                    : "text-gray-500 hover:text-gray-700"
+                  active ? "text-primary" : "text-gray-500 hover:text-gray-700",
                 )}
               >
                 {children}
@@ -180,14 +186,18 @@ export function MobileNav({
 
             return (
               <ItemComponent key={item.href}>
-                <div className={cn(
-                  "p-1.5 rounded-lg transition-colors",
-                  active ? item.bgColor : "hover:bg-gray-100"
-                )}>
-                  <item.icon className={cn(
-                    "h-5 w-5",
-                    active ? item.color : "text-current"
-                  )} />
+                <div
+                  className={cn(
+                    "p-1.5 rounded-lg transition-colors",
+                    active ? item.bgColor : "hover:bg-gray-100",
+                  )}
+                >
+                  <item.icon
+                    className={cn(
+                      "h-5 w-5",
+                      active ? item.color : "text-current",
+                    )}
+                  />
                 </div>
                 <span className="text-xs font-medium mt-0.5 leading-none">
                   {item.title}
@@ -200,14 +210,18 @@ export function MobileNav({
           })}
 
           {/* More Button with Drawer */}
-          {(quickActions.length > 0 || drawerItems.length > 0 || customDrawerContent) && (
+          {(quickActions.length > 0 ||
+            drawerItems.length > 0 ||
+            customDrawerContent) && (
             <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
               <DrawerTrigger asChild>
                 <button className="flex flex-col items-center justify-center py-2 px-1 text-gray-500 hover:text-gray-700 transition-colors">
                   <div className="p-1.5 rounded-lg hover:bg-gray-100">
                     <MoreHorizontal className="h-5 w-5" />
                   </div>
-                  <span className="text-xs font-medium mt-0.5 leading-none">{moreButtonText}</span>
+                  <span className="text-xs font-medium mt-0.5 leading-none">
+                    {moreButtonText}
+                  </span>
                 </button>
               </DrawerTrigger>
 
@@ -216,9 +230,7 @@ export function MobileNav({
                   <div className="flex items-center justify-between">
                     <div>
                       <DrawerTitle>{drawerTitle}</DrawerTitle>
-                      <DrawerDescription>
-                        {drawerDescription}
-                      </DrawerDescription>
+                      <DrawerDescription>{drawerDescription}</DrawerDescription>
                     </div>
                     <DrawerClose asChild>
                       <Button variant="ghost" size="sm">
@@ -234,7 +246,9 @@ export function MobileNav({
                       {/* Quick Actions */}
                       {quickActions.length > 0 && (
                         <div>
-                          <h3 className="text-sm font-semibold text-gray-900 mb-3">{quickActionsTitle}</h3>
+                          <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                            {quickActionsTitle}
+                          </h3>
                           <div className="grid grid-cols-2 gap-3">
                             {quickActions.map((action) => (
                               <Button
@@ -242,12 +256,14 @@ export function MobileNav({
                                 variant="ghost"
                                 className={cn(
                                   "h-auto p-4 justify-start gap-3",
-                                  action.color
+                                  action.color,
                                 )}
                                 onClick={() => handleQuickAction(action.action)}
                               >
                                 <action.icon className="h-5 w-5" />
-                                <span className="font-medium">{action.title}</span>
+                                <span className="font-medium">
+                                  {action.title}
+                                </span>
                               </Button>
                             ))}
                           </div>
@@ -266,26 +282,38 @@ export function MobileNav({
                               return (
                                 <a
                                   key={item.href}
-                                  href={item.href ? `${basePath}/${item.href}` : basePath}
+                                  href={
+                                    item.href
+                                      ? `${basePath}/${item.href}`
+                                      : basePath
+                                  }
                                   onClick={() => handleNavigation(item.href)}
                                   className={cn(
                                     "flex items-center gap-3 p-3 rounded-lg transition-colors",
                                     active
                                       ? "bg-primary/10 text-primary"
-                                      : "hover:bg-gray-50 text-gray-700"
+                                      : "hover:bg-gray-50 text-gray-700",
                                   )}
                                 >
-                                  <div className={cn(
-                                    "p-2 rounded-lg",
-                                    active ? "bg-primary/20" : "bg-gray-100"
-                                  )}>
-                                    <item.icon className={cn(
-                                      "h-4 w-4",
-                                      active ? "text-primary" : "text-gray-600"
-                                    )} />
+                                  <div
+                                    className={cn(
+                                      "p-2 rounded-lg",
+                                      active ? "bg-primary/20" : "bg-gray-100",
+                                    )}
+                                  >
+                                    <item.icon
+                                      className={cn(
+                                        "h-4 w-4",
+                                        active
+                                          ? "text-primary"
+                                          : "text-gray-600",
+                                      )}
+                                    />
                                   </div>
                                   <div className="flex-1">
-                                    <div className="font-medium">{item.title}</div>
+                                    <div className="font-medium">
+                                      {item.title}
+                                    </div>
                                     <div className="text-xs text-gray-500 leading-tight">
                                       {item.description}
                                     </div>
@@ -312,14 +340,22 @@ export function MobileNav({
                             {/* Bell icon would be passed via quickActions or custom implementation */}
                             التنبيهات
                             {notifications.count && notifications.count > 0 && (
-                              <Badge variant={notifications.variant || "destructive"} className="mr-2">
+                              <Badge
+                                variant={notifications.variant || "destructive"}
+                                className="mr-2"
+                              >
                                 {notifications.count}
                               </Badge>
                             )}
                           </Button>
                         )}
                         {onLogout && (
-                          <Button variant="ghost" size="sm" className="text-red-600" onClick={onLogout}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-600"
+                            onClick={onLogout}
+                          >
                             {/* LogOut icon would be passed via custom implementation */}
                             تسجيل الخروج
                           </Button>
