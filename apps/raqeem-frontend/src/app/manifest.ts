@@ -13,12 +13,12 @@ export default function manifest(): MetadataRoute.Manifest {
       {
         src: '/raqeem-icon.svg',
         sizes: '192x192',
-        type: 'image/svg+xml',
+        type: 'image/png',
       },
       {
         src: '/raqeem-icon.svg',
         sizes: '512x512',
-        type: 'image/svg+xml',
+        type: 'image/png',
       },
     ],
   }
