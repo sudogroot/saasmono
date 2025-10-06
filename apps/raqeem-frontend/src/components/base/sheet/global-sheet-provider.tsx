@@ -68,8 +68,8 @@ export function GlobalSheetProvider({ children }: { children: React.ReactNode })
       {children}
       <Sheet open={isOpen} onOpenChange={handleClose}>
         <SheetContent
-          side={isMobile ? 'bottom' : 'left'}
-          className={`w-full max-w-none gap-0 sm:m-4 sm:h-[calc(100vh-2.5rem)] sm:rounded-lg sm:border sm:p-0 ${isMobile ? 'h-[99vh] rounded-t-xl' : ''} ${
+          isMobileSheet
+          className={`w-full max-w-none gap-0 sm:m-4 sm:h-[calc(100vh-2.5rem)] sm:rounded-lg sm:border sm:p-0 ${
             currentSheet?.size === 'sm'
               ? 'sm:max-w-md'
               : currentSheet?.size === 'md'
