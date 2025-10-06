@@ -139,13 +139,13 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
           control={form.control}
           name="name"
           render={({ field }) => (
-            <div>
-              {/*<FormLabel>اسم العميل ***</FormLabel>*/}
-              {/*<FormControl >*/}
-              <Input className="text-xl" size={100} placeholder="أدخل اسم العميل الكامل" {...field} />
-              {/*</FormControl>*/}
-              {/*<FormMessage />*/}
-            </div>
+            <FormItem>
+              <FormLabel>اسم العميل *</FormLabel>
+              <FormControl>
+                <Input placeholder="أدخل اسم العميل الكامل" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
         />
 
