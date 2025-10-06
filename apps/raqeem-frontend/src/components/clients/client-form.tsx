@@ -142,7 +142,7 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
             <div>
               {/*<FormLabel>اسم العميل ***</FormLabel>*/}
               {/*<FormControl >*/}
-              <Input className="text-lg" size={100} placeholder="أدخل اسم العميل الكامل" {...field} />
+              <Input className="text-xl" size={100} placeholder="أدخل اسم العميل الكامل" {...field} />
               {/*</FormControl>*/}
               {/*<FormMessage />*/}
             </div>
