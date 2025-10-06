@@ -312,22 +312,13 @@
   }
 
   /* Make selectable elements selectable again */
-  /*input,
+  input,
   textarea,
   [contenteditable] {
     -webkit-user-select: text;
     -moz-user-select: text;
     -ms-user-select: text;
     user-select: text;
-  }*/
-}
-
-/* iOS PWA specific styles */
-@media (display-mode: standalone) and (-webkit-touch-callout: none) {
-  /* iOS status bar padding */
-  :root {
-    --safe-area-inset-top: env(safe-area-inset-top);
-    --safe-area-inset-bottom: env(safe-area-inset-bottom);
   }
 }
 
