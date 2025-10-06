@@ -299,21 +299,21 @@ export function ClientsTable({
     <div className="w-full">
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          <ClientAvatar client={row.original} size="sm" />
+          <ClientAvatar client={row.original} size="md" />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="text-foreground truncate text-sm font-medium">{row.original.name}</span>
+              <span className="text-foreground text-md truncate font-medium md:text-sm">{row.original.name}</span>
               <Badge
                 variant="outline"
                 className={cn(
-                  'shrink-0 px-1 py-0 text-xs',
+                  'shrink-0 px-1 py-0 text-base md:text-xs',
                   clientTypeColors[row.original.clientType as keyof typeof clientTypeColors]
                 )}
               >
                 {clientTypeLabels[row.original.clientType as keyof typeof clientTypeLabels]}
               </Badge>
             </div>
-            <div className="text-muted-foreground mt-0.5 flex items-center gap-3 text-xs">
+            <div className="text-muted-foreground mt-0.5 flex items-center gap-3 text-sm md:text-xs">
               {row.original.phone && (
                 <div className="flex items-center gap-1">
                   <Phone className="h-2.5 w-2.5" />
@@ -323,7 +323,7 @@ export function ClientsTable({
               {row.original.email && (
                 <div className="flex items-center gap-1">
                   <Mail className="h-2.5 w-2.5" />
-                  <span className="">{row.original.email}</span>
+                  <span className="text-sm md:text-xs">{row.original.email}</span>
                 </div>
               )}
             </div>
