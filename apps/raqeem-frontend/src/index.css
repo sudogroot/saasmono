@@ -312,14 +312,14 @@
   }
 
   /* Make selectable elements selectable again */
-  input,
+  /*input,
   textarea,
   [contenteditable] {
     -webkit-user-select: text;
     -moz-user-select: text;
     -ms-user-select: text;
     user-select: text;
-  }
+  }*/
 }
 
 /* iOS PWA specific styles */
@@ -328,57 +328,6 @@
   :root {
     --safe-area-inset-top: env(safe-area-inset-top);
     --safe-area-inset-bottom: env(safe-area-inset-bottom);
-  }
-}
-
-/* CRITICAL: Prevent zoom on input focus on iOS - applies to ALL modes */
-@supports (-webkit-touch-callout: none) {
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="number"],
-  input[type="tel"],
-  input[type="search"],
-  input[type="url"],
-  textarea,
-  select,
-  input {
-    font-size: 16px !important;
-    -webkit-text-size-adjust: 100% !important;
-  }
-}
-
-/* Fallback for all mobile touch devices */
-@media (hover: none) and (pointer: coarse) {
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="number"],
-  input[type="tel"],
-  input[type="search"],
-  input[type="url"],
-  textarea,
-  select,
-  input {
-    font-size: 16px !important;
-    -webkit-text-size-adjust: 100% !important;
-  }
-}
-
-/* Extra aggressive fix for all viewports under 768px */
-@media (max-width: 767px) {
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="number"],
-  input[type="tel"],
-  input[type="search"],
-  input[type="url"],
-  textarea,
-  select,
-  input {
-    font-size: 16px !important;
-    -webkit-text-size-adjust: 100% !important;
   }
 }
 
