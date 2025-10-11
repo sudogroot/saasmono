@@ -6,6 +6,7 @@ import { studentManagementRouter } from './students'
 import { teacherManagementRouter } from './teachers'
 import { timetableManagementRouter } from './timetable'
 import { userManagementRouter } from './user'
+import { sessionNoteManagementRouter } from './sessionNotes'
 
 export const managementRouter = {
   users: userManagementRouter,
@@ -15,4 +16,5 @@ export const managementRouter = {
   curriculum: curriculumManagementRouter,
   classroom: classroomManagementRouter,
   timetables: timetableManagementRouter,
+  sessionNotes: sessionNoteManagementRouter,
 }

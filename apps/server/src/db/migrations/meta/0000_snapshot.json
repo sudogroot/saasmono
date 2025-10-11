@@ -1,5 +1,5 @@
 {
-  "id": "0b250507-3966-454c-be84-8e502427a6b2",
+  "id": "e316d819-ccba-4f4c-8287-70bab16bafd7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -2393,6 +2393,24 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "keywords": {
+          "name": "keywords",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "summary": {
+          "name": "summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "is_private": {
           "name": "is_private",

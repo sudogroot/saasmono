@@ -11,6 +11,8 @@ import path from 'path'
 import { auth } from './lib/auth'
 import { createContext } from './lib/context'
 import { appRouter } from './routers'
+import { upload } from './routers/managment/upload'
+import { validateFile } from './lib/fileUtils'
 
 const app = express()
 
@@ -27,6 +29,38 @@ app.all('/api/auth{/*path}', toNodeHandler(auth))
 
 // Serve static images - must be before orpc handlers
 app.use('/images', express.static(path.join(process.cwd(), 'src', 'images')))
+
+// Serve public files (including uploaded files)
+app.use('/public', express.static(path.join(process.cwd(), 'src', 'public')))
+
+// Global upload endpoint (reusable for all features)
+app.post('/api/management/upload-temp-file', upload.single('file'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' })
+    }
+
+    // Validate file
+    const validation = validateFile(req.file)
+    if (!validation.valid) {
+      return res.status(400).json({ error: validation.error })
+    }
+
+    // Return file metadata
+    return res.status(200).json({
+      fileName: req.file.filename,
+      tempPath: `/tmp/${req.file.filename}`,
+      fileSize: req.file.size,
+      mimeType: req.file.mimetype,
+      originalName: req.file.originalname,
+    })
+  } catch (error) {
+    console.error('Upload error:', error)
+    return res.status(500).json({
+      error: error instanceof Error ? error.message : 'Upload failed',
+    })
+  }
+})
 
 const rpcHandler = new RPCHandler(appRouter, {
   interceptors: [

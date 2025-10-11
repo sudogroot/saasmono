@@ -8,6 +8,12 @@ export const sessionNote = pgTable('session_note', {
   id: uuid('id').primaryKey().defaultRandom(),
   title: text('title').notNull(),
   content: text('content').notNull(),
+
+  // Cornell Notes structure
+  keywords: text('keywords'), // Comma-separated keywords (cleaned: lowercase, no special chars)
+  notes: text('notes'), // Main notes content (QuillJS Delta JSON)
+  summary: text('summary'), // Summary section content
+
   isPrivate: boolean('is_private').default(false).notNull(), // Private to teacher vs visible to students/parents
 
   timetableId: uuid('timetable_id')
