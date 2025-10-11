@@ -93,6 +93,12 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
     const url = new URL(window.location.href)
     url.searchParams.set('tab', value)
     window.history.replaceState({}, '', url.toString())
+
+    // Update global sheet store so child sheets preserve this tab
+    const currentSheet = globalSheet.getNavigationInfo().currentSheet
+    if (currentSheet) {
+      currentSheet.urlParams = { ...currentSheet.urlParams, tab: value }
+    }
   }
 
   const {

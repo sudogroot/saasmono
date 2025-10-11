@@ -333,6 +333,7 @@ const openSheet = (type: 'details' | 'form', entity: 'case' | 'client' | 'oppone
   if (props.clientId && entity !== 'client') urlParams.clientId = props.clientId
   if (props.opponentId) urlParams.opponentId = props.opponentId
   if (props.courtId) urlParams.courtId = props.courtId
+  if (props.currentTab) urlParams.tab = props.currentTab
 
   // Build sheet data
   const sheetData: GlobalSheetData = {
@@ -444,8 +445,12 @@ const createSheetFromUrl = (componentName: string, urlParams: Record<string, str
  */
 export const globalSheet = {
   // Entity-specific methods (maintained for backward compatibility)
-  openCaseDetails: (props: { slug: string; caseId: string; size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'; reset?: boolean }) =>
-    openSheet('details', 'case', props),
+  openCaseDetails: (props: { slug: string; caseId: string; size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'; reset?: boolean }) => {
+    // Include current tab from URL if it exists
+    const urlParams = getUrlParams()
+    const propsWithTab = urlParams.tab ? { ...props, currentTab: urlParams.tab } : props
+    return openSheet('details', 'case', propsWithTab)
+  },
 
   openCaseForm: (props: {
     mode: 'create' | 'edit'
@@ -470,7 +475,12 @@ export const globalSheet = {
     clientId: string
     size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
     reset?: boolean
-  }) => openSheet('details', 'client', props),
+  }) => {
+    // Include current tab from URL if it exists
+    const urlParams = getUrlParams()
+    const propsWithTab = urlParams.tab ? { ...props, currentTab: urlParams.tab } : props
+    return openSheet('details', 'client', propsWithTab)
+  },
 
   openClientForm: (props: {
     mode: 'create' | 'edit'
