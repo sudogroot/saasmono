@@ -1,5 +1,6 @@
 'use client'
 
+import { globalSheet } from '@/stores/global-sheet-store'
 import { orpc } from '@/utils/orpc'
 import {
   Badge,
@@ -12,6 +13,9 @@ import {
   FormMessage,
   Heading,
   Input,
+  SearchSelect,
+  type SearchSelectOption,
+  type SearchSelectGroup,
   Select,
   SelectContent,
   SelectItem,
@@ -20,7 +24,7 @@ import {
   Textarea,
 } from '@repo/ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { FileText, Gavel, Loader2, Save, User, UserX, Scale } from 'lucide-react'
+import { FileText, Gavel, Loader2, Save, Scale, User, UserX } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -336,20 +340,31 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>العميل *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!!presetData?.clientId}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="اختر العميل" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {clients.map((client) => (
-                        <SelectItem key={client.id} value={client.id}>
-                          {client.name} ({client.clientType})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchSelect
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      options={clients.map((client) => ({
+                        id: client.id,
+                        label: client.name,
+                        metadata: client.clientType,
+                      }))}
+                      placeholder="اختر العميل"
+                      searchPlaceholder="ابحث عن عميل..."
+                      emptyMessage="لا يوجد عملاء"
+                      disabled={!!presetData?.clientId}
+                      clearable={true}
+                      allowCreate={true}
+                      createLabel="إضافة عميل جديد"
+                      onCreateClick={() => {
+                        globalSheet.openClientForm({
+                          mode: 'create',
+                          slug: 'clients',
+                          size: 'md',
+                        })
+                      }}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -361,21 +376,24 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>الخصم</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!!presetData?.opponentId}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="اختر الخصم (اختياري)" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="none">بدون خصم</SelectItem>
-                      {opponents.map((opponent) => (
-                        <SelectItem key={opponent.id} value={opponent.id}>
-                          {opponent.name} ({opponent.opponentType})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchSelect
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      options={opponents.map((opponent) => ({
+                        id: opponent.id,
+                        label: opponent.name,
+                        metadata: opponent.opponentType,
+                      }))}
+                      placeholder="اختر الخصم (اختياري)"
+                      searchPlaceholder="ابحث عن خصم..."
+                      emptyMessage="لا يوجد خصوم"
+                      disabled={!!presetData?.opponentId}
+                      clearable={true}
+                      allowNone={true}
+                      noneLabel="بدون خصم"
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -396,28 +414,26 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
             render={({ field }) => (
               <FormItem>
                 <FormLabel>المحكمة</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!!presetData?.courtId}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="اختر المحكمة (اختياري)" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="none">بدون محكمة</SelectItem>
-                    {courtsByState.map((stateGroup) => (
-                      <div key={stateGroup.state}>
-                        <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
-                          {stateGroup.state}
-                        </div>
-                        {stateGroup.courts.map((court) => (
-                          <SelectItem key={court.id} value={court.id} className="pl-6">
-                            {court.name}
-                          </SelectItem>
-                        ))}
-                      </div>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <SearchSelect
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    groups={courtsByState.map((stateGroup) => ({
+                      groupLabel: stateGroup.state,
+                      options: stateGroup.courts.map((court) => ({
+                        id: court.id,
+                        label: court.name,
+                      })),
+                    }))}
+                    placeholder="اختر المحكمة (اختياري)"
+                    searchPlaceholder="ابحث عن محكمة..."
+                    emptyMessage="لا توجد محاكم"
+                    disabled={!!presetData?.courtId}
+                    clearable={true}
+                    allowNone={true}
+                    noneLabel="بدون محكمة"
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
