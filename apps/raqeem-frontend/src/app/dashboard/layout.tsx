@@ -7,6 +7,7 @@ import { authClient } from '@/lib/auth-client'
 import { globalSheet } from '@/stores/global-sheet-store'
 import { DashboardLayout, MobileNav } from '@repo/ui'
 import { usePathname, useRouter } from 'next/navigation'
+import { Toaster } from 'sonner'
 
 export default function NewLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
@@ -91,38 +92,43 @@ export default function NewLayout({ children }: { children: React.ReactNode }) {
   // Initialize sheets from URL parameters
   useSheetUrlSync()
 
-  return (
-    <DashboardLayout
-      sidebarData={{
-        ...raqeemDashboardSidebarData,
-        user: {
-          name: user?.name,
-          email: user?.email,
-          avatar: user?.image || '/raqeem-icon.svg',
-          onLogout: async () => {
-            await authClient.signOut()
-            window.location.href = '/'
-          },
-        },
-      }}
-      brandLogo={<img src="/logo.svg" alt="رقيم" className="!w-24" />}
-      brandIcon={<img src="/raqeem-icon.svg" alt="رقيم" className="!w-[34px]" />}
-    >
-      {children}
+  console.log('Dashboard layout rendering, Toaster should mount')
 
-      {/* Mobile Navigation */}
-      <MobileNav
-        mainNavItems={mainNavItems}
-        quickActions={quickActions}
-        drawerItems={drawerItems}
-        basePath="/dashboard"
-        onQuickAction={handleMobileQuickAction}
-        onLogout={handleMobileLogout}
-        notifications={{
-          count: 3,
-          variant: 'destructive',
+  return (
+    <>
+      <DashboardLayout
+        sidebarData={{
+          ...raqeemDashboardSidebarData,
+          user: {
+            name: user?.name,
+            email: user?.email,
+            avatar: user?.image || '/raqeem-icon.svg',
+            onLogout: async () => {
+              await authClient.signOut()
+              window.location.href = '/'
+            },
+          },
         }}
-      />
-    </DashboardLayout>
+        brandLogo={<img src="/logo.svg" alt="رقيم" className="!w-24" />}
+        brandIcon={<img src="/raqeem-icon.svg" alt="رقيم" className="!w-[34px]" />}
+      >
+        {children}
+
+        {/* Mobile Navigation */}
+        <MobileNav
+          mainNavItems={mainNavItems}
+          quickActions={quickActions}
+          drawerItems={drawerItems}
+          basePath="/dashboard"
+          onQuickAction={handleMobileQuickAction}
+          onLogout={handleMobileLogout}
+          notifications={{
+            count: 3,
+            variant: 'destructive',
+          }}
+        />
+      </DashboardLayout>
+      <Toaster richColors position="bottom-right" dir="rtl" />
+    </>
   )
 }

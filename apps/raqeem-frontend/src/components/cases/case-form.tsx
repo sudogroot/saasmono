@@ -1,5 +1,7 @@
 'use client'
 
+import { globalSheet } from '@/stores/global-sheet-store'
+import { useSheetFormState } from '@/stores/sheet-form-state-store'
 import { orpc } from '@/utils/orpc'
 import {
   Badge,
@@ -12,6 +14,9 @@ import {
   FormMessage,
   Heading,
   Input,
+  SearchSelect,
+  type SearchSelectOption,
+  type SearchSelectGroup,
   Select,
   SelectContent,
   SelectItem,
@@ -20,8 +25,8 @@ import {
   Textarea,
 } from '@repo/ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { FileText, Gavel, Loader2, Save, User, UserX, Scale } from 'lucide-react'
-import { useState } from 'react'
+import { FileText, Gavel, Loader2, Save, Scale, User, UserX } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -70,10 +75,17 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const isEditing = !!caseId
   const queryClient = useQueryClient()
+  const { saveFormState, getFormState, clearFormState } = useSheetFormState()
+
+  // Unique key for storing this form's state
+  const formStateKey = `case-form-${caseId || 'new'}`
+
+  // Check if we have saved state to restore
+  const savedFormState = getFormState(formStateKey)
 
   const form = useForm({
     // resolver: zodResolver(caseFormSchema),
-    defaultValues: {
+    defaultValues: savedFormState || {
       caseNumber: initialData?.caseNumber || '',
       caseTitle: initialData?.caseTitle || '',
       caseSubject: initialData?.caseSubject || '',
@@ -85,6 +97,14 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
       priority: initialData?.priority || 'medium',
     },
   })
+
+  // Restore saved form state when component mounts (if available)
+  useEffect(() => {
+    if (savedFormState) {
+      form.reset(savedFormState)
+    }
+  }, [])
+
 
   // Fetch clients for dropdown
   const { data: clients = [] } = useQuery({
@@ -106,8 +126,21 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
       onSuccess: (data) => {
         toast.success('تم إنشاء القضية بنجاح')
         form.reset()
-        queryClient.invalidateQueries({ queryKey: orpc.cases.listCases?.key?.() || ['cases'] })
-        onSuccess?.(data)
+        clearFormState(formStateKey) // Clear saved state after successful submission
+        queryClient.invalidateQueries({ queryKey: ['cases'] })
+
+        // If onSuccess callback is provided, call it
+        if (onSuccess) {
+          onSuccess(data)
+        } else {
+          // Default behavior: Replace form sheet with case details
+          globalSheet.openCaseDetails({
+            slug: 'cases',
+            caseId: data.id,
+            size: 'lg',
+            reset: true,
+          })
+        }
       },
       onError: (error: any) => {
         toast.error(`حدث خطأ: ${error.message}`)
@@ -122,11 +155,22 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
     orpc.cases.updateCase.mutationOptions({
       onSuccess: (data) => {
         toast.success('تم تحديث القضية بنجاح')
-        queryClient.invalidateQueries({ queryKey: orpc.cases.listCases?.key?.() || ['cases'] })
-        queryClient.invalidateQueries({
-          queryKey: orpc.cases.getCaseById?.key?.({ input: { caseId: caseId! } }) || ['case', caseId],
-        })
-        onSuccess?.(data)
+        clearFormState(formStateKey) // Clear saved state after successful submission
+        queryClient.invalidateQueries({ queryKey: ['cases'] })
+        queryClient.invalidateQueries({ queryKey: ['case', caseId] })
+
+        // If onSuccess callback is provided, call it
+        if (onSuccess) {
+          onSuccess(data)
+        } else {
+          // Default behavior: Replace form sheet with case details
+          globalSheet.openCaseDetails({
+            slug: 'cases',
+            caseId: data.id,
+            size: 'lg',
+            reset: true,
+          })
+        }
       },
       onError: (error: any) => {
         toast.error(`حدث خطأ: ${error.message}`)
@@ -336,20 +380,55 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>العميل *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!!presetData?.clientId}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="اختر العميل" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {clients.map((client) => (
-                        <SelectItem key={client.id} value={client.id}>
-                          {client.name} ({client.clientType})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchSelect
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      options={clients.map((client) => ({
+                        id: client.id,
+                        label: client.name,
+                        metadata: client.clientType,
+                      }))}
+                      placeholder="اختر العميل"
+                      searchPlaceholder="ابحث عن عميل..."
+                      emptyMessage="لا يوجد عملاء"
+                      disabled={!!presetData?.clientId}
+                      clearable={true}
+                      allowCreate={true}
+                      createLabel="إضافة عميل جديد"
+                      onCreateClick={(searchValue) => {
+                        // Save current form state before navigating
+                        saveFormState(formStateKey, form.getValues())
+
+                        globalSheet.openClientForm({
+                          mode: 'create',
+                          slug: 'clients',
+                          size: 'md',
+                          initialData: {
+                            name: searchValue,
+                          },
+                          onSuccess: async (createdClient: any) => {
+                            // Wait for queries to refetch so the new client appears in the dropdown
+                            await queryClient.refetchQueries({
+                              queryKey: orpc.clients.getClientsForDropdown.key(),
+                            })
+
+                            // Get the saved form state and update with new client
+                            const savedState = getFormState(formStateKey)
+                            if (savedState) {
+                              saveFormState(formStateKey, {
+                                ...savedState,
+                                clientId: createdClient.id,
+                              })
+                            }
+
+                            // Close the client form sheet and return to case form
+                            globalSheet.back()
+                          },
+                        })
+                      }}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -361,21 +440,57 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>الخصم</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!!presetData?.opponentId}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="اختر الخصم (اختياري)" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="none">بدون خصم</SelectItem>
-                      {opponents.map((opponent) => (
-                        <SelectItem key={opponent.id} value={opponent.id}>
-                          {opponent.name} ({opponent.opponentType})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchSelect
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      options={opponents.map((opponent) => ({
+                        id: opponent.id,
+                        label: opponent.name,
+                        metadata: opponent.opponentType,
+                      }))}
+                      placeholder="اختر الخصم (اختياري)"
+                      searchPlaceholder="ابحث عن خصم..."
+                      emptyMessage="لا يوجد خصوم"
+                      disabled={!!presetData?.opponentId}
+                      clearable={true}
+                      allowNone={true}
+                      noneLabel="بدون خصم"
+                      allowCreate={true}
+                      createLabel="إضافة خصم جديد"
+                      onCreateClick={(searchValue) => {
+                        // Save current form state before navigating
+                        saveFormState(formStateKey, form.getValues())
+
+                        globalSheet.openOpponentForm({
+                          mode: 'create',
+                          slug: 'opponents',
+                          size: 'md',
+                          initialData: {
+                            name: searchValue,
+                          },
+                          onSuccess: async (createdOpponent: any) => {
+                            // Wait for queries to refetch so the new opponent appears in the dropdown
+                            await queryClient.refetchQueries({
+                              queryKey: orpc.opponents.getOpponentsForDropdown.key(),
+                            })
+
+                            // Get the saved form state and update with new opponent
+                            const savedState = getFormState(formStateKey)
+                            if (savedState) {
+                              saveFormState(formStateKey, {
+                                ...savedState,
+                                opponentId: createdOpponent.id,
+                              })
+                            }
+
+                            // Close the opponent form sheet and return to case form
+                            globalSheet.back()
+                          },
+                        })
+                      }}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -396,28 +511,26 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
             render={({ field }) => (
               <FormItem>
                 <FormLabel>المحكمة</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!!presetData?.courtId}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="اختر المحكمة (اختياري)" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="none">بدون محكمة</SelectItem>
-                    {courtsByState.map((stateGroup) => (
-                      <div key={stateGroup.state}>
-                        <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
-                          {stateGroup.state}
-                        </div>
-                        {stateGroup.courts.map((court) => (
-                          <SelectItem key={court.id} value={court.id} className="pl-6">
-                            {court.name}
-                          </SelectItem>
-                        ))}
-                      </div>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <SearchSelect
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    groups={courtsByState.map((stateGroup) => ({
+                      groupLabel: stateGroup.state,
+                      options: stateGroup.courts.map((court) => ({
+                        id: court.id,
+                        label: court.name,
+                      })),
+                    }))}
+                    placeholder="اختر المحكمة (اختياري)"
+                    searchPlaceholder="ابحث عن محكمة..."
+                    emptyMessage="لا توجد محاكم"
+                    disabled={!!presetData?.courtId}
+                    clearable={true}
+                    allowNone={true}
+                    noneLabel="بدون محكمة"
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

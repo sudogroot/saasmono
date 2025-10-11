@@ -6,6 +6,8 @@ import { orpc } from '@/utils/orpc'
 import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Separator, Tabs, TabsContent, TabsList, TabsTrigger, Text, ValueText } from '@repo/ui'
 import { useQuery } from '@tanstack/react-query'
 import { AlertCircle, Calendar, Clock, Edit, FileText, Gavel, Loader2, Mail, Phone, Plus, Scale, User } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 interface ClientDetailsSheetProps {
   clientId: string
@@ -76,6 +78,29 @@ const priorityLabels = {
 } as const
 
 export function ClientDetails({ clientId, organizationId, renderMode = 'content' }: ClientDetailsSheetProps) {
+  const searchParams = useSearchParams()
+  const urlTab = searchParams.get('tab') || 'info'
+  const [activeTab, setActiveTab] = useState(urlTab)
+
+  // Update active tab when URL param changes
+  useEffect(() => {
+    setActiveTab(urlTab)
+  }, [urlTab])
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value)
+    // Update URL params
+    const url = new URL(window.location.href)
+    url.searchParams.set('tab', value)
+    window.history.replaceState({}, '', url.toString())
+
+    // Update global sheet store so child sheets preserve this tab
+    const currentSheet = globalSheet.getNavigationInfo().currentSheet
+    if (currentSheet) {
+      currentSheet.urlParams = { ...currentSheet.urlParams, tab: value }
+    }
+  }
+
   const {
     data: clientData,
     isLoading,
@@ -134,12 +159,16 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
         clientId: clientData.id,
       },
       size: 'md',
+      onSuccess: () => {
+        // Return to client details with cases tab active
+        globalSheet.back()
+      },
     })
   }
 
   return (
     <div className="space-y-6 p-2">
-      <Tabs dir="rtl" defaultValue="info">
+      <Tabs dir="rtl" value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="mb-2">
           <TabsTrigger value={'info'} className="text-muted-foreground text-sm font-medium">
             المعلومات الشخصية

@@ -3,7 +3,7 @@
 import React, { useRef, useCallback, useState } from "react";
 import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
-import { Search, Loader2, Filter } from "lucide-react";
+import { Search, Loader2, Filter, Plus } from "lucide-react";
 import { cn } from "../../../lib/utils";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { FilterDrawer } from "./filter-drawer";
@@ -138,16 +138,29 @@ export function MobileTable<TData>({
     );
   }
 
+  // Extract onClick handler from headerActions button
+  const extractButtonClick = (element: React.ReactNode): (() => void) | undefined => {
+    if (React.isValidElement(element)) {
+      const props = element.props as any;
+      if (props?.onClick) {
+        return props.onClick;
+      }
+    }
+    return undefined;
+  };
+
+  const fabOnClick = headerActions ? extractButtonClick(headerActions) : undefined;
+
   return (
-    <div className={cn("flex flex-col h-full bg-background", className)}>
+    <div className={cn("flex flex-col h-full bg-background relative", className)}>
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background border-b border-border/50">
+        {/* Title Section (No Actions on Mobile) */}
         {tableTitle && (
-          <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center px-4 py-3 border-b border-border/30">
             <h1 className="text-lg font-semibold text-foreground">
               {tableTitle}
             </h1>
-            {headerActions}
           </div>
         )}
 
@@ -300,6 +313,17 @@ export function MobileTable<TData>({
           onFilterChange={handleFilterChange}
           onClearAll={handleClearAllFilters}
         />
+      )}
+
+      {/* Floating Action Button (FAB) */}
+      {headerActions && fabOnClick && (
+        <Button
+          onClick={fabOnClick}
+          className="fixed bottom-20 right-4 h-11 w-11 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] transition-all duration-200 z-40 p-0"
+          size="icon"
+        >
+          <Plus className="h-5 w-5" />
+        </Button>
       )}
     </div>
   );

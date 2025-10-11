@@ -13,6 +13,8 @@ import {
   FormMessage,
   Heading,
   Input,
+  SearchSelect,
+  type SearchSelectOption,
   Select,
   SelectContent,
   SelectItem,
@@ -202,20 +204,22 @@ export function TrialForm({ initialData, trialId, caseId, presetData, onSuccess,
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>القضية *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!!(presetData?.caseId || caseId)}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="اختر القضية" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {cases.map((caseItem: any) => (
-                        <SelectItem key={caseItem.id} value={caseItem.id}>
-                          {caseItem.caseNumber} - {caseItem.caseTitle}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchSelect
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      options={cases.map((caseItem: any) => ({
+                        id: caseItem.id,
+                        label: `${caseItem.caseNumber} - ${caseItem.caseTitle}`,
+                        searchLabel: `${caseItem.caseNumber} ${caseItem.caseTitle}`,
+                      }))}
+                      placeholder="اختر القضية"
+                      searchPlaceholder="ابحث عن قضية..."
+                      emptyMessage="لا توجد قضايا"
+                      disabled={!!(presetData?.caseId || caseId)}
+                      clearable={false}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -260,20 +264,22 @@ export function TrialForm({ initialData, trialId, caseId, presetData, onSuccess,
             render={({ field }) => (
               <FormItem>
                 <FormLabel>المحكمة *</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="اختر المحكمة" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {courts.map((court) => (
-                      <SelectItem key={court.id} value={court.id}>
-                        {court.name} - {court.state}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <SearchSelect
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    options={courts.map((court) => ({
+                      id: court.id,
+                      label: court.name,
+                      metadata: court.state,
+                      searchLabel: `${court.name} ${court.state}`,
+                    }))}
+                    placeholder="اختر المحكمة"
+                    searchPlaceholder="ابحث عن محكمة..."
+                    emptyMessage="لا توجد محاكم"
+                    clearable={false}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

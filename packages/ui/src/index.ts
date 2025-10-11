@@ -16,6 +16,7 @@ export {
   NavSecondary,
   NavUser,
 } from "./layout";
+export { CopyButton } from "./components/base/copy-button/copy-button";
 export {
   GenericTable,
   MobileTable,
@@ -26,6 +27,7 @@ export {
   TablePagination,
 } from "./components/base/table";
 export { ValueText, Heading, Text, Code } from "./components/base/typography";
+export { SearchSelect } from "./components/base/search-select";
 export type {
   GenericTableProps,
   TablePaginationProps,
@@ -40,6 +42,11 @@ export type {
   TextProps,
   CodeProps,
 } from "./components/base/typography";
+export type {
+  SearchSelectProps,
+  SearchSelectOption,
+  SearchSelectGroup,
+} from "./components/base/search-select";
 export type {
   HeaderProps,
   AppSidebarProps,

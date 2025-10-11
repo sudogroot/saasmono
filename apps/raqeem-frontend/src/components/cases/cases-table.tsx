@@ -1,6 +1,5 @@
 'use client'
 
-import { GenericTable } from '@/components/base/table'
 import { cn } from '@/lib/utils'
 import { globalSheet } from '@/stores/global-sheet-store'
 import {
@@ -18,6 +17,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  GenericTable,
 } from '@repo/ui'
 // import type { Case } from '@/types'
 import { orpc } from '@/utils/orpc'
@@ -35,7 +35,6 @@ import { usePathname } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 // import { casePriorityBadges, PriorityBadge } from '../base/badge'
-import { CaseAvatar } from './case-avatar'
 
 interface CasesTableProps {
   // cases?: Case[]
@@ -170,7 +169,6 @@ export function CasesTable({
         header: 'القضية',
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
-            <CaseAvatar case_={row.original} size="md" />
             <div>
               <div className="text-foreground font-medium">{row.original.caseTitle}</div>
               <div className="text-muted-foreground font-mono text-sm">{row.original.caseNumber}</div>
@@ -243,33 +241,33 @@ export function CasesTable({
         header: 'الإجراءات',
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                if (onView) {
-                  onView(row.original.id)
-                } else {
-                  globalSheet.openCaseDetails({
-                    slug: currentSlug,
-                    caseId: row.original.id,
-                    size: 'lg',
-                  })
-                }
-              }}
-              title="عرض"
-            >
-              <Eye className="h-4 w-4" />
-            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
+                <Button variant="outline" size="sm">
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => {
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    if (onView) {
+                      onView(row.original.id)
+                    } else {
+                      globalSheet.openCaseDetails({
+                        slug: currentSlug,
+                        caseId: row.original.id,
+                        size: 'md',
+                      })
+                    }
+                  }}
+                >
+                  <Eye className="ml-2 h-4 w-4" />
+                  عرض
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(event) => {
+                    event.stopPropagation()
                     if (onEdit) {
                       onEdit(row.original.id)
                     } else {
@@ -277,7 +275,7 @@ export function CasesTable({
                         mode: 'edit',
                         slug: currentSlug,
                         caseId: row.original.id,
-                        size: 'lg',
+                        size: 'md',
                       })
                     }
                   }}
@@ -286,7 +284,10 @@ export function CasesTable({
                   تعديل
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => handleDelete(row.original.id)}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    handleDelete(row.original.id)
+                  }}
                   className="text-destructive focus:text-destructive"
                 >
                   <Trash2 className="ml-2 h-4 w-4" />
@@ -420,7 +421,6 @@ export function CasesTable({
     <div className="w-full">
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          <CaseAvatar case_={row.original} size="sm" />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <span className="text-foreground truncate text-sm font-medium">{row.original.caseTitle}</span>
@@ -448,17 +448,18 @@ export function CasesTable({
 
         <div className="mx-2">
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             className="h-8 w-8 p-0"
-            onClick={() => {
+            onClick={(event) => {
+              event.stopPropagation()
               if (onView) {
                 onView(row.original.id)
               } else {
                 globalSheet.openCaseDetails({
                   slug: currentSlug,
                   caseId: row.original.id,
-                  size: 'lg',
+                  size: 'md',
                 })
               }
             }}
@@ -508,6 +509,17 @@ export function CasesTable({
       <GenericTable
         table={table}
         isLoading={isLoading}
+        onRowClick={(row) => {
+          if (onView) {
+            onView(row.original.id)
+          } else {
+            globalSheet.openCaseDetails({
+              slug: currentSlug,
+              caseId: row.original.id,
+              size: 'md',
+            })
+          }
+        }}
         error={error}
         searchValue={searchValue}
         onSearchChange={setSearchValue}

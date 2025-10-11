@@ -59,7 +59,7 @@ function Combobox({
   return (
     <ComboboxContext.Provider value={{ open, setOpen, isDesktop }}>
       {isDesktop ? (
-        <Popover data-slot="combobox" open={open} onOpenChange={setOpen} {...props}>
+        <Popover data-slot="combobox" open={open} onOpenChange={setOpen} modal={true} {...props}>
           {children}
         </Popover>
       ) : (

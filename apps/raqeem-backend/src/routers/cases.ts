@@ -28,9 +28,24 @@ export const caseRouter = {
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
       const userId = getCurrentUserId(context)
+
+      console.log('[CREATE CASE] Request received:', {
+        orgId,
+        userId,
+        input: JSON.stringify(input, null, 2)
+      })
+
       try {
-        return await caseService.createCase(orgId, userId, input)
+        const result = await caseService.createCase(orgId, userId, input)
+        console.log('[CREATE CASE] Success:', { caseId: result.id })
+        return result
       } catch (error) {
+        console.error('[CREATE CASE] Error:', {
+          message: error instanceof Error ? error.message : 'Unknown error',
+          stack: error instanceof Error ? error.stack : undefined,
+          error: error,
+          input: JSON.stringify(input, null, 2)
+        })
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to create case')
       }
     }),

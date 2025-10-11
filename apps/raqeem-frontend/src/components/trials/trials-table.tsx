@@ -295,6 +295,69 @@ export function TrialsTable({
     </Button>
   ) : null
 
+  const mobileCardRenderer = (row: any) => {
+    const trial = row.original
+    const trialDate = new Date(trial.trialDateTime)
+    const timeBadge = getTrialTimeBadge(trialDate)
+
+    return (
+      <div className="w-full">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex min-w-0 flex-1 items-center gap-3">
+            <div className="bg-primary/10 text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-full">
+              <span className="text-sm font-bold">#{trial.trialNumber}</span>
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <span className="text-foreground truncate font-medium">{trial.caseNumber}</span>
+                <Badge variant="outline" className={cn('shrink-0 px-1.5 py-0 text-xs', timeBadge.className)}>
+                  {timeBadge.label}
+                </Badge>
+              </div>
+              <div className="text-muted-foreground mt-0.5 text-xs">{trial.caseTitle}</div>
+              <div className="text-muted-foreground mt-1 flex flex-wrap items-center gap-2 text-xs">
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  <span>{format(trialDate, 'dd/MM/yyyy', { locale: ar })}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
+                  <span>{format(trialDate, 'hh:mm a', { locale: ar })}</span>
+                </div>
+              </div>
+              <div className="text-muted-foreground mt-1 flex items-center gap-2 text-xs">
+                <Gavel className="h-3 w-3" />
+                <span className="truncate">{trial.courtName}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mx-2">
+            <Eye className="text-muted-foreground h-4 w-4" />
+          </div>
+        </div>
+        <div className="bg-border/30 h-px w-full" />
+      </div>
+    )
+  }
+
+  if (trials.length === 0 && !isLoading) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <div className="space-y-4 text-center">
+          <div className="bg-muted mx-auto flex h-16 w-16 items-center justify-center rounded-full">
+            <Calendar className="text-muted-foreground h-8 w-8" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold">لا توجد جلسات</h3>
+            <p className="text-muted-foreground mt-1">ابدأ بإضافة جلسة جديدة لإدارة مواعيد المحاكمات</p>
+          </div>
+          {emptyStateAction}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <GenericTable
       table={table}
@@ -302,6 +365,13 @@ export function TrialsTable({
       error={error}
       searchValue={searchValue}
       onSearchChange={setSearchValue}
+      onRowClick={(row) => {
+        globalSheet.openTrialDetails({
+          slug: currentSlug,
+          trialId: row.original.id,
+          size: 'lg',
+        })
+      }}
       searchPlaceholder="البحث عن جلسة (رقم، قضية، عميل، محكمة...)"
       noDataMessage="لا توجد جلسات مطابقة للبحث"
       showQuickFilters={true}
@@ -310,6 +380,9 @@ export function TrialsTable({
       onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
       headerActions={headerActions}
       emptyStateAction={emptyStateAction}
+      mobileCardRenderer={mobileCardRenderer}
+      enableVirtualScroll={true}
+      virtualItemHeight={90}
       className="w-full"
     />
   )

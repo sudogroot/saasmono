@@ -22,7 +22,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           <ReactQueryDevtools />
         </GlobalSheetProvider>
       </QueryClientProvider>
-      <Toaster richColors position="bottom-left" />
     </ThemeProvider>
   )
 }
