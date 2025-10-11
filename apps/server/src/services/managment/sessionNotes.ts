@@ -1,5 +1,7 @@
 import { timetable } from '@/db/schema/timetable'
 import { sessionNote, sessionNoteAttachment } from '@/db/schema/sessionNote'
+import { classroom, classroomGroup } from '@/db/schema/classroom'
+import { educationLevel } from '@/db/schema/education'
 import type {
   CreateSessionNoteAttachmentInput,
   CreateSessionNoteInput,
@@ -9,6 +11,8 @@ import type {
 } from '@/types/sessionNote'
 import { and, count, eq, gte, isNull, lte } from 'drizzle-orm'
 import { NodePgDatabase } from 'drizzle-orm/node-postgres'
+import path from 'path'
+import { cleanKeywords, moveFileFromTemp, PUBLIC_DIR } from '@/lib/fileUtils'
 
 export class SessionNoteManagementService {
   private db: NodePgDatabase
@@ -91,6 +95,9 @@ export class SessionNoteManagementService {
         noteId: sessionNote.id,
         noteTitle: sessionNote.title,
         noteContent: sessionNote.content,
+        noteKeywords: sessionNote.keywords,
+        noteNotes: sessionNote.notes,
+        noteSummary: sessionNote.summary,
         noteIsPrivate: sessionNote.isPrivate,
         noteTimetableId: sessionNote.timetableId,
         noteOrgId: sessionNote.orgId,
@@ -138,6 +145,9 @@ export class SessionNoteManagementService {
       id: row.noteId,
       title: row.noteTitle,
       content: row.noteContent,
+      keywords: row.noteKeywords,
+      notes: row.noteNotes,
+      summary: row.noteSummary,
       isPrivate: row.noteIsPrivate,
       timetableId: row.noteTimetableId,
       orgId: row.noteOrgId,
@@ -155,11 +165,18 @@ export class SessionNoteManagementService {
   }
 
   async createSessionNote(input: CreateSessionNoteInput, orgId: string, userId: string) {
+    // Clean keywords if provided
+    const cleanedKeywords = input.keywords ? cleanKeywords(input.keywords) : null
+
+    // Create the session note
     const result = await this.db
       .insert(sessionNote)
       .values({
         title: input.title,
         content: input.content,
+        keywords: cleanedKeywords,
+        notes: input.notes || null,
+        summary: input.summary || null,
         isPrivate: input.isPrivate,
         timetableId: input.timetableId,
         orgId,
@@ -169,6 +186,9 @@ export class SessionNoteManagementService {
         id: sessionNote.id,
         title: sessionNote.title,
         content: sessionNote.content,
+        keywords: sessionNote.keywords,
+        notes: sessionNote.notes,
+        summary: sessionNote.summary,
         isPrivate: sessionNote.isPrivate,
         timetableId: sessionNote.timetableId,
         orgId: sessionNote.orgId,
@@ -181,14 +201,149 @@ export class SessionNoteManagementService {
       throw new Error('Failed to create session note')
     }
 
-    return result[0]
+    const createdNote = result[0]
+
+    // Handle file attachments if provided
+    if (input.tempAttachments && input.tempAttachments.length > 0) {
+      await this.moveAndCreateAttachments(
+        createdNote.id,
+        createdNote.timetableId,
+        input.tempAttachments,
+        orgId,
+        userId
+      )
+    }
+
+    return createdNote
+  }
+
+  /**
+   * Move files from temp and create attachment records
+   * This is a reusable helper method
+   */
+  private async moveAndCreateAttachments(
+    sessionNoteId: string,
+    timetableId: string,
+    tempAttachments: Array<{
+      tempPath: string
+      fileName: string
+      fileSize: number
+      mimeType: string
+      originalName: string
+    }>,
+    orgId: string,
+    userId: string
+  ) {
+    // Get timetable to find institutionLevelId
+    const timetableResult = await this.db
+      .select({
+        classroomId: timetable.classroomId,
+        classGroupId: timetable.classroomGroupId,
+      })
+      .from(timetable)
+      .where(eq(timetable.id, timetableId))
+      .limit(1)
+
+    if (!timetableResult[0]) {
+      throw new Error('Timetable not found')
+    }
+
+    let institutionLevelId: string | null = null
+
+    // Get institutionLevelId from classroom or classGroup
+    if (timetableResult[0].classroomId) {
+      const classroomResult = await this.db
+        .select({ institutionLevelId: educationLevel.institutionLevelId })
+        .from(classroom)
+        .leftJoin(educationLevel, eq(classroom.educationLevelId, educationLevel.id))
+        .where(eq(classroom.id, timetableResult[0].classroomId))
+        .limit(1)
+
+      institutionLevelId = classroomResult[0]?.institutionLevelId || null
+    } else if (timetableResult[0].classGroupId) {
+      const classGroupResult = await this.db
+        .select({ institutionLevelId: educationLevel.institutionLevelId })
+        .from(classroomGroup)
+        .leftJoin(classroom, eq(classroomGroup.classroomId, classroom.id))
+        .leftJoin(educationLevel, eq(classroom.educationLevelId, educationLevel.id))
+        .where(eq(classroomGroup.id, timetableResult[0].classGroupId))
+        .limit(1)
+
+      institutionLevelId = classGroupResult[0]?.institutionLevelId || null
+    }
+
+    if (!institutionLevelId) {
+      throw new Error('Could not determine institution level for file storage')
+    }
+
+    // Destination directory for files
+    const destinationDir = path.join(
+      PUBLIC_DIR,
+      'organization',
+      orgId,
+      'institution-level',
+      institutionLevelId,
+      'session-notes',
+      sessionNoteId
+    )
+
+    // Move files and create attachment records
+    for (const attachment of tempAttachments) {
+      try {
+        // Move file from temp to final destination
+        const finalPath = await moveFileFromTemp(
+          path.join(PUBLIC_DIR, attachment.tempPath.replace('/public/', '')),
+          destinationDir,
+          attachment.fileName
+        )
+
+        // Create attachment record
+        await this.db.insert(sessionNoteAttachment).values({
+          sessionNoteId,
+          fileName: attachment.fileName,
+          fileUrl: finalPath,
+          fileSize: attachment.fileSize.toString(),
+          mimeType: attachment.mimeType,
+          orgId,
+          createdByUserId: userId,
+        })
+      } catch (error) {
+        console.error(`Failed to move attachment ${attachment.fileName}:`, error)
+        // Continue with other files even if one fails
+      }
+    }
   }
 
   async updateSessionNote(sessionNoteId: string, input: UpdateSessionNoteInput, orgId: string, userId: string) {
+    // Clean keywords if provided
+    const updateData: any = { ...input }
+    if (input.keywords !== undefined) {
+      updateData.keywords = input.keywords ? cleanKeywords(input.keywords) : null
+    }
+
+    // Get existing note to find timetableId for file handling
+    const existing = await this.db
+      .select({ timetableId: sessionNote.timetableId })
+      .from(sessionNote)
+      .where(and(
+        eq(sessionNote.id, sessionNoteId),
+        eq(sessionNote.orgId, orgId),
+        isNull(sessionNote.deletedAt)
+      ))
+      .limit(1)
+
+    if (!existing[0]) {
+      throw new Error('Session note not found')
+    }
+
+    // Remove tempAttachments from update data (handled separately)
+    const tempAttachments = updateData.tempAttachments
+    delete updateData.tempAttachments
+
     const result = await this.db
       .update(sessionNote)
       .set({
-        ...input,
+        ...updateData,
         updatedByUserId: userId,
       })
       .where(and(
@@ -200,6 +355,9 @@ export class SessionNoteManagementService {
         id: sessionNote.id,
         title: sessionNote.title,
         content: sessionNote.content,
+        keywords: sessionNote.keywords,
+        notes: sessionNote.notes,
+        summary: sessionNote.summary,
         isPrivate: sessionNote.isPrivate,
         timetableId: sessionNote.timetableId,
         orgId: sessionNote.orgId,
@@ -210,6 +368,17 @@ export class SessionNoteManagementService {
 
     if (!result[0] || result.length === 0) {
       throw new Error('Session note not found or failed to update')
+    }
+
+    // Handle new file attachments if provided
+    if (tempAttachments && tempAttachments.length > 0) {
+      await this.moveAndCreateAttachments(
+        sessionNoteId,
+        existing[0].timetableId,
+        tempAttachments,
+        orgId,
+        userId
+      )
     }
 
     return result[0]

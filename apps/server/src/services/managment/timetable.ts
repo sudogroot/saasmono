@@ -437,9 +437,7 @@ export class TimetableManagementService {
       .returning({ id: timetableImages.id })
   }
 
-  private async createTimetableImage(timetableData: TimetableListItem[], request: TimetableImageGenerationRequest, orgId: string): Promise<string> {
-    console.log('Creating timetable image with data:', timetableData.length, 'sessions')
-    console.log('========== timetableData.length', timetableData);
+  private async createTimetableImage(timetableData: TimetableListItem[] = [], request: TimetableImageGenerationRequest, orgId: string): Promise<string> {
 
     const canvas = createCanvas(1400, 900)
     const ctx = canvas.getContext('2d')
@@ -587,19 +585,6 @@ export class TimetableManagementService {
       ctx.fillText(timeSlot, timeColumnX + timeColumnWidth / 2, currentY + slotHeight / 2 + 4)
 
       currentY += slotHeight
-    })
-
-    // Debug: Add total data count and session times
-    ctx.fillStyle = '#6b7280'
-    ctx.font = '10px Arial'
-    ctx.textAlign = 'left'
-    ctx.fillText(`Total sessions: ${timetableData.length}`, 20, 870)
-
-    // Show session times for debugging
-    timetableData.forEach((session, index) => {
-      const sessionDate = new Date(session.startDateTime)
-      const debugText = `S${index + 1}: ${session.title} - UTCDay:${sessionDate.getUTCDay()} UTCHour:${sessionDate.getUTCHours()}`
-      ctx.fillText(debugText, 20, 880 + (index * 12))
     })
 
     // Create structured file path

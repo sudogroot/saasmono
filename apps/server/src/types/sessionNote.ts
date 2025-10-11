@@ -5,6 +5,10 @@ export const SessionNoteSchema = z.object({
   id: z.uuid(),
   title: z.string(),
   content: z.string(),
+  // Cornell Notes fields
+  keywords: z.string().nullable(), // Comma-separated, cleaned keywords
+  notes: z.string().nullable(), // QuillJS Delta JSON
+  summary: z.string().nullable(), // Summary text
   isPrivate: z.boolean(),
   timetableId: z.uuid(),
   orgId: z.string(),
@@ -62,8 +66,20 @@ export const SessionNoteAttachmentSchema = z.object({
 export const CreateSessionNoteInputSchema = z.object({
   title: z.string().min(1, 'Note title is required'),
   content: z.string().min(1, 'Note content is required'),
+  // Cornell Notes fields
+  keywords: z.string().optional(), // Will be cleaned on backend
+  notes: z.string().optional(), // QuillJS Delta JSON
+  summary: z.string().optional(),
   isPrivate: z.boolean().default(false),
   timetableId: z.uuid(),
+  // Temp file paths for attachments (will be moved on save)
+  tempAttachments: z.array(z.object({
+    tempPath: z.string(),
+    fileName: z.string(),
+    fileSize: z.number(),
+    mimeType: z.string(),
+    originalName: z.string(),
+  })).optional(),
 })
 
 export const UpdateSessionNoteInputSchema = CreateSessionNoteInputSchema.partial().omit({ timetableId: true })

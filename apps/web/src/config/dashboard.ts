@@ -36,6 +36,11 @@ export const dashboardSidebarData = {
       icon: Calendar,
     },
     {
+      title: 'ملاحظات الجلسات',
+      url: '/dashboard/session-notes',
+      icon: BookOpen,
+    },
+    {
       title: 'المعلمون',
       url: '/dashboard/institution-settings/teachers',
       icon: Users,
@@ -213,6 +218,13 @@ export const dashboardMobileNavItems = [
     icon: Calendar,
     color: 'text-indigo-600',
     bgColor: 'bg-indigo-50',
+  },
+  {
+    title: 'ملاحظات الجلسات',
+    href: 'session-notes',
+    icon: BookOpen,
+    color: 'text-amber-600',
+    bgColor: 'bg-amber-50',
   },
   {
     title: 'المعلمون',
