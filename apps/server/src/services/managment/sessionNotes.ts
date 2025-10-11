@@ -169,36 +169,54 @@ export class SessionNoteManagementService {
     const cleanedKeywords = input.keywords ? cleanKeywords(input.keywords) : null
 
     // Create the session note
-    const result = await this.db
-      .insert(sessionNote)
-      .values({
+    let result
+    try {
+      console.log('[SessionNote] Attempting to create session note with:', {
         title: input.title,
-        content: input.content,
-        keywords: cleanedKeywords,
-        notes: input.notes || null,
-        summary: input.summary || null,
-        isPrivate: input.isPrivate,
         timetableId: input.timetableId,
         orgId,
-        createdByUserId: userId,
-      })
-      .returning({
-        id: sessionNote.id,
-        title: sessionNote.title,
-        content: sessionNote.content,
-        keywords: sessionNote.keywords,
-        notes: sessionNote.notes,
-        summary: sessionNote.summary,
-        isPrivate: sessionNote.isPrivate,
-        timetableId: sessionNote.timetableId,
-        orgId: sessionNote.orgId,
-        createdAt: sessionNote.createdAt,
-        updatedAt: sessionNote.updatedAt,
-        deletedAt: sessionNote.deletedAt,
+        userId,
       })
 
+      result = await this.db
+        .insert(sessionNote)
+        .values({
+          title: input.title,
+          content: input.content,
+          keywords: cleanedKeywords,
+          notes: input.notes || null,
+          summary: input.summary || null,
+          isPrivate: input.isPrivate,
+          timetableId: input.timetableId,
+          orgId,
+          createdByUserId: userId,
+        })
+        .returning({
+          id: sessionNote.id,
+          title: sessionNote.title,
+          content: sessionNote.content,
+          keywords: sessionNote.keywords,
+          notes: sessionNote.notes,
+          summary: sessionNote.summary,
+          isPrivate: sessionNote.isPrivate,
+          timetableId: sessionNote.timetableId,
+          orgId: sessionNote.orgId,
+          createdAt: sessionNote.createdAt,
+          updatedAt: sessionNote.updatedAt,
+          deletedAt: sessionNote.deletedAt,
+        })
+    } catch (error) {
+      console.error('[SessionNote] Database insert error:', error)
+      if (error instanceof Error) {
+        console.error('[SessionNote] Error message:', error.message)
+        console.error('[SessionNote] Error stack:', error.stack)
+      }
+      // Re-throw with more context
+      throw new Error(`Failed to insert session note into database: ${error instanceof Error ? error.message : String(error)}`)
+    }
+
     if (!result[0]) {
-      throw new Error('Failed to create session note')
+      throw new Error('Failed to create session note: No data returned from insert')
     }
 
     const createdNote = result[0]
@@ -291,11 +309,14 @@ export class SessionNoteManagementService {
     for (const attachment of tempAttachments) {
       try {
         // Move file from temp to final destination
+        // tempPath is an absolute path like /tmp/filename.png
+        console.log(`Moving file from ${attachment.tempPath} to ${destinationDir}/${attachment.fileName}`)
         const finalPath = await moveFileFromTemp(
-          path.join(PUBLIC_DIR, attachment.tempPath.replace('/public/', '')),
+          attachment.tempPath,
           destinationDir,
           attachment.fileName
         )
+        console.log(`File moved successfully to ${finalPath}`)
 
         // Create attachment record
         await this.db.insert(sessionNoteAttachment).values({
@@ -309,7 +330,12 @@ export class SessionNoteManagementService {
         })
       } catch (error) {
         console.error(`Failed to move attachment ${attachment.fileName}:`, error)
-        // Continue with other files even if one fails
+        // Log the full error stack for debugging
+        if (error instanceof Error) {
+          console.error('Error stack:', error.stack)
+        }
+        // Re-throw to fail the entire operation if file move fails
+        throw error
       }
     }
   }

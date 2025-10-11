@@ -25,7 +25,7 @@ export default function EditSessionNotePage({ params }: PageProps) {
   ) as any
 
   const updateMutation = useMutation({
-    mutationFn: orpc.management.sessionNotes.updateSessionNote,
+    ...orpc.management.sessionNotes.updateSessionNote.mutationOptions(),
     onSuccess: () => {
       toast.success('تم تحديث الملاحظة بنجاح')
       // Invalidate queries
@@ -49,10 +49,8 @@ export default function EditSessionNotePage({ params }: PageProps) {
     // Remove timetableId from update data (can't be changed)
     const { timetableId, ...updateData } = data
     await updateMutation.mutateAsync({
-      input: {
-        sessionNoteId: params.noteId,
-        ...updateData,
-      },
+      sessionNoteId: params.noteId,
+      data: updateData,
     })
   }
 

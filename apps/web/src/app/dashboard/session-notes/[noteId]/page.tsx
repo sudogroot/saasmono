@@ -24,7 +24,7 @@ export default function SessionNoteDetailPage({ params }: PageProps) {
   ) as any
 
   const deleteMutation = useMutation({
-    mutationFn: orpc.management.sessionNotes.deleteSessionNote,
+    ...orpc.management.sessionNotes.deleteSessionNote.mutationOptions(),
     onSuccess: () => {
       toast.success('تم حذف الملاحظة بنجاح')
       // Invalidate list query
@@ -41,7 +41,7 @@ export default function SessionNoteDetailPage({ params }: PageProps) {
 
   const handleDelete = () => {
     if (window.confirm('هل أنت متأكد من حذف هذه الملاحظة؟')) {
-      deleteMutation.mutate({ input: { sessionNoteId: params.noteId } })
+      deleteMutation.mutate({ sessionNoteId: params.noteId })
     }
   }
 

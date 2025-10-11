@@ -79,7 +79,7 @@ export function FileUpload({ value, onChange, maxFiles = 6, disabled = false }: 
         const formData = new FormData()
         formData.append('file', file)
 
-        const response = await fetch('/api/management/upload-temp-file', {
+        const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/management/upload-temp-file', {
           method: 'POST',
           body: formData,
         })

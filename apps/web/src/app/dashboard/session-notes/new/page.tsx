@@ -13,7 +13,7 @@ export default function CreateSessionNotePage() {
   const queryClient = useQueryClient()
 
   const createMutation = useMutation({
-    mutationFn: orpc.management.sessionNotes.createSessionNote,
+    ...orpc.management.sessionNotes.createSessionNote.mutationOptions(),
     onSuccess: (data: any) => {
       toast.success('تم إنشاء الملاحظة بنجاح')
       // Invalidate list query
@@ -29,7 +29,7 @@ export default function CreateSessionNotePage() {
   })
 
   const handleSubmit = async (data: any) => {
-    await createMutation.mutateAsync({ input: data })
+    await createMutation.mutateAsync(data)
   }
 
   const handleCancel = () => {

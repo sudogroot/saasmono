@@ -5,50 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1758963659919,
-      "tag": "0000_outgoing_dark_phoenix",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1759019656827,
-      "tag": "0001_red_white_tiger",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1759022107988,
-      "tag": "0002_bizarre_caretaker",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1759050760869,
-      "tag": "0003_striped_jane_foster",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1759059374071,
-      "tag": "0004_green_skin",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1759059787273,
-      "tag": "0005_organic_tomorrow_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1760180623732,
-      "tag": "0006_yummy_professor_monster",
+      "when": 1760184788451,
+      "tag": "0000_kind_demogoblin",
       "breakpoints": true
     }
   ]
