@@ -99,6 +99,10 @@ export default function NewLayout({ children }: { children: React.ReactNode }) {
           name: user?.name,
           email: user?.email,
           avatar: user?.image || '/raqeem-icon.svg',
+          onLogout: async () => {
+            await authClient.signOut()
+            window.location.href = '/'
+          },
         },
       }}
       brandLogo={<img src="/logo.svg" alt="رقيم" className="!w-24" />}

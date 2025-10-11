@@ -23,6 +23,9 @@ const data = {
     name: "shadcn",
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
+    onLogout: () => {
+      // Implement logout logic here
+    },
   },
   navMain: [
     {
