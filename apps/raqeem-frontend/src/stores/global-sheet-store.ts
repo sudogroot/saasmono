@@ -168,7 +168,7 @@ export const useGlobalSheet = create<GlobalSheetState>((set, get) => ({
       state.sheetStack.forEach((sheet) => sheet.onClose?.())
 
       // Build list of all URL parameters to remove
-      const paramsToRemove: Record<string, null> = { view: null }
+      const paramsToRemove: Record<string, null> = { view: null, tab: null }
       state.sheetStack.forEach((sheet) => {
         if (sheet.urlParams) {
           Object.keys(sheet.urlParams).forEach((key) => {
@@ -248,7 +248,7 @@ export const useGlobalSheet = create<GlobalSheetState>((set, get) => ({
       const paramsToRemove: Record<string, null> = { view: null }
 
       // Remove known sheet-related parameters
-      const sheetParams = ['clientId', 'caseId', 'opponentId', 'courtId', 'trialId']
+      const sheetParams = ['clientId', 'caseId', 'opponentId', 'courtId', 'trialId', 'tab']
       sheetParams.forEach((param) => {
         if (currentParams[param]) {
           paramsToRemove[param] = null
@@ -271,10 +271,22 @@ export const useGlobalSheet = create<GlobalSheetState>((set, get) => ({
       }
     })
 
-    updateUrlParams({
+    // First remove all sheet-related parameters that might exist
+    const currentParams = getUrlParams()
+    const paramsToUpdate: Record<string, string | null> = {
       view: viewParams.join(','),
       ...urlParams,
+    }
+
+    // Remove 'tab' if it's not in the new params (it's managed by detail sheets)
+    const sheetParams = ['clientId', 'caseId', 'opponentId', 'courtId', 'trialId', 'tab']
+    sheetParams.forEach((param) => {
+      if (currentParams[param] && !urlParams[param]) {
+        paramsToUpdate[param] = null
+      }
     })
+
+    updateUrlParams(paramsToUpdate)
   },
 }))
 
@@ -449,6 +461,8 @@ export const globalSheet = {
       [key: string]: any
     }
     size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
+    reset?: boolean
+    onSuccess?: (caseData: any) => void
   }) => openSheet('form', 'case', props),
 
   openClientDetails: (props: {
@@ -511,6 +525,7 @@ export const globalSheet = {
       [key: string]: any
     }
     size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
+    onSuccess?: () => void
   }) => {
     const mode = props.mode || (props.trialId ? 'edit' : 'create')
     const urlParams: Record<string, string> = {}

@@ -50,7 +50,9 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
   const createMutation = useMutation(
     orpc.clients.createClient.mutationOptions({
       onSuccess: (data) => {
+        console.log('Creating toast...')
         toast.success('تم إنشاء العميل بنجاح')
+        console.log('Toast created')
         form.reset()
         // Invalidate and refetch queries
         queryClient.invalidateQueries({ queryKey: orpc.clients.listClients.key() })

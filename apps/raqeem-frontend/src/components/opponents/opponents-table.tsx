@@ -1,10 +1,9 @@
 'use client'
 
-import { GenericTable } from '@/components/base/table'
 import { cn } from '@/lib/utils'
 import { globalSheet } from '@/stores/global-sheet-store'
 import type { OpponentListItem } from '@/types'
-import { Badge, Button } from '@repo/ui'
+import { Badge, Button, GenericTable } from '@repo/ui'
 import {
   createColumnHelper,
   getCoreRowModel,

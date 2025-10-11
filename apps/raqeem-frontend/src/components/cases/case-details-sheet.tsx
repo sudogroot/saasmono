@@ -3,9 +3,23 @@
 import { cn } from '@/lib/utils'
 import { globalSheet } from '@/stores/global-sheet-store'
 import { orpc } from '@/utils/orpc'
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Separator, Tabs, TabsContent, TabsList, TabsTrigger, Text, ValueText } from '@repo/ui'
+import {
+  Badge,
+  Button,
+  CopyButton,
+  Separator,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Text,
+  ValueText,
+} from '@repo/ui'
 import { useQuery } from '@tanstack/react-query'
-import { AlertCircle, Calendar, Clock, Edit, FileText, Gavel, Loader2, Mail, Phone, Plus, Scale, User } from 'lucide-react'
+import { AlertCircle, Calendar, Clock, Edit, FileText, Gavel, Loader2, Plus, Scale, User } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 interface CaseDetailsSheetProps {
   caseId: string
@@ -24,7 +38,7 @@ const caseStatusColors = {
   closed: 'bg-slate-50 text-slate-700 border-slate-200',
   withdrawn: 'bg-pink-50 text-pink-700 border-pink-200',
   suspended: 'bg-amber-50 text-amber-700 border-amber-200',
-} as const;
+} as const
 
 const caseStatusLabels = {
   new: 'جديدة',
@@ -37,7 +51,7 @@ const caseStatusLabels = {
   closed: 'مغلقة',
   withdrawn: 'منسحبة',
   suspended: 'معلقة',
-} as const;
+} as const
 
 const priorityColors = {
   low: 'bg-gray-50 text-gray-700 border-gray-200',
@@ -46,7 +60,7 @@ const priorityColors = {
   high: 'bg-orange-50 text-orange-700 border-orange-200',
   urgent: 'bg-red-50 text-red-700 border-red-200',
   critical: 'bg-purple-50 text-purple-700 border-purple-200',
-} as const;
+} as const
 
 const priorityLabels = {
   low: 'منخفضة',
@@ -55,9 +69,18 @@ const priorityLabels = {
   high: 'عالية',
   urgent: 'عاجلة',
   critical: 'حرجة',
-} as const;
+} as const
 
 export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: CaseDetailsSheetProps) {
+  const searchParams = useSearchParams()
+  const urlTab = searchParams.get('tab') || 'info'
+  const [activeTab, setActiveTab] = useState(urlTab)
+
+  // Update active tab when URL param changes
+  useEffect(() => {
+    setActiveTab(urlTab)
+  }, [urlTab])
+
   const {
     data: caseData,
     isLoading,
@@ -70,30 +93,38 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
     }),
   })
 
+  const handleTabChange = (value: string) => {
+    setActiveTab(value)
+    // Update URL params
+    const url = new URL(window.location.href)
+    url.searchParams.set('tab', value)
+    window.history.replaceState({}, '', url.toString())
+  }
+
   if (isLoading) {
     return (
-      <div className='flex items-center justify-center py-8'>
-        <Loader2 className='h-6 w-6 animate-spin ml-2' />
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="ml-2 h-6 w-6 animate-spin" />
         <span>جاري تحميل بيانات القضية...</span>
       </div>
-    );
+    )
   }
 
   if (error) {
     return (
-      <div className='flex items-center justify-center py-8 text-destructive'>
-        <AlertCircle className='h-5 w-5 ml-2' />
+      <div className="text-destructive flex items-center justify-center py-8">
+        <AlertCircle className="ml-2 h-5 w-5" />
         <span>حدث خطأ في تحميل البيانات</span>
       </div>
-    );
+    )
   }
 
   if (!caseData) {
     return (
-      <div className='flex items-center justify-center py-8 text-muted-foreground'>
+      <div className="text-muted-foreground flex items-center justify-center py-8">
         <span>لم يتم العثور على القضية</span>
       </div>
-    );
+    )
   }
 
   const handleEdit = () => {
@@ -115,12 +146,16 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
         ...(caseData.court && { courtId: caseData.court.id }),
       },
       size: 'md',
+      onSuccess: () => {
+        // Return to case details with trials tab active
+        globalSheet.back()
+      },
     })
   }
 
   return (
     <div className="space-y-6 p-2">
-      <Tabs dir="rtl" defaultValue="info">
+      <Tabs dir="rtl" value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="mb-2">
           <TabsTrigger value={'info'} className="text-muted-foreground text-sm font-medium">
             معلومات القضية
@@ -138,28 +173,46 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
               </Button>
             </div>
             <div className="space-y-2">
+              <div className="flex items-center justify-between gap-4 rounded-lg border p-3">
+                <div>
+                  <Text size="sm" variant="muted" as="span">
+                    القضية
+                  </Text>
+                </div>
+                <div dir="rtl" className="flex-1">
+                  <Text size="sm" weight="semibold" as="span">
+                    {caseData.caseTitle}
+                  </Text>
+                </div>
+
+                <CopyButton
+                  content={caseData.caseTitle}
+                  size="md"
+                  onCopy={() => {
+                    toast.success('تم نسخ العنوان')
+                  }}
+                />
+              </div>
               <div className="flex items-center justify-between rounded-lg border p-3">
                 <div className="flex items-center gap-2">
                   <FileText className="text-muted-foreground h-4 w-4" />
-                  <span className="text-sm">عنوان القضية</span>
                 </div>
                 <div className="flex gap-4">
-                  <Badge
-                    variant="outline"
-                    className={cn('w-fit', caseStatusColors[caseData.caseStatus as keyof typeof caseStatusColors])}
-                  >
-                    {caseStatusLabels[caseData.caseStatus as keyof typeof caseStatusLabels]}
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    className={cn('w-fit', priorityColors[caseData.priority as keyof typeof priorityColors])}
-                  >
-                    {priorityLabels[caseData.priority as keyof typeof priorityLabels]}
-                  </Badge>
                   <div>
-                    <Text size="sm" weight="semibold" as="span">
-                      {caseData.caseTitle}
-                    </Text>
+                    <Badge
+                      variant="outline"
+                      className={cn('w-fit', caseStatusColors[caseData.caseStatus as keyof typeof caseStatusColors])}
+                    >
+                      {caseStatusLabels[caseData.caseStatus as keyof typeof caseStatusLabels]}
+                    </Badge>
+                  </div>
+                  <div>
+                    <Badge
+                      variant="outline"
+                      className={cn('w-fit', priorityColors[caseData.priority as keyof typeof priorityColors])}
+                    >
+                      {priorityLabels[caseData.priority as keyof typeof priorityLabels]}
+                    </Badge>
                   </div>
                 </div>
               </div>
@@ -194,10 +247,8 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
                     <Text size="sm" weight="semibold" as="span">
                       {caseData.client.name}
                     </Text>
-                    <p className="text-xs text-muted-foreground">{caseData.client.clientType}</p>
-                    {caseData.client.email && (
-                      <p className="text-xs text-muted-foreground">{caseData.client.email}</p>
-                    )}
+                    <p className="text-muted-foreground text-xs">{caseData.client.clientType}</p>
+                    {caseData.client.email && <p className="text-muted-foreground text-xs">{caseData.client.email}</p>}
                   </div>
                 </div>
               )}
@@ -211,7 +262,7 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
                     <Text size="sm" weight="semibold" as="span">
                       {caseData.opponent.name}
                     </Text>
-                    <p className="text-xs text-muted-foreground">{caseData.opponent.opponentType}</p>
+                    <p className="text-muted-foreground text-xs">{caseData.opponent.opponentType}</p>
                   </div>
                 </div>
               )}
@@ -225,7 +276,7 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
                     <Text size="sm" weight="semibold" as="span">
                       {caseData.court.name}
                     </Text>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground text-xs">
                       {caseData.court.state} • {caseData.court.courtType}
                     </p>
                   </div>
@@ -280,34 +331,21 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
                     <Gavel className="h-4 w-4" />
                     الجلسات ({caseData.trial.length})
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleAddTrial}
-                  >
+                  <Button variant="outline" size="sm" onClick={handleAddTrial}>
                     <Plus className="ml-1 h-3 w-3" />
                     إضافة جلسة جديدة
                   </Button>
                 </div>
                 <div className="space-y-2">
                   {caseData.trial.map((trial) => (
-                    <div
-                      key={trial.id}
-                      className="flex items-center justify-between rounded-lg border bg-muted/30 p-3"
-                    >
+                    <div key={trial.id} className="bg-muted/30 flex items-center justify-between rounded-lg border p-3">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-                          <Scale className="h-4 w-4 text-primary" />
+                        <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full">
+                          <Scale className="text-primary h-4 w-4" />
                         </div>
                         <div className="space-y-1">
-                          <div className="text-sm font-medium">
-                            الجلسة رقم {trial.trialNumber}
-                          </div>
-                          {trial.court && (
-                            <div className="text-xs text-muted-foreground">
-                              {trial.court.name}
-                            </div>
-                          )}
+                          <div className="text-sm font-medium">الجلسة رقم {trial.trialNumber}</div>
+                          {trial.court && <div className="text-muted-foreground text-xs">{trial.court.name}</div>}
                         </div>
                       </div>
                       <div className="text-left">
@@ -319,7 +357,7 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
                             day: 'numeric',
                           })}
                         </div>
-                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <div className="text-muted-foreground flex items-center gap-1 text-xs">
                           <Clock className="h-3 w-3" />
                           {new Date(trial.trialDateTime).toLocaleTimeString('ar-TN', {
                             hour: '2-digit',
@@ -332,15 +370,11 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
                 </div>
               </div>
             ) : (
-              <div className="text-center py-8 text-muted-foreground space-y-3">
-                <Gavel className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                <p className="text-lg font-medium mb-1">لا توجد جلسات</p>
+              <div className="text-muted-foreground space-y-3 py-8 text-center">
+                <Gavel className="mx-auto mb-3 h-12 w-12 opacity-50" />
+                <p className="mb-1 text-lg font-medium">لا توجد جلسات</p>
                 <p className="text-sm">لم يتم جدولة أي جلسات لهذه القضية بعد</p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleAddTrial}
-                >
+                <Button variant="outline" size="sm" onClick={handleAddTrial}>
                   <Plus className="ml-1 h-4 w-4" />
                   إضافة جلسة
                 </Button>

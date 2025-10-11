@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import 'sonner/dist/styles.css';
 
 @source "../node_modules/@repo/ui";
 
@@ -286,6 +287,31 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
   }
+}
+
+/* Sonner Toast Styles */
+[data-sonner-toaster][data-theme="light"] {
+  --normal-bg: oklch(1 0 0);
+  --normal-border: oklch(0.92 0.004 286.32);
+  --normal-text: oklch(0.141 0.005 285.823);
+  --success-bg: oklch(0.646 0.222 41.116);
+  --success-border: oklch(0.646 0.222 41.116);
+  --success-text: oklch(1 0 0);
+  --error-bg: oklch(0.577 0.245 27.325);
+  --error-border: oklch(0.577 0.245 27.325);
+  --error-text: oklch(1 0 0);
+}
+
+[data-sonner-toaster][data-theme="dark"] {
+  --normal-bg: oklch(0.13 0.006 240);
+  --normal-border: oklch(0.32 0.012 240);
+  --normal-text: oklch(0.98 0.001 240);
+  --success-bg: oklch(0.7 0.25 260);
+  --success-border: oklch(0.7 0.25 260);
+  --success-text: oklch(0.98 0.001 240);
+  --error-bg: oklch(0.68 0.22 25);
+  --error-border: oklch(0.68 0.22 25);
+  --error-text: oklch(0.98 0.001 240);
 }
 
 /* PWA Specific Styles */

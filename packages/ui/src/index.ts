@@ -16,6 +16,7 @@ export {
   NavSecondary,
   NavUser,
 } from "./layout";
+export { CopyButton } from "./components/base/copy-button/copy-button";
 export {
   GenericTable,
   MobileTable,
