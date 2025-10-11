@@ -16,11 +16,36 @@ export class CaseService {
   }
 
   async createCase(orgId: string, userId: string, data: CreateCaseInput): Promise<CaseResponse> {
+    console.log('[CaseService.createCase] Starting validation:', { orgId, userId, caseNumber: data.caseNumber })
+
+    // Check for duplicate case number in organization
+    const existingCase = await this.db
+      .select()
+      .from(cases)
+      .where(
+        and(
+          eq(cases.organizationId, orgId),
+          eq(cases.caseNumber, data.caseNumber),
+          isNull(cases.deletedAt)
+        )
+      )
+
+    console.log('[CaseService.createCase] Duplicate case number check:', {
+      caseNumber: data.caseNumber,
+      exists: existingCase.length > 0
+    })
+
+    if (existingCase.length > 0) {
+      throw new Error(`Case number "${data.caseNumber}" already exists in your organization`)
+    }
+
     // Verify user belongs to organization
     const userMembership = await this.db
       .select()
       .from(member)
       .where(and(eq(member.userId, userId), eq(member.organizationId, orgId)))
+
+    console.log('[CaseService.createCase] User membership check:', { found: userMembership.length > 0 })
 
     if (userMembership.length === 0) {
       throw new Error('User not found in organization')
@@ -38,8 +63,10 @@ export class CaseService {
         )
       )
 
+    console.log('[CaseService.createCase] Client verification:', { clientId: data.clientId, found: clientExists.length > 0 })
+
     if (clientExists.length === 0) {
-      throw new Error('Client not found')
+      throw new Error(`Client with ID "${data.clientId}" not found or does not belong to your organization`)
     }
 
     // Verify court exists if provided
@@ -49,8 +76,10 @@ export class CaseService {
         .from(courts)
         .where(eq(courts.id, data.courtId))
 
+      console.log('[CaseService.createCase] Court verification:', { courtId: data.courtId, found: courtExists.length > 0 })
+
       if (courtExists.length === 0) {
-        throw new Error('Court not found')
+        throw new Error(`Court with ID "${data.courtId}" not found`)
       }
     }
 
@@ -67,25 +96,44 @@ export class CaseService {
           )
         )
 
+      console.log('[CaseService.createCase] Opponent verification:', { opponentId: data.opponentId, found: opponentExists.length > 0 })
+
       if (opponentExists.length === 0) {
-        throw new Error('Opponent not found')
+        throw new Error(`Opponent with ID "${data.opponentId}" not found or does not belong to your organization`)
       }
     }
 
-    const [newCase] = await this.db
-      .insert(cases)
-      .values({
-        ...data,
-        organizationId: orgId,
-        createdBy: userId,
+    console.log('[CaseService.createCase] All validations passed, inserting case...')
+
+    try {
+      const [newCase] = await this.db
+        .insert(cases)
+        .values({
+          ...data,
+          organizationId: orgId,
+          createdBy: userId,
+        })
+        .returning()
+
+      if (!newCase) {
+        throw new Error('Failed to create case - no record returned')
+      }
+
+      console.log('[CaseService.createCase] Case created successfully:', { caseId: newCase.id })
+
+      return newCase as CaseResponse
+    } catch (dbError) {
+      console.error('[CaseService.createCase] Database insertion error:', {
+        error: dbError,
+        message: dbError instanceof Error ? dbError.message : 'Unknown database error',
+        data: {
+          ...data,
+          organizationId: orgId,
+          createdBy: userId,
+        }
       })
-      .returning()
-
-    if (!newCase) {
-      throw new Error('Failed to create case')
+      throw dbError
     }
-
-    return newCase as CaseResponse
   }
 
   async getCaseById(caseId: string, orgId: string): Promise<CaseWithRelations> {

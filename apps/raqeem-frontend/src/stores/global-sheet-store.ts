@@ -432,7 +432,7 @@ const createSheetFromUrl = (componentName: string, urlParams: Record<string, str
  */
 export const globalSheet = {
   // Entity-specific methods (maintained for backward compatibility)
-  openCaseDetails: (props: { slug: string; caseId: string; size?: 'sm' | 'md' | 'lg' | 'xl' | 'full' }) =>
+  openCaseDetails: (props: { slug: string; caseId: string; size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'; reset?: boolean }) =>
     openSheet('details', 'case', props),
 
   openCaseForm: (props: {
@@ -464,6 +464,7 @@ export const globalSheet = {
     clientId?: string
     size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
     initialData?: any
+    onSuccess?: (client: any) => void
   }) => openSheet('form', 'client', props),
 
   openOpponentDetails: (props: { slug: string; opponentId: string; size?: 'sm' | 'md' | 'lg' | 'xl' | 'full' }) =>
@@ -474,6 +475,8 @@ export const globalSheet = {
     slug: string
     opponentId?: string
     size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
+    initialData?: any
+    onSuccess?: (opponent: any) => void
   }) => openSheet('form', 'opponent', props),
 
   openTrialDetails: (props: { slug: string; trialId: string; size?: 'sm' | 'md' | 'lg' | 'xl' | 'full' }) => {

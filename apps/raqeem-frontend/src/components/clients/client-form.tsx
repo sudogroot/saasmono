@@ -54,13 +54,19 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
         form.reset()
         // Invalidate and refetch queries
         queryClient.invalidateQueries({ queryKey: orpc.clients.listClients.key() })
-        globalSheet.openClientDetails({
-          slug: 'clients',
-          clientId: data.id,
-          size: 'md',
-          reset: true,
-        })
-        onSuccess?.(data)
+
+        // If onSuccess callback is provided, call it and let parent handle navigation
+        // Otherwise, navigate to client details by default
+        if (onSuccess) {
+          onSuccess(data)
+        } else {
+          globalSheet.openClientDetails({
+            slug: 'clients',
+            clientId: data.id,
+            size: 'md',
+            reset: true,
+          })
+        }
       },
       onError: (error: any) => {
         toast.error(`حدث خطأ: ${error.message}`)
@@ -80,14 +86,19 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
         queryClient.invalidateQueries({
           queryKey: orpc.clients.getClientById.key({ input: { clientId: clientId! } }),
         })
-        globalSheet.openClientDetails({
-          slug: 'clients',
-          clientId: data.id,
-          size: 'md',
-          reset: true,
-        })
 
-        onSuccess?.(data)
+        // If onSuccess callback is provided, call it and let parent handle navigation
+        // Otherwise, navigate to client details by default
+        if (onSuccess) {
+          onSuccess(data)
+        } else {
+          globalSheet.openClientDetails({
+            slug: 'clients',
+            clientId: data.id,
+            size: 'md',
+            reset: true,
+          })
+        }
       },
       onError: (error: any) => {
         toast.error(`حدث خطأ: ${error.message}`)

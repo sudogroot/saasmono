@@ -1,6 +1,7 @@
 'use client'
 
 import { globalSheet } from '@/stores/global-sheet-store'
+import { useSheetFormState } from '@/stores/sheet-form-state-store'
 import { orpc } from '@/utils/orpc'
 import {
   Badge,
@@ -25,7 +26,7 @@ import {
 } from '@repo/ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { FileText, Gavel, Loader2, Save, Scale, User, UserX } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -74,10 +75,17 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const isEditing = !!caseId
   const queryClient = useQueryClient()
+  const { saveFormState, getFormState, clearFormState } = useSheetFormState()
+
+  // Unique key for storing this form's state
+  const formStateKey = `case-form-${caseId || 'new'}`
+
+  // Check if we have saved state to restore
+  const savedFormState = getFormState(formStateKey)
 
   const form = useForm({
     // resolver: zodResolver(caseFormSchema),
-    defaultValues: {
+    defaultValues: savedFormState || {
       caseNumber: initialData?.caseNumber || '',
       caseTitle: initialData?.caseTitle || '',
       caseSubject: initialData?.caseSubject || '',
@@ -89,6 +97,14 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
       priority: initialData?.priority || 'medium',
     },
   })
+
+  // Restore saved form state when component mounts (if available)
+  useEffect(() => {
+    if (savedFormState) {
+      form.reset(savedFormState)
+    }
+  }, [])
+
 
   // Fetch clients for dropdown
   const { data: clients = [] } = useQuery({
@@ -110,8 +126,21 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
       onSuccess: (data) => {
         toast.success('تم إنشاء القضية بنجاح')
         form.reset()
-        queryClient.invalidateQueries({ queryKey: orpc.cases.listCases?.key?.() || ['cases'] })
-        onSuccess?.(data)
+        clearFormState(formStateKey) // Clear saved state after successful submission
+        queryClient.invalidateQueries({ queryKey: ['cases'] })
+
+        // If onSuccess callback is provided, call it
+        if (onSuccess) {
+          onSuccess(data)
+        } else {
+          // Default behavior: Replace form sheet with case details
+          globalSheet.openCaseDetails({
+            slug: 'cases',
+            caseId: data.id,
+            size: 'lg',
+            reset: true,
+          })
+        }
       },
       onError: (error: any) => {
         toast.error(`حدث خطأ: ${error.message}`)
@@ -126,11 +155,22 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
     orpc.cases.updateCase.mutationOptions({
       onSuccess: (data) => {
         toast.success('تم تحديث القضية بنجاح')
-        queryClient.invalidateQueries({ queryKey: orpc.cases.listCases?.key?.() || ['cases'] })
-        queryClient.invalidateQueries({
-          queryKey: orpc.cases.getCaseById?.key?.({ input: { caseId: caseId! } }) || ['case', caseId],
-        })
-        onSuccess?.(data)
+        clearFormState(formStateKey) // Clear saved state after successful submission
+        queryClient.invalidateQueries({ queryKey: ['cases'] })
+        queryClient.invalidateQueries({ queryKey: ['case', caseId] })
+
+        // If onSuccess callback is provided, call it
+        if (onSuccess) {
+          onSuccess(data)
+        } else {
+          // Default behavior: Replace form sheet with case details
+          globalSheet.openCaseDetails({
+            slug: 'cases',
+            caseId: data.id,
+            size: 'lg',
+            reset: true,
+          })
+        }
       },
       onError: (error: any) => {
         toast.error(`حدث خطأ: ${error.message}`)
@@ -356,11 +396,35 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
                       clearable={true}
                       allowCreate={true}
                       createLabel="إضافة عميل جديد"
-                      onCreateClick={() => {
+                      onCreateClick={(searchValue) => {
+                        // Save current form state before navigating
+                        saveFormState(formStateKey, form.getValues())
+
                         globalSheet.openClientForm({
                           mode: 'create',
                           slug: 'clients',
                           size: 'md',
+                          initialData: {
+                            name: searchValue,
+                          },
+                          onSuccess: async (createdClient: any) => {
+                            // Wait for queries to refetch so the new client appears in the dropdown
+                            await queryClient.refetchQueries({
+                              queryKey: orpc.clients.getClientsForDropdown.key(),
+                            })
+
+                            // Get the saved form state and update with new client
+                            const savedState = getFormState(formStateKey)
+                            if (savedState) {
+                              saveFormState(formStateKey, {
+                                ...savedState,
+                                clientId: createdClient.id,
+                              })
+                            }
+
+                            // Close the client form sheet and return to case form
+                            globalSheet.back()
+                          },
                         })
                       }}
                     />
@@ -392,6 +456,39 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
                       clearable={true}
                       allowNone={true}
                       noneLabel="بدون خصم"
+                      allowCreate={true}
+                      createLabel="إضافة خصم جديد"
+                      onCreateClick={(searchValue) => {
+                        // Save current form state before navigating
+                        saveFormState(formStateKey, form.getValues())
+
+                        globalSheet.openOpponentForm({
+                          mode: 'create',
+                          slug: 'opponents',
+                          size: 'md',
+                          initialData: {
+                            name: searchValue,
+                          },
+                          onSuccess: async (createdOpponent: any) => {
+                            // Wait for queries to refetch so the new opponent appears in the dropdown
+                            await queryClient.refetchQueries({
+                              queryKey: orpc.opponents.getOpponentsForDropdown.key(),
+                            })
+
+                            // Get the saved form state and update with new opponent
+                            const savedState = getFormState(formStateKey)
+                            if (savedState) {
+                              saveFormState(formStateKey, {
+                                ...savedState,
+                                opponentId: createdOpponent.id,
+                              })
+                            }
+
+                            // Close the opponent form sheet and return to case form
+                            globalSheet.back()
+                          },
+                        })
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

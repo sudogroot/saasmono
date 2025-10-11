@@ -51,7 +51,7 @@ export interface SearchSelectProps {
   // Create new entity
   allowCreate?: boolean
   createLabel?: string
-  onCreateClick?: () => void
+  onCreateClick?: (searchValue: string) => void
 
   // Search
   searchable?: boolean
@@ -229,7 +229,7 @@ export function SearchSelect({
                         size="sm"
                         onClick={() => {
                           setOpen(false)
-                          onCreateClick?.()
+                          onCreateClick?.(searchValue)
                         }}
                         className="gap-2"
                       >
