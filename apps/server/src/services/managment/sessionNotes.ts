@@ -12,7 +12,7 @@ import type {
 import { and, count, eq, gte, isNull, lte } from 'drizzle-orm'
 import { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import path from 'path'
-import { cleanKeywords, moveFileFromTemp, PUBLIC_DIR } from '@/lib/fileUtils'
+import { cleanKeywords, moveFileFromTemp, PUBLIC_DIR, toFullFileUrl } from '@/lib/fileUtils'
 
 export class SessionNoteManagementService {
   private db: NodePgDatabase
@@ -139,6 +139,12 @@ export class SessionNoteManagementService {
         isNull(sessionNoteAttachment.deletedAt)
       ))
 
+    // Convert relative file URLs to full URLs
+    const attachmentsWithFullUrls = attachments.map(attachment => ({
+      ...attachment,
+      fileUrl: toFullFileUrl(attachment.fileUrl),
+    }))
+
     const row = result[0]
 
     return {
@@ -160,7 +166,7 @@ export class SessionNoteManagementService {
         startDateTime: row.sessionStartDateTime!,
         endDateTime: row.sessionEndDateTime!,
       },
-      attachments,
+      attachments: attachmentsWithFullUrls,
     }
   }
 
@@ -309,10 +315,11 @@ export class SessionNoteManagementService {
     for (const attachment of tempAttachments) {
       try {
         // Move file from temp to final destination
-        // tempPath is an absolute path like /tmp/filename.png
-        console.log(`Moving file from ${attachment.tempPath} to ${destinationDir}/${attachment.fileName}`)
+        // tempPath is a URL path like /tmp/filename.png, convert to filesystem path
+        const tempFilePath = path.join(PUBLIC_DIR, attachment.tempPath)
+        console.log(`Moving file from ${tempFilePath} to ${destinationDir}/${attachment.fileName}`)
         const finalPath = await moveFileFromTemp(
-          attachment.tempPath,
+          tempFilePath,
           destinationDir,
           attachment.fileName
         )
