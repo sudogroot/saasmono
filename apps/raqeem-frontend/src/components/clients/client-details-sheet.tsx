@@ -8,74 +8,13 @@ import { useQuery } from '@tanstack/react-query'
 import { AlertCircle, Calendar, Clock, Edit, FileText, Gavel, Loader2, Mail, Phone, Plus, Scale, User } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { EntityBadge } from '../base/entity-badge'
 
 interface ClientDetailsSheetProps {
   clientId: string
   organizationId?: string
   renderMode?: 'content' | 'full'
 }
-
-const clientTypeColors = {
-  individual: 'bg-blue-50 text-blue-700 border-blue-200',
-  company: 'bg-green-50 text-green-700 border-green-200',
-  institution: 'bg-purple-50 text-purple-700 border-purple-200',
-  organization: 'bg-orange-50 text-orange-700 border-orange-200',
-  government: 'bg-gray-50 text-gray-700 border-gray-200',
-  association: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-} as const
-
-const clientTypeLabels = {
-  individual: 'فرد',
-  company: 'شركة',
-  institution: 'مؤسسة',
-  organization: 'منظمة',
-  government: 'حكومي',
-  association: 'جمعية',
-} as const
-
-const caseStatusColors = {
-  new: 'bg-blue-50 text-blue-700 border-blue-200',
-  'under-review': 'bg-yellow-50 text-yellow-700 border-yellow-200',
-  'filed-to-court': 'bg-purple-50 text-purple-700 border-purple-200',
-  'under-consideration': 'bg-orange-50 text-orange-700 border-orange-200',
-  won: 'bg-green-50 text-green-700 border-green-200',
-  lost: 'bg-red-50 text-red-700 border-red-200',
-  postponed: 'bg-gray-50 text-gray-700 border-gray-200',
-  closed: 'bg-slate-50 text-slate-700 border-slate-200',
-  withdrawn: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-  suspended: 'bg-amber-50 text-amber-700 border-amber-200',
-} as const
-
-const caseStatusLabels = {
-  new: 'جديدة',
-  'under-review': 'قيد المراجعة',
-  'filed-to-court': 'مرفوعة للمحكمة',
-  'under-consideration': 'قيد النظر',
-  won: 'كسبت',
-  lost: 'خسرت',
-  postponed: 'مؤجلة',
-  closed: 'مغلقة',
-  withdrawn: 'منسحبة',
-  suspended: 'معلقة',
-} as const
-
-const priorityColors = {
-  low: 'bg-gray-50 text-gray-700 border-gray-200',
-  normal: 'bg-blue-50 text-blue-700 border-blue-200',
-  medium: 'bg-yellow-50 text-yellow-700 border-yellow-200',
-  high: 'bg-orange-50 text-orange-700 border-orange-200',
-  urgent: 'bg-red-50 text-red-700 border-red-200',
-  critical: 'bg-red-100 text-red-800 border-red-300',
-} as const
-
-const priorityLabels = {
-  low: 'منخفضة',
-  normal: 'عادية',
-  medium: 'متوسطة',
-  high: 'عالية',
-  urgent: 'عاجلة',
-  critical: 'حرجة',
-} as const
 
 export function ClientDetails({ clientId, organizationId, renderMode = 'content' }: ClientDetailsSheetProps) {
   const searchParams = useSearchParams()
@@ -193,12 +132,7 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                 </div>
 
                 <div className="flex gap-4">
-                  <Badge
-                    variant="outline"
-                    className={cn('w-fit', clientTypeColors[clientData.clientType as keyof typeof clientTypeColors])}
-                  >
-                    {clientTypeLabels[clientData.clientType as keyof typeof clientTypeLabels]}
-                  </Badge>
+                  <EntityBadge type="entityType" value={clientData.clientType} />
                   <div>
                     <Text size="sm" weight="semibold" as="span">
                       {clientData.name}
@@ -291,18 +225,8 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          <Badge
-                            variant="outline"
-                            className={cn('text-xs', caseStatusColors[caseItem.caseStatus as keyof typeof caseStatusColors])}
-                          >
-                            {caseStatusLabels[caseItem.caseStatus as keyof typeof caseStatusLabels] || caseItem.caseStatus}
-                          </Badge>
-                          <Badge
-                            variant="outline"
-                            className={cn('text-xs', priorityColors[caseItem.priority as keyof typeof priorityColors])}
-                          >
-                            {priorityLabels[caseItem.priority as keyof typeof priorityLabels] || caseItem.priority}
-                          </Badge>
+                          <EntityBadge type="caseStatus" value={caseItem.caseStatus} className="text-xs" />
+                          <EntityBadge type="priority" value={caseItem.priority} className="text-xs" />
                         </div>
                       </div>
                     </CardHeader>

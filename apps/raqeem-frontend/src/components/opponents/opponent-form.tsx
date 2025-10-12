@@ -28,6 +28,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { EntityBadge } from '../base/entity-badge'
 
 const opponentFormSchema = z.object({
   name: z.string().min(1, 'اسم الخصم مطلوب'),
@@ -152,12 +153,12 @@ export function OpponentForm({ initialData, opponentId, onSuccess, onCancel }: O
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="individual">فرد</SelectItem>
-                      <SelectItem value="company">شركة</SelectItem>
-                      <SelectItem value="institution">مؤسسة</SelectItem>
-                      <SelectItem value="organization">منظمة</SelectItem>
-                      <SelectItem value="government">حكومي</SelectItem>
-                      <SelectItem value="association">جمعية</SelectItem>
+                      <SelectItem value="individual"><EntityBadge type="entityType" value="individual" /></SelectItem>
+                      <SelectItem value="company"><EntityBadge type="entityType" value="company" /></SelectItem>
+                      <SelectItem value="institution"><EntityBadge type="entityType" value="institution" /></SelectItem>
+                      <SelectItem value="organization"><EntityBadge type="entityType" value="organization" /></SelectItem>
+                      <SelectItem value="government"><EntityBadge type="entityType" value="government" /></SelectItem>
+                      <SelectItem value="association"><EntityBadge type="entityType" value="association" /></SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

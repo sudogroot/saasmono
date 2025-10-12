@@ -30,6 +30,7 @@ import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { EntityBadge } from '../base/entity-badge'
 
 const caseFormSchema = z.object({
   caseNumber: z.string().min(1, 'رقم القضية مطلوب'),
@@ -358,16 +359,16 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="new">جديدة</SelectItem>
-                      <SelectItem value="under-review">قيد المراجعة</SelectItem>
-                      <SelectItem value="filed-to-court">مرفوعة للمحكمة</SelectItem>
-                      <SelectItem value="under-consideration">قيد النظر</SelectItem>
-                      <SelectItem value="won">كسبت</SelectItem>
-                      <SelectItem value="lost">خسرت</SelectItem>
-                      <SelectItem value="postponed">مؤجلة</SelectItem>
-                      <SelectItem value="closed">مغلقة</SelectItem>
-                      <SelectItem value="withdrawn">منسحبة</SelectItem>
-                      <SelectItem value="suspended">معلقة</SelectItem>
+                      <SelectItem value="new"><EntityBadge type="caseStatus" value="new" /></SelectItem>
+                      <SelectItem value="under-review"><EntityBadge type="caseStatus" value="under-review" /></SelectItem>
+                      <SelectItem value="filed-to-court"><EntityBadge type="caseStatus" value="filed-to-court" /></SelectItem>
+                      <SelectItem value="under-consideration"><EntityBadge type="caseStatus" value="under-consideration" /></SelectItem>
+                      <SelectItem value="won"><EntityBadge type="caseStatus" value="won" /></SelectItem>
+                      <SelectItem value="lost"><EntityBadge type="caseStatus" value="lost" /></SelectItem>
+                      <SelectItem value="postponed"><EntityBadge type="caseStatus" value="postponed" /></SelectItem>
+                      <SelectItem value="closed"><EntityBadge type="caseStatus" value="closed" /></SelectItem>
+                      <SelectItem value="withdrawn"><EntityBadge type="caseStatus" value="withdrawn" /></SelectItem>
+                      <SelectItem value="suspended"><EntityBadge type="caseStatus" value="suspended" /></SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -388,12 +389,12 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="low">منخفضة</SelectItem>
-                      <SelectItem value="normal">عادية</SelectItem>
-                      <SelectItem value="medium">متوسطة</SelectItem>
-                      <SelectItem value="high">عالية</SelectItem>
-                      <SelectItem value="urgent">عاجلة</SelectItem>
-                      <SelectItem value="critical">حرجة</SelectItem>
+                      <SelectItem value="low"><EntityBadge type="priority" value="low" /></SelectItem>
+                      <SelectItem value="normal"><EntityBadge type="priority" value="normal" /></SelectItem>
+                      <SelectItem value="medium"><EntityBadge type="priority" value="medium" /></SelectItem>
+                      <SelectItem value="high"><EntityBadge type="priority" value="high" /></SelectItem>
+                      <SelectItem value="urgent"><EntityBadge type="priority" value="urgent" /></SelectItem>
+                      <SelectItem value="critical"><EntityBadge type="priority" value="critical" /></SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

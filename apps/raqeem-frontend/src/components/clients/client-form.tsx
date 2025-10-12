@@ -23,6 +23,7 @@ import {
 } from '@repo/ui'
 import { Loader2, Phone, Save, User } from 'lucide-react'
 import { toast } from 'sonner'
+import { EntityBadge } from '../base/entity-badge'
 
 interface ClientFormProps {
   initialData?: Partial<any> // client type
@@ -176,12 +177,12 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="individual">فرد</SelectItem>
-                    <SelectItem value="company">شركة</SelectItem>
-                    <SelectItem value="institution">مؤسسة</SelectItem>
-                    <SelectItem value="organization">منظمة</SelectItem>
-                    <SelectItem value="government">حكومي</SelectItem>
-                    <SelectItem value="association">جمعية</SelectItem>
+                    <SelectItem value="individual"><EntityBadge type="entityType" value="individual" /></SelectItem>
+                    <SelectItem value="company"><EntityBadge type="entityType" value="company" /></SelectItem>
+                    <SelectItem value="institution"><EntityBadge type="entityType" value="institution" /></SelectItem>
+                    <SelectItem value="organization"><EntityBadge type="entityType" value="organization" /></SelectItem>
+                    <SelectItem value="government"><EntityBadge type="entityType" value="government" /></SelectItem>
+                    <SelectItem value="association"><EntityBadge type="entityType" value="association" /></SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

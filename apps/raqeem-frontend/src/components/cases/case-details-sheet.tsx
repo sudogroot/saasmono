@@ -20,56 +20,13 @@ import { AlertCircle, Calendar, Clock, Edit, FileText, Gavel, Loader2, Plus, Sca
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { EntityBadge } from '../base/entity-badge'
 
 interface CaseDetailsSheetProps {
   caseId: string
   organizationId?: string
   renderMode?: 'content' | 'full'
 }
-
-const caseStatusColors = {
-  new: 'bg-blue-50 text-blue-700 border-blue-200',
-  'under-review': 'bg-yellow-50 text-yellow-700 border-yellow-200',
-  'filed-to-court': 'bg-purple-50 text-purple-700 border-purple-200',
-  'under-consideration': 'bg-orange-50 text-orange-700 border-orange-200',
-  won: 'bg-green-50 text-green-700 border-green-200',
-  lost: 'bg-red-50 text-red-700 border-red-200',
-  postponed: 'bg-gray-50 text-gray-700 border-gray-200',
-  closed: 'bg-slate-50 text-slate-700 border-slate-200',
-  withdrawn: 'bg-pink-50 text-pink-700 border-pink-200',
-  suspended: 'bg-amber-50 text-amber-700 border-amber-200',
-} as const
-
-const caseStatusLabels = {
-  new: 'جديدة',
-  'under-review': 'قيد المراجعة',
-  'filed-to-court': 'مرفوعة للمحكمة',
-  'under-consideration': 'قيد النظر',
-  won: 'كسبت',
-  lost: 'خسرت',
-  postponed: 'مؤجلة',
-  closed: 'مغلقة',
-  withdrawn: 'منسحبة',
-  suspended: 'معلقة',
-} as const
-
-const priorityColors = {
-  low: 'bg-gray-50 text-gray-700 border-gray-200',
-  normal: 'bg-blue-50 text-blue-700 border-blue-200',
-  medium: 'bg-yellow-50 text-yellow-700 border-yellow-200',
-  high: 'bg-orange-50 text-orange-700 border-orange-200',
-  urgent: 'bg-red-50 text-red-700 border-red-200',
-  critical: 'bg-purple-50 text-purple-700 border-purple-200',
-} as const
-
-const priorityLabels = {
-  low: 'منخفضة',
-  normal: 'عادية',
-  medium: 'متوسطة',
-  high: 'عالية',
-  urgent: 'عاجلة',
-  critical: 'حرجة',
-} as const
 
 export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: CaseDetailsSheetProps) {
   const searchParams = useSearchParams()
@@ -206,20 +163,10 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
                 </div>
                 <div className="flex gap-4">
                   <div>
-                    <Badge
-                      variant="outline"
-                      className={cn('w-fit', caseStatusColors[caseData.caseStatus as keyof typeof caseStatusColors])}
-                    >
-                      {caseStatusLabels[caseData.caseStatus as keyof typeof caseStatusLabels]}
-                    </Badge>
+                    <EntityBadge type="caseStatus" value={caseData.caseStatus} />
                   </div>
                   <div>
-                    <Badge
-                      variant="outline"
-                      className={cn('w-fit', priorityColors[caseData.priority as keyof typeof priorityColors])}
-                    >
-                      {priorityLabels[caseData.priority as keyof typeof priorityLabels]}
-                    </Badge>
+                    <EntityBadge type="priority" value={caseData.priority} />
                   </div>
                 </div>
               </div>

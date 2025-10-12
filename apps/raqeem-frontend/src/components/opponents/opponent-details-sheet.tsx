@@ -16,30 +16,13 @@ import {
   Plus
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { EntityBadge } from "../base/entity-badge";
 
 interface OpponentDetailsSheetProps {
   opponentId: string;
   organizationId?: string;
   renderMode?: 'content' | 'full';
 }
-
-const opponentTypeColors = {
-  individual: "bg-red-50 text-red-700 border-red-200",
-  company: "bg-orange-50 text-orange-700 border-orange-200", 
-  institution: "bg-pink-50 text-pink-700 border-pink-200",
-  organization: "bg-purple-50 text-purple-700 border-purple-200",
-  government: "bg-gray-50 text-gray-700 border-gray-200",
-  association: "bg-rose-50 text-rose-700 border-rose-200",
-} as const;
-
-const opponentTypeLabels = {
-  individual: "فرد",
-  company: "شركة", 
-  institution: "مؤسسة",
-  organization: "منظمة",
-  government: "حكومي",
-  association: "جمعية",
-} as const;
 
 export function OpponentDetails({ 
   opponentId, 
@@ -109,12 +92,7 @@ export function OpponentDetails({
               {opponentData.name}
             </h2>
           </div>
-          <Badge
-            variant="outline"
-            className={cn("w-fit", opponentTypeColors[opponentData.opponentType as keyof typeof opponentTypeColors])}
-          >
-            {opponentTypeLabels[opponentData.opponentType as keyof typeof opponentTypeLabels]}
-          </Badge>
+          <EntityBadge type="entityType" value={opponentData.opponentType} />
         </div>
         <div className="flex gap-2">
           <Button
@@ -148,7 +126,7 @@ export function OpponentDetails({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1">
             <label className="text-sm font-medium text-muted-foreground">نوع الخصم</label>
-            <p className="text-foreground">{opponentTypeLabels[opponentData.opponentType as keyof typeof opponentTypeLabels]}</p>
+            <div><EntityBadge type="entityType" value={opponentData.opponentType} /></div>
           </div>
         </div>
       </div>
