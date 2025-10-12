@@ -16,6 +16,7 @@ import { Edit, Eye, Plus, Trash2, Users } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { OpponentAvatar } from './opponent-avatar'
+import { EntityBadge } from '../base/entity-badge'
 
 interface OpponentsTableProps {
   opponents: OpponentListItem[]
@@ -30,24 +31,6 @@ interface OpponentsTableProps {
 }
 
 const columnHelper = createColumnHelper<OpponentListItem>()
-
-const opponentTypeColors = {
-  individual: 'bg-red-50 text-red-700 border-red-200',
-  company: 'bg-orange-50 text-orange-700 border-orange-200',
-  institution: 'bg-pink-50 text-pink-700 border-pink-200',
-  organization: 'bg-purple-50 text-purple-700 border-purple-200',
-  government: 'bg-gray-50 text-gray-700 border-gray-200',
-  association: 'bg-rose-50 text-rose-700 border-rose-200',
-} as const
-
-const opponentTypeLabels = {
-  individual: 'فرد',
-  company: 'شركة',
-  institution: 'مؤسسة',
-  organization: 'منظمة',
-  government: 'حكومي',
-  association: 'جمعية',
-} as const
 
 export function OpponentsTable({
   opponents,
@@ -86,14 +69,7 @@ export function OpponentsTable({
       columnHelper.accessor('opponentType', {
         id: 'type',
         header: 'النوع',
-        cell: ({ getValue }) => {
-          const opponentType = getValue() as keyof typeof opponentTypeColors
-          return (
-            <Badge variant="outline" className={cn('font-medium', opponentTypeColors[opponentType])}>
-              {opponentTypeLabels[opponentType]}
-            </Badge>
-          )
-        },
+        cell: ({ getValue }) => <EntityBadge type="entityType" value={getValue()} />,
       }),
       columnHelper.accessor('createdAt', {
         id: 'created_at',
@@ -170,12 +146,12 @@ export function OpponentsTable({
         key: 'opponentType',
         label: 'نوع الخصم',
         values: [
-          { label: 'فرد', value: 'individual' },
-          { label: 'شركة', value: 'company' },
-          { label: 'مؤسسة', value: 'institution' },
-          { label: 'منظمة', value: 'organization' },
-          { label: 'حكومي', value: 'government' },
-          { label: 'جمعية', value: 'association' },
+          { label: <EntityBadge type="entityType" value="individual" />, value: 'individual' },
+          { label: <EntityBadge type="entityType" value="company" />, value: 'company' },
+          { label: <EntityBadge type="entityType" value="institution" />, value: 'institution' },
+          { label: <EntityBadge type="entityType" value="organization" />, value: 'organization' },
+          { label: <EntityBadge type="entityType" value="government" />, value: 'government' },
+          { label: <EntityBadge type="entityType" value="association" />, value: 'association' },
         ],
       },
     ],
@@ -227,15 +203,7 @@ export function OpponentsTable({
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <span className="text-foreground truncate text-sm font-medium">{row.original.name}</span>
-              <Badge
-                variant="outline"
-                className={cn(
-                  'shrink-0 px-1 py-0 text-xs',
-                  opponentTypeColors[row.original.opponentType as keyof typeof opponentTypeColors]
-                )}
-              >
-                {opponentTypeLabels[row.original.opponentType as keyof typeof opponentTypeLabels]}
-              </Badge>
+              <EntityBadge type="entityType" value={row.original.opponentType} showIcon={false} className="shrink-0 px-1 py-0 text-xs" />
             </div>
           </div>
         </div>

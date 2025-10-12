@@ -36,7 +36,7 @@ import { CalendarCheck, Edit, Eye, FileText, MoreHorizontal, Plus, Trash2, Users
 import { usePathname } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
-// import { casePriorityBadges, PriorityBadge } from '../base/badge'
+import { EntityBadge } from '../base/entity-badge'
 
 interface CasesTableProps {
   // cases?: Case[]
@@ -52,50 +52,6 @@ interface CasesTableProps {
 }
 
 const columnHelper = createColumnHelper<any>() //Case
-
-const caseStatusColors = {
-  new: 'bg-blue-50 text-blue-700 border-blue-200',
-  'under-review': 'bg-yellow-50 text-yellow-700 border-yellow-200',
-  'filed-to-court': 'bg-purple-50 text-purple-700 border-purple-200',
-  'under-consideration': 'bg-orange-50 text-orange-700 border-orange-200',
-  won: 'bg-green-50 text-green-700 border-green-200',
-  lost: 'bg-red-50 text-red-700 border-red-200',
-  postponed: 'bg-gray-50 text-gray-700 border-gray-200',
-  closed: 'bg-slate-50 text-slate-700 border-slate-200',
-  withdrawn: 'bg-pink-50 text-pink-700 border-pink-200',
-  suspended: 'bg-amber-50 text-amber-700 border-amber-200',
-} as const
-
-const caseStatusLabels = {
-  new: 'جديدة',
-  'under-review': 'قيد المراجعة',
-  'filed-to-court': 'مرفوعة للمحكمة',
-  'under-consideration': 'قيد النظر',
-  won: 'كسبت',
-  lost: 'خسرت',
-  postponed: 'مؤجلة',
-  closed: 'مغلقة',
-  withdrawn: 'منسحبة',
-  suspended: 'معلقة',
-} as const
-
-const priorityColors = {
-  low: 'bg-gray-50 text-gray-700 border-gray-200',
-  normal: 'bg-blue-50 text-blue-700 border-blue-200',
-  medium: 'bg-yellow-50 text-yellow-700 border-yellow-200',
-  high: 'bg-orange-50 text-orange-700 border-orange-200',
-  urgent: 'bg-red-50 text-red-700 border-red-200',
-  critical: 'bg-red-100 text-red-800 border-red-300',
-} as const
-
-const priorityLabels = {
-  low: 'منخفضة',
-  normal: 'عادية',
-  medium: 'متوسطة',
-  high: 'عالية',
-  urgent: 'عاجلة',
-  critical: 'حرجة',
-} as const
 
 export function CasesTable({
   cases: propsCases,
@@ -187,26 +143,12 @@ export function CasesTable({
       columnHelper.accessor('caseStatus', {
         id: 'status',
         header: 'الحالة',
-        cell: ({ getValue }) => {
-          const status = getValue() as keyof typeof caseStatusColors
-          return (
-            <Badge variant="outline" className={cn('font-medium', caseStatusColors[status])}>
-              {caseStatusLabels[status]}
-            </Badge>
-          )
-        },
+        cell: ({ getValue }) => <EntityBadge type="caseStatus" value={getValue()} />,
       }),
       columnHelper.accessor('priority', {
         id: 'priority',
         header: 'الأولوية',
-        cell: ({ getValue }) => {
-          const priority = getValue() as keyof typeof priorityColors
-          return (
-            <Badge variant="outline" className={cn('font-medium', priorityColors[priority])}>
-              {priorityLabels[priority]}
-            </Badge>
-          )
-        },
+        cell: ({ getValue }) => <EntityBadge type="priority" value={getValue()} />,
       }),
       columnHelper.display({
         id: 'client',
@@ -317,83 +259,43 @@ export function CasesTable({
         label: 'حالة القضية',
         values: [
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', caseStatusColors.new)}>
-                جديدة
-              </Badge>
-            ),
+            label: <EntityBadge type="caseStatus" value="new" />,
             value: 'new',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', caseStatusColors['under-review'])}>
-                قيد المراجعة
-              </Badge>
-            ),
+            label: <EntityBadge type="caseStatus" value="under-review" />,
             value: 'under-review',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', caseStatusColors['filed-to-court'])}>
-                مرفوعة للمحكمة
-              </Badge>
-            ),
+            label: <EntityBadge type="caseStatus" value="filed-to-court" />,
             value: 'filed-to-court',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', caseStatusColors['under-consideration'])}>
-                قيد النظر
-              </Badge>
-            ),
+            label: <EntityBadge type="caseStatus" value="under-consideration" />,
             value: 'under-consideration',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', caseStatusColors.won)}>
-                كسبت
-              </Badge>
-            ),
+            label: <EntityBadge type="caseStatus" value="won" />,
             value: 'won',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', caseStatusColors.lost)}>
-                خسرت
-              </Badge>
-            ),
+            label: <EntityBadge type="caseStatus" value="lost" />,
             value: 'lost',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', caseStatusColors.postponed)}>
-                مؤجلة
-              </Badge>
-            ),
+            label: <EntityBadge type="caseStatus" value="postponed" />,
             value: 'postponed',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', caseStatusColors.closed)}>
-                مغلقة
-              </Badge>
-            ),
+            label: <EntityBadge type="caseStatus" value="closed" />,
             value: 'closed',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', caseStatusColors.withdrawn)}>
-                منسحبة
-              </Badge>
-            ),
+            label: <EntityBadge type="caseStatus" value="withdrawn" />,
             value: 'withdrawn',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', caseStatusColors.suspended)}>
-                معلقة
-              </Badge>
-            ),
+            label: <EntityBadge type="caseStatus" value="suspended" />,
             value: 'suspended',
           },
         ],
@@ -403,51 +305,27 @@ export function CasesTable({
         label: 'الأولوية',
         values: [
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', priorityColors.low)}>
-                منخفضة
-              </Badge>
-            ),
+            label: <EntityBadge type="priority" value="low" />,
             value: 'low',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', priorityColors.normal)}>
-                عادية
-              </Badge>
-            ),
+            label: <EntityBadge type="priority" value="normal" />,
             value: 'normal',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', priorityColors.medium)}>
-                متوسطة
-              </Badge>
-            ),
+            label: <EntityBadge type="priority" value="medium" />,
             value: 'medium',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', priorityColors.high)}>
-                عالية
-              </Badge>
-            ),
+            label: <EntityBadge type="priority" value="high" />,
             value: 'high',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', priorityColors.urgent)}>
-                عاجلة
-              </Badge>
-            ),
+            label: <EntityBadge type="priority" value="urgent" />,
             value: 'urgent',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', priorityColors.critical)}>
-                حرجة
-              </Badge>
-            ),
+            label: <EntityBadge type="priority" value="critical" />,
             value: 'critical',
           },
         ],
@@ -575,15 +453,7 @@ export function CasesTable({
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <span className="text-foreground truncate text-sm font-medium">{row.original.caseTitle}</span>
-              <Badge
-                variant="outline"
-                className={cn(
-                  'shrink-0 px-1 py-0 text-xs',
-                  caseStatusColors[row.original.caseStatus as keyof typeof caseStatusColors]
-                )}
-              >
-                {caseStatusLabels[row.original.caseStatus as keyof typeof caseStatusLabels]}
-              </Badge>
+              <EntityBadge type="caseStatus" value={row.original.caseStatus} showIcon={false} className="shrink-0 px-1 py-0 text-xs" />
             </div>
             <div className="text-muted-foreground mt-0.5 flex items-center gap-3 text-xs">
               <span className="font-mono">{row.original.caseNumber}</span>

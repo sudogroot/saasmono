@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils'
 import { globalSheet } from '@/stores/global-sheet-store'
 import { Edit, Eye, Mail, Phone, Plus, Trash2, Users } from 'lucide-react'
 import { ClientAvatar } from './client-avatar'
+import { EntityBadge } from '../base/entity-badge'
 
 // Client type is now imported from shared types
 
@@ -32,24 +33,6 @@ interface ClientsTableProps {
 }
 
 const columnHelper = createColumnHelper<any>() // Client type
-
-const clientTypeColors = {
-  individual: 'bg-blue-50 text-blue-700 border-blue-200',
-  company: 'bg-green-50 text-green-700 border-green-200',
-  institution: 'bg-purple-50 text-purple-700 border-purple-200',
-  organization: 'bg-orange-50 text-orange-700 border-orange-200',
-  government: 'bg-gray-50 text-gray-700 border-gray-200',
-  association: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-} as const
-
-const clientTypeLabels = {
-  individual: 'فرد',
-  company: 'شركة',
-  institution: 'مؤسسة',
-  organization: 'منظمة',
-  government: 'حكومي',
-  association: 'جمعية',
-} as const
 
 export function ClientsTable({
   clients,
@@ -90,14 +73,7 @@ export function ClientsTable({
       columnHelper.accessor('clientType', {
         id: 'type',
         header: 'النوع',
-        cell: ({ getValue }) => {
-          const clientType = getValue() as keyof typeof clientTypeColors
-          return (
-            <Badge variant="outline" className={cn('font-medium', clientTypeColors[clientType])}>
-              {clientTypeLabels[clientType]}
-            </Badge>
-          )
-        },
+        cell: ({ getValue }) => <EntityBadge type="entityType" value={getValue()} />,
       }),
       columnHelper.display({
         id: 'contact',
@@ -202,51 +178,27 @@ export function ClientsTable({
         label: 'نوع العميل',
         values: [
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', clientTypeColors.individual)}>
-                فرد
-              </Badge>
-            ),
+            label: <EntityBadge type="entityType" value="individual" />,
             value: 'individual',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', clientTypeColors.company)}>
-                شركة
-              </Badge>
-            ),
+            label: <EntityBadge type="entityType" value="company" />,
             value: 'company',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', clientTypeColors.institution)}>
-                مؤسسة
-              </Badge>
-            ),
+            label: <EntityBadge type="entityType" value="institution" />,
             value: 'institution',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', clientTypeColors.organization)}>
-                منظمة
-              </Badge>
-            ),
+            label: <EntityBadge type="entityType" value="organization" />,
             value: 'organization',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', clientTypeColors.government)}>
-                حكومي
-              </Badge>
-            ),
+            label: <EntityBadge type="entityType" value="government" />,
             value: 'government',
           },
           {
-            label: (
-              <Badge variant="outline" className={cn('font-medium', clientTypeColors.association)}>
-                جمعية
-              </Badge>
-            ),
+            label: <EntityBadge type="entityType" value="association" />,
             value: 'association',
           },
         ],
@@ -303,15 +255,7 @@ export function ClientsTable({
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <span className="text-foreground truncate text-lg font-medium md:text-sm">{row.original.name}</span>
-              <Badge
-                variant="outline"
-                className={cn(
-                  'shrink-0 px-1 py-0 text-base md:text-xs',
-                  clientTypeColors[row.original.clientType as keyof typeof clientTypeColors]
-                )}
-              >
-                {clientTypeLabels[row.original.clientType as keyof typeof clientTypeLabels]}
-              </Badge>
+              <EntityBadge type="entityType" value={row.original.clientType} showIcon={false} className="shrink-0 px-1 py-0 text-base md:text-xs" />
             </div>
             <div className="text-muted-foreground mt-0.5 flex items-center gap-3 text-sm md:text-xs">
               {row.original.phone && (
