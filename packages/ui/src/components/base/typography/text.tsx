@@ -4,7 +4,7 @@ import { cn } from "../../../lib/utils";
 export interface TextProps {
   children: React.ReactNode;
   variant?: "body" | "caption" | "small" | "muted" | "lead";
-  size?: "xs" | "sm" | "base" | "lg" | "xl";
+  size?: "xs" | "sm" | "base" | "lg" | "xl" | "2xl";
   weight?: "normal" | "medium" | "semibold" | "bold";
   className?: string;
   truncate?: boolean;
@@ -25,6 +25,7 @@ const sizeClasses = {
   base: "text-lg md:text-base",
   lg: "text-xl md:text-lg",
   xl: "text-2xl md:text-xl",
+  "2xl": "text-3xl md:text-2xl",
 };
 
 const weightClasses = {
