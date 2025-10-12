@@ -556,7 +556,7 @@ export function CasesTable({
         error={error}
         searchValue={searchValue}
         onSearchChange={setSearchValue}
-        searchPlaceholder="البحث في القضايا (العنوان، الرقم، الموضوع، العميل، الخصم...)"
+        // searchPlaceholder="البحث في القضايا (العنوان، الرقم، الموضوع، العميل، الخصم...)"
         noDataMessage="لا توجد قضايا مطابقة للبحث"
         mobileCardRenderer={mobileCardRenderer}
         showQuickFilters={true}

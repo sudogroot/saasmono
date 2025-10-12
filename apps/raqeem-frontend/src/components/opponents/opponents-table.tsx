@@ -350,7 +350,7 @@ export function OpponentsTable({
         error={error}
         searchValue={searchValue}
         onSearchChange={setSearchValue}
-        searchPlaceholder="البحث عن خصم (الاسم، النوع...)"
+        // searchPlaceholder="البحثصم (الاسم، النوع...)"
         noDataMessage="لا يوجد خصوم مطابقين للبحث"
         mobileCardRenderer={mobileCardRenderer}
         showQuickFilters={true}

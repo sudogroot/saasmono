@@ -409,7 +409,7 @@ export function ClientsTable({
         error={error}
         searchValue={searchValue}
         onSearchChange={setSearchValue}
-        searchPlaceholder="البحث عن عميل (الاسم، الهوية، الهاتف، البريد الإلكتروني...)"
+        // searchPlaceholder="البحث عن عميل (الاسم، الهوية، الهاتف، البريد الإلكتروني...)"
         noDataMessage="لا يوجد عملاء مطابقين للبحث"
         mobileCardRenderer={mobileCardRenderer}
         showQuickFilters={true}
