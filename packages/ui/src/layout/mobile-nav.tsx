@@ -199,7 +199,7 @@ export function MobileNav({
                     )}
                   />
                 </div>
-                <span className="text-xs font-medium mt-0.5 leading-none">
+                <span className="text-sm font-medium mt-0.5 leading-none">
                   {item.title}
                 </span>
                 {active && (
@@ -219,7 +219,7 @@ export function MobileNav({
                   <div className="p-1.5 rounded-lg hover:bg-gray-100">
                     <MoreHorizontal className="h-5 w-5" />
                   </div>
-                  <span className="text-xs font-medium mt-0.5 leading-none">
+                  <span className="text-sm font-medium mt-0.5 leading-none">
                     {moreButtonText}
                   </span>
                 </button>
@@ -314,7 +314,7 @@ export function MobileNav({
                                     <div className="font-medium">
                                       {item.title}
                                     </div>
-                                    <div className="text-xs text-gray-500 leading-tight">
+                                    <div className="text-sm text-gray-500 leading-tight">
                                       {item.description}
                                     </div>
                                   </div>

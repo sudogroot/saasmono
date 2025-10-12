@@ -110,7 +110,7 @@ export function DashboardLayout({
         <SiteHeader title={dynamicHeaderTitle} />
         <div className="flex flex-1 flex-col p-2">
           <div className=" flex flex-1 flex-col gap-2">
-            <div className="flex flex-col h-full gap-4 py-4 md:gap-6 md:py-2">
+            <div className="flex flex-col h-full gap-4 py-4 md:gap-6 md:py-2 text-base">
               <div>{children}</div>
             </div>
           </div>
