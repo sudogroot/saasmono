@@ -26,7 +26,7 @@ function TabsList({
       data-slot="tabs-list"
       className={cn(
         // Added slightly taller height and padding below md
-        "bg-muted text-muted-foreground inline-flex h-10 md:h-9 w-fit items-center justify-center rounded-lg p-1 md:p-[3px]",
+        "bg-muted text-muted-foreground inline-flex h-12 md:h-9 w-fit items-center justify-center rounded-lg p-1 md:p-[3px]",
         className,
       )}
       {...props}

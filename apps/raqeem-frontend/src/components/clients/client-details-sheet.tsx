@@ -1,14 +1,27 @@
 'use client'
 
-import { cn } from '@/lib/utils'
 import { globalSheet } from '@/stores/global-sheet-store'
 import { orpc } from '@/utils/orpc'
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, CopyButton, Separator, Tabs, TabsContent, TabsList, TabsTrigger, Text, ValueText } from '@repo/ui'
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CopyButton,
+  Separator,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Text,
+  ValueText,
+} from '@repo/ui'
 import { useQuery } from '@tanstack/react-query'
 import { AlertCircle, Calendar, Clock, Edit, FileText, Gavel, Loader2, Plus, Scale } from 'lucide-react'
-import { toast } from 'sonner'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { EntityBadge } from '../base/entity-badge'
 
 interface ClientDetailsSheetProps {
@@ -110,12 +123,8 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
     <div className="space-y-6 p-2">
       <Tabs dir="rtl" value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="mb-2">
-          <TabsTrigger value={'info'} className="text-muted-foreground text-sm font-medium">
-            المعلومات الشخصية
-          </TabsTrigger>
-          <TabsTrigger value={'cases'} className="text-muted-foreground text-sm font-medium">
-            القضايا
-          </TabsTrigger>
+          <TabsTrigger value={'info'}>المعلومات الشخصية</TabsTrigger>
+          <TabsTrigger value={'cases'}>القضايا</TabsTrigger>
         </TabsList>
         <TabsContent value="info">
           <div className="space-y-3">
@@ -243,7 +252,7 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                 {clientData.case.map((caseItem) => (
                   <Card
                     key={caseItem.id}
-                    className="overflow-hidden cursor-pointer transition-colors hover:bg-muted/50"
+                    className="hover:bg-muted/50 cursor-pointer overflow-hidden transition-colors"
                     onClick={() => {
                       globalSheet.openCaseDetails({
                         slug: 'cases',
@@ -254,12 +263,12 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                   >
                     <CardHeader className="pb-3">
                       <div className="flex items-start justify-between">
-                        <div className="space-y-1 flex-1">
+                        <div className="flex-1 space-y-1">
                           <CardTitle className="flex items-center gap-2 text-lg">
                             <FileText className="h-5 w-5" />
                             {caseItem.caseTitle}
                           </CardTitle>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <div className="text-muted-foreground flex items-center gap-2 text-sm">
                             <span>رقم القضية: {caseItem.caseNumber}</span>
                             {caseItem.courtFileNumber && (
                               <>
@@ -277,7 +286,7 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                     </CardHeader>
                     <CardContent className="pt-0">
                       <div className="space-y-3">
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-muted-foreground text-sm">
                           <p>{caseItem.caseSubject}</p>
                         </div>
 
@@ -312,20 +321,16 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                               {caseItem.trial.map((trial) => (
                                 <div
                                   key={trial.id}
-                                  className="flex items-center justify-between rounded-lg border bg-muted/30 p-3"
+                                  className="bg-muted/30 flex items-center justify-between rounded-lg border p-3"
                                 >
                                   <div className="flex items-center gap-3">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-                                      <Scale className="h-4 w-4 text-primary" />
+                                    <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full">
+                                      <Scale className="text-primary h-4 w-4" />
                                     </div>
                                     <div className="space-y-1">
-                                      <div className="text-sm font-medium">
-                                        الجلسة رقم {trial.trialNumber}
-                                      </div>
+                                      <div className="text-sm font-medium">الجلسة رقم {trial.trialNumber}</div>
                                       {trial.court && (
-                                        <div className="text-xs text-muted-foreground">
-                                          {trial.court.name}
-                                        </div>
+                                        <div className="text-muted-foreground text-xs">{trial.court.name}</div>
                                       )}
                                     </div>
                                   </div>
@@ -338,7 +343,7 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                                         day: 'numeric',
                                       })}
                                     </div>
-                                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                    <div className="text-muted-foreground flex items-center gap-1 text-xs">
                                       <Clock className="h-3 w-3" />
                                       {new Date(trial.trialDateTime).toLocaleTimeString('ar-TN', {
                                         hour: '2-digit',
@@ -353,8 +358,8 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                         )}
 
                         {(!caseItem.trial || caseItem.trial.length === 0) && (
-                          <div className="text-center py-4 text-muted-foreground space-y-3">
-                            <Gavel className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                          <div className="text-muted-foreground space-y-3 py-4 text-center">
+                            <Gavel className="mx-auto mb-2 h-8 w-8 opacity-50" />
                             <p className="text-sm">لا توجد جلسات مجدولة لهذه القضية</p>
                             <Button
                               variant="outline"
@@ -383,9 +388,9 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                <FileText className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                <p className="text-lg font-medium mb-1">لا توجد قضايا</p>
+              <div className="text-muted-foreground py-8 text-center">
+                <FileText className="mx-auto mb-3 h-12 w-12 opacity-50" />
+                <p className="mb-1 text-lg font-medium">لا توجد قضايا</p>
                 <p className="text-sm">لم يتم إنشاء أي قضايا لهذا العميل بعد</p>
               </div>
             )}

@@ -24,8 +24,8 @@ const buttonVariants = cva(
       size: {
         default:
           // Slightly bigger height/padding below md
-          "h-10 px-5 py-2.5 has-[>svg]:px-4 md:h-9 md:px-4 md:py-2 md:has-[>svg]:px-3",
-        sm: "h-9 rounded-md gap-1.5 px-3.5 has-[>svg]:px-3 md:h-8 md:px-3 md:gap-1.5 md:has-[>svg]:px-2.5 text-sm md:text-xs",
+          "h-12 px-5 py-2.5 has-[>svg]:px-4 md:h-9 md:px-4 md:py-2 md:has-[>svg]:px-3",
+        sm: "h-9.5 rounded-md gap-1.5 px-3.5 has-[>svg]:px-3 md:h-8 md:px-3 md:gap-1.5 md:has-[>svg]:px-2.5 text-base md:text-xs",
         lg: "h-11 rounded-md px-7 has-[>svg]:px-5 md:h-10 md:px-6 md:has-[>svg]:px-4 text-lg md:text-base",
         icon: "size-10 md:size-9",
       },
