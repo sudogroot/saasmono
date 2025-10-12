@@ -326,7 +326,7 @@ export function MobileTable<TData>({
       {headerActions && fabOnClick && (
         <Button
           onClick={fabOnClick}
-          className="fixed bottom-20 right-4 h-11 w-11 rounded-full shadow-[0_3px_9px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] transition-all duration-200 z-40 p-0"
+          className="fixed bottom-20 right-4 h-16 w-16 rounded-full shadow-[0_3px_8px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] transition-all duration-200 z-40 p-0"
           size="icon"
         >
           <Plus className="h-8 w-8" />
