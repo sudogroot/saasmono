@@ -11,7 +11,19 @@ import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@repo/ui/components/ui/sheet'
 import { useQuery } from '@tanstack/react-query'
-import { CalendarX, Loader2 } from 'lucide-react'
+import {
+  CalendarX,
+  Loader2,
+  CalendarDays,
+  Bell,
+  Clock,
+  CheckCircle2,
+  Sparkles,
+  Calendar as CalendarIcon,
+  Gavel,
+  Users,
+  AlertCircle
+} from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
 import './fullcalendar-styles.css'
 
@@ -53,7 +65,91 @@ interface TrialEvent {
   }
 }
 
+// Coming Soon Component
+function ComingSoonCalendar() {
+  return (
+    <div className="flex h-[calc(100vh-80px)] w-full items-center justify-center p-4" dir="rtl">
+      <div className="mx-auto w-full max-w-3xl">
+        <div className="flex flex-col items-center gap-6">
+          {/* Icon and Badge */}
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/10 rounded-2xl p-4">
+              <CalendarDays className="text-primary h-12 w-12" />
+            </div>
+            <div className="bg-primary/15 text-primary rounded-full px-4 py-1.5 text-xs font-medium animate-pulse">
+              قريباً
+            </div>
+          </div>
+
+          {/* Title */}
+          <h1 className="text-2xl font-semibold">التقويم</h1>
+
+          {/* Calendar Preview */}
+          <div className="bg-card w-full max-w-md rounded-xl border shadow-sm">
+            <div className="border-b px-4 py-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">فبراير 2025</span>
+                <div className="flex gap-1">
+                  <div className="bg-muted h-6 w-6 rounded"></div>
+                  <div className="bg-muted h-6 w-6 rounded"></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3">
+              <div className="grid grid-cols-7 gap-1">
+                {['سبت', 'أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة'].map((day) => (
+                  <div key={day} className="text-muted-foreground py-1 text-center text-[10px]">
+                    {day}
+                  </div>
+                ))}
+
+                {Array.from({ length: 28 }, (_, i) => {
+                  const hasEvent = [3, 6, 11, 17].includes(i)
+                  return (
+                    <div
+                      key={i}
+                      className="bg-muted/30 hover:bg-muted/50 flex aspect-square items-center justify-center rounded text-xs transition-colors"
+                    >
+                      <span className="text-muted-foreground text-[11px]">{i + 1}</span>
+                      {hasEvent && (
+                        <div className="bg-primary absolute mt-4 h-1 w-1 rounded-full"></div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            <div className="border-t px-4 py-2">
+              <div className="flex items-center gap-2 text-xs">
+                <Gavel className="text-primary h-3 w-3" />
+                <span className="text-muted-foreground">جلسات المحكمة</span>
+                <Bell className="text-amber-600 mr-auto h-3 w-3" />
+                <span className="text-muted-foreground">تنبيهات تلقائية</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Progress */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <div className="bg-primary h-1 w-6 rounded-full"></div>
+              <div className="bg-primary h-1 w-6 rounded-full"></div>
+              <div className="bg-primary/30 h-1 w-6 rounded-full"></div>
+            </div>
+            <span className="text-muted-foreground text-[11px]">قيد التطوير</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function CalendarPage() {
+  // Show coming soon page for now
+  const SHOW_COMING_SOON = true
+
   const { data: session } = authClient.useSession()
   const calendarRef = useRef<FullCalendar>(null)
   const [selectedEvent, setSelectedEvent] = useState<TrialEvent | null>(null)
@@ -65,7 +161,7 @@ export default function CalendarPage() {
     error,
   } = useQuery({
     ...orpc.trials.listTrials.queryOptions(),
-    enabled: !!session,
+    enabled: !!session && !SHOW_COMING_SOON,
   })
 
   // Convert trials to FullCalendar events
@@ -144,6 +240,11 @@ export default function CalendarPage() {
   const handleEventResize = (info: EventResizeDoneArg) => {
     console.log('Event resized:', info.event.id, info.event.start, info.event.end)
     // TODO: Update event in backend
+  }
+
+  // Show coming soon page
+  if (SHOW_COMING_SOON) {
+    return <ComingSoonCalendar />
   }
 
   if (isLoading) {

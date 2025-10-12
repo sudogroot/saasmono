@@ -32,7 +32,7 @@ export const caseRouter = {
       console.log('[CREATE CASE] Request received:', {
         orgId,
         userId,
-        input: JSON.stringify(input, null, 2)
+        input: JSON.stringify(input, null, 2),
       })
 
       try {
@@ -44,7 +44,7 @@ export const caseRouter = {
           message: error instanceof Error ? error.message : 'Unknown error',
           stack: error instanceof Error ? error.stack : undefined,
           error: error,
-          input: JSON.stringify(input, null, 2)
+          input: JSON.stringify(input, null, 2),
         })
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to create case')
       }

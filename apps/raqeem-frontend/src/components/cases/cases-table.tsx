@@ -18,6 +18,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   GenericTable,
+  Text,
+  ValueText,
 } from '@repo/ui'
 // import type { Case } from '@/types'
 import { orpc } from '@/utils/orpc'
@@ -30,7 +32,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Edit, Eye, FileText, MoreHorizontal, Plus, Trash2, Users } from 'lucide-react'
+import { CalendarCheck, Edit, Eye, FileText, MoreHorizontal, Plus, Trash2, Users } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
@@ -171,9 +173,12 @@ export function CasesTable({
           <div className="flex items-center gap-3">
             <div>
               <div className="text-foreground font-medium">{row.original.caseTitle}</div>
-              <div className="text-muted-foreground font-mono text-sm">{row.original.caseNumber}</div>
               {row.original.caseSubject && (
-                <div className="text-muted-foreground line-clamp-1 text-sm">{row.original.caseSubject}</div>
+                <div className="flex justify-items-center gap-2">
+                  <Text variant="muted" size="xs">
+                    {row.original.caseSubject}
+                  </Text>
+                </div>
               )}
             </div>
           </div>
@@ -209,7 +214,7 @@ export function CasesTable({
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <Users className="text-muted-foreground h-4 w-4" />
-            <span className="text-sm">{row.original.client?.name || 'غير محدد'}</span>
+            <ValueText fallbackText="غير محدد" className="text-sm" value={row.original.clientName} />
           </div>
         ),
       }),
@@ -219,7 +224,7 @@ export function CasesTable({
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <Users className="text-muted-foreground h-4 w-4" />
-            <span className="text-sm">{row.original.opponent?.name || 'غير محدد'}</span>
+            <ValueText fallbackText="غير محدد" className="text-sm" value={row.original.opponentName} />
           </div>
         ),
       }),
@@ -227,12 +232,15 @@ export function CasesTable({
         id: 'created_at',
         header: 'تاريخ الإضافة',
         cell: ({ getValue }) => (
-          <div className="text-muted-foreground text-sm">
-            {new Date(getValue()).toLocaleDateString('ar-TN', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-            })}
+          <div className="flex gap-2">
+            <CalendarCheck className="h-4 w-4" />
+            <Text size="xs">
+              {new Date(getValue()).toLocaleDateString('ar-TN', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+              })}
+            </Text>
           </div>
         ),
       }),

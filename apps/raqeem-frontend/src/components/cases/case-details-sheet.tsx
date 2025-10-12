@@ -193,6 +193,7 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
 
                 <CopyButton
                   content={caseData.caseTitle}
+                  variant={'outline'}
                   size="md"
                   onCopy={() => {
                     toast.success('تم نسخ العنوان')

@@ -83,6 +83,16 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
   // Check if we have saved state to restore
   const savedFormState = getFormState(formStateKey)
 
+  // Fetch case data when editing
+  const { data: caseData, isLoading: isCaseLoading } = useQuery({
+    ...orpc.cases.getCaseById.queryOptions({
+      input: {
+        caseId: caseId!,
+      },
+    }),
+    enabled: isEditing && !initialData, // Only fetch if editing and no initialData provided
+  })
+
   const form = useForm({
     // resolver: zodResolver(caseFormSchema),
     defaultValues: savedFormState || {
@@ -99,11 +109,25 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
   })
 
   // Restore saved form state when component mounts (if available)
+  // OR load fetched case data when editing
   useEffect(() => {
     if (savedFormState) {
       form.reset(savedFormState)
+    } else if (caseData && isEditing) {
+      // Populate form with fetched case data
+      form.reset({
+        caseNumber: caseData.caseNumber || '',
+        caseTitle: caseData.caseTitle || '',
+        caseSubject: caseData.caseSubject || '',
+        clientId: caseData.clientId || '',
+        opponentId: caseData.opponentId || '',
+        courtId: caseData.courtId || '',
+        courtFileNumber: caseData.courtFileNumber || '',
+        caseStatus: caseData.caseStatus || 'new',
+        priority: caseData.priority || 'medium',
+      })
     }
-  }, [])
+  }, [caseData, savedFormState, isEditing])
 
 
   // Fetch clients for dropdown
@@ -127,7 +151,8 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
         toast.success('تم إنشاء القضية بنجاح')
         form.reset()
         clearFormState(formStateKey) // Clear saved state after successful submission
-        queryClient.invalidateQueries({ queryKey: ['cases'] })
+        // Invalidate all case list queries
+        queryClient.invalidateQueries({ queryKey: orpc.cases.listCases.key() })
 
         // If onSuccess callback is provided, call it
         if (onSuccess) {
@@ -156,8 +181,10 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
       onSuccess: (data) => {
         toast.success('تم تحديث القضية بنجاح')
         clearFormState(formStateKey) // Clear saved state after successful submission
-        queryClient.invalidateQueries({ queryKey: ['cases'] })
-        queryClient.invalidateQueries({ queryKey: ['case', caseId] })
+        // Invalidate all case list queries
+        queryClient.invalidateQueries({ queryKey: orpc.cases.listCases.key() })
+        // Invalidate all case details queries
+        queryClient.invalidateQueries({ queryKey: orpc.cases.getCaseById.key() })
 
         // If onSuccess callback is provided, call it
         if (onSuccess) {
@@ -211,6 +238,16 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
   const presetOpponent = opponents.find((o) => o.id === presetData?.opponentId)
   const courtsByStateFlat = courtsByState.flatMap((group) => group.courts)
   const presetCourt = courtsByStateFlat.find((c) => c.id === presetData?.courtId)
+
+  // Show loading state while fetching case data for editing
+  if (isEditing && isCaseLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="ml-2 h-6 w-6 animate-spin" />
+        <span>جاري تحميل بيانات القضية...</span>
+      </div>
+    )
+  }
 
   return (
     <Form {...form}>

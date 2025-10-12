@@ -1,12 +1,12 @@
 import { and, eq, isNull } from 'drizzle-orm'
 import { NodePgDatabase } from 'drizzle-orm/node-postgres'
+import { member, user } from '../db/schema/auth'
 import { cases } from '../db/schema/cases'
 import { clients } from '../db/schema/clients'
 import { courts } from '../db/schema/courts'
 import { opponents } from '../db/schema/opponents'
 import { trials } from '../db/schema/trials'
-import { member, user } from '../db/schema/auth'
-import type { CreateCaseInput, UpdateCaseInput, CaseResponse, CaseListItem, CaseWithRelations } from '../types/case'
+import type { CaseListItem, CaseResponse, CaseWithRelations, CreateCaseInput, UpdateCaseInput } from '../types/case'
 
 export class CaseService {
   private db: NodePgDatabase
@@ -22,17 +22,11 @@ export class CaseService {
     const existingCase = await this.db
       .select()
       .from(cases)
-      .where(
-        and(
-          eq(cases.organizationId, orgId),
-          eq(cases.caseNumber, data.caseNumber),
-          isNull(cases.deletedAt)
-        )
-      )
+      .where(and(eq(cases.organizationId, orgId), eq(cases.caseNumber, data.caseNumber), isNull(cases.deletedAt)))
 
     console.log('[CaseService.createCase] Duplicate case number check:', {
       caseNumber: data.caseNumber,
-      exists: existingCase.length > 0
+      exists: existingCase.length > 0,
     })
 
     if (existingCase.length > 0) {
@@ -55,15 +49,12 @@ export class CaseService {
     const clientExists = await this.db
       .select()
       .from(clients)
-      .where(
-        and(
-          eq(clients.id, data.clientId),
-          eq(clients.organizationId, orgId),
-          isNull(clients.deletedAt)
-        )
-      )
+      .where(and(eq(clients.id, data.clientId), eq(clients.organizationId, orgId), isNull(clients.deletedAt)))
 
-    console.log('[CaseService.createCase] Client verification:', { clientId: data.clientId, found: clientExists.length > 0 })
+    console.log('[CaseService.createCase] Client verification:', {
+      clientId: data.clientId,
+      found: clientExists.length > 0,
+    })
 
     if (clientExists.length === 0) {
       throw new Error(`Client with ID "${data.clientId}" not found or does not belong to your organization`)
@@ -71,12 +62,12 @@ export class CaseService {
 
     // Verify court exists if provided
     if (data.courtId) {
-      const courtExists = await this.db
-        .select()
-        .from(courts)
-        .where(eq(courts.id, data.courtId))
+      const courtExists = await this.db.select().from(courts).where(eq(courts.id, data.courtId))
 
-      console.log('[CaseService.createCase] Court verification:', { courtId: data.courtId, found: courtExists.length > 0 })
+      console.log('[CaseService.createCase] Court verification:', {
+        courtId: data.courtId,
+        found: courtExists.length > 0,
+      })
 
       if (courtExists.length === 0) {
         throw new Error(`Court with ID "${data.courtId}" not found`)
@@ -88,15 +79,12 @@ export class CaseService {
       const opponentExists = await this.db
         .select()
         .from(opponents)
-        .where(
-          and(
-            eq(opponents.id, data.opponentId),
-            eq(opponents.organizationId, orgId),
-            isNull(opponents.deletedAt)
-          )
-        )
+        .where(and(eq(opponents.id, data.opponentId), eq(opponents.organizationId, orgId), isNull(opponents.deletedAt)))
 
-      console.log('[CaseService.createCase] Opponent verification:', { opponentId: data.opponentId, found: opponentExists.length > 0 })
+      console.log('[CaseService.createCase] Opponent verification:', {
+        opponentId: data.opponentId,
+        found: opponentExists.length > 0,
+      })
 
       if (opponentExists.length === 0) {
         throw new Error(`Opponent with ID "${data.opponentId}" not found or does not belong to your organization`)
@@ -130,7 +118,7 @@ export class CaseService {
           ...data,
           organizationId: orgId,
           createdBy: userId,
-        }
+        },
       })
       throw dbError
     }
@@ -171,13 +159,7 @@ export class CaseService {
       .leftJoin(opponents, eq(cases.opponentId, opponents.id))
       .leftJoin(courts, eq(cases.courtId, courts.id))
       .leftJoin(user, eq(cases.createdBy, user.id))
-      .where(
-        and(
-          eq(cases.id, caseId),
-          eq(cases.organizationId, orgId),
-          isNull(cases.deletedAt)
-        )
-      )
+      .where(and(eq(cases.id, caseId), eq(cases.organizationId, orgId), isNull(cases.deletedAt)))
 
     if (result.length === 0) {
       throw new Error('Case not found')
@@ -203,17 +185,11 @@ export class CaseService {
       })
       .from(trials)
       .leftJoin(courts, eq(trials.courtId, courts.id))
-      .where(
-        and(
-          eq(trials.caseId, caseId),
-          eq(trials.organizationId, orgId),
-          isNull(trials.deletedAt)
-        )
-      )
+      .where(and(eq(trials.caseId, caseId), eq(trials.organizationId, orgId), isNull(trials.deletedAt)))
       .orderBy(trials.trialNumber)
 
     // Format trials data
-    const trialsData = trialsResult.map(row => ({
+    const trialsData = trialsResult.map((row) => ({
       id: row.trial.id,
       trialNumber: row.trial.trialNumber,
       trialDateTime: row.trial.trialDateTime,
@@ -235,13 +211,7 @@ export class CaseService {
     const existingCase = await this.db
       .select()
       .from(cases)
-      .where(
-        and(
-          eq(cases.id, caseId),
-          eq(cases.organizationId, orgId),
-          isNull(cases.deletedAt)
-        )
-      )
+      .where(and(eq(cases.id, caseId), eq(cases.organizationId, orgId), isNull(cases.deletedAt)))
 
     if (existingCase.length === 0) {
       throw new Error('Case not found')
@@ -252,13 +222,7 @@ export class CaseService {
       const clientExists = await this.db
         .select()
         .from(clients)
-        .where(
-          and(
-            eq(clients.id, data.clientId),
-            eq(clients.organizationId, orgId),
-            isNull(clients.deletedAt)
-          )
-        )
+        .where(and(eq(clients.id, data.clientId), eq(clients.organizationId, orgId), isNull(clients.deletedAt)))
 
       if (clientExists.length === 0) {
         throw new Error('Client not found')
@@ -267,10 +231,7 @@ export class CaseService {
 
     // Verify court exists if being updated
     if (data.courtId) {
-      const courtExists = await this.db
-        .select()
-        .from(courts)
-        .where(eq(courts.id, data.courtId))
+      const courtExists = await this.db.select().from(courts).where(eq(courts.id, data.courtId))
 
       if (courtExists.length === 0) {
         throw new Error('Court not found')
@@ -282,13 +243,7 @@ export class CaseService {
       const opponentExists = await this.db
         .select()
         .from(opponents)
-        .where(
-          and(
-            eq(opponents.id, data.opponentId),
-            eq(opponents.organizationId, orgId),
-            isNull(opponents.deletedAt)
-          )
-        )
+        .where(and(eq(opponents.id, data.opponentId), eq(opponents.organizationId, orgId), isNull(opponents.deletedAt)))
 
       if (opponentExists.length === 0) {
         throw new Error('Opponent not found')
@@ -317,13 +272,7 @@ export class CaseService {
     const existingCase = await this.db
       .select()
       .from(cases)
-      .where(
-        and(
-          eq(cases.id, caseId),
-          eq(cases.organizationId, orgId),
-          isNull(cases.deletedAt)
-        )
-      )
+      .where(and(eq(cases.id, caseId), eq(cases.organizationId, orgId), isNull(cases.deletedAt)))
 
     if (existingCase.length === 0) {
       throw new Error('Case not found')
@@ -346,6 +295,7 @@ export class CaseService {
       .select({
         id: cases.id,
         caseNumber: cases.caseNumber,
+        caseSubject: cases.caseSubject,
         caseTitle: cases.caseTitle,
         caseStatus: cases.caseStatus,
         priority: cases.priority,
@@ -359,12 +309,7 @@ export class CaseService {
       .innerJoin(clients, eq(cases.clientId, clients.id))
       .leftJoin(opponents, eq(cases.opponentId, opponents.id))
       .leftJoin(courts, eq(cases.courtId, courts.id))
-      .where(
-        and(
-          eq(cases.organizationId, orgId),
-          isNull(cases.deletedAt)
-        )
-      )
+      .where(and(eq(cases.organizationId, orgId), isNull(cases.deletedAt)))
       .orderBy(cases.createdAt)
 
     return result as CaseListItem[]
