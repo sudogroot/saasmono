@@ -254,7 +254,7 @@ export function SessionNotesTable({ onCreateNew }: SessionNotesTableProps) {
           </div>
           <div>
             <h3 className="text-lg font-semibold">لا توجد ملاحظات</h3>
-            <p className="text-muted-foreground mt-1">ابدأ بإضافة ملاحظات الجلسات</p>
+            <p className="text-muted-foreground mt-1">ابدأ بإضافة كراس القسم</p>
           </div>
           {emptyStateAction}
         </div>

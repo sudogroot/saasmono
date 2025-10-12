@@ -14,9 +14,9 @@ export default function SessionNotesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">ملاحظات الجلسات</h1>
+        <h1 className="text-3xl font-bold tracking-tight">كراس القسم</h1>
         <p className="text-muted-foreground mt-2">
-          إدارة ملاحظات الجلسات الدراسية باستخدام نموذج كورنيل
+          إدارة كراس القسم الدراسية باستخدام نموذج كورنيل
         </p>
       </div>
 

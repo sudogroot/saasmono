@@ -124,7 +124,7 @@
 11. **Add to Sidebar**
     - Icon: `BookOpen` (from lucide-react)
     - Path: `/dashboard/session-notes`
-    - Label: "ملاحظات الجلسات" (Session Notes)
+    - Label: "كراس القسم" (Session Notes)
 
 12. **End-to-End Testing**
     - Create note with Cornell fields

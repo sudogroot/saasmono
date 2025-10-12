@@ -36,7 +36,7 @@ export const dashboardSidebarData = {
       icon: Calendar,
     },
     {
-      title: 'ملاحظات الجلسات',
+      title: 'كراس القسم',
       url: '/dashboard/session-notes',
       icon: BookOpen,
     },
@@ -220,7 +220,7 @@ export const dashboardMobileNavItems = [
     bgColor: 'bg-indigo-50',
   },
   {
-    title: 'ملاحظات الجلسات',
+    title: 'كراس القسم',
     href: 'session-notes',
     icon: BookOpen,
     color: 'text-amber-600',
