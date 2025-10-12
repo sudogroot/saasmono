@@ -329,7 +329,9 @@ export function ClientsTable({
               {row.original.email && (
                 <div className="flex items-center gap-1">
                   <Mail className="h-2.5 w-2.5" />
-                  <Text size="base">{row.original.email}</Text>
+                  <Text variant="muted" size="base">
+                    {row.original.email}
+                  </Text>
                 </div>
               )}
             </div>
