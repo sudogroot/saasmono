@@ -1,47 +1,47 @@
-import React from 'react';
-import { cn } from '../../../lib/utils';
+import React from "react";
+import { cn } from "../../../lib/utils";
 
 export interface TextProps {
   children: React.ReactNode;
-  variant?: 'body' | 'caption' | 'small' | 'muted' | 'lead';
-  size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl';
-  weight?: 'normal' | 'medium' | 'semibold' | 'bold';
+  variant?: "body" | "caption" | "small" | "muted" | "lead";
+  size?: "xs" | "sm" | "base" | "lg" | "xl";
+  weight?: "normal" | "medium" | "semibold" | "bold";
   className?: string;
   truncate?: boolean;
-  as?: 'p' | 'span' | 'div';
+  as?: "p" | "span" | "div";
 }
 
 const variantClasses = {
-  body: 'text-foreground',
-  caption: 'text-base md:text-sm text-muted-foreground',
-  small: 'text-sm md:text-xs text-muted-foreground',
-  muted: 'text-muted-foreground',
-  lead: 'text-xl md:text-lg text-muted-foreground'
+  body: "text-foreground",
+  caption: "text-base md:text-sm text-muted-foreground",
+  small: "text-sm md:text-xs text-muted-foreground",
+  muted: "text-muted-foreground",
+  lead: "text-xl md:text-lg text-muted-foreground",
 };
 
 const sizeClasses = {
-  xs: 'text-sm md:text-xs',
-  sm: 'text-base md:text-sm',
-  base: 'text-base',
-  lg: 'text-lg md:text-lg',
-  xl: 'text-xl md:text-xl'
+  xs: "text-base md:text-sm",
+  sm: "text-lg md:text-base",
+  base: "text-lg md:text-base",
+  lg: "text-lg md:text-lg",
+  xl: "text-xl md:text-xl",
 };
 
 const weightClasses = {
-  normal: 'font-normal',
-  medium: 'font-medium',
-  semibold: 'font-semibold',
-  bold: 'font-bold'
+  normal: "font-normal",
+  medium: "font-medium",
+  semibold: "font-semibold",
+  bold: "font-bold",
 };
 
 export const Text: React.FC<TextProps> = ({
   children,
-  variant = 'body',
+  variant = "body",
   size,
-  weight = 'normal',
+  weight = "normal",
   className,
   truncate = false,
-  as = 'p'
+  as = "p",
 }) => {
   const Component = as;
 
@@ -51,8 +51,8 @@ export const Text: React.FC<TextProps> = ({
         variantClasses[variant],
         size && sizeClasses[size],
         weightClasses[weight],
-        truncate && 'truncate',
-        className
+        truncate && "truncate",
+        className,
       )}
     >
       {children}
