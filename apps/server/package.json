@@ -39,6 +39,8 @@
     "seed:group-memberships": "tsx src/db/seeds/dev/groupMemberships.ts",
     "seed:classroom-complete": "tsx src/db/seeds/dev/seedClassroomComplete.ts",
     "seed:timetables": "tsx src/db/seeds/dev/timetables.ts",
+    "seed:session-notes": "tsx src/db/seeds/dev/sessionNotes.ts",
+    "seed:attendances": "tsx src/db/seeds/dev/attendances.ts",
     "db:show-tables": "tsx src/db/seeds/utils/showTables.ts"
   },
   "dependencies": {
