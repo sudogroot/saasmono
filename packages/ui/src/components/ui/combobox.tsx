@@ -248,15 +248,29 @@ function ComboboxItem({
   children,
   selected = false,
   onSelect,
+  id,
+  searchValue,
+  value,
   ...props
-}: React.ComponentProps<typeof CommandItem> & {
+}: Omit<React.ComponentProps<typeof CommandItem>, 'value'> & {
   selected?: boolean
+  id?: string
+  searchValue?: string
+  value?: string
 }) {
+  // Use id as primary value for unique identification, fallback to value for backward compatibility
+  const itemValue = id || value
+
+  // If searchValue is provided, use it for keywords; otherwise use the value
+  const keywords = searchValue ? [searchValue] : undefined
+
   return (
     <CommandItem
       data-slot="combobox-item"
       className={cn("cursor-pointer", className)}
       onSelect={onSelect}
+      value={itemValue}
+      keywords={keywords}
       {...props}
     >
       <div className="flex items-center w-full">

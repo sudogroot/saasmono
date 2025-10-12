@@ -181,7 +181,8 @@ export function TimetableFilters({
                         {classrooms.map((classroom) => (
                           <ComboboxItem
                             key={classroom.id}
-                            value={`${classroom.name} ${classroom.educationLevel.displayNameAr} ${classroom.academicYear}`}
+                            id={classroom.id}
+                            searchValue={`${classroom.name} ${classroom.educationLevel.displayNameAr} ${classroom.academicYear}`}
                             selected={filters.classroomId === classroom.id}
                             onSelect={() => handleClassroomChange(classroom.id)}
                           >
@@ -201,7 +202,8 @@ export function TimetableFilters({
                       {displayedClassrooms.map((classroom) => (
                         <ComboboxItem
                           key={classroom.id}
-                          value={`${classroom.name} ${classroom.educationLevel.displayNameAr} ${classroom.academicYear}`}
+                          id={classroom.id}
+                          searchValue={`${classroom.name} ${classroom.educationLevel.displayNameAr} ${classroom.academicYear}`}
                           selected={filters.classroomId === classroom.id}
                           onSelect={() => handleClassroomChange(classroom.id)}
                         >
@@ -279,7 +281,8 @@ export function TimetableFilters({
                         {groups.map((group) => (
                           <ComboboxItem
                             key={group.id}
-                            value={`${group.name} ${group.classroomName} ${group.classroomAcademicYear}`}
+                            id={group.id}
+                            searchValue={`${group.name} ${group.classroomName} ${group.classroomAcademicYear}`}
                             selected={filters.classroomGroupId === group.id}
                             onSelect={() => handleClassroomGroupChange(group.id)}
                           >
@@ -294,7 +297,8 @@ export function TimetableFilters({
                       {displayedClassroomGroups.map((group) => (
                         <ComboboxItem
                           key={group.id}
-                          value={`${group.name} ${group.classroomName} ${group.classroomAcademicYear}`}
+                          id={group.id}
+                          searchValue={`${group.name} ${group.classroomName} ${group.classroomAcademicYear}`}
                           selected={filters.classroomGroupId === group.id}
                           onSelect={() => handleClassroomGroupChange(group.id)}
                         >
