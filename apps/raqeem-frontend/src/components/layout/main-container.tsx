@@ -1,5 +1,6 @@
 "use client"
 import { usePathname } from "next/navigation"
+import { Heading } from "@repo/ui"
 import {breadcrumbs} from "./config"
 
 interface MainContainerProps {
@@ -17,9 +18,9 @@ export function MainContainer({
                 <div className="container mx-auto px-6 py-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h1 className="text-3xl font-bold">
+                      <Heading level={1}>
                         { breadcrumbs[pathname] }
-                      </h1>
+                      </Heading>
 
                     </div>
                   </div>

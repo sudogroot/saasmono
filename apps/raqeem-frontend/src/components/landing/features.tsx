@@ -1,5 +1,5 @@
 import React from "react";
-import { Badge } from "@repo/ui";
+import { Badge, Heading, Text } from "@repo/ui";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui";
 import {
   Scale,
@@ -49,12 +49,12 @@ export function Features() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <Badge variant="secondary" className="mb-4">الميزات</Badge>
-          <h2 className="text-3xl lg:text-5xl font-bold mb-6">
+          <Heading level={2} className="mb-6">
             كل ما تحتاجه لإدارة مكتبك القانوني
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          </Heading>
+          <Text size="xl" className="text-gray-600 max-w-3xl mx-auto">
             نظام شامل ومتكامل يغطي جميع احتياجاتك اليومية في إدارة الأعمال القانونية
-          </p>
+          </Text>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

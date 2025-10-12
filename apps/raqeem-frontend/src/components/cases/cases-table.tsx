@@ -20,6 +20,7 @@ import {
   GenericTable,
   Text,
   ValueText,
+  Heading,
 } from '@repo/ui'
 // import type { Case } from '@/types'
 import { orpc } from '@/utils/orpc'
@@ -516,8 +517,8 @@ export function CasesTable({
             <FileText className="text-muted-foreground h-8 w-8" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold">لا توجد قضايا</h3>
-            <p className="text-muted-foreground mt-1">ابدأ بإضافة قضية جديدة لإدارة ملفاتك القانونية</p>
+            <Heading level={3} className="font-semibold">لا توجد قضايا</Heading>
+            <Text variant="muted" className="mt-1">ابدأ بإضافة قضية جديدة لإدارة ملفاتك القانونية</Text>
           </div>
           {emptyStateAction}
         </div>

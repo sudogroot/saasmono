@@ -18,7 +18,7 @@ export const Code: React.FC<CodeProps> = ({
     return (
       <pre
         className={cn(
-          'rounded-md bg-muted p-4 overflow-x-auto text-sm font-mono',
+          'rounded-md bg-muted p-4 overflow-x-auto text-base md:text-sm font-mono',
           className
         )}
         data-language={language}
@@ -31,7 +31,7 @@ export const Code: React.FC<CodeProps> = ({
   return (
     <code
       className={cn(
-        'rounded bg-muted px-1.5 py-0.5 text-sm font-mono font-medium',
+        'rounded bg-muted px-1.5 py-0.5 text-sm md:text-sm font-mono font-medium',
         className
       )}
     >

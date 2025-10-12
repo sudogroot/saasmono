@@ -9,12 +9,9 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+  Field,
+  FieldError,
+  FieldLabel,
   Input,
   Select,
   SelectContent,
@@ -25,7 +22,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Loader2, Save, Users } from 'lucide-react'
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { EntityBadge } from '../base/entity-badge'
@@ -115,7 +112,6 @@ export function OpponentForm({ initialData, opponentId, onSuccess, onCancel }: O
   }
 
   return (
-    <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-6">
         {/* Basic Information */}
         <Card>
@@ -126,32 +122,33 @@ export function OpponentForm({ initialData, opponentId, onSuccess, onCancel }: O
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <FormField
+            <Controller
               control={form.control as any}
               name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>اسم الخصم *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="أدخل اسم الخصم الكامل" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>اسم الخصم *</FieldLabel>
+                  <Input
+                    {...field}
+                    id={field.name}
+                    placeholder="أدخل اسم الخصم الكامل"
+                    aria-invalid={fieldState.invalid}
+                  />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
               )}
             />
 
-            <FormField
+            <Controller
               control={form.control as any}
               name="opponentType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>نوع الخصم *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="اختر نوع الخصم" />
-                      </SelectTrigger>
-                    </FormControl>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="opponent-type">نوع الخصم *</FieldLabel>
+                  <Select name={field.name} value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger id="opponent-type" aria-invalid={fieldState.invalid}>
+                      <SelectValue placeholder="اختر نوع الخصم" />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="individual"><EntityBadge type="entityType" value="individual" /></SelectItem>
                       <SelectItem value="company"><EntityBadge type="entityType" value="company" /></SelectItem>
@@ -161,8 +158,8 @@ export function OpponentForm({ initialData, opponentId, onSuccess, onCancel }: O
                       <SelectItem value="association"><EntityBadge type="entityType" value="association" /></SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormMessage />
-                </FormItem>
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
               )}
             />
           </CardContent>
@@ -191,6 +188,5 @@ export function OpponentForm({ initialData, opponentId, onSuccess, onCancel }: O
           )}
         </div>
       </form>
-    </Form>
   )
 }

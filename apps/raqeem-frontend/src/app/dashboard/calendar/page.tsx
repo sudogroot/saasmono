@@ -10,6 +10,7 @@ import listPlugin from '@fullcalendar/list'
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@repo/ui/components/ui/sheet'
+import { Heading, Text } from '@repo/ui'
 import { useQuery } from '@tanstack/react-query'
 import {
   CalendarX,
@@ -82,13 +83,13 @@ function ComingSoonCalendar() {
           </div>
 
           {/* Title */}
-          <h1 className="text-2xl font-semibold">التقويم</h1>
+          <Heading level={1}>التقويم</Heading>
 
           {/* Calendar Preview */}
           <div className="bg-card w-full max-w-md rounded-xl border shadow-sm">
             <div className="border-b px-4 py-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">فبراير 2025</span>
+                <Text as="span" size="sm" className="font-medium">فبراير 2025</Text>
                 <div className="flex gap-1">
                   <div className="bg-muted h-6 w-6 rounded"></div>
                   <div className="bg-muted h-6 w-6 rounded"></div>
@@ -99,9 +100,9 @@ function ComingSoonCalendar() {
             <div className="p-3">
               <div className="grid grid-cols-7 gap-1">
                 {['سبت', 'أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة'].map((day) => (
-                  <div key={day} className="text-muted-foreground py-1 text-center text-[10px]">
+                  <Text key={day} as="span" size="xs" className="text-muted-foreground py-1 text-center">
                     {day}
-                  </div>
+                  </Text>
                 ))}
 
                 {Array.from({ length: 28 }, (_, i) => {
@@ -109,9 +110,9 @@ function ComingSoonCalendar() {
                   return (
                     <div
                       key={i}
-                      className="bg-muted/30 hover:bg-muted/50 flex aspect-square items-center justify-center rounded text-xs transition-colors"
+                      className="bg-muted/30 hover:bg-muted/50 flex aspect-square items-center justify-center rounded transition-colors"
                     >
-                      <span className="text-muted-foreground text-[11px]">{i + 1}</span>
+                      <Text as="span" size="xs" className="text-muted-foreground">{i + 1}</Text>
                       {hasEvent && (
                         <div className="bg-primary absolute mt-4 h-1 w-1 rounded-full"></div>
                       )}
@@ -122,11 +123,11 @@ function ComingSoonCalendar() {
             </div>
 
             <div className="border-t px-4 py-2">
-              <div className="flex items-center gap-2 text-xs">
+              <div className="flex items-center gap-2">
                 <Gavel className="text-primary h-3 w-3" />
-                <span className="text-muted-foreground">جلسات المحكمة</span>
+                <Text as="span" size="xs" className="text-muted-foreground">جلسات المحكمة</Text>
                 <Bell className="text-amber-600 mr-auto h-3 w-3" />
-                <span className="text-muted-foreground">تنبيهات تلقائية</span>
+                <Text as="span" size="xs" className="text-muted-foreground">تنبيهات تلقائية</Text>
               </div>
             </div>
           </div>
@@ -138,7 +139,7 @@ function ComingSoonCalendar() {
               <div className="bg-primary h-1 w-6 rounded-full"></div>
               <div className="bg-primary/30 h-1 w-6 rounded-full"></div>
             </div>
-            <span className="text-muted-foreground text-[11px]">قيد التطوير</span>
+            <Text as="span" size="xs" className="text-muted-foreground">قيد التطوير</Text>
           </div>
         </div>
       </div>
@@ -252,7 +253,7 @@ export default function CalendarPage() {
       <div className="flex h-[calc(100vh-200px)] items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="text-primary h-8 w-8 animate-spin" />
-          <p className="text-muted-foreground text-sm">جاري تحميل التقويم...</p>
+          <Text variant="muted" size="sm">جاري تحميل التقويم...</Text>
         </div>
       </div>
     )
@@ -266,10 +267,10 @@ export default function CalendarPage() {
             <CalendarX className="text-destructive h-8 w-8" />
           </div>
           <div>
-            <p className="text-foreground text-lg font-semibold">حدث خطأ في تحميل البيانات</p>
-            <p className="text-muted-foreground mt-2 text-sm">
+            <Text size="lg" className="text-foreground font-semibold">حدث خطأ في تحميل البيانات</Text>
+            <Text variant="muted" size="sm" className="mt-2">
               {error instanceof Error ? error.message : 'خطأ غير معروف'}
-            </p>
+            </Text>
           </div>
         </div>
       </div>
@@ -353,48 +354,48 @@ export default function CalendarPage() {
           {selectedEvent && (
             <div className="mt-6 space-y-4" dir="rtl">
               <div>
-                <p className="text-muted-foreground text-sm font-medium">رقم الجلسة</p>
-                <p className="text-lg">{selectedEvent.extendedProps.trialNumber}</p>
+                <Text variant="muted" size="sm" className="font-medium">رقم الجلسة</Text>
+                <Text size="lg">{selectedEvent.extendedProps.trialNumber}</Text>
               </div>
 
               <div>
-                <p className="text-muted-foreground text-sm font-medium">رقم القضية</p>
-                <p className="text-lg">{selectedEvent.extendedProps.caseNumber}</p>
+                <Text variant="muted" size="sm" className="font-medium">رقم القضية</Text>
+                <Text size="lg">{selectedEvent.extendedProps.caseNumber}</Text>
               </div>
 
               <div>
-                <p className="text-muted-foreground text-sm font-medium">عنوان القضية</p>
-                <p className="text-lg">{selectedEvent.extendedProps.caseTitle}</p>
+                <Text variant="muted" size="sm" className="font-medium">عنوان القضية</Text>
+                <Text size="lg">{selectedEvent.extendedProps.caseTitle}</Text>
               </div>
 
               <div>
-                <p className="text-muted-foreground text-sm font-medium">اسم الموكل</p>
-                <p className="text-lg">{selectedEvent.extendedProps.clientName}</p>
+                <Text variant="muted" size="sm" className="font-medium">اسم الموكل</Text>
+                <Text size="lg">{selectedEvent.extendedProps.clientName}</Text>
               </div>
 
               <div>
-                <p className="text-muted-foreground text-sm font-medium">المحكمة</p>
-                <p className="text-lg">{selectedEvent.extendedProps.courtName}</p>
+                <Text variant="muted" size="sm" className="font-medium">المحكمة</Text>
+                <Text size="lg">{selectedEvent.extendedProps.courtName}</Text>
               </div>
 
               <div>
-                <p className="text-muted-foreground text-sm font-medium">وقت البداية</p>
-                <p className="text-lg">
+                <Text variant="muted" size="sm" className="font-medium">وقت البداية</Text>
+                <Text size="lg">
                   {selectedEvent.start.toLocaleString('ar-SA', {
                     dateStyle: 'full',
                     timeStyle: 'short',
                   })}
-                </p>
+                </Text>
               </div>
 
               <div>
-                <p className="text-muted-foreground text-sm font-medium">وقت النهاية</p>
-                <p className="text-lg">
+                <Text variant="muted" size="sm" className="font-medium">وقت النهاية</Text>
+                <Text size="lg">
                   {selectedEvent.end.toLocaleString('ar-SA', {
                     dateStyle: 'full',
                     timeStyle: 'short',
                   })}
-                </p>
+                </Text>
               </div>
             </div>
           )}

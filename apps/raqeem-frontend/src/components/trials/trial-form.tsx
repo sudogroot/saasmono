@@ -5,12 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Badge,
   Button,
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+  Field,
+  FieldError,
+  FieldLabel,
   Heading,
   Input,
   SearchSelect,
@@ -24,7 +21,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Calendar, Clock, FileText, Gavel, Loader2, Save, Briefcase, User } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
@@ -170,7 +167,6 @@ export function TrialForm({ initialData, trialId, caseId, presetData, onSuccess,
   const presetCase = presetCaseDetails || cases.find((c: any) => c.id === (presetData?.caseId || caseId))
 
   return (
-    <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-4">
         {/* Preset Context Banner */}
         {presetCase && (
@@ -198,53 +194,51 @@ export function TrialForm({ initialData, trialId, caseId, presetData, onSuccess,
         </div>
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <FormField
+            <Controller
               control={form.control}
               name="caseId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>القضية *</FormLabel>
-                  <FormControl>
-                    <SearchSelect
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      options={cases.map((caseItem: any) => ({
-                        id: caseItem.id,
-                        label: `${caseItem.caseNumber} - ${caseItem.caseTitle}`,
-                        searchLabel: `${caseItem.caseNumber} ${caseItem.caseTitle}`,
-                      }))}
-                      placeholder="اختر القضية"
-                      searchPlaceholder="ابحث عن قضية..."
-                      emptyMessage="لا توجد قضايا"
-                      disabled={!!(presetData?.caseId || caseId)}
-                      clearable={false}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="case-select">القضية *</FieldLabel>
+                  <SearchSelect
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    options={cases.map((caseItem: any) => ({
+                      id: caseItem.id,
+                      label: `${caseItem.caseNumber} - ${caseItem.caseTitle}`,
+                      searchLabel: `${caseItem.caseNumber} ${caseItem.caseTitle}`,
+                    }))}
+                    placeholder="اختر القضية"
+                    searchPlaceholder="ابحث عن قضية..."
+                    emptyMessage="لا توجد قضايا"
+                    disabled={!!(presetData?.caseId || caseId)}
+                    clearable={false}
+                  />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
               )}
             />
 
-            <FormField
+            <Controller
               control={form.control}
               name="trialNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>رقم الجلسة *</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="رقم الجلسة"
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                      value={field.value || ''}
-                      disabled={isEditing}
-                      className="font-mono"
-                    />
-                  </FormControl>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>رقم الجلسة *</FieldLabel>
+                  <Input
+                    type="number"
+                    placeholder="رقم الجلسة"
+                    {...field}
+                    id={field.name}
+                    onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                    value={field.value || ''}
+                    disabled={isEditing}
+                    className="font-mono"
+                    aria-invalid={fieldState.invalid}
+                  />
                   {isEditing && <p className="text-muted-foreground text-xs">لا يمكن تعديل رقم الجلسة</p>}
-                  <FormMessage />
-                </FormItem>
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
               )}
             />
           </div>
@@ -258,30 +252,28 @@ export function TrialForm({ initialData, trialId, caseId, presetData, onSuccess,
           </Heading>
         </div>
         <div className="space-y-4">
-          <FormField
+          <Controller
             control={form.control}
             name="courtId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>المحكمة *</FormLabel>
-                <FormControl>
-                  <SearchSelect
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    options={courts.map((court) => ({
-                      id: court.id,
-                      label: court.name,
-                      metadata: court.state,
-                      searchLabel: `${court.name} ${court.state}`,
-                    }))}
-                    placeholder="اختر المحكمة"
-                    searchPlaceholder="ابحث عن محكمة..."
-                    emptyMessage="لا توجد محاكم"
-                    clearable={false}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="court-select">المحكمة *</FieldLabel>
+                <SearchSelect
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  options={courts.map((court) => ({
+                    id: court.id,
+                    label: court.name,
+                    metadata: court.state,
+                    searchLabel: `${court.name} ${court.state}`,
+                  }))}
+                  placeholder="اختر المحكمة"
+                  searchPlaceholder="ابحث عن محكمة..."
+                  emptyMessage="لا توجد محاكم"
+                  clearable={false}
+                />
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
             )}
           />
         </div>
@@ -295,37 +287,45 @@ export function TrialForm({ initialData, trialId, caseId, presetData, onSuccess,
         </div>
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <FormField
+            <Controller
               control={form.control}
               name="trialDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>تاريخ الجلسة *</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Calendar className="text-muted-foreground absolute top-3 right-3 h-4 w-4" />
-                      <Input type="date" {...field} className="pr-10" />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>تاريخ الجلسة *</FieldLabel>
+                  <div className="relative">
+                    <Calendar className="text-muted-foreground absolute top-3 right-3 h-4 w-4" />
+                    <Input
+                      type="date"
+                      {...field}
+                      id={field.name}
+                      className="pr-10"
+                      aria-invalid={fieldState.invalid}
+                    />
+                  </div>
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
               )}
             />
 
-            <FormField
+            <Controller
               control={form.control}
               name="trialTime"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>وقت الجلسة *</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Clock className="text-muted-foreground absolute top-3 right-3 h-4 w-4" />
-                      <Input type="time" {...field} className="pr-10" />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>وقت الجلسة *</FieldLabel>
+                  <div className="relative">
+                    <Clock className="text-muted-foreground absolute top-3 right-3 h-4 w-4" />
+                    <Input
+                      type="time"
+                      {...field}
+                      id={field.name}
+                      className="pr-10"
+                      aria-invalid={fieldState.invalid}
+                    />
+                  </div>
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
               )}
             />
           </div>
@@ -354,6 +354,5 @@ export function TrialForm({ initialData, trialId, caseId, presetData, onSuccess,
           )}
         </div>
       </form>
-    </Form>
   )
 }

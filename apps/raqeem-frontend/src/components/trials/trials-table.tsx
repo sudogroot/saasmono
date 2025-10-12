@@ -16,6 +16,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   GenericTable,
+  Heading,
+  Text,
 } from '@repo/ui'
 import {
   createColumnHelper,
@@ -410,8 +412,8 @@ export function TrialsTable({
             <Calendar className="text-muted-foreground h-8 w-8" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold">لا توجد جلسات</h3>
-            <p className="text-muted-foreground mt-1">ابدأ بإضافة جلسة جديدة لإدارة مواعيد المحاكمات</p>
+            <Heading level={3} className="font-semibold">لا توجد جلسات</Heading>
+            <Text variant="muted" className="mt-1">ابدأ بإضافة جلسة جديدة لإدارة مواعيد المحاكمات</Text>
           </div>
           {emptyStateAction}
         </div>

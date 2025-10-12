@@ -10,8 +10,8 @@ export interface ValueTextProps {
 }
 
 const sizeClasses = {
-  xs: "text-xs",
-  sm: "text-sm",
+  xs: "text-sm md:text-xs",
+  sm: "text-base md:text-sm",
   base: "text-base",
   lg: "text-lg",
   xl: "text-xl",

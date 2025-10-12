@@ -1,5 +1,5 @@
 import { authClient } from '@/lib/auth-client'
-import { Button, Input, Label } from '@repo/ui'
+import { Button, Input, Label, Heading, Text } from '@repo/ui'
 import { useForm } from '@tanstack/react-form'
 import { DoorOpen, Lock, Mail, User } from 'lucide-react'
 import Image from 'next/image'
@@ -71,8 +71,8 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
               </div>
             </div>
             <div>
-              <h1 className="mb-2 text-2xl font-bold text-gray-900">إنشاء حساب جديد</h1>
-              <p className="text-gray-600">انضم إلى رقيم وابدأ رحلتك القانونية</p>
+              <Heading level={1} className="mb-2 text-gray-900">إنشاء حساب جديد</Heading>
+              <Text className="text-gray-600">انضم إلى رقيم وابدأ رحلتك القانونية</Text>
             </div>
           </div>
 
@@ -104,9 +104,9 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
                       />
                     </div>
                     {field.state.meta.errors.map((error) => (
-                      <p key={error?.message} className="text-sm text-red-500">
+                      <Text key={error?.message} size="sm" className="text-red-500">
                         {error?.message}
-                      </p>
+                      </Text>
                     ))}
                   </div>
                 )}
@@ -134,9 +134,9 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
                       />
                     </div>
                     {field.state.meta.errors.map((error) => (
-                      <p key={error?.message} className="text-sm text-red-500">
+                      <Text key={error?.message} size="sm" className="text-red-500">
                         {error?.message}
-                      </p>
+                      </Text>
                     ))}
                   </div>
                 )}
@@ -164,9 +164,9 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
                       />
                     </div>
                     {field.state.meta.errors.map((error) => (
-                      <p key={error?.message} className="text-sm text-red-500">
+                      <Text key={error?.message} size="sm" className="text-red-500">
                         {error?.message}
-                      </p>
+                      </Text>
                     ))}
                   </div>
                 )}
@@ -187,7 +187,7 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
           </form>
 
           <div className="text-center">
-            <p className="mb-2 text-gray-600">لديك حساب بالفعل؟</p>
+            <Text className="mb-2 text-gray-600">لديك حساب بالفعل؟</Text>
             <Button
               variant="link"
               onClick={onSwitchToSignIn}

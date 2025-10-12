@@ -1,6 +1,5 @@
 import React from "react";
-import { Button } from "@repo/ui";
-import { Badge } from "@repo/ui";
+import { Button, Badge, Heading, Text } from "@repo/ui";
 import { Award, Scale, Gavel, Calendar, FileText, Clock, CheckCircle, TrendingUp } from "lucide-react";
 import Link from "next/link";
 
@@ -15,15 +14,15 @@ export function Hero() {
               المنصة الأول في تونس
             </Badge>
 
-            <h1 className="text-2xl md:text-3xl lg:text-5xl font-bold text-gray-900 leading-tight">
+            <Heading level={1} className="text-gray-900 leading-tight">
               المنصة الشاملة للمحامين.
               تضمن لك سلاسة العمل.
-            </h1>
+            </Heading>
 
-            <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+            <Text variant="lead" className="leading-relaxed max-w-2xl mx-auto lg:mx-0">
               نظام رقيم المتكامل يساعدك على إدارة قضاياك و وثائقك  ومواعيدك بكفاءة عالية.
               مصمم خصيصاً للمحامين والمكاتب القانونية.
-            </p>
+            </Text>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-end">
               <Button 
@@ -48,8 +47,8 @@ export function Hero() {
                     <Scale className="h-5 w-5 lg:h-6 lg:w-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-sm lg:text-base">نظام رقيم</h3>
-                    <p className="text-xs lg:text-sm text-gray-500">منصة إدارة قانونية متكاملة</p>
+                    <Heading level={3} className="font-semibold">نظام رقيم</Heading>
+                    <Text variant="small" className="text-gray-500">منصة إدارة قانونية متكاملة</Text>
                   </div>
                 </div>
 
@@ -57,28 +56,28 @@ export function Hero() {
                   <div className="flex justify-between items-center p-2 lg:p-3 bg-blue-50 rounded-lg">
                     <div className="flex items-center gap-2">
                       <Gavel className="h-4 w-4 text-blue-600" />
-                      <span className="text-xs lg:text-sm">قضية تجارية - محمد التونسي</span>
+                      <Text as="span" size="xs">قضية تجارية - محمد التونسي</Text>
                     </div>
                     <Badge className="text-xs">جديدة</Badge>
                   </div>
                   <div className="flex justify-between items-center p-2 lg:p-3 bg-green-50 rounded-lg">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-green-600" />
-                      <span className="text-xs lg:text-sm">جلسة محكمة تونس - 10:00</span>
+                      <Text as="span" size="xs">جلسة محكمة تونس - 10:00</Text>
                     </div>
                     <Badge variant="secondary" className="text-xs">اليوم</Badge>
                   </div>
                   <div className="flex justify-between items-center p-2 lg:p-3 bg-orange-50 rounded-lg">
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-orange-600" />
-                      <span className="text-xs lg:text-sm">تذكير: تسليم الوثائق - 2:00</span>
+                      <Text as="span" size="xs">تذكير: تسليم الوثائق - 2:00</Text>
                     </div>
                     <Badge variant="outline" className="text-xs bg-orange-100 text-orange-700">تذكير</Badge>
                   </div>
                   <div className="flex justify-between items-center p-2 lg:p-3 bg-purple-50 rounded-lg">
                     <div className="flex items-center gap-2">
                       <FileText className="h-4 w-4 text-purple-600" />
-                      <span className="text-xs lg:text-sm">مراجعة عقد العمل</span>
+                      <Text as="span" size="xs">مراجعة عقد العمل</Text>
                     </div>
                     <Badge variant="outline" className="text-xs">قريباً</Badge>
                   </div>

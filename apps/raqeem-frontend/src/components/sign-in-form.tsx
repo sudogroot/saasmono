@@ -1,5 +1,5 @@
 import { authClient } from '@/lib/auth-client'
-import { Button, Input, Label } from '@repo/ui'
+import { Button, Input, Label, Heading, Text } from '@repo/ui'
 import { useForm } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import z from 'zod'
@@ -65,8 +65,8 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
               </div>
             </div>
             <div>
-              <h1 className="mb-2 text-2xl font-bold text-gray-900">مرحباً بعودتك</h1>
-              <p className="text-gray-600">سجل الدخول إلى حسابك في رقيم</p>
+              <Heading level={1} className="mb-2 text-gray-900">مرحباً بعودتك</Heading>
+              <Text className="text-gray-600">سجل الدخول إلى حسابك في رقيم</Text>
             </div>
           </div>
 
@@ -99,9 +99,9 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
                       />
                     </div>
                     {field.state.meta.errors.map((error) => (
-                      <p key={error?.message} className="text-sm text-red-500">
+                      <Text key={error?.message} size="sm" className="text-red-500">
                         {error?.message}
-                      </p>
+                      </Text>
                     ))}
                   </div>
                 )}
@@ -129,9 +129,9 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
                       />
                     </div>
                     {field.state.meta.errors.map((error) => (
-                      <p key={error?.message} className="text-sm text-red-500">
+                      <Text key={error?.message} size="sm" className="text-red-500">
                         {error?.message}
-                      </p>
+                      </Text>
                     ))}
                   </div>
                 )}
@@ -152,7 +152,7 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
           </form>
 
           <div className="text-center">
-            <p className="mb-2 text-gray-600">ليس لديك حساب؟</p>
+            <Text className="mb-2 text-gray-600">ليس لديك حساب؟</Text>
             <Button
               variant="link"
               onClick={onSwitchToSignUp}

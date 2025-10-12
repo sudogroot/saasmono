@@ -13,18 +13,18 @@ export interface TextProps {
 
 const variantClasses = {
   body: 'text-foreground',
-  caption: 'text-sm text-muted-foreground',
-  small: 'text-xs text-muted-foreground',
+  caption: 'text-base md:text-sm text-muted-foreground',
+  small: 'text-sm md:text-xs text-muted-foreground',
   muted: 'text-muted-foreground',
-  lead: 'text-lg text-muted-foreground'
+  lead: 'text-xl md:text-lg text-muted-foreground'
 };
 
 const sizeClasses = {
-  xs: 'text-xs',
-  sm: 'text-sm',
+  xs: 'text-sm md:text-xs',
+  sm: 'text-base md:text-sm',
   base: 'text-base',
-  lg: 'text-lg',
-  xl: 'text-xl'
+  lg: 'text-lg md:text-lg',
+  xl: 'text-xl md:text-xl'
 };
 
 const weightClasses = {

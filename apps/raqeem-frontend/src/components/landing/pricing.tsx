@@ -1,5 +1,5 @@
 import React from "react";
-import { Badge } from "@repo/ui";
+import { Badge, Heading, Text } from "@repo/ui";
 import { Button } from "@repo/ui";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui";
 import { CheckCircle } from "lucide-react";
@@ -11,39 +11,39 @@ export function Pricing() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
           <Badge variant="secondary" className="mb-4">الأسعار</Badge>
-          <h2 className="text-2xl md:text-3xl font-bold mb-3">
+          <Heading level={2} className="mb-3">
             خطط تناسب احتياجاتك
-          </h2>
-          <p className="text-lg text-gray-600">
+          </Heading>
+          <Text size="lg" className="text-gray-600">
             ابدأ مجاناً واكتشف كيف يمكن لرقيم تحويل مكتبك القانوني
-          </p>
+          </Text>
         </div>
 
         <div className="max-w-2xl mx-auto">
           <Card className="bg-gradient-to-r from-primary to-gray-600 text-white border-0 shadow-xl">
             <CardContent className="text-center p-6">
               <div className="mb-6">
-                <h3 className="text-xl font-bold mb-1">تجربة مجانية كاملة</h3>
-                <div className="text-3xl font-bold mb-1">مجاناً</div>
-                <p className="text-sm opacity-90">30 يوماً بدون قيود</p>
+                <Heading level={3} className="font-bold mb-1">تجربة مجانية كاملة</Heading>
+                <Heading level={2} className="font-bold mb-1">مجاناً</Heading>
+                <Text size="sm" className="opacity-90">30 يوماً بدون قيود</Text>
               </div>
               
-              <div className="grid grid-cols-2 gap-3 mb-6 text-sm">
+              <div className="grid grid-cols-2 gap-3 mb-6">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-4 w-4" />
-                  <span>جميع الميزات</span>
+                  <Text as="span" size="sm">جميع الميزات</Text>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-4 w-4" />
-                  <span>دعم فني</span>
+                  <Text as="span" size="sm">دعم فني</Text>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-4 w-4" />
-                  <span>بدون بطاقة ائتمان</span>
+                  <Text as="span" size="sm">بدون بطاقة ائتمان</Text>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-4 w-4" />
-                  <span>إلغاء متى شئت</span>
+                  <Text as="span" size="sm">إلغاء متى شئت</Text>
                 </div>
               </div>
 

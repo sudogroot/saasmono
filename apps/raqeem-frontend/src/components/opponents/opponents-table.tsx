@@ -20,6 +20,7 @@ import {
   GenericTable,
   Text,
   ValueText,
+  Heading,
 } from '@repo/ui'
 import {
   createColumnHelper,
@@ -314,8 +315,8 @@ export function OpponentsTable({
             <Users className="text-muted-foreground h-8 w-8" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold">لا يوجد خصوم</h3>
-            <p className="text-muted-foreground mt-1">ابدأ بإضافة خصم جديد لإدارة ملفاتك القانونية</p>
+            <Heading level={3} className="font-semibold">لا يوجد خصوم</Heading>
+            <Text variant="muted" className="mt-1">ابدأ بإضافة خصم جديد لإدارة ملفاتك القانونية</Text>
           </div>
           {emptyStateAction}
         </div>

@@ -3,18 +3,15 @@
 import { Button, Heading, Input } from '@repo/ui'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 
 import { globalSheet } from '@/stores/global-sheet-store'
 // import type { ClientData, Client } from '../../../../server/src/types/clients';
 import { orpc } from '@/utils/orpc'
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+  Field,
+  FieldError,
+  FieldLabel,
   Select,
   SelectContent,
   SelectItem,
@@ -140,7 +137,6 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
   }
 
   return (
-    <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-4">
         {/* Basic Information */}
         <div className="flex gap-2">
@@ -149,33 +145,34 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
             المعلومات الأساسية
           </Heading>
         </div>
-        <FormField
+        <Controller
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>اسم العميل *</FormLabel>
-              <FormControl>
-                <Input placeholder="أدخل اسم العميل الكامل" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>اسم العميل *</FieldLabel>
+              <Input
+                {...field}
+                id={field.name}
+                placeholder="أدخل اسم العميل الكامل"
+                aria-invalid={fieldState.invalid}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
           )}
         />
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <FormField
+          <Controller
             control={form.control}
             name="clientType"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>نوع العميل *</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="اختر نوع العميل" />
-                    </SelectTrigger>
-                  </FormControl>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="client-type">نوع العميل *</FieldLabel>
+                <Select name={field.name} value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger id="client-type" aria-invalid={fieldState.invalid}>
+                    <SelectValue placeholder="اختر نوع العميل" />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="individual"><EntityBadge type="entityType" value="individual" /></SelectItem>
                     <SelectItem value="company"><EntityBadge type="entityType" value="company" /></SelectItem>
@@ -185,21 +182,25 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
                     <SelectItem value="association"><EntityBadge type="entityType" value="association" /></SelectItem>
                   </SelectContent>
                 </Select>
-                <FormMessage />
-              </FormItem>
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
             )}
           />
-          <FormField
+          <Controller
             control={form.control}
             name="nationalId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>رقم الهوية</FormLabel>
-                <FormControl>
-                  <Input placeholder="أدخل رقم الهوية" {...field} className="font-mono" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>رقم الهوية</FieldLabel>
+                <Input
+                  {...field}
+                  id={field.name}
+                  placeholder="أدخل رقم الهوية"
+                  className="font-mono"
+                  aria-invalid={fieldState.invalid}
+                />
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
             )}
           />
         </div>
@@ -211,31 +212,40 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
           </Heading>
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <FormField
+          <Controller
             control={form.control}
             name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>رقم الهاتف</FormLabel>
-                <FormControl>
-                  <Input placeholder="أدخل رقم الهاتف" {...field} className="font-mono" type="tel" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>رقم الهاتف</FieldLabel>
+                <Input
+                  {...field}
+                  id={field.name}
+                  placeholder="أدخل رقم الهاتف"
+                  className="font-mono"
+                  type="tel"
+                  aria-invalid={fieldState.invalid}
+                />
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
             )}
           />
 
-          <FormField
+          <Controller
             control={form.control}
             name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>البريد الإلكتروني</FormLabel>
-                <FormControl>
-                  <Input placeholder="أدخل البريد الإلكتروني" {...field} type="email" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>البريد الإلكتروني</FieldLabel>
+                <Input
+                  {...field}
+                  id={field.name}
+                  placeholder="أدخل البريد الإلكتروني"
+                  type="email"
+                  aria-invalid={fieldState.invalid}
+                />
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
             )}
           />
         </div>
@@ -263,6 +273,5 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
           )}
         </div>
       </form>
-    </Form>
   )
 }

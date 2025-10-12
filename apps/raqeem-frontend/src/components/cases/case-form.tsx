@@ -6,12 +6,9 @@ import { orpc } from '@/utils/orpc'
 import {
   Badge,
   Button,
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+  Field,
+  FieldError,
+  FieldLabel,
   Heading,
   Input,
   SearchSelect,
@@ -25,7 +22,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { FileText, Gavel, Loader2, Save, Scale, User, UserX } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { EntityBadge } from '../base/entity-badge'
@@ -248,7 +245,6 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
   }
 
   return (
-    <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-4">
         {/* Preset Context Banner */}
         {(presetClient || presetOpponent || presetCourt) && (
@@ -284,76 +280,90 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
         </div>
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <FormField
+            <Controller
               control={form.control}
               name="caseNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>رقم القضية *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="أدخل رقم القضية" {...field} disabled={isEditing} className="font-mono" />
-                  </FormControl>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>رقم القضية *</FieldLabel>
+                  <Input
+                    {...field}
+                    id={field.name}
+                    placeholder="أدخل رقم القضية"
+                    disabled={isEditing}
+                    className="font-mono"
+                    aria-invalid={fieldState.invalid}
+                  />
                   {isEditing && <p className="text-muted-foreground text-xs">لا يمكن تعديل رقم القضية</p>}
-                  <FormMessage />
-                </FormItem>
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
               )}
             />
-            <FormField
+            <Controller
               control={form.control}
               name="courtFileNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>رقم الملف بالمحكمة</FormLabel>
-                  <FormControl>
-                    <Input placeholder="أدخل رقم الملف بالمحكمة" {...field} className="font-mono" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>رقم الملف بالمحكمة</FieldLabel>
+                  <Input
+                    {...field}
+                    id={field.name}
+                    placeholder="أدخل رقم الملف بالمحكمة"
+                    className="font-mono"
+                    aria-invalid={fieldState.invalid}
+                  />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
               )}
             />
           </div>
 
-          <FormField
+          <Controller
             control={form.control}
             name="caseTitle"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>عنوان القضية *</FormLabel>
-                <FormControl>
-                  <Input placeholder="أدخل عنوان القضية" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>عنوان القضية *</FieldLabel>
+                <Input
+                  {...field}
+                  id={field.name}
+                  placeholder="أدخل عنوان القضية"
+                  aria-invalid={fieldState.invalid}
+                />
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
             )}
           />
 
-          <FormField
+          <Controller
             control={form.control}
             name="caseSubject"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>موضوع القضية *</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="اشرح موضوع القضية بالتفصيل" {...field} rows={3} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>موضوع القضية *</FieldLabel>
+                <Textarea
+                  {...field}
+                  id={field.name}
+                  placeholder="اشرح موضوع القضية بالتفصيل"
+                  rows={3}
+                  aria-invalid={fieldState.invalid}
+                />
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
             )}
           />
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <FormField
+            <Controller
               control={form.control}
               name="caseStatus"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>حالة القضية *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="اختر حالة القضية" />
-                      </SelectTrigger>
-                    </FormControl>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="case-status">حالة القضية *</FieldLabel>
+                  <Select name={field.name} value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger id="case-status" aria-invalid={fieldState.invalid}>
+                      <SelectValue placeholder="اختر حالة القضية" />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="new">
                         <EntityBadge type="caseStatus" value="new" />
@@ -387,23 +397,21 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormMessage />
-                </FormItem>
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
               )}
             />
 
-            <FormField
+            <Controller
               control={form.control}
               name="priority"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>الأولوية *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="اختر الأولوية" />
-                      </SelectTrigger>
-                    </FormControl>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="case-priority">الأولوية *</FieldLabel>
+                  <Select name={field.name} value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger id="case-priority" aria-invalid={fieldState.invalid}>
+                      <SelectValue placeholder="اختر الأولوية" />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="low">
                         <EntityBadge type="priority" value="low" />
@@ -425,8 +433,8 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormMessage />
-                </FormItem>
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
               )}
             />
           </div>
@@ -440,125 +448,121 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
         </div>
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <FormField
+            <Controller
               control={form.control}
               name="clientId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>العميل *</FormLabel>
-                  <FormControl>
-                    <SearchSelect
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      options={clients.map((client) => ({
-                        id: client.id,
-                        label: client.name,
-                        metadata: client.clientType,
-                      }))}
-                      placeholder="اختر العميل"
-                      searchPlaceholder="ابحث عن عميل..."
-                      emptyMessage="لا يوجد عملاء"
-                      disabled={!!presetData?.clientId}
-                      clearable={true}
-                      allowCreate={true}
-                      createLabel="إضافة عميل جديد"
-                      onCreateClick={(searchValue) => {
-                        // Save current form state before navigating
-                        saveFormState(formStateKey, form.getValues())
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="client-select">العميل *</FieldLabel>
+                  <SearchSelect
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    options={clients.map((client) => ({
+                      id: client.id,
+                      label: client.name,
+                      metadata: client.clientType,
+                    }))}
+                    placeholder="اختر العميل"
+                    searchPlaceholder="ابحث عن عميل..."
+                    emptyMessage="لا يوجد عملاء"
+                    disabled={!!presetData?.clientId}
+                    clearable={true}
+                    allowCreate={true}
+                    createLabel="إضافة عميل جديد"
+                    onCreateClick={(searchValue) => {
+                      // Save current form state before navigating
+                      saveFormState(formStateKey, form.getValues())
 
-                        globalSheet.openClientForm({
-                          mode: 'create',
-                          slug: 'clients',
-                          size: 'md',
-                          initialData: {
-                            name: searchValue,
-                          },
-                          onSuccess: async (createdClient: any) => {
-                            // Wait for queries to refetch so the new client appears in the dropdown
-                            await queryClient.refetchQueries({
-                              queryKey: orpc.clients.getClientsForDropdown.key(),
+                      globalSheet.openClientForm({
+                        mode: 'create',
+                        slug: 'clients',
+                        size: 'md',
+                        initialData: {
+                          name: searchValue,
+                        },
+                        onSuccess: async (createdClient: any) => {
+                          // Wait for queries to refetch so the new client appears in the dropdown
+                          await queryClient.refetchQueries({
+                            queryKey: orpc.clients.getClientsForDropdown.key(),
+                          })
+
+                          // Get the saved form state and update with new client
+                          const savedState = getFormState(formStateKey)
+                          if (savedState) {
+                            saveFormState(formStateKey, {
+                              ...savedState,
+                              clientId: createdClient.id,
                             })
+                          }
 
-                            // Get the saved form state and update with new client
-                            const savedState = getFormState(formStateKey)
-                            if (savedState) {
-                              saveFormState(formStateKey, {
-                                ...savedState,
-                                clientId: createdClient.id,
-                              })
-                            }
-
-                            // Close the client form sheet and return to case form
-                            globalSheet.back()
-                          },
-                        })
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                          // Close the client form sheet and return to case form
+                          globalSheet.back()
+                        },
+                      })
+                    }}
+                  />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
               )}
             />
 
-            <FormField
+            <Controller
               control={form.control}
               name="opponentId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>الخصم</FormLabel>
-                  <FormControl>
-                    <SearchSelect
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      options={opponents.map((opponent) => ({
-                        id: opponent.id,
-                        label: opponent.name,
-                        metadata: opponent.opponentType,
-                      }))}
-                      placeholder="اختر الخصم (اختياري)"
-                      searchPlaceholder="ابحث عن خصم..."
-                      emptyMessage="لا يوجد خصوم"
-                      disabled={!!presetData?.opponentId}
-                      clearable={true}
-                      allowNone={true}
-                      noneLabel="بدون خصم"
-                      allowCreate={true}
-                      createLabel="إضافة خصم جديد"
-                      onCreateClick={(searchValue) => {
-                        // Save current form state before navigating
-                        saveFormState(formStateKey, form.getValues())
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="opponent-select">الخصم</FieldLabel>
+                  <SearchSelect
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    options={opponents.map((opponent) => ({
+                      id: opponent.id,
+                      label: opponent.name,
+                      metadata: opponent.opponentType,
+                    }))}
+                    placeholder="اختر الخصم (اختياري)"
+                    searchPlaceholder="ابحث عن خصم..."
+                    emptyMessage="لا يوجد خصوم"
+                    disabled={!!presetData?.opponentId}
+                    clearable={true}
+                    allowNone={true}
+                    noneLabel="بدون خصم"
+                    allowCreate={true}
+                    createLabel="إضافة خصم جديد"
+                    onCreateClick={(searchValue) => {
+                      // Save current form state before navigating
+                      saveFormState(formStateKey, form.getValues())
 
-                        globalSheet.openOpponentForm({
-                          mode: 'create',
-                          slug: 'opponents',
-                          size: 'md',
-                          initialData: {
-                            name: searchValue,
-                          },
-                          onSuccess: async (createdOpponent: any) => {
-                            // Wait for queries to refetch so the new opponent appears in the dropdown
-                            await queryClient.refetchQueries({
-                              queryKey: orpc.opponents.getOpponentsForDropdown.key(),
+                      globalSheet.openOpponentForm({
+                        mode: 'create',
+                        slug: 'opponents',
+                        size: 'md',
+                        initialData: {
+                          name: searchValue,
+                        },
+                        onSuccess: async (createdOpponent: any) => {
+                          // Wait for queries to refetch so the new opponent appears in the dropdown
+                          await queryClient.refetchQueries({
+                            queryKey: orpc.opponents.getOpponentsForDropdown.key(),
+                          })
+
+                          // Get the saved form state and update with new opponent
+                          const savedState = getFormState(formStateKey)
+                          if (savedState) {
+                            saveFormState(formStateKey, {
+                              ...savedState,
+                              opponentId: createdOpponent.id,
                             })
+                          }
 
-                            // Get the saved form state and update with new opponent
-                            const savedState = getFormState(formStateKey)
-                            if (savedState) {
-                              saveFormState(formStateKey, {
-                                ...savedState,
-                                opponentId: createdOpponent.id,
-                              })
-                            }
-
-                            // Close the opponent form sheet and return to case form
-                            globalSheet.back()
-                          },
-                        })
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                          // Close the opponent form sheet and return to case form
+                          globalSheet.back()
+                        },
+                      })
+                    }}
+                  />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
               )}
             />
           </div>
@@ -571,34 +575,32 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
           </Heading>
         </div>
         <div className="space-y-4">
-          <FormField
+          <Controller
             control={form.control}
             name="courtId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>المحكمة</FormLabel>
-                <FormControl>
-                  <SearchSelect
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    groups={courtsByState.map((stateGroup) => ({
-                      groupLabel: stateGroup.state,
-                      options: stateGroup.courts.map((court) => ({
-                        id: court.id,
-                        label: court.name,
-                      })),
-                    }))}
-                    placeholder="اختر المحكمة (اختياري)"
-                    searchPlaceholder="ابحث عن محكمة..."
-                    emptyMessage="لا توجد محاكم"
-                    disabled={!!presetData?.courtId}
-                    clearable={true}
-                    allowNone={true}
-                    noneLabel="بدون محكمة"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="court-select">المحكمة</FieldLabel>
+                <SearchSelect
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  groups={courtsByState.map((stateGroup) => ({
+                    groupLabel: stateGroup.state,
+                    options: stateGroup.courts.map((court) => ({
+                      id: court.id,
+                      label: court.name,
+                    })),
+                  }))}
+                  placeholder="اختر المحكمة (اختياري)"
+                  searchPlaceholder="ابحث عن محكمة..."
+                  emptyMessage="لا توجد محاكم"
+                  disabled={!!presetData?.courtId}
+                  clearable={true}
+                  allowNone={true}
+                  noneLabel="بدون محكمة"
+                />
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
             )}
           />
         </div>
@@ -626,6 +628,5 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
           )}
         </div>
       </form>
-    </Form>
   )
 }

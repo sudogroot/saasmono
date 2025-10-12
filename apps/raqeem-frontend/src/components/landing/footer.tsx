@@ -1,6 +1,7 @@
 import React from "react";
 import { Scale } from "lucide-react";
 import Link from "next/link";
+import { Heading, Text } from "@repo/ui";
 
 export function Footer() {
   return (
@@ -10,15 +11,15 @@ export function Footer() {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <Scale className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold">رقيم</span>
+              <Heading level={2} className="font-bold">رقيم</Heading>
             </div>
-            <p className="text-gray-400 mb-4">
+            <Text className="text-gray-400 mb-4">
               نظام إدارة متكامل للمكاتب القانونية والمحاماة
-            </p>
+            </Text>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">المنتج</h4>
+            <Heading level={4} className="font-semibold mb-4">المنتج</Heading>
             <ul className="space-y-2 text-gray-400">
               <li><Link href="#" className="hover:text-white">الميزات</Link></li>
               <li><Link href="#" className="hover:text-white">الأسعار</Link></li>
@@ -27,7 +28,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">الدعم</h4>
+            <Heading level={4} className="font-semibold mb-4">الدعم</Heading>
             <ul className="space-y-2 text-gray-400">
               <li><Link href="#" className="hover:text-white">مركز المساعدة</Link></li>
               <li><Link href="#" className="hover:text-white">اتصل بنا</Link></li>
@@ -36,7 +37,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">الشركة</h4>
+            <Heading level={4} className="font-semibold mb-4">الشركة</Heading>
             <ul className="space-y-2 text-gray-400">
               <li><Link href="#" className="hover:text-white">من نحن</Link></li>
               <li><Link href="#" className="hover:text-white">الخصوصية</Link></li>
@@ -46,7 +47,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 رقيم. جميع الحقوق محفوظة.</p>
+          <Text>&copy; 2024 رقيم. جميع الحقوق محفوظة.</Text>
         </div>
       </div>
     </footer>
