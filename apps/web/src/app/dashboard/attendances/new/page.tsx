@@ -3,46 +3,50 @@
 import { orpc } from '@/utils/orpc'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { SessionNoteForm } from '@/components/sessionNotes/form/session-note-form'
+import { AttendanceForm } from '@/components/attendances/form/attendance-form'
 import { toast } from 'sonner'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@repo/ui'
 
-export default function CreateSessionNotePage() {
+export default function CreateAttendancePage() {
   const router = useRouter()
   const queryClient = useQueryClient()
 
   const createMutation = useMutation({
-    ...orpc.management.sessionNotes.createSessionNote.mutationOptions(),
+    ...orpc.management.attendances.createBulkAttendance.mutationOptions(),
     onSuccess: (data: any) => {
-      toast.success('تم إنشاء الملاحظة بنجاح')
+      toast.success('تم إنشاء سجل الحضور بنجاح')
       // Invalidate list query
       queryClient.invalidateQueries({
-        queryKey: orpc.management.sessionNotes.getSessionNotesList.queryKey({}),
+        queryKey: orpc.management.attendances.getAttendancesList.queryKey({}),
       })
       // Navigate to detail page
-      router.push(`/dashboard/session-notes/${data.id}`)
+      router.push(`/dashboard/attendances/${data.sessionId}`)
     },
     onError: (error: any) => {
-      toast.error(error.message || 'حدث خطأ أثناء إنشاء الملاحظة')
+      toast.error(error.message || 'حدث خطأ أثناء إنشاء سجل الحضور')
     },
   })
 
   const handleSubmit = async (data: any) => {
-    await createMutation.mutateAsync(data)
+    await createMutation.mutateAsync({
+      timetableId: data.timetableId,
+      generalNotes: data.generalNotes,
+      attendances: data.attendances,
+    })
   }
 
   const handleCancel = () => {
-    router.push('/dashboard/session-notes')
+    router.push('/dashboard/attendances')
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center kustify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">إضافة ملاحظة جديدة</h1>
+          <h1 className="text-3xl font-bold tracking-tight">إضافة سجل حضور جديد</h1>
           <p className="text-muted-foreground mt-2">
-            إنشاء ملاحظة جلسة جديدة باستخدام نموذج كورنيل
+            تسجيل حضور الطلاب لجلسة معينة
           </p>
         </div>
         <Button
@@ -54,10 +58,10 @@ export default function CreateSessionNotePage() {
         </Button>
       </div>
 
-      <SessionNoteForm
+      <AttendanceForm
         onSubmit={handleSubmit}
         onCancel={handleCancel}
-        submitLabel="إنشاء الملاحظة"
+        submitLabel="إنشاء سجل الحضور"
         isLoading={createMutation.isPending}
       />
     </div>

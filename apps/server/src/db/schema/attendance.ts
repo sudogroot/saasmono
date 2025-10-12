@@ -12,6 +12,35 @@ export const attendanceStatusEnum = pgEnum('attendance_status', [
   'SICK'
 ])
 
+// Attendance session - groups all attendance records for a timetable session
+export const attendanceSession = pgTable('attendance_session', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  timetableId: uuid('timetable_id')
+    .notNull()
+    .references(() => timetable.id, { onDelete: 'cascade' }),
+  generalNotes: text('general_notes'), // Overall notes for this attendance session
+
+  orgId: text('org_id')
+    .notNull()
+    .references(() => organization.id, { onDelete: 'cascade' }),
+
+  // Audit fields
+  createdByUserId: text('created_by_user_id').references(() => user.id),
+  updatedByUserId: text('updated_by_user_id').references(() => user.id),
+
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+}, (table) => {
+  return {
+    // Index for quick lookup
+    timetableIdx: index('attendance_session_timetable_idx').on(table.timetableId),
+    orgIdx: index('attendance_session_org_idx').on(table.orgId),
+  }
+})
+
 // Attendance records for specific session instances
 export const attendance = pgTable('attendance', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -19,6 +48,8 @@ export const attendance = pgTable('attendance', {
   note: text('note'), // Reason for absence, late arrival, etc.
 
   // Required associations
+  attendanceSessionId: uuid('attendance_session_id')
+    .references(() => attendanceSession.id, { onDelete: 'cascade' }),
   studentId: text('student_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
@@ -69,7 +100,33 @@ export const attendance = pgTable('attendance', {
 })
 
 // Relations
+export const attendanceSessionRelations = relations(attendanceSession, ({ one, many }) => ({
+  timetable: one(timetable, {
+    fields: [attendanceSession.timetableId],
+    references: [timetable.id],
+  }),
+  organization: one(organization, {
+    fields: [attendanceSession.orgId],
+    references: [organization.id],
+  }),
+  attendances: many(attendance),
+  createdBy: one(user, {
+    fields: [attendanceSession.createdByUserId],
+    references: [user.id],
+    relationName: 'attendanceSessionCreatedBy',
+  }),
+  updatedBy: one(user, {
+    fields: [attendanceSession.updatedByUserId],
+    references: [user.id],
+    relationName: 'attendanceSessionUpdatedBy',
+  }),
+}))
+
 export const attendanceRelations = relations(attendance, ({ one }) => ({
+  attendanceSession: one(attendanceSession, {
+    fields: [attendance.attendanceSessionId],
+    references: [attendanceSession.id],
+  }),
   student: one(user, {
     fields: [attendance.studentId],
     references: [user.id],

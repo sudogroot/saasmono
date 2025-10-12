@@ -6,7 +6,7 @@ import { QuillEditor } from '../quill-editor'
 import { KeywordsInput } from './keywords-input'
 import { SummaryInput } from './summary-input'
 import { FileUpload } from './file-upload'
-import { TimetableCombobox } from '../timetable-combobox'
+import { TimetableCombobox } from '@/components/commun/timetable-combobox'
 import { Loader2, Save, X } from 'lucide-react'
 
 interface UploadedFile {

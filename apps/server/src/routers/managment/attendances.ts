@@ -7,33 +7,83 @@ import {
   AttendanceListItemSchema,
   AttendanceQuerySchema,
   AttendanceSchema,
+  AttendanceSessionListItemSchema,
+  AttendanceSessionSchema,
   AttendanceSummarySchema,
   CreateAttendanceInputSchema,
   CreateBulkAttendanceInputSchema,
   StudentAttendanceSummarySchema,
+  StudentBasicInfoSchema,
   UpdateAttendanceInputSchema
 } from '../../types/attendance'
 
 const attendanceService = createAttendanceManagementService(db)
 
 export const attendanceManagementRouter = {
-  // Attendance Records
+  // Get students for a timetable
+  getStudentsByTimetable: protectedProcedure
+    .input(
+      z.object({
+        timetableId: z.uuid().describe('Timetable ID'),
+      })
+    )
+    .output(z.array(StudentBasicInfoSchema))
+    .route({
+      method: 'GET',
+      path: '/management/attendances/timetables/{timetableId}/students',
+      tags: ['Attendance Management'],
+      summary: 'Get students for timetable',
+      description: 'Retrieves all students enrolled in a timetable\'s classroom or classroom group',
+    })
+    .handler(async ({ input, context }) => {
+      const orgId = getOrgId(context)
+      try {
+        return await attendanceService.getStudentsByTimetable(input.timetableId, orgId)
+      } catch (error) {
+        throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch students for timetable')
+      }
+    }),
+
+  // Attendance Sessions
   getAttendancesList: protectedProcedure
     .input(AttendanceQuerySchema.optional())
-    .output(z.array(AttendanceListItemSchema))
+    .output(z.array(AttendanceSessionListItemSchema))
     .route({
       method: 'GET',
       path: '/management/attendances',
       tags: ['Attendance Management'],
-      summary: 'List attendance records',
-      description: 'Retrieves all attendance records with optional filtering',
+      summary: 'List attendance sessions',
+      description: 'Retrieves all attendance sessions grouped by timetable with optional filtering',
     })
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
       try {
         return await attendanceService.getAttendancesList(orgId, input)
       } catch (error) {
-        throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch attendance records')
+        throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch attendance sessions')
+      }
+    }),
+
+  getAttendanceSessionById: protectedProcedure
+    .input(
+      z.object({
+        sessionId: z.uuid().describe('Attendance Session ID'),
+      })
+    )
+    .output(AttendanceSessionSchema)
+    .route({
+      method: 'GET',
+      path: '/management/attendances/sessions/{sessionId}',
+      tags: ['Attendance Management'],
+      summary: 'Get attendance session',
+      description: 'Retrieves a complete attendance session with all student records',
+    })
+    .handler(async ({ input, context }) => {
+      const orgId = getOrgId(context)
+      try {
+        return await attendanceService.getAttendanceSessionById(input.sessionId, orgId)
+      } catch (error) {
+        throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch attendance session')
       }
     }),
 
@@ -89,21 +139,17 @@ export const attendanceManagementRouter = {
   createBulkAttendance: protectedProcedure
     .input(CreateBulkAttendanceInputSchema)
     .output(z.object({
+      sessionId: z.uuid(),
       created: z.number(),
-      skipped: z.number(),
-      records: z.array(z.object({
-        id: z.uuid(),
-        status: z.enum(['PRESENT', 'ABSENT', 'LATE', 'EXCUSED', 'SICK']),
-        studentId: z.string(),
-        timetableId: z.uuid(),
-      }))
+      updated: z.number(),
+      total: z.number(),
     }))
     .route({
       method: 'POST',
       path: '/management/attendances/bulk',
       tags: ['Attendance Management'],
-      summary: 'Create bulk attendance records',
-      description: 'Creates multiple attendance records for a session',
+      summary: 'Create or update bulk attendance session',
+      description: 'Creates or updates an attendance session with multiple attendance records',
     })
     .handler(async ({ input, context }) => {
       const orgId = getOrgId(context)
@@ -114,7 +160,7 @@ export const attendanceManagementRouter = {
       try {
         return await attendanceService.createBulkAttendance(input, orgId, userId)
       } catch (error) {
-        throw OrpcErrorHelper.handleServiceError(error, 'Failed to create bulk attendance records')
+        throw OrpcErrorHelper.handleServiceError(error, 'Failed to create/update attendance session')
       }
     }),
 

@@ -11,7 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { BookOpen, Calendar, Eye, Lock, Paperclip, Plus } from 'lucide-react'
+import { BookOpen, Calendar, Edit, Eye, Lock, Paperclip, Plus } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -52,6 +52,10 @@ export function SessionNotesTable({ onCreateNew }: SessionNotesTableProps) {
 
   const handleViewNote = (noteId: string) => {
     router.push(`/dashboard/session-notes/${noteId}`)
+  }
+
+  const handleEditNote = (noteId: string) => {
+    router.push(`/dashboard/session-notes/${noteId}/edit`)
   }
 
   const columns = useMemo(
@@ -129,9 +133,14 @@ export function SessionNotesTable({ onCreateNew }: SessionNotesTableProps) {
         id: 'actions',
         header: 'الإجراءات',
         cell: ({ row }) => (
-          <Button variant="ghost" size="sm" onClick={() => handleViewNote(row.original.id)} title="عرض">
-            <Eye className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="sm" onClick={() => handleViewNote(row.original.id)} title="عرض">
+              <Eye className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => handleEditNote(row.original.id)} title="تعديل">
+              <Edit className="h-4 w-4" />
+            </Button>
+          </div>
         ),
       }),
     ],

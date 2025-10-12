@@ -3,6 +3,7 @@ import {
   BookOpen,
   BookUser,
   Calendar,
+  CheckSquare,
   Database,
   FileText,
   FileType,
@@ -39,6 +40,11 @@ export const dashboardSidebarData = {
       title: 'كراس القسم',
       url: '/dashboard/session-notes',
       icon: BookOpen,
+    },
+    {
+      title: 'سجلات الحضور',
+      url: '/dashboard/attendances',
+      icon: CheckSquare,
     },
     {
       title: 'المعلمون',
@@ -225,6 +231,13 @@ export const dashboardMobileNavItems = [
     icon: BookOpen,
     color: 'text-amber-600',
     bgColor: 'bg-amber-50',
+  },
+  {
+    title: 'سجلات الحضور',
+    href: 'attendances',
+    icon: CheckSquare,
+    color: 'text-teal-600',
+    bgColor: 'bg-teal-50',
   },
   {
     title: 'المعلمون',

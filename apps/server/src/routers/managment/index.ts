@@ -7,6 +7,8 @@ import { teacherManagementRouter } from './teachers'
 import { timetableManagementRouter } from './timetable'
 import { userManagementRouter } from './user'
 import { sessionNoteManagementRouter } from './sessionNotes'
+import { attendanceManagementRouter } from './attendances'
+import { attendance } from '@/db/schema/attendance'
 
 export const managementRouter = {
   users: userManagementRouter,
@@ -17,4 +19,5 @@ export const managementRouter = {
   classroom: classroomManagementRouter,
   timetables: timetableManagementRouter,
   sessionNotes: sessionNoteManagementRouter,
+  attendances: attendanceManagementRouter
 }
