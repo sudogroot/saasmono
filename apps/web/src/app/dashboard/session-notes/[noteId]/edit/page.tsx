@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { SessionNoteForm } from '@/components/sessionNotes/form/session-note-form'
 import { toast } from 'sonner'
-import { ArrowLeft, Loader2 } from 'lucide-react'
+import { ArrowRight, Loader2 } from 'lucide-react'
 import { Button } from '@repo/ui'
 
 interface PageProps {
@@ -81,21 +81,19 @@ export default function EditSessionNotePage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            تعديل ملاحظة: {sessionNote.title}
+          </h1>
+        </div>
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={() => router.back()}
         >
-          <ArrowLeft className="h-4 w-4 ml-1" />
           رجوع
         </Button>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">تعديل الملاحظة</h1>
-          <p className="text-muted-foreground mt-2">
-            تعديل ملاحظة: {sessionNote.title}
-          </p>
-        </div>
       </div>
 
       <SessionNoteForm

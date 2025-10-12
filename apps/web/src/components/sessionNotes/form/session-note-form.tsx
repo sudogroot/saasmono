@@ -138,7 +138,7 @@ export function SessionNoteForm({
               <p className="text-sm text-destructive">{errors.timetableId}</p>
             )}
             <p className="text-xs text-muted-foreground">
-              يتم عرض جلسات الأسبوع الحالي فقط (الإثنين - الأحد)
+              يتم عرض جلسات الأسبوع الحالي فقط (الإثنين - السبت)
             </p>
           </div>
 

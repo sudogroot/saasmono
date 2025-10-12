@@ -2,6 +2,7 @@ import { timetable } from '@/db/schema/timetable'
 import { sessionNote, sessionNoteAttachment } from '@/db/schema/sessionNote'
 import { classroom, classroomGroup } from '@/db/schema/classroom'
 import { educationLevel } from '@/db/schema/education'
+import { user } from '@/db/schema/auth'
 import type {
   CreateSessionNoteAttachmentInput,
   CreateSessionNoteInput,
@@ -12,7 +13,7 @@ import type {
 import { and, count, eq, gte, isNull, lte } from 'drizzle-orm'
 import { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import path from 'path'
-import { cleanKeywords, moveFileFromTemp, PUBLIC_DIR } from '@/lib/fileUtils'
+import { cleanKeywords, moveFileFromTemp, PUBLIC_DIR, toFullFileUrl } from '@/lib/fileUtils'
 
 export class SessionNoteManagementService {
   private db: NodePgDatabase
@@ -109,9 +110,14 @@ export class SessionNoteManagementService {
         sessionTitle: timetable.title,
         sessionStartDateTime: timetable.startDateTime,
         sessionEndDateTime: timetable.endDateTime,
+        // Creator data
+        creatorId: user.id,
+        creatorName: user.name,
+        creatorLastName: user.lastName,
       })
       .from(sessionNote)
       .leftJoin(timetable, eq(sessionNote.timetableId, timetable.id))
+      .leftJoin(user, eq(sessionNote.createdByUserId, user.id))
       .where(and(
         eq(sessionNote.id, sessionNoteId),
         eq(sessionNote.orgId, orgId),
@@ -139,6 +145,12 @@ export class SessionNoteManagementService {
         isNull(sessionNoteAttachment.deletedAt)
       ))
 
+    // Convert relative file URLs to full URLs
+    const attachmentsWithFullUrls = attachments.map(attachment => ({
+      ...attachment,
+      fileUrl: toFullFileUrl(attachment.fileUrl),
+    }))
+
     const row = result[0]
 
     return {
@@ -160,7 +172,12 @@ export class SessionNoteManagementService {
         startDateTime: row.sessionStartDateTime!,
         endDateTime: row.sessionEndDateTime!,
       },
-      attachments,
+      createdBy: {
+        id: row.creatorId!,
+        name: row.creatorName!,
+        lastName: row.creatorLastName!,
+      },
+      attachments: attachmentsWithFullUrls,
     }
   }
 
@@ -309,10 +326,11 @@ export class SessionNoteManagementService {
     for (const attachment of tempAttachments) {
       try {
         // Move file from temp to final destination
-        // tempPath is an absolute path like /tmp/filename.png
-        console.log(`Moving file from ${attachment.tempPath} to ${destinationDir}/${attachment.fileName}`)
+        // tempPath is a URL path like /tmp/filename.png, convert to filesystem path
+        const tempFilePath = path.join(PUBLIC_DIR, attachment.tempPath)
+        console.log(`Moving file from ${tempFilePath} to ${destinationDir}/${attachment.fileName}`)
         const finalPath = await moveFileFromTemp(
-          attachment.tempPath,
+          tempFilePath,
           destinationDir,
           attachment.fileName
         )

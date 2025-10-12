@@ -73,6 +73,7 @@ export default function SessionNoteDetailPage({ params }: PageProps) {
         isPrivate={sessionNote.isPrivate}
         createdAt={sessionNote.createdAt}
         timetable={sessionNote.timetable}
+        createdBy={sessionNote.createdBy}
         noteId={params.noteId}
         onDelete={handleDelete}
       />

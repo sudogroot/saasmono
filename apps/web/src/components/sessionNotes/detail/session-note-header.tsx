@@ -1,7 +1,7 @@
 'use client'
 
 import { Badge, Button } from '@repo/ui'
-import { BookOpen, Calendar, Clock, Lock, Edit, Trash2 } from 'lucide-react'
+import { BookOpen, Calendar, Clock, Lock, Edit, Trash2, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface SessionNoteHeaderProps {
@@ -14,6 +14,11 @@ interface SessionNoteHeaderProps {
     startDateTime: Date
     endDateTime: Date
   }
+  createdBy: {
+    id: string
+    name: string
+    lastName: string
+  }
   noteId: string
   onDelete?: () => void
 }
@@ -23,6 +28,7 @@ export function SessionNoteHeader({
   isPrivate,
   createdAt,
   timetable,
+  createdBy,
   noteId,
   onDelete,
 }: SessionNoteHeaderProps) {
@@ -48,7 +54,7 @@ export function SessionNoteHeader({
               </div>
               <div className="flex-1 min-w-0">
                 <h1 className="text-2xl font-bold text-foreground break-words">{title}</h1>
-                <div className="flex items-center gap-2 mt-2">
+                <div className="flex flex-wrap items-center gap-2 mt-2">
                   <Badge variant={isPrivate ? 'secondary' : 'default'} className="text-xs">
                     {isPrivate ? (
                       <>
@@ -63,6 +69,10 @@ export function SessionNoteHeader({
                     <Calendar className="h-3 w-3" />
                     {new Date(createdAt).toLocaleDateString('ar-SA')}
                   </span>
+                </div>
+                <div className="flex items-center gap-1 mt-1 text-muted-foreground text-sm">
+                  <User className="h-3 w-3" />
+                  <span>أنشئت بواسطة: {createdBy.name} {createdBy.lastName}</span>
                 </div>
               </div>
             </div>

@@ -30,6 +30,38 @@ export const MAX_FILES_PER_NOTE = 6
 export const PUBLIC_DIR = path.join(process.cwd(), 'src', 'public')
 
 /**
+ * Get server base URL
+ */
+export function getServerBaseUrl(): string {
+  const port = process.env.PORT || 3000
+  const host = process.env.HOST || 'localhost'
+  return `http://${host}:${port}`
+}
+
+/**
+ * Convert relative file path to full URL
+ * Adds /public prefix since files are served via express.static at /public
+ */
+export function toFullFileUrl(relativePath: string): string {
+  if (!relativePath) return ''
+
+  // If already a full URL, return as is
+  if (relativePath.startsWith('http://') || relativePath.startsWith('https://')) {
+    return relativePath
+  }
+
+  // Add leading slash if missing
+  let path = relativePath.startsWith('/') ? relativePath : `/${relativePath}`
+
+  // Add /public prefix if not already present (files are served at /public/...)
+  if (!path.startsWith('/public/')) {
+    path = `/public${path}`
+  }
+
+  return `${getServerBaseUrl()}${path}`
+}
+
+/**
  * Temp upload directory
  */
 export const TEMP_DIR = path.join(PUBLIC_DIR, 'tmp')
@@ -86,7 +118,8 @@ export async function moveFileFromTemp(
     // Move file
     await fs.move(tempFilePath, destinationPath, { overwrite: true })
 
-    // Return relative path from public directory
+    // Return relative path from public directory (WITHOUT /public prefix)
+    // We'll add /public prefix when serving, not when storing in DB
     const relativePath = path.relative(PUBLIC_DIR, destinationPath)
     return `/${relativePath.split(path.sep).join('/')}`
   } catch (error) {
