@@ -3,6 +3,7 @@ import { protectedProcedure, publicProcedure } from '../lib/orpc'
 import { caseRouter } from './cases'
 import { clientRouter } from './clients'
 import { courtRouter } from './courts'
+import { dashboardRouter } from './dashboard'
 import { opponentRouter } from './opponents'
 import { trialRouter } from './trials'
 
@@ -39,6 +40,7 @@ export const appRouter = {
   courts: courtRouter,
   opponents: opponentRouter,
   trials: trialRouter,
+  dashboard: dashboardRouter,
 }
 
 export type AppRouter = typeof appRouter
