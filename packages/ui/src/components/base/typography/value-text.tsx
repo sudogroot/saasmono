@@ -12,10 +12,10 @@ export interface ValueTextProps {
 const sizeClasses = {
   xs: "text-sm md:text-xs",
   sm: "text-base md:text-sm",
-  base: "text-base",
-  lg: "text-lg",
-  xl: "text-xl",
-  "2xl": "text-2xl",
+  base: "text-lg md:text-base",
+  lg: "text-xl md:text-lg",
+  xl: "text-2xl md:text-xl",
+  "2xl": "text-3xl md:text-2xl",
 };
 
 export const ValueText: React.FC<ValueTextProps> = ({
