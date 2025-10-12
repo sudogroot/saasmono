@@ -157,20 +157,33 @@ export function TrialForm({ initialData, trialId, caseId, presetData, onSuccess,
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-4">
       {/* Preset Context Banner */}
       {presetCase && (
-        <div className="bg-muted/50 border-border -mt-2 mb-4 flex flex-wrap items-center gap-2 rounded-lg border px-4 py-3">
-          <span className="text-muted-foreground text-sm font-medium">إضافة جلسة لـ:</span>
-          <Badge variant="secondary" className="gap-1.5">
-            <Briefcase className="h-3 w-3" />
-            <span>
-              {presetCase.caseNumber} - {presetCase.caseTitle}
-            </span>
-          </Badge>
-          {(presetCase as any).client?.name && (
-            <Badge variant="secondary" className="gap-1.5">
-              <User className="h-3 w-3" />
-              <span>{(presetCase as any).client.name}</span>
-            </Badge>
-          )}
+        <div className="bg-primary/5 border-primary/20 -mt-2 mb-4 rounded-lg border px-3 py-3 space-y-2">
+          <div className="flex items-start gap-2">
+            <Briefcase className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+            <div className="flex-1 min-w-0 space-y-1">
+              <p className="text-xs font-medium text-muted-foreground">تم تحديد القضية مسبقاً</p>
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-xs text-muted-foreground shrink-0">القضية:</span>
+                  <span className="text-sm font-medium truncate">
+                    {presetCase.caseNumber} - {presetCase.caseTitle}
+                  </span>
+                </div>
+                {(presetCase as any).client?.name && (
+                  <div className="flex items-center gap-2 min-w-0">
+                    <User className="h-3 w-3 text-muted-foreground shrink-0" />
+                    <span className="text-xs text-muted-foreground shrink-0">العميل:</span>
+                    <span className="text-sm truncate">{(presetCase as any).client.name}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="bg-primary/10 rounded-md px-3 py-2 pr-6">
+            <p className="text-sm font-medium text-primary">
+              الجلسة ستُضاف لهذه القضية
+            </p>
+          </div>
         </div>
       )}
 
