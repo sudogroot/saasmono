@@ -64,6 +64,7 @@ export const sessionNoteManagementRouter = {
     .output(SessionNoteSchema.omit({
       timetable: true,
       attachments: true,
+      createdBy: true,
     }))
     .route({
       method: 'POST',
@@ -95,6 +96,7 @@ export const sessionNoteManagementRouter = {
     .output(SessionNoteSchema.omit({
       timetable: true,
       attachments: true,
+      createdBy: true,
     }))
     .route({
       method: 'PUT',
