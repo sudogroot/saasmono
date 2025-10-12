@@ -20,8 +20,8 @@ const variantClasses = {
 };
 
 const sizeClasses = {
-  xs: "text-base md:text-sm",
-  sm: "text-lg md:text-base",
+  xs: "text-sm md:text-xs",
+  sm: "text-base md:text-sm",
   base: "text-lg md:text-base",
   lg: "text-xl md:text-lg",
   xl: "text-2xl md:text-xl",
