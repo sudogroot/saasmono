@@ -122,12 +122,12 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-4 rounded-lg border p-3">
                 <div>
-                  <Text size="sm" variant="muted" as="span">
+                  <Text variant="muted" as="span">
                     القضية
                   </Text>
                 </div>
                 <div dir="rtl" className="flex-1">
-                  <Text size="sm" weight="semibold" as="span">
+                  <Text weight="semibold" as="span">
                     {caseData.caseTitle}
                   </Text>
                 </div>
@@ -143,24 +143,18 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
               </div>
               <div className="flex items-center justify-between rounded-lg border p-3">
                 <div className="flex items-center gap-2">
-                  <Text variant="muted" size="sm">
-                    الحالة
-                  </Text>
+                  <Text variant="muted">الحالة</Text>
                   <EntityBadge type="caseStatus" value={caseData.caseStatus} />
                 </div>
                 <div className="flex items-center gap-2">
-                  <Text variant="muted" size="sm">
-                    الأولوية
-                  </Text>
+                  <Text variant="muted">الأولوية</Text>
                   <EntityBadge type="priority" value={caseData.priority} />
                 </div>
               </div>
               <div className="flex items-center gap-4 rounded-lg border p-3">
-                <Text variant="muted" size="sm">
-                  رقم القضية
-                </Text>
+                <Text variant="muted">رقم القضية</Text>
                 <div className="flex-1">
-                  <ValueText value={caseData.caseNumber} size="sm" className="font-mono" />
+                  <ValueText value={caseData.caseNumber} className="font-mono" />
                 </div>
                 <CopyButton
                   content={caseData.caseNumber}
@@ -173,12 +167,12 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
               </div>
               <div className="flex items-center gap-4 rounded-lg border p-3">
                 <Text variant="muted">موضوع القضية</Text>
-                <ValueText value={caseData.caseSubject} size="sm" className="font-medium" />
+                <ValueText value={caseData.caseSubject} className="font-medium" />
               </div>
               <div className="flex items-center gap-4 rounded-lg border p-3">
                 <Text variant="muted">رقم الملف بالمحكمة</Text>
                 <div className="flex-1">
-                  <ValueText value={caseData.courtFileNumber} size="sm" className="font-mono" fallbackText="غير محدد" />
+                  <ValueText value={caseData.courtFileNumber} className="font-mono" fallbackText="غير محدد" />
                 </div>
                 {caseData.courtFileNumber && (
                   <CopyButton
@@ -196,7 +190,7 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
                   <div className="flex items-center gap-4">
                     <Text variant="muted">المنوب</Text>
                     <div className="text-right">
-                      <Text size="sm" weight="semibold" as="span">
+                      <Text weight="semibold" as="span">
                         {caseData.client.name}
                       </Text>
                     </div>
@@ -229,7 +223,7 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
             <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
               <div>
                 <p className="text-muted-foreground">تاريخ الإضافة</p>
-                <Text size="sm">
+                <Text>
                   {new Date(caseData.createdAt).toLocaleDateString('ar-TN', {
                     year: 'numeric',
                     month: 'long',
@@ -242,7 +236,7 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
 
               <div>
                 <p className="text-muted-foreground">آخر تحديث</p>
-                <Text size="sm">
+                <Text>
                   {new Date(caseData.updatedAt).toLocaleDateString('ar-TN', {
                     year: 'numeric',
                     month: 'long',

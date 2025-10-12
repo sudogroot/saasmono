@@ -136,27 +136,21 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
             </div>
             <div className="space-y-2">
               <div className="flex items-center gap-4 rounded-lg border p-3">
-                <Text variant="muted" size="sm">
-                  الاسم
-                </Text>
+                <Text variant="muted">الاسم</Text>
                 <div className="flex-1 text-right">
-                  <Text size="sm" weight="semibold" as="span">
+                  <Text weight="semibold" as="span">
                     {clientData.name}
                   </Text>
                 </div>
               </div>
               <div className="flex items-center gap-4 rounded-lg border p-3">
-                <Text variant="muted" size="sm">
-                  الصفة
-                </Text>
+                <Text variant="muted">الصفة</Text>
                 <EntityBadge type="entityType" value={clientData.clientType} />
               </div>
               <div className="flex items-center gap-4 rounded-lg border p-3">
-                <Text variant="muted" size="sm">
-                  البريد الإلكتروني
-                </Text>
+                <Text variant="muted">البريد الإلكتروني</Text>
                 <div className="flex-1">
-                  <ValueText value={clientData.email} size="sm" fallbackText="غير محدد" />
+                  <ValueText value={clientData.email} fallbackText="غير محدد" />
                 </div>
                 {clientData.email && (
                   <CopyButton
@@ -170,11 +164,9 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                 )}
               </div>
               <div className="flex items-center gap-4 rounded-lg border p-3">
-                <Text variant="muted" size="sm">
-                  رقم الهاتف
-                </Text>
+                <Text variant="muted">رقم الهاتف</Text>
                 <div className="flex-1">
-                  <ValueText value={clientData.phone} size="sm" fallbackText="غير محدد" />
+                  <ValueText value={clientData.phone} fallbackText="غير محدد" />
                 </div>
                 {clientData.phone && (
                   <CopyButton
@@ -188,11 +180,9 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                 )}
               </div>
               <div className="flex items-center gap-4 rounded-lg border p-3">
-                <Text variant="muted" size="sm">
-                  رقم الهوية
-                </Text>
+                <Text variant="muted">رقم الهوية</Text>
                 <div className="flex-1">
-                  <ValueText value={clientData.nationalId} size="sm" className="font-mono" fallbackText="غير محدد" />
+                  <ValueText value={clientData.nationalId} className="font-mono" fallbackText="غير محدد" />
                 </div>
                 {clientData.nationalId && (
                   <CopyButton
@@ -212,7 +202,7 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
             <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
               <div>
                 <p className="text-muted-foreground">تاريخ الإضافة</p>
-                <Text size="sm">
+                <Text>
                   {new Date(clientData.createdAt).toLocaleDateString('ar-TN', {
                     year: 'numeric',
                     month: 'long',
@@ -225,7 +215,7 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
 
               <div>
                 <p className="text-muted-foreground">آخر تحديث</p>
-                <Text size="sm">
+                <Text>
                   {new Date(clientData.updatedAt).toLocaleDateString('ar-TN', {
                     year: 'numeric',
                     month: 'long',
