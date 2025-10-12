@@ -364,6 +364,118 @@ export function CasesTable({
             ),
             value: 'lost',
           },
+          {
+            label: (
+              <Badge variant="outline" className={cn('font-medium', caseStatusColors.postponed)}>
+                مؤجلة
+              </Badge>
+            ),
+            value: 'postponed',
+          },
+          {
+            label: (
+              <Badge variant="outline" className={cn('font-medium', caseStatusColors.closed)}>
+                مغلقة
+              </Badge>
+            ),
+            value: 'closed',
+          },
+          {
+            label: (
+              <Badge variant="outline" className={cn('font-medium', caseStatusColors.withdrawn)}>
+                منسحبة
+              </Badge>
+            ),
+            value: 'withdrawn',
+          },
+          {
+            label: (
+              <Badge variant="outline" className={cn('font-medium', caseStatusColors.suspended)}>
+                معلقة
+              </Badge>
+            ),
+            value: 'suspended',
+          },
+        ],
+      },
+      {
+        key: 'priority',
+        label: 'الأولوية',
+        values: [
+          {
+            label: (
+              <Badge variant="outline" className={cn('font-medium', priorityColors.low)}>
+                منخفضة
+              </Badge>
+            ),
+            value: 'low',
+          },
+          {
+            label: (
+              <Badge variant="outline" className={cn('font-medium', priorityColors.normal)}>
+                عادية
+              </Badge>
+            ),
+            value: 'normal',
+          },
+          {
+            label: (
+              <Badge variant="outline" className={cn('font-medium', priorityColors.medium)}>
+                متوسطة
+              </Badge>
+            ),
+            value: 'medium',
+          },
+          {
+            label: (
+              <Badge variant="outline" className={cn('font-medium', priorityColors.high)}>
+                عالية
+              </Badge>
+            ),
+            value: 'high',
+          },
+          {
+            label: (
+              <Badge variant="outline" className={cn('font-medium', priorityColors.urgent)}>
+                عاجلة
+              </Badge>
+            ),
+            value: 'urgent',
+          },
+          {
+            label: (
+              <Badge variant="outline" className={cn('font-medium', priorityColors.critical)}>
+                حرجة
+              </Badge>
+            ),
+            value: 'critical',
+          },
+        ],
+      },
+      {
+        key: 'dateRange',
+        label: 'الفترة الزمنية',
+        values: [
+          {
+            label: 'آخر 7 أيام',
+            value: '7days',
+          },
+          {
+            label: 'آخر 30 يوم',
+            value: '30days',
+          },
+          {
+            label: 'آخر 3 أشهر',
+            value: '3months',
+          },
+          {
+            label: 'آخر 6 أشهر',
+            value: '6months',
+          },
+          {
+            label: 'آخر سنة',
+            value: '1year',
+          },
         ],
       },
     ],
@@ -384,6 +496,37 @@ export function CasesTable({
         case 'priority':
           filtered = filtered.filter((case_: any) => case_.priority === value)
           break
+        case 'dateRange': {
+          const now = new Date()
+          let startDate: Date
+
+          switch (value) {
+            case '7days':
+              startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+              break
+            case '30days':
+              startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+              break
+            case '3months':
+              startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
+              break
+            case '6months':
+              startDate = new Date(now.getTime() - 180 * 24 * 60 * 60 * 1000)
+              break
+            case '1year':
+              startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)
+              break
+            default:
+              return
+          }
+
+          filtered = filtered.filter((case_: any) => {
+            if (!case_.createdAt) return false
+            const caseDate = new Date(case_.createdAt)
+            return caseDate >= startDate && caseDate <= now
+          })
+          break
+        }
       }
     })
 
@@ -405,8 +548,8 @@ export function CasesTable({
         case_.caseSubject,
         case_.caseStatus,
         case_.priority,
-        case_.client?.name,
-        case_.opponent?.name,
+        case_.clientName,
+        case_.opponentName,
       ]
         .filter(Boolean)
         .join(' ')
@@ -535,7 +678,7 @@ export function CasesTable({
         noDataMessage="لا توجد قضايا مطابقة للبحث"
         mobileCardRenderer={mobileCardRenderer}
         showQuickFilters={true}
-        // quickFilters={quickFilters as any}
+        quickFilters={quickFilters as any}
         activeFilters={activeFilters}
         onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
         headerActions={headerActions}
