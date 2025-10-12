@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { flexRender } from "@tanstack/react-table";
 import { Checkbox } from "../../ui/checkbox";
 import { Loader2 } from "lucide-react";
@@ -78,29 +77,26 @@ export function DesktopTable<TData>({
 
   return (
     <div className={cn("w-full space-y-6", className)} dir={dir || "rtl"}>
-      {(tableTitle || headerActions) && (
-        <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between">
+        {tableTitle && (
           <div className="flex-1">
-            {tableTitle && (
-              <h2 className="text-2xl font-semibold">{tableTitle}</h2>
-            )}
+            <h2 className="text-2xl font-semibold">{tableTitle}</h2>
           </div>
-          {headerActions && <div>{headerActions}</div>}
-        </div>
-      )}
-
-      {(showSearch || showQuickFilters) && (
-        <DesktopFilters
-          showSearch={showSearch}
-          searchValue={searchValue}
-          onSearchChange={onSearchChange}
-          searchPlaceholder={searchPlaceholder}
-          showQuickFilters={showQuickFilters}
-          quickFilters={quickFilters}
-          activeFilters={activeFilters}
-          onFilterChange={onFilterChange}
-        />
-      )}
+        )}
+        {(showSearch || showQuickFilters) && (
+          <DesktopFilters
+            showSearch={showSearch}
+            searchValue={searchValue}
+            onSearchChange={onSearchChange}
+            searchPlaceholder={searchPlaceholder}
+            showQuickFilters={showQuickFilters}
+            quickFilters={quickFilters}
+            activeFilters={activeFilters}
+            onFilterChange={onFilterChange}
+          />
+        )}
+        {headerActions && <div>{headerActions}</div>}
+      </div>
 
       <div className="rounded-md border">
         <div className="overflow-x-auto">
@@ -142,7 +138,8 @@ export function DesktopTable<TData>({
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
                     className={cn(
-                      onRowClick && "cursor-pointer hover:bg-muted/50 transition-colors",
+                      onRowClick &&
+                        "cursor-pointer hover:bg-muted/50 transition-colors",
                       row.getIsSelected() && "bg-muted/50",
                     )}
                     onClick={() => onRowClick?.(row)}
