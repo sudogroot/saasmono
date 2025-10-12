@@ -1,8 +1,8 @@
 'use client'
 
-import { cn } from '@/lib/utils'
 import { globalSheet } from '@/stores/global-sheet-store'
 import type { OpponentListItem } from '@/types'
+import { orpc } from '@/utils/orpc'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,10 +18,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   GenericTable,
-  Text,
-  ValueText,
   Heading,
+  Text,
 } from '@repo/ui'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -30,12 +30,10 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { CalendarCheck, Edit, Eye, MoreHorizontal, Plus, Trash2, Users } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import { orpc } from '@/utils/orpc'
 import { EntityBadge } from '../base/entity-badge'
 
 interface OpponentsTableProps {
@@ -264,8 +262,13 @@ export function OpponentsTable({
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="text-foreground truncate text-sm font-medium">{row.original.name}</span>
-              <EntityBadge type="entityType" value={row.original.opponentType} showIcon={false} className="shrink-0 px-1 py-0 text-xs" />
+              <Text size="lg">{row.original.name}</Text>
+              <EntityBadge
+                type="entityType"
+                value={row.original.opponentType}
+                showIcon={false}
+                className="shrink-0 px-1 py-0 text-xs"
+              />
             </div>
           </div>
         </div>
@@ -315,8 +318,12 @@ export function OpponentsTable({
             <Users className="text-muted-foreground h-8 w-8" />
           </div>
           <div>
-            <Heading level={3} className="font-semibold">لا يوجد خصوم</Heading>
-            <Text variant="muted" className="mt-1">ابدأ بإضافة خصم جديد لإدارة ملفاتك القانونية</Text>
+            <Heading level={3} className="font-semibold">
+              لا يوجد خصوم
+            </Heading>
+            <Text variant="muted" className="mt-1">
+              ابدأ بإضافة خصم جديد لإدارة ملفاتك القانونية
+            </Text>
           </div>
           {emptyStateAction}
         </div>

@@ -23,8 +23,8 @@ const sizeClasses = {
   xs: "text-base md:text-sm",
   sm: "text-lg md:text-base",
   base: "text-lg md:text-base",
-  lg: "text-lg md:text-lg",
-  xl: "text-xl md:text-xl",
+  lg: "text-xl md:text-lg",
+  xl: "text-2xl md:text-xl",
 };
 
 const weightClasses = {

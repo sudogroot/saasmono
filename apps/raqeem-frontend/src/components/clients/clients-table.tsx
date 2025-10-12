@@ -1,5 +1,7 @@
 'use client'
 
+import { globalSheet } from '@/stores/global-sheet-store'
+import { orpc } from '@/utils/orpc'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,10 +17,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   GenericTable,
-  Text,
-  ValueText,
   Heading,
+  Text,
 } from '@repo/ui'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -27,14 +29,10 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { CalendarCheck, Edit, Eye, Mail, MoreHorizontal, Phone, Plus, Trash2, Users } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
-import { globalSheet } from '@/stores/global-sheet-store'
-import { orpc } from '@/utils/orpc'
 import { EntityBadge } from '../base/entity-badge'
 
 // Client type is now imported from shared types
@@ -309,14 +307,19 @@ export function ClientsTable({
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="text-foreground truncate text-sm font-medium">{row.original.name}</span>
-              <EntityBadge type="entityType" value={row.original.clientType} showIcon={false} className="shrink-0 px-1 py-0 text-xs" />
+              <Text size="lg">{row.original.name}</Text>
+              <EntityBadge
+                type="entityType"
+                value={row.original.clientType}
+                showIcon={false}
+                className="shrink-0 px-1 py-0 text-xs"
+              />
             </div>
             <div className="text-muted-foreground mt-0.5 flex items-center gap-3 text-xs">
               {row.original.phone && (
                 <div className="flex items-center gap-1">
                   <Phone className="h-2.5 w-2.5" />
-                  <span className="font-mono">{row.original.phone}</span>
+                  <Text size="base">{row.original.phone}</Text>
                 </div>
               )}
               {row.original.email && (
@@ -374,8 +377,12 @@ export function ClientsTable({
             <Users className="text-muted-foreground h-8 w-8" />
           </div>
           <div>
-            <Heading level={3} className="font-semibold">لا يوجد عملاء</Heading>
-            <Text variant="muted" className="mt-1">ابدأ بإضافة عميل جديد لإدارة ملفاتك القانونية</Text>
+            <Heading level={3} className="font-semibold">
+              لا يوجد عملاء
+            </Heading>
+            <Text variant="muted" className="mt-1">
+              ابدأ بإضافة عميل جديد لإدارة ملفاتك القانونية
+            </Text>
           </div>
           {emptyStateAction}
         </div>
