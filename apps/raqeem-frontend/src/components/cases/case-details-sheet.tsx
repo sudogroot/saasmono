@@ -18,7 +18,8 @@ interface CaseDetailsSheetProps {
 
 export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: CaseDetailsSheetProps) {
   const searchParams = useSearchParams()
-  const urlTab = searchParams.get('tab') || 'info'
+  const tabParamName = 'caseTab'
+  const urlTab = searchParams.get(tabParamName) || 'info'
   const [activeTab, setActiveTab] = useState(urlTab)
 
   // Update active tab when URL param changes
@@ -42,13 +43,13 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
     setActiveTab(value)
     // Update URL params
     const url = new URL(window.location.href)
-    url.searchParams.set('tab', value)
+    url.searchParams.set(tabParamName, value)
     window.history.replaceState({}, '', url.toString())
 
     // Update global sheet store so child sheets preserve this tab
     const currentSheet = globalSheet.getNavigationInfo().currentSheet
     if (currentSheet) {
-      currentSheet.urlParams = { ...currentSheet.urlParams, tab: value }
+      currentSheet.urlParams = { ...currentSheet.urlParams, [tabParamName]: value }
     }
   }
 

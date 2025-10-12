@@ -32,7 +32,8 @@ interface ClientDetailsSheetProps {
 
 export function ClientDetails({ clientId, organizationId, renderMode = 'content' }: ClientDetailsSheetProps) {
   const searchParams = useSearchParams()
-  const urlTab = searchParams.get('tab') || 'info'
+  const tabParamName = 'clientTab'
+  const urlTab = searchParams.get(tabParamName) || 'info'
   const [activeTab, setActiveTab] = useState(urlTab)
 
   // Update active tab when URL param changes
@@ -44,13 +45,13 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
     setActiveTab(value)
     // Update URL params
     const url = new URL(window.location.href)
-    url.searchParams.set('tab', value)
+    url.searchParams.set(tabParamName, value)
     window.history.replaceState({}, '', url.toString())
 
     // Update global sheet store so child sheets preserve this tab
     const currentSheet = globalSheet.getNavigationInfo().currentSheet
     if (currentSheet) {
-      currentSheet.urlParams = { ...currentSheet.urlParams, tab: value }
+      currentSheet.urlParams = { ...currentSheet.urlParams, [tabParamName]: value }
     }
   }
 
@@ -121,7 +122,7 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
 
   return (
     <div className="space-y-6 p-2">
-      <Tabs dir="rtl" value={activeTab} onValueChange={handleTabChange}>
+      <Tabs key={clientId} dir="rtl" value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="mb-2">
           <TabsTrigger value={'info'}>المعلومات الشخصية</TabsTrigger>
           <TabsTrigger value={'cases'}>القضايا</TabsTrigger>
@@ -238,37 +239,46 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
             </div>
 
             {clientData.case && clientData.case.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {clientData.case.map((caseItem) => (
-                  <Card
-                    key={caseItem.id}
-                    className="hover:bg-muted/50 cursor-pointer overflow-hidden transition-colors"
-                    onClick={() => {
-                      globalSheet.openCaseDetails({
-                        slug: 'cases',
-                        caseId: caseItem.id,
-                        size: 'md',
-                      })
-                    }}
-                  >
+                  <Card key={caseItem.id} className="overflow-hidden">
                     <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1 space-y-1">
-                          <CardTitle className="flex items-center gap-2 text-lg">
-                            <FileText className="h-5 w-5" />
-                            {caseItem.caseTitle}
-                          </CardTitle>
-                          <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                            <span>رقم القضية: {caseItem.caseNumber}</span>
-                            {caseItem.courtFileNumber && (
-                              <>
-                                <span>•</span>
-                                <span>رقم الملف: {caseItem.courtFileNumber}</span>
-                              </>
-                            )}
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0 flex-1 space-y-2">
+                            <CardTitle className="flex items-start gap-2 text-base leading-tight sm:text-lg">
+                              <FileText className="mt-0.5 h-4 w-4 flex-shrink-0 sm:h-5 sm:w-5" />
+                              <span className="line-clamp-2 break-words">{caseItem.caseTitle}</span>
+                            </CardTitle>
+                            <div className="flex flex-col gap-1.5 text-xs text-muted-foreground sm:text-sm">
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-medium">رقم القضية:</span>
+                                <span className="font-mono">{caseItem.caseNumber}</span>
+                              </div>
+                              {caseItem.courtFileNumber && (
+                                <div className="flex items-center gap-1.5">
+                                  <span className="font-medium">رقم الملف:</span>
+                                  <span className="font-mono">{caseItem.courtFileNumber}</span>
+                                </div>
+                              )}
+                            </div>
                           </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 flex-shrink-0 text-xs sm:h-9 sm:text-sm"
+                            onClick={() => {
+                              globalSheet.openCaseDetails({
+                                slug: 'cases',
+                                caseId: caseItem.id,
+                                size: 'md',
+                              })
+                            }}
+                          >
+                            عرض
+                          </Button>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2">
                           <EntityBadge type="caseStatus" value={caseItem.caseStatus} className="text-xs" />
                           <EntityBadge type="priority" value={caseItem.priority} className="text-xs" />
                         </div>
@@ -290,8 +300,7 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation()
+                                onClick={() => {
                                   globalSheet.openTrialForm({
                                     mode: 'create',
                                     slug: 'trials',
@@ -354,8 +363,7 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={(e) => {
-                                e.stopPropagation()
+                              onClick={() => {
                                 globalSheet.openTrialForm({
                                   mode: 'create',
                                   slug: 'trials',
