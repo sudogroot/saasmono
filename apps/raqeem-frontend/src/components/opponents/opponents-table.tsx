@@ -107,9 +107,9 @@ export function OpponentsTable({
         id: 'opponent',
         header: 'الخصم',
         cell: ({ row }) => (
-          <div className="flex items-center gap-3">
-            <div>
-              <div className="text-foreground font-medium">{row.original.name}</div>
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="min-w-0 flex-1">
+              <div className="text-foreground font-medium truncate">{row.original.name}</div>
             </div>
           </div>
         ),
@@ -262,7 +262,7 @@ export function OpponentsTable({
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <Text size="lg">{row.original.name}</Text>
+              <Text size="lg" truncate>{row.original.name}</Text>
               <EntityBadge
                 type="entityType"
                 value={row.original.opponentType}

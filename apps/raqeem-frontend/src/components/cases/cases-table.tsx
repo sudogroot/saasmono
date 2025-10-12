@@ -125,12 +125,12 @@ export function CasesTable({
         id: 'case',
         header: 'القضية',
         cell: ({ row }) => (
-          <div className="flex items-center gap-3">
-            <div>
-              <div className="text-foreground font-medium">{row.original.caseTitle}</div>
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="min-w-0 flex-1">
+              <div className="text-foreground font-medium truncate">{row.original.caseTitle}</div>
               {row.original.caseSubject && (
                 <div className="flex justify-items-center gap-2">
-                  <Text variant="muted" size="xs">
+                  <Text variant="muted" size="xs" className="truncate">
                     {row.original.caseSubject}
                   </Text>
                 </div>

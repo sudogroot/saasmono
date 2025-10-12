@@ -107,12 +107,12 @@ export function ClientsTable({
         id: 'client',
         header: 'العميل',
         cell: ({ row }) => (
-          <div className="flex items-center gap-3">
-            <div>
-              <div className="text-foreground font-medium">{row.original.name}</div>
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="min-w-0 flex-1">
+              <div className="text-foreground font-medium truncate">{row.original.name}</div>
               {row.original.nationalId && (
                 <div className="flex justify-items-center gap-2">
-                  <Text variant="muted" size="xs">
+                  <Text variant="muted" size="xs" className="truncate">
                     الهوية: {row.original.nationalId}
                   </Text>
                 </div>
