@@ -262,7 +262,7 @@ export function OpponentsTable({
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <Text size="2xl">{row.original.name}</Text>
+              <Text size="xl">{row.original.name}</Text>
               <EntityBadge
                 type="entityType"
                 value={row.original.opponentType}

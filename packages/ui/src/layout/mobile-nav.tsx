@@ -32,14 +32,15 @@ export interface QuickAction {
   color: string;
 }
 
-export interface DrawerCategory {
-  category: string;
-  items: Array<{
-    title: string;
-    href: string;
-    icon: React.ComponentType<{ className?: string }>;
-    description: string;
-  }>;
+export interface DrawerItem {
+  title: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  description: string;
+}
+export interface DrawerCategory extends DrawerItem {
+  category?: string;
+  items?: Array<DrawerItem>;
 }
 
 export interface NotificationInfo {
@@ -115,6 +116,62 @@ export interface MobileNavProps {
   quickActionsTitle?: string;
 }
 
+function ItemNav({
+  item,
+  basePath,
+  active,
+  handleNavigation,
+  isOutlined,
+}: any) {
+  return (
+    <a
+      key={item.href}
+      href={item.href ? `${basePath}/${item.href}` : basePath}
+      onClick={() => handleNavigation(item.href)}
+      className={cn(
+        "flex items-center gap-3 p-3 rounded-xl transition-all duration-200",
+        active
+          ? "bg-primary/10 text-primary shadow-sm border border-primary/20"
+          : "hover:bg-gray-50 text-gray-700 hover:shadow-sm",
+        isOutlined ? "border border-gray-200" : "",
+      )}
+    >
+      <div
+        className={cn(
+          "p-2.5 rounded-lg transition-all duration-200",
+          active
+            ? "bg-primary text-white shadow-md"
+            : "bg-gray-100 group-hover:bg-gray-200",
+        )}
+      >
+        <item.icon
+          className={cn(
+            "h-5 w-5",
+            active ? "text-white" : "text-gray-600"
+          )}
+        />
+      </div>
+      <div className="flex-1">
+        <div className={cn(
+          "text-base font-semibold",
+          active ? "text-primary" : "text-gray-900"
+        )}>
+          {item.title}
+        </div>
+        {item.description && (
+          <div className="text-xs text-gray-500 leading-tight mt-0.5">
+            {item.description}
+          </div>
+        )}
+      </div>
+      {active && (
+        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+          <div className="w-2 h-2 bg-primary rounded-full"></div>
+        </div>
+      )}
+    </a>
+  );
+}
 export function MobileNav({
   mainNavItems,
   quickActions = [],
@@ -240,125 +297,108 @@ export function MobileNav({
                   </div>
                 </DrawerHeader>
 
-                <div className="flex-1 overflow-y-auto p-4 space-y-6">
+                <div className="flex-1 overflow-y-auto p-4 space-y-1.5">
                   {customDrawerContent || (
                     <>
                       {/* Quick Actions */}
                       {quickActions.length > 0 && (
-                        <div>
+                        <div className="mb-4">
                           <h3 className="text-sm font-semibold text-gray-900 mb-3">
                             {quickActionsTitle}
                           </h3>
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="grid grid-cols-2 gap-2">
                             {quickActions.map((action) => (
-                              <Button
+                              <button
                                 key={action.action}
-                                variant="ghost"
                                 className={cn(
-                                  "h-auto p-4 justify-start gap-3",
-                                  action.color,
+                                  "flex items-center gap-2.5 p-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 hover:shadow-sm",
                                 )}
                                 onClick={() => handleQuickAction(action.action)}
                               >
-                                <action.icon className="h-5 w-5" />
-                                <span className="font-medium">
+                                <div className={cn(
+                                  "p-2 rounded-lg",
+                                  action.color
+                                )}>
+                                  <action.icon className="h-4 w-4" />
+                                </div>
+                                <span className="text-sm font-semibold text-gray-900 flex-1 text-right">
                                   {action.title}
                                 </span>
-                              </Button>
+                              </button>
                             ))}
                           </div>
                         </div>
                       )}
 
                       {/* Navigation Categories */}
-                      {drawerItems.map((category) => (
-                        <div key={category.category}>
-                          <h3 className="text-sm font-semibold text-gray-900 mb-3">
-                            {category.category}
-                          </h3>
-                          <div className="space-y-2">
-                            {category.items.map((item) => {
-                              const active = checkIsActive(item.href, pathname);
-                              return (
-                                <a
-                                  key={item.href}
-                                  href={
-                                    item.href
-                                      ? `${basePath}/${item.href}`
-                                      : basePath
-                                  }
-                                  onClick={() => handleNavigation(item.href)}
-                                  className={cn(
-                                    "flex items-center gap-3 p-3 rounded-lg transition-colors",
-                                    active
-                                      ? "bg-primary/10 text-primary"
-                                      : "hover:bg-gray-50 text-gray-700",
-                                  )}
-                                >
-                                  <div
-                                    className={cn(
-                                      "p-2 rounded-lg",
-                                      active ? "bg-primary/20" : "bg-gray-100",
-                                    )}
-                                  >
-                                    <item.icon
-                                      className={cn(
-                                        "h-4 w-4",
-                                        active
-                                          ? "text-primary"
-                                          : "text-gray-600",
-                                      )}
-                                    />
-                                  </div>
-                                  <div className="flex-1">
-                                    <div className="font-medium">
-                                      {item.title}
-                                    </div>
-                                    <div className="text-sm text-gray-500 leading-tight">
-                                      {item.description}
-                                    </div>
-                                  </div>
-                                  {active && (
-                                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                                  )}
-                                </a>
-                              );
-                            })}
+                      {drawerItems.map((category) => {
+                        return (
+                          <div key={category.category || category.title}>
+                            {category.category && (
+                              <>
+                                <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                                  {category.category}
+                                </h3>
+                                <div className="space-y-2">
+                                  {category.items?.map((item) => {
+                                    const active = checkIsActive(
+                                      item.href,
+                                      pathname,
+                                    );
+                                    return (
+                                      <ItemNav
+                                        key={item.href}
+                                        item={item}
+                                        basePath={basePath}
+                                        active={active}
+                                        handleNavigation={handleNavigation}
+                                      />
+                                    );
+                                  })}
+                                </div>
+                              </>
+                            )}
+                            {category.title && (
+                              <ItemNav
+                                key={category.href}
+                                item={category}
+                                basePath={basePath}
+                                active={checkIsActive(category.href, pathname)}
+                                handleNavigation={handleNavigation}
+                                isOutlined
+                              />
+                            )}
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </>
                   )}
                 </div>
 
-                {(footerActions || notifications || onLogout) && (
-                  <DrawerFooter className="border-t">
+                {(footerActions || onLogout) && (
+                  <DrawerFooter className="border-t bg-gray-50/50 p-4">
                     {footerActions || (
-                      <div className="flex items-center justify-between">
-                        {notifications && (
-                          <Button variant="outline" size="sm">
-                            {/* Bell icon would be passed via quickActions or custom implementation */}
-                            التنبيهات
-                            {notifications.count && notifications.count > 0 && (
-                              <Badge
-                                variant={notifications.variant || "destructive"}
-                                className="mr-2"
-                              >
-                                {notifications.count}
-                              </Badge>
-                            )}
-                          </Button>
-                        )}
+                      <div className="w-full">
                         {onLogout && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-red-600"
+                          <button
+                            className="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 hover:border-red-300 text-red-600 hover:text-red-700 font-semibold transition-all duration-200 hover:shadow-sm"
                             onClick={onLogout}
                           >
-                            {/* LogOut icon would be passed via custom implementation */}
+                            <svg
+                              className="h-5 w-5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                              />
+                            </svg>
                             تسجيل الخروج
-                          </Button>
+                          </button>
                         )}
                       </div>
                     )}

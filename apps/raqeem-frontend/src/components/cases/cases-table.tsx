@@ -451,7 +451,7 @@ export function CasesTable({
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <Text size="2xl">{row.original.caseTitle}</Text>
+              <Text size="xl">{row.original.caseTitle}</Text>
               <EntityBadge
                 type="caseStatus"
                 value={row.original.caseStatus}
@@ -460,7 +460,7 @@ export function CasesTable({
               />
             </div>
             <div className="text-muted-foreground mt-0.5 flex items-center gap-3">
-              <Text size="base" className="font-mono">
+              <Text variant="muted" size="base" className="font-mono">
                 {row.original.caseNumber}
               </Text>
               <div className="flex items-center gap-1">

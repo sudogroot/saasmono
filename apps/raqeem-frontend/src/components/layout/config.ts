@@ -1,194 +1,182 @@
 import {
-  Calendar,
-  Gavel,
-  Scale,
-  LayoutDashboard,
-  Users,
-  FileText,
   Building,
-  UserCog,
-  Settings,
+  Calendar,
   Clock,
-  DollarSign,
-  BarChart3,
-  Search,
-  Plus,
+  FileText,
+  Gavel,
   Home,
+  LayoutDashboard,
+  Plus,
+  Scale,
+  UserCog,
+  Users,
   UserX,
-  X
-} from "lucide-react";
+} from 'lucide-react'
 export const mainNavItems = [
   {
-    title: "التقويم",
-    href: "calendar",
+    title: 'التقويم',
+    href: 'calendar',
     icon: Calendar,
-    color: "text-blue-600",
-    bgColor: "bg-blue-50"
+    color: 'text-blue-600',
+    bgColor: 'bg-blue-50',
   },
   {
-    title: "الجلسات",
-    href: "trials",
+    title: 'الجلسات',
+    href: 'trials',
     icon: Gavel,
-    color: "text-purple-600",
-    bgColor: "bg-purple-50"
+    color: 'text-purple-600',
+    bgColor: 'bg-purple-50',
   },
   {
-    title: "القضايا",
-    href: "cases",
+    title: 'القضايا',
+    href: 'cases',
     icon: Scale,
-    color: "text-green-600",
-    bgColor: "bg-green-50"
+    color: 'text-green-600',
+    bgColor: 'bg-green-50',
   },
   {
-    title: "الرئيسية",
-    href: "",
+    title: 'الرئيسية',
+    href: '',
     icon: LayoutDashboard,
-    color: "text-primary",
-    bgColor: "bg-primary/10"
-  }
-];
+    color: 'text-primary',
+    bgColor: 'bg-primary/10',
+  },
+]
 
 export const drawerItems = [
   {
-    category: "العملاء والأطراف",
-    items: [
-      {
-        title: "العملاء",
-        href: "clients",
-        icon: Users,
-        description: "إدارة ملفات العملاء"
-      },
-      {
-        title: "الخصوم",
-        href: "opponents",
-        icon: UserCog,
-        description: "إدارة الأطراف المقابلة"
-      }
-    ]
+    title: 'المنوبون',
+    href: 'clients',
+    icon: Users,
+    description: 'إدارة ملفات العملاء',
   },
   {
-    category: "المحاكم والمواعيد",
-    items: [
-      {
-        title: "المحاكم",
-        href: "courts",
-        icon: Building,
-        description: "قائمة المحاكم والجهات"
-      },
-      {
-        title: "المواعيد",
-        href: "appointments",
-        icon: Clock,
-        description: "جدولة المواعيد"
-      }
-    ]
+    title: 'الخصوم',
+    href: 'opponents',
+    icon: UserCog,
+    description: 'إدارة الأطراف المقابلة',
   },
   {
-    category: "الوثائق والتقارير",
-    items: [
-      {
-        title: "الوثائق",
-        href: "documents",
-        icon: FileText,
-        description: "إدارة الملفات والوثائق"
-      },
-      {
-        title: "التقارير",
-        href: "reports",
-        icon: BarChart3,
-        description: "التقارير والإحصائيات"
-      }
-    ]
+    title: 'المحاكم',
+    href: 'courts',
+    icon: Building,
+    description: 'قائمة المحاكم والجهات',
   },
   {
-    category: "المالية والإدارة",
-    items: [
-      {
-        title: "الفواتير",
-        href: "billing",
-        icon: DollarSign,
-        description: "إدارة الفواتير والمدفوعات"
-      },
-      {
-        title: "الإعدادات",
-        href: "settings",
-        icon: Settings,
-        description: "إعدادات المؤسسة"
-      }
-    ]
-  }
-];
+    title: 'المواعيد',
+    href: 'appointments',
+    icon: Clock,
+    description: 'جدولة المواعيد',
+  },
+  // {
+  //   category: 'الوثائق والتقارير',
+  //   items: [
+  //     {
+  //       title: 'الوثائق',
+  //       href: 'documents',
+  //       icon: FileText,
+  //       description: 'إدارة الملفات والوثائق',
+  //     },
+  //     {
+  //       title: 'التقارير',
+  //       href: 'reports',
+  //       icon: BarChart3,
+  //       description: 'التقارير والإحصائيات',
+  //     },
+  //   ],
+  // },
+  // {
+  //   category: 'المالية والإدارة',
+  //   items: [
+  //     {
+  //       title: 'الفواتير',
+  //       href: 'billing',
+  //       icon: DollarSign,
+  //       description: 'إدارة الفواتير والمدفوعات',
+  //     },
+  //     {
+  //       title: 'الإعدادات',
+  //       href: 'settings',
+  //       icon: Settings,
+  //       description: 'إعدادات المؤسسة',
+  //     },
+  //   ],
+  // },
+]
 
 export const quickActions = [
   {
-    title: "قضية جديدة",
+    title: 'قضية جديدة',
     icon: Plus,
-    action: "create-case",
-    color: "bg-blue-600 text-white"
+    action: 'create-case',
+    color: 'bg-gray-300 text-white',
   },
   {
-    title: "عميل جديد",
+    title: 'جلسة جديدة',
     icon: Plus,
-    action: "create-client",
-    color: "bg-green-600 text-white"
+    action: 'create-trial',
+    color: 'bg-blue-300 text-white',
   },
   {
-    title: "موعد جديد",
+    title: 'منوب جديد',
     icon: Plus,
-    action: "create-appointment",
-    color: "bg-purple-600 text-white"
+    action: 'create-client',
+    color: 'bg-purple-300 text-white',
   },
-  {
-    title: "بحث سريع",
-    icon: Search,
-    action: "search",
-    color: "bg-gray-600 text-white"
-  }
-];
+  // {
+  //   title: "موعد جديد",
+  //   icon: Plus,
+  //   action: "create-appointment",
+  //   color: "bg-purple-600 text-white"
+  // },
+  // {
+  //   title: "بحث سريع",
+  //   icon: Search,
+  //   action: "search",
+  //   color: "bg-gray-600 text-white"
+  // }
+]
 
-
-export const breadcrumbs: any= {
-  "/dashboard" : "الرئيسية",
-  "/dashboard/clients" : "عملاء",
+export const breadcrumbs: any = {
+  '/dashboard': 'الرئيسية',
+  '/dashboard/clients': 'عملاء',
 }
-
-
 
 // Navigation items for the dashboard
 export const navigationItems = [
   {
-    title: "لوحة التحكم",
+    title: 'لوحة التحكم',
     icon: Home,
-    href: "",
+    href: '',
   },
   {
-    title: "العملاء",
+    title: 'العملاء',
     icon: Users,
-    href: "/clients",
+    href: '/clients',
   },
   {
-    title: "القضايا",
+    title: 'القضايا',
     icon: Scale,
-    href: "/cases",
+    href: '/cases',
   },
   {
-    title: "الخصوم",
+    title: 'الخصوم',
     icon: UserX,
-    href: "/opponents",
+    href: '/opponents',
   },
   {
-    title: "الجلسات",
+    title: 'الجلسات',
     icon: Gavel,
-    href: "/trials",
+    href: '/trials',
   },
   {
-    title: "المواعيد",
+    title: 'المواعيد',
     icon: Calendar,
-    href: "/appointments",
+    href: '/appointments',
   },
   {
-    title: "الوثائق",
+    title: 'الوثائق',
     icon: FileText,
-    href: "/documents",
+    href: '/documents',
   },
-];
+]

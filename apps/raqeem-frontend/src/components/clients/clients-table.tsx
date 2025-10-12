@@ -307,7 +307,7 @@ export function ClientsTable({
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <Text size="2xl">{row.original.name}</Text>
+              <Text size="xl">{row.original.name}</Text>
               <EntityBadge
                 type="entityType"
                 value={row.original.clientType}
@@ -319,7 +319,9 @@ export function ClientsTable({
               {row.original.phone && (
                 <div className="flex items-center gap-1">
                   <Phone className="h-2.5 w-2.5" />
-                  <Text size="base">{row.original.phone}</Text>
+                  <Text variant="muted" size="base">
+                    {row.original.phone}
+                  </Text>
                 </div>
               )}
               {row.original.email && (
