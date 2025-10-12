@@ -106,7 +106,7 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
 
   return (
     <div className="space-y-6 p-2">
-      <Tabs dir="rtl" value={activeTab} onValueChange={handleTabChange}>
+      <Tabs key={caseId} dir="rtl" value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="mb-2">
           <TabsTrigger value={'info'} className="text-muted-foreground text-sm font-medium">
             معلومات القضية

@@ -38,7 +38,7 @@ const weightClasses = {
 export const Text: React.FC<TextProps> = ({
   children,
   variant = "body",
-  size,
+  size = "base",
   weight = "normal",
   className,
   truncate = false,

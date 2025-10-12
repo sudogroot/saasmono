@@ -241,7 +241,17 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
             {clientData.case && clientData.case.length > 0 ? (
               <div className="space-y-4">
                 {clientData.case.map((caseItem) => (
-                  <Card key={caseItem.id} className="overflow-hidden">
+                  <Card
+                    key={caseItem.id}
+                    className="overflow-hidden cursor-pointer transition-colors hover:bg-muted/50"
+                    onClick={() => {
+                      globalSheet.openCaseDetails({
+                        slug: 'cases',
+                        caseId: caseItem.id,
+                        size: 'md',
+                      })
+                    }}
+                  >
                     <CardHeader className="pb-3">
                       <div className="flex items-start justify-between">
                         <div className="space-y-1 flex-1">
@@ -281,15 +291,18 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => globalSheet.openTrialForm({
-                                  mode: 'create',
-                                  slug: 'trials',
-                                  caseId: caseItem.id,
-                                  presetData: {
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  globalSheet.openTrialForm({
+                                    mode: 'create',
+                                    slug: 'trials',
                                     caseId: caseItem.id,
-                                  },
-                                  size: 'md',
-                                })}
+                                    presetData: {
+                                      caseId: caseItem.id,
+                                    },
+                                    size: 'md',
+                                  })
+                                }}
                               >
                                 <Plus className="ml-1 h-3 w-3" />
                                 إضافة جلسة جديدة
@@ -346,15 +359,18 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => globalSheet.openTrialForm({
-                                mode: 'create',
-                                slug: 'trials',
-                                caseId: caseItem.id,
-                                presetData: {
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                globalSheet.openTrialForm({
+                                  mode: 'create',
+                                  slug: 'trials',
                                   caseId: caseItem.id,
-                                },
-                                size: 'md',
-                              })}
+                                  presetData: {
+                                    caseId: caseItem.id,
+                                  },
+                                  size: 'md',
+                                })
+                              }}
                             >
                               <Plus className="ml-1 h-4 w-4" />
                               إضافة جلسة
