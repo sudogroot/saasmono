@@ -4,15 +4,13 @@ import React from "react";
 import {
   Header,
   Hero,
-  FeaturesShowcase,
-  CTASection1,
-  Features,
-  CTASection2,
+  VideoDemo,
+  FeaturesSimple,
   Testimonials,
-  CTASection3,
   Pricing,
   FinalCTA,
-  Footer
+  Footer,
+  StickyCTA
 } from "@/components/landing";
 
 export default function LandingPage() {
@@ -20,14 +18,13 @@ export default function LandingPage() {
     <div className="min-h-screen" dir="rtl">
       <Header />
       <Hero />
-      <FeaturesShowcase />
-      <CTASection1 />
-      <Features />
-      <CTASection2 />
+      <VideoDemo />
+      <FeaturesSimple />
       <Testimonials />
       <Pricing />
       <FinalCTA />
       <Footer />
+      <StickyCTA />
     </div>
   );
 }

@@ -1,6 +1,5 @@
 'use client'
 
-import { cn } from '@/lib/utils'
 import { globalSheet } from '@/stores/global-sheet-store'
 import {
   AlertDialog,
@@ -11,16 +10,15 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  Badge,
   Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   GenericTable,
+  Heading,
   Text,
   ValueText,
-  Heading,
 } from '@repo/ui'
 // import type { Case } from '@/types'
 import { orpc } from '@/utils/orpc'
@@ -453,17 +451,22 @@ export function CasesTable({
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="text-foreground truncate text-sm font-medium">{row.original.caseTitle}</span>
-              <EntityBadge type="caseStatus" value={row.original.caseStatus} showIcon={false} className="shrink-0 px-1 py-0 text-xs" />
+              <Text size="sm">{row.original.caseTitle}</Text>
+              <EntityBadge
+                type="caseStatus"
+                value={row.original.caseStatus}
+                showIcon={false}
+                className="shrink-0 px-1 py-0 text-xs"
+              />
             </div>
-            <div className="text-muted-foreground mt-0.5 flex items-center gap-3 text-xs">
-              <span className="font-mono">{row.original.caseNumber}</span>
-              {row.original.client?.name && (
-                <div className="flex items-center gap-1">
-                  <Users className="h-2.5 w-2.5" />
-                  <span className="max-w-[60px] truncate">{row.original.client.name}</span>
-                </div>
-              )}
+            <div className="text-muted-foreground mt-0.5 flex items-center gap-3">
+              <Text size="xs" className="font-mono">
+                {row.original.caseNumber}
+              </Text>
+              <div className="flex items-center gap-1">
+                <Users className="h-2.5 w-2.5" />
+                <Text size="xs">{row.original.clientName}</Text>
+              </div>
             </div>
           </div>
         </div>
@@ -517,8 +520,12 @@ export function CasesTable({
             <FileText className="text-muted-foreground h-8 w-8" />
           </div>
           <div>
-            <Heading level={3} className="font-semibold">لا توجد قضايا</Heading>
-            <Text variant="muted" className="mt-1">ابدأ بإضافة قضية جديدة لإدارة ملفاتك القانونية</Text>
+            <Heading level={3} className="font-semibold">
+              لا توجد قضايا
+            </Heading>
+            <Text variant="muted" className="mt-1">
+              ابدأ بإضافة قضية جديدة لإدارة ملفاتك القانونية
+            </Text>
           </div>
           {emptyStateAction}
         </div>

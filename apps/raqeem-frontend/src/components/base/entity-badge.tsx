@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { Badge } from '@repo/ui'
+import { Badge, Text } from '@repo/ui'
 import type { LucideIcon } from 'lucide-react'
 import {
   AlertCircle,
@@ -212,8 +212,8 @@ export function EntityBadge({ type, value, showIcon = true, className, iconClass
   return (
     <Badge dir="rtl" variant="outline" className={cn('font-medium', config.colorClass, className)}>
       <div className="flex items-center gap-1.5">
-        {showIcon && Icon && <Icon className={cn('h-3.5 w-3.5', config.colorClass, iconClassName)} />}
-        <span>{config.label}</span>
+        {showIcon && Icon && <Icon className={cn('h-4.5 w-4.5 md:h-3.5 md:w-3.5', config.colorClass, iconClassName)} />}
+        <Text size="sm">{config.label}</Text>
       </div>
     </Badge>
   )
