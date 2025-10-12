@@ -1,22 +1,10 @@
 'use client'
 
-import { cn } from '@/lib/utils'
 import { globalSheet } from '@/stores/global-sheet-store'
 import { orpc } from '@/utils/orpc'
-import {
-  Badge,
-  Button,
-  CopyButton,
-  Separator,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Text,
-  ValueText,
-} from '@repo/ui'
+import { Button, CopyButton, Separator, Tabs, TabsContent, TabsList, TabsTrigger, Text, ValueText } from '@repo/ui'
 import { useQuery } from '@tanstack/react-query'
-import { AlertCircle, Calendar, Clock, Edit, FileText, Gavel, Loader2, Plus, Scale, User } from 'lucide-react'
+import { AlertCircle, Calendar, Clock, Edit, Gavel, Loader2, Plus, Scale } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -95,7 +83,7 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
       mode: 'edit',
       slug: 'cases',
       caseId: caseData.id,
-      size: 'lg',
+      size: 'md',
     })
   }
 
@@ -159,83 +147,85 @@ export function CaseDetails({ caseId, organizationId, renderMode = 'content' }: 
               </div>
               <div className="flex items-center justify-between rounded-lg border p-3">
                 <div className="flex items-center gap-2">
-                  <FileText className="text-muted-foreground h-4 w-4" />
+                  <Text variant="muted" size="sm">
+                    الحالة
+                  </Text>
+                  <EntityBadge type="caseStatus" value={caseData.caseStatus} />
                 </div>
-                <div className="flex gap-4">
-                  <div>
-                    <EntityBadge type="caseStatus" value={caseData.caseStatus} />
-                  </div>
-                  <div>
-                    <EntityBadge type="priority" value={caseData.priority} />
-                  </div>
+                <div className="flex items-center gap-2">
+                  <Text variant="muted" size="sm">
+                    الأولوية
+                  </Text>
+                  <EntityBadge type="priority" value={caseData.priority} />
                 </div>
               </div>
-              <div className="flex items-center justify-between rounded-lg border p-3">
-                <div className="flex items-center gap-2">
-                  <FileText className="text-muted-foreground h-4 w-4" />
-                  <span className="text-sm">رقم القضية</span>
+              <div className="flex items-center gap-4 rounded-lg border p-3">
+                <Text variant="muted" size="sm">
+                  رقم القضية
+                </Text>
+                <div className="flex-1">
+                  <ValueText value={caseData.caseNumber} size="sm" className="font-mono" />
                 </div>
-                <ValueText value={caseData.caseNumber} size="sm" className="font-mono" />
+                <CopyButton
+                  content={caseData.caseNumber}
+                  variant={'outline'}
+                  size="md"
+                  onCopy={() => {
+                    toast.success('تم نسخ رقم القضية')
+                  }}
+                />
               </div>
-              <div className="flex items-center justify-between rounded-lg border p-3">
-                <div className="flex items-center gap-2">
-                  <FileText className="text-muted-foreground h-4 w-4" />
-                  <span className="text-sm">موضوع القضية</span>
-                </div>
+              <div className="flex items-center gap-4 rounded-lg border p-3">
+                <Text variant="muted">موضوع القضية</Text>
                 <ValueText value={caseData.caseSubject} size="sm" className="font-medium" />
               </div>
-              <div className="flex items-center justify-between rounded-lg border p-3">
-                <div className="flex items-center gap-2">
-                  <Gavel className="text-muted-foreground h-4 w-4" />
-                  <span className="text-sm">رقم الملف بالمحكمة</span>
+              <div className="flex items-center gap-4 rounded-lg border p-3">
+                <Text variant="muted">رقم الملف بالمحكمة</Text>
+                <div className="flex-1">
+                  <ValueText value={caseData.courtFileNumber} size="sm" className="font-mono" fallbackText="غير محدد" />
                 </div>
-                <ValueText value={caseData.courtFileNumber} size="sm" className="font-mono" fallbackText="غير محدد" />
+                {caseData.courtFileNumber && (
+                  <CopyButton
+                    content={caseData.courtFileNumber}
+                    variant={'outline'}
+                    size="md"
+                    onCopy={() => {
+                      toast.success('تم نسخ رقم الملف بالمحكمة')
+                    }}
+                  />
+                )}
               </div>
               {caseData.client && (
-                <div className="flex items-center justify-between rounded-lg border p-3">
-                  <div className="flex items-center gap-2">
-                    <User className="text-muted-foreground h-4 w-4" />
-                    <span className="text-sm">العميل</span>
+                <div className="flex-col items-center gap-4 rounded-lg border p-3">
+                  <div className="flex items-center gap-4">
+                    <Text variant="muted">المنوب</Text>
+                    <div className="text-right">
+                      <Text size="sm" weight="semibold" as="span">
+                        {caseData.client.name}
+                      </Text>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <Text size="sm" weight="semibold" as="span">
-                      {caseData.client.name}
-                    </Text>
-                    <p className="text-muted-foreground text-xs">{caseData.client.clientType}</p>
-                    {caseData.client.email && <p className="text-muted-foreground text-xs">{caseData.client.email}</p>}
-                  </div>
-                </div>
-              )}
-              {caseData.opponent && (
-                <div className="flex items-center justify-between rounded-lg border p-3">
-                  <div className="flex items-center gap-2">
-                    <User className="text-muted-foreground h-4 w-4" />
-                    <span className="text-sm">الخصم</span>
-                  </div>
-                  <div className="text-right">
-                    <Text size="sm" weight="semibold" as="span">
-                      {caseData.opponent.name}
-                    </Text>
-                    <p className="text-muted-foreground text-xs">{caseData.opponent.opponentType}</p>
+                  <div className="flex items-center gap-4">
+                    <Text variant="muted">الهاتف</Text>
+                    <div className="flex-1">
+                      <ValueText value={caseData.client.phone} fallbackText="غير محدد" />
+                    </div>
+                    {caseData.client.phone && <CopyButton value={caseData.client.phone} variant="outline" size="md" />}
                   </div>
                 </div>
               )}
-              {caseData.court && (
-                <div className="flex items-center justify-between rounded-lg border p-3">
-                  <div className="flex items-center gap-2">
-                    <Gavel className="text-muted-foreground h-4 w-4" />
-                    <span className="text-sm">المحكمة</span>
-                  </div>
-                  <div className="text-right">
-                    <Text size="sm" weight="semibold" as="span">
-                      {caseData.court.name}
-                    </Text>
-                    <p className="text-muted-foreground text-xs">
-                      {caseData.court.state} • {caseData.court.courtType}
-                    </p>
-                  </div>
+              <div className="flex items-center gap-4 rounded-lg border p-3">
+                <Text variant="muted">الخصم</Text>
+                <div className="text-right">
+                  <ValueText value={caseData.opponent?.name} fallbackText="غير محدد" />
                 </div>
-              )}
+              </div>
+              <div className="flex items-center gap-4 rounded-lg border p-3">
+                <Text variant="muted">المحكمة</Text>
+                <div className="text-right">
+                  <ValueText value={caseData.court?.name} fallbackText="غير محدد" />
+                </div>
+              </div>
             </div>
           </div>
           <Separator className="my-2" />

@@ -8,7 +8,7 @@ export default function CasesPage() {
     globalSheet.openCaseForm({
       mode: 'create',
       slug: 'cases',
-      size: 'lg',
+      size: 'md',
     })
   }
 
