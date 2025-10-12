@@ -22,6 +22,11 @@ export const SessionNoteSchema = z.object({
     startDateTime: z.date(),
     endDateTime: z.date(),
   }),
+  createdBy: z.object({
+    id: z.string(),
+    name: z.string(),
+    lastName: z.string(),
+  }),
   attachments: z.array(z.object({
     id: z.uuid(),
     fileName: z.string(),

@@ -2,6 +2,7 @@ import { timetable } from '@/db/schema/timetable'
 import { sessionNote, sessionNoteAttachment } from '@/db/schema/sessionNote'
 import { classroom, classroomGroup } from '@/db/schema/classroom'
 import { educationLevel } from '@/db/schema/education'
+import { user } from '@/db/schema/auth'
 import type {
   CreateSessionNoteAttachmentInput,
   CreateSessionNoteInput,
@@ -109,9 +110,14 @@ export class SessionNoteManagementService {
         sessionTitle: timetable.title,
         sessionStartDateTime: timetable.startDateTime,
         sessionEndDateTime: timetable.endDateTime,
+        // Creator data
+        creatorId: user.id,
+        creatorName: user.name,
+        creatorLastName: user.lastName,
       })
       .from(sessionNote)
       .leftJoin(timetable, eq(sessionNote.timetableId, timetable.id))
+      .leftJoin(user, eq(sessionNote.createdByUserId, user.id))
       .where(and(
         eq(sessionNote.id, sessionNoteId),
         eq(sessionNote.orgId, orgId),
@@ -165,6 +171,11 @@ export class SessionNoteManagementService {
         title: row.sessionTitle!,
         startDateTime: row.sessionStartDateTime!,
         endDateTime: row.sessionEndDateTime!,
+      },
+      createdBy: {
+        id: row.creatorId!,
+        name: row.creatorName!,
+        lastName: row.creatorLastName!,
       },
       attachments: attachmentsWithFullUrls,
     }

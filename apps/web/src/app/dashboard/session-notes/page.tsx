@@ -15,9 +15,6 @@ export default function SessionNotesPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">كراس القسم</h1>
-        <p className="text-muted-foreground mt-2">
-          إدارة كراس القسم الدراسية باستخدام نموذج كورنيل
-        </p>
       </div>
 
       <Card className="p-6">
