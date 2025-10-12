@@ -139,7 +139,9 @@ export function MobileTable<TData>({
   }
 
   // Extract onClick handler from headerActions button
-  const extractButtonClick = (element: React.ReactNode): (() => void) | undefined => {
+  const extractButtonClick = (
+    element: React.ReactNode,
+  ): (() => void) | undefined => {
     if (React.isValidElement(element)) {
       const props = element.props as any;
       if (props?.onClick) {
@@ -149,10 +151,14 @@ export function MobileTable<TData>({
     return undefined;
   };
 
-  const fabOnClick = headerActions ? extractButtonClick(headerActions) : undefined;
+  const fabOnClick = headerActions
+    ? extractButtonClick(headerActions)
+    : undefined;
 
   return (
-    <div className={cn("flex flex-col h-full bg-background relative", className)}>
+    <div
+      className={cn("flex flex-col h-full bg-background relative", className)}
+    >
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background border-b border-border/50">
         {/* Title Section (No Actions on Mobile) */}
@@ -173,7 +179,6 @@ export function MobileTable<TData>({
                   placeholder={searchPlaceholder}
                   value={searchValue}
                   onChange={(e) => onSearchChange?.(e.target.value)}
-                  className="pl-9  text-sm placeholder:text-muted-foreground "
                 />
               </div>
               {showQuickFilters && quickFilters.length > 0 && (
@@ -184,7 +189,7 @@ export function MobileTable<TData>({
                 >
                   <Filter className="h-4 w-4" />
                   {hasActiveFilters && (
-                    <span className="absolute top-[-5px] left-[-5px] pr-0.2 text-xs bg-primary text-primary-foreground rounded-full w-4 h-4 flex items-center justify-center">
+                    <span className="absolute top-[-5px] left-[-5px] pr-0.2  bg-primary text-primary-foreground rounded-full w-4 h-4 flex items-center justify-center">
                       {
                         Object.values(activeFilters).filter((v) => v !== "")
                           .length
@@ -236,7 +241,8 @@ export function MobileTable<TData>({
                     <div
                       className={cn(
                         "border-b border-border/20",
-                        onRowClick && "cursor-pointer hover:bg-muted/30 transition-colors"
+                        onRowClick &&
+                          "cursor-pointer hover:bg-muted/30 transition-colors",
                       )}
                       onClick={() => onRowClick?.(row)}
                     >
@@ -262,7 +268,8 @@ export function MobileTable<TData>({
                   key={row.id}
                   className={cn(
                     "border-b border-border/20 last:border-b-0",
-                    onRowClick && "cursor-pointer hover:bg-muted/30 transition-colors"
+                    onRowClick &&
+                      "cursor-pointer hover:bg-muted/30 transition-colors",
                   )}
                   onClick={() => onRowClick?.(row)}
                 >
@@ -319,10 +326,10 @@ export function MobileTable<TData>({
       {headerActions && fabOnClick && (
         <Button
           onClick={fabOnClick}
-          className="fixed bottom-20 right-4 h-11 w-11 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] transition-all duration-200 z-40 p-0"
+          className="fixed bottom-20 right-4 h-11 w-11 rounded-full shadow-[0_3px_9px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] transition-all duration-200 z-40 p-0"
           size="icon"
         >
-          <Plus className="h-5 w-5" />
+          <Plus className="h-8 w-8" />
         </Button>
       )}
     </div>
