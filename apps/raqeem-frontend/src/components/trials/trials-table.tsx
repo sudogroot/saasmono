@@ -1,6 +1,22 @@
 'use client'
 
-import { Badge, Button, GenericTable } from '@repo/ui'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  Badge,
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  GenericTable,
+} from '@repo/ui'
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -9,13 +25,16 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { usePathname } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { globalSheet } from '@/stores/global-sheet-store'
-import { Calendar, Clock, Edit, Eye, Gavel, Plus, Trash2, Users } from 'lucide-react'
+import { orpc } from '@/utils/orpc'
+import { Calendar, Clock, Edit, Eye, Gavel, MoreHorizontal, Plus, Trash2, Users } from 'lucide-react'
 import { format, isToday, isTomorrow, isThisWeek, isThisMonth, isPast, isFuture } from 'date-fns'
 import { ar } from 'date-fns/locale'
+import { toast } from 'sonner'
 
 interface TrialsTableProps {
   trials: any[]
@@ -69,12 +88,43 @@ export function TrialsTable({
 }: TrialsTableProps) {
   const pathname = usePathname()
   const currentSlug = slug || pathname.split('/')[2] || ''
+  const queryClient = useQueryClient()
+
   const [searchValue, setSearchValue] = useState('')
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
+  const [deletingTrialId, setDeletingTrialId] = useState<string | null>(null)
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 20,
   })
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    ...orpc.trials.deleteTrial.mutationOptions({
+      onSuccess: () => {
+        toast.success('تم حذف الجلسة بنجاح')
+        queryClient.invalidateQueries({ queryKey: orpc.trials.listTrials.key() })
+        setDeletingTrialId(null)
+      },
+      onError: (error: any) => {
+        toast.error(`حدث خطأ: ${error.message}`)
+      },
+    }),
+  })
+
+  const handleDelete = (trialId: string) => {
+    if (onDelete) {
+      onDelete(trialId)
+    } else {
+      setDeletingTrialId(trialId)
+    }
+  }
+
+  const confirmDelete = () => {
+    if (deletingTrialId) {
+      deleteMutation.mutate({ trialId: deletingTrialId })
+    }
+  }
 
   const columns = useMemo(
     () => [
@@ -150,46 +200,57 @@ export function TrialsTable({
           const trial = row.original
 
           return (
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  globalSheet.openTrialDetails({
-                    slug: currentSlug,
-                    trialId: trial.id,
-                    size: 'lg',
-                  })
-                }}
-              >
-                <Eye className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  if (onEdit) {
-                    onEdit(trial.id)
-                  } else {
-                    globalSheet.openTrialForm({
-                      mode: 'edit',
-                      slug: currentSlug,
-                      trialId: trial.id,
-                      size: 'md',
-                    })
-                  }
-                }}
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onDelete?.(trial.id)}
-                className="text-destructive hover:text-destructive"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+            <div className="flex items-center gap-1">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      globalSheet.openTrialDetails({
+                        slug: currentSlug,
+                        trialId: trial.id,
+                        size: 'md',
+                      })
+                    }}
+                  >
+                    <Eye className="ml-2 h-4 w-4" />
+                    عرض
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      if (onEdit) {
+                        onEdit(trial.id)
+                      } else {
+                        globalSheet.openTrialForm({
+                          mode: 'edit',
+                          slug: currentSlug,
+                          trialId: trial.id,
+                          size: 'md',
+                        })
+                      }
+                    }}
+                  >
+                    <Edit className="ml-2 h-4 w-4" />
+                    تعديل
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      handleDelete(trial.id)
+                    }}
+                    className="text-destructive focus:text-destructive"
+                  >
+                    <Trash2 className="ml-2 h-4 w-4" />
+                    حذف
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           )
         },
@@ -359,31 +420,55 @@ export function TrialsTable({
   }
 
   return (
-    <GenericTable
-      table={table}
-      isLoading={isLoading}
-      error={error}
-      searchValue={searchValue}
-      onSearchChange={setSearchValue}
-      onRowClick={(row) => {
-        globalSheet.openTrialDetails({
-          slug: currentSlug,
-          trialId: row.original.id,
-          size: 'lg',
-        })
-      }}
-      searchPlaceholder="البحث عن جلسة (رقم، قضية، عميل، محكمة...)"
-      noDataMessage="لا توجد جلسات مطابقة للبحث"
-      showQuickFilters={true}
-      quickFilters={quickFilters}
-      activeFilters={activeFilters}
-      onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
-      headerActions={headerActions}
-      emptyStateAction={emptyStateAction}
-      mobileCardRenderer={mobileCardRenderer}
-      enableVirtualScroll={true}
-      virtualItemHeight={90}
-      className="w-full"
-    />
+    <>
+      <GenericTable
+        table={table}
+        isLoading={isLoading}
+        error={error}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        onRowClick={(row) => {
+          globalSheet.openTrialDetails({
+            slug: currentSlug,
+            trialId: row.original.id,
+            size: 'md',
+          })
+        }}
+        searchPlaceholder="البحث عن جلسة (رقم، قضية، عميل، محكمة...)"
+        noDataMessage="لا توجد جلسات مطابقة للبحث"
+        showQuickFilters={true}
+        quickFilters={quickFilters as any}
+        activeFilters={activeFilters}
+        onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
+        headerActions={headerActions}
+        emptyStateAction={emptyStateAction}
+        mobileCardRenderer={mobileCardRenderer}
+        enableVirtualScroll={true}
+        virtualItemHeight={90}
+        className="w-full"
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deletingTrialId} onOpenChange={() => setDeletingTrialId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
+            <AlertDialogDescription>
+              هل أنت متأكد من أنك تريد حذف هذه الجلسة؟ لا يمكن التراجع عن هذا الإجراء.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              disabled={deleteMutation.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteMutation.isPending ? 'جاري الحذف...' : 'حذف'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }

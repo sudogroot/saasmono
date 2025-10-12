@@ -20,11 +20,11 @@ export function TestSheet() {
           Test Custom Sheet
         </Button>
 
-        <Button 
+        <Button
           onClick={() => globalSheet.openClientDetails({
             slug: "test-slug",
             clientId: "test-client-123",
-            size: "lg"
+            size: "md"
           })}
         >
           Test Client Details (will fail but should open sheet)

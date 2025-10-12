@@ -3,7 +3,24 @@
 import { cn } from '@/lib/utils'
 import { globalSheet } from '@/stores/global-sheet-store'
 import type { OpponentListItem } from '@/types'
-import { Badge, Button, GenericTable } from '@repo/ui'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  GenericTable,
+  Text,
+  ValueText,
+} from '@repo/ui'
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -12,10 +29,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Edit, Eye, Plus, Trash2, Users } from 'lucide-react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { CalendarCheck, Edit, Eye, MoreHorizontal, Plus, Trash2, Users } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useMemo, useState } from 'react'
-import { OpponentAvatar } from './opponent-avatar'
+import { toast } from 'sonner'
+import { orpc } from '@/utils/orpc'
 import { EntityBadge } from '../base/entity-badge'
 
 interface OpponentsTableProps {
@@ -45,12 +64,43 @@ export function OpponentsTable({
 }: OpponentsTableProps) {
   const pathname = usePathname()
   const currentSlug = slug || pathname.split('/')[2] || ''
+  const queryClient = useQueryClient()
+
   const [searchValue, setSearchValue] = useState('')
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
+  const [deletingOpponentId, setDeletingOpponentId] = useState<string | null>(null)
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 20,
   })
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    ...orpc.opponents.deleteOpponent.mutationOptions({
+      onSuccess: () => {
+        toast.success('تم حذف الخصم بنجاح')
+        queryClient.invalidateQueries({ queryKey: orpc.opponents.listOpponents.key() })
+        setDeletingOpponentId(null)
+      },
+      onError: (error: any) => {
+        toast.error(`حدث خطأ: ${error.message}`)
+      },
+    }),
+  })
+
+  const handleDelete = (opponentId: string) => {
+    if (onDelete) {
+      onDelete(opponentId)
+    } else {
+      setDeletingOpponentId(opponentId)
+    }
+  }
+
+  const confirmDelete = () => {
+    if (deletingOpponentId) {
+      deleteMutation.mutate({ opponentId: deletingOpponentId })
+    }
+  }
 
   const columns = useMemo(
     () => [
@@ -59,7 +109,6 @@ export function OpponentsTable({
         header: 'الخصم',
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
-            {/*<OpponentAvatar opponent={row.original} size="md" />*/}
             <div>
               <div className="text-foreground font-medium">{row.original.name}</div>
             </div>
@@ -75,12 +124,15 @@ export function OpponentsTable({
         id: 'created_at',
         header: 'تاريخ الإضافة',
         cell: ({ getValue }) => (
-          <div className="text-muted-foreground text-sm">
-            {new Date(getValue()).toLocaleDateString('ar-TN', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-            })}
+          <div className="flex gap-2">
+            <CalendarCheck className="h-4 w-4" />
+            <Text size="xs">
+              {new Date(getValue()).toLocaleDateString('ar-TN', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+              })}
+            </Text>
           </div>
         ),
       }),
@@ -89,50 +141,60 @@ export function OpponentsTable({
         header: 'الإجراءات',
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() =>
-                globalSheet.openOpponentDetails({
-                  slug: currentSlug,
-                  opponentId: row.original.id,
-                  size: 'lg',
-                })
-              }
-              title="عرض"
-            >
-              <Eye className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                if (onEdit) {
-                  onEdit(row.original.id)
-                } else {
-                  globalSheet.openOpponentForm({
-                    mode: 'edit',
-                    slug: currentSlug,
-                    opponentId: row.original.id,
-                    size: 'lg',
-                  })
-                }
-              }}
-              title="تعديل"
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-            {onDelete && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onDelete(row.original.id)}
-                title="حذف"
-                className="text-destructive hover:text-destructive"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    if (onView) {
+                      onView(row.original.id)
+                    } else {
+                      globalSheet.openOpponentDetails({
+                        slug: currentSlug,
+                        opponentId: row.original.id,
+                        size: 'md',
+                      })
+                    }
+                  }}
+                >
+                  <Eye className="ml-2 h-4 w-4" />
+                  عرض
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    if (onEdit) {
+                      onEdit(row.original.id)
+                    } else {
+                      globalSheet.openOpponentForm({
+                        mode: 'edit',
+                        slug: currentSlug,
+                        opponentId: row.original.id,
+                        size: 'md',
+                      })
+                    }
+                  }}
+                >
+                  <Edit className="ml-2 h-4 w-4" />
+                  تعديل
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    handleDelete(row.original.id)
+                  }}
+                  className="text-destructive focus:text-destructive"
+                >
+                  <Trash2 className="ml-2 h-4 w-4" />
+                  حذف
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         ),
       }),
@@ -199,7 +261,6 @@ export function OpponentsTable({
     <div className="w-full">
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          <OpponentAvatar opponent={row.original} size="sm" />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <span className="text-foreground truncate text-sm font-medium">{row.original.name}</span>
@@ -210,19 +271,20 @@ export function OpponentsTable({
 
         <div className="mx-2">
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             className="h-8 w-8 p-0"
-            onClick={() =>
+            onClick={(event) => {
+              event.stopPropagation()
               globalSheet.openOpponentDetails({
                 slug: currentSlug,
                 opponentId: row.original.id,
-                size: 'lg',
+                size: 'md',
               })
-            }
+            }}
             title="عرض"
           >
-            <Eye className="h-3 w-3" />
+            <Eye className="h-4 w-4" />
           </Button>
         </div>
       </div>
@@ -262,24 +324,59 @@ export function OpponentsTable({
   }
 
   return (
-    <GenericTable
-      table={table}
-      isLoading={isLoading}
-      error={error}
-      searchValue={searchValue}
-      onSearchChange={setSearchValue}
-      searchPlaceholder="البحث عن خصم (الاسم، النوع...)"
-      noDataMessage="لا يوجد خصوم مطابقين للبحث"
-      mobileCardRenderer={mobileCardRenderer}
-      showQuickFilters={true}
-      quickFilters={quickFilters}
-      activeFilters={activeFilters}
-      onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
-      headerActions={headerActions}
-      emptyStateAction={emptyStateAction}
-      enableVirtualScroll={true}
-      virtualItemHeight={50}
-      className="w-full"
-    />
+    <>
+      <GenericTable
+        table={table}
+        isLoading={isLoading}
+        onRowClick={(row) => {
+          if (onView) {
+            onView(row.original.id)
+          } else {
+            globalSheet.openOpponentDetails({
+              slug: currentSlug,
+              opponentId: row.original.id,
+              size: 'md',
+            })
+          }
+        }}
+        error={error}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        searchPlaceholder="البحث عن خصم (الاسم، النوع...)"
+        noDataMessage="لا يوجد خصوم مطابقين للبحث"
+        mobileCardRenderer={mobileCardRenderer}
+        showQuickFilters={true}
+        quickFilters={quickFilters as any}
+        activeFilters={activeFilters}
+        onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
+        headerActions={headerActions}
+        emptyStateAction={emptyStateAction}
+        enableVirtualScroll={true}
+        virtualItemHeight={60}
+        className="w-full"
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deletingOpponentId} onOpenChange={() => setDeletingOpponentId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
+            <AlertDialogDescription>
+              هل أنت متأكد من أنك تريد حذف هذا الخصم؟ لا يمكن التراجع عن هذا الإجراء.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              disabled={deleteMutation.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteMutation.isPending ? 'جاري الحذف...' : 'حذف'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }

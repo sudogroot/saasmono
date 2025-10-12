@@ -1,21 +1,15 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Badge } from "@repo/ui";
-import { Button } from "@repo/ui";
-import { Separator } from "@repo/ui";
+import { Button, Separator, Text } from "@repo/ui";
 import { OpponentAvatar } from "./opponent-avatar";
 import { orpc } from "@/utils/orpc";
 import { globalSheet } from "@/stores/global-sheet-store";
 import {
-  Users,
-  Calendar,
   Loader2,
   AlertCircle,
   Edit,
-  Plus
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { EntityBadge } from "../base/entity-badge";
 
 interface OpponentDetailsSheetProps {
@@ -68,33 +62,14 @@ export function OpponentDetails({
       mode: 'edit',
       slug: 'opponents',
       opponentId: opponentData.id,
-      size: 'lg'
-    });
-  };
-
-  const handleAddCase = () => {
-    globalSheet.openCaseForm({
-      mode: 'create',
-      slug: 'cases',
-      opponentId: opponentData.id,
-      size: 'lg'
+      size: 'md'
     });
   };
 
   return (
-    <div className="space-y-6 p-6">
-      {/* Header */}
-      <div className="flex items-start gap-4">
-        <OpponentAvatar opponent={opponentData} size="xl" />
-        <div className="flex-1 space-y-2">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground">
-              {opponentData.name}
-            </h2>
-          </div>
-          <EntityBadge type="entityType" value={opponentData.opponentType} />
-        </div>
-        <div className="flex gap-2">
+    <div className="space-y-6 p-2">
+      <div className="space-y-3">
+        <div className="flex justify-end gap-2">
           <Button
             variant="outline"
             size="sm"
@@ -103,46 +78,32 @@ export function OpponentDetails({
             <Edit className="h-4 w-4 ml-1" />
             تعديل
           </Button>
-          <Button
-            variant="default"
-            size="sm"
-            onClick={handleAddCase}
-          >
-            <Plus className="h-4 w-4 ml-1" />
-            إضافة قضية
-          </Button>
         </div>
-      </div>
-
-      <Separator />
-
-      {/* Basic Information */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold flex items-center gap-2">
-          <Users className="h-5 w-5" />
-          المعلومات الأساسية
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-muted-foreground">نوع الخصم</label>
-            <div><EntityBadge type="entityType" value={opponentData.opponentType} /></div>
+        <div className="space-y-2">
+          <div className="flex items-center gap-4 rounded-lg border p-3">
+            <Text variant="muted" size="sm">
+              الاسم
+            </Text>
+            <div className="flex-1 text-right">
+              <Text size="sm" weight="semibold" as="span">
+                {opponentData.name}
+              </Text>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 rounded-lg border p-3">
+            <Text variant="muted" size="sm">
+              الصفة
+            </Text>
+            <EntityBadge type="entityType" value={opponentData.opponentType} />
           </div>
         </div>
       </div>
-
-      {/* Timestamps */}
-      <Separator />
+      <Separator className="my-2" />
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold flex items-center gap-2">
-          <Calendar className="h-5 w-5" />
-          التواريخ
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
           <div>
             <p className="text-muted-foreground">تاريخ الإضافة</p>
-            <p className="text-foreground">
+            <Text size="sm">
               {new Date(opponentData.createdAt).toLocaleDateString("ar-TN", {
                 year: "numeric",
                 month: "long",
@@ -150,12 +111,12 @@ export function OpponentDetails({
                 hour: "2-digit",
                 minute: "2-digit",
               })}
-            </p>
+            </Text>
           </div>
-          
+
           <div>
             <p className="text-muted-foreground">آخر تحديث</p>
-            <p className="text-foreground">
+            <Text size="sm">
               {new Date(opponentData.updatedAt).toLocaleDateString("ar-TN", {
                 year: "numeric",
                 month: "long",
@@ -163,7 +124,7 @@ export function OpponentDetails({
                 hour: "2-digit",
                 minute: "2-digit",
               })}
-            </p>
+            </Text>
           </div>
         </div>
       </div>

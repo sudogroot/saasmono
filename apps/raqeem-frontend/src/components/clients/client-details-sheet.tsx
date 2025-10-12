@@ -3,9 +3,10 @@
 import { cn } from '@/lib/utils'
 import { globalSheet } from '@/stores/global-sheet-store'
 import { orpc } from '@/utils/orpc'
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Separator, Tabs, TabsContent, TabsList, TabsTrigger, Text, ValueText } from '@repo/ui'
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, CopyButton, Separator, Tabs, TabsContent, TabsList, TabsTrigger, Text, ValueText } from '@repo/ui'
 import { useQuery } from '@tanstack/react-query'
-import { AlertCircle, Calendar, Clock, Edit, FileText, Gavel, Loader2, Mail, Phone, Plus, Scale, User } from 'lucide-react'
+import { AlertCircle, Calendar, Clock, Edit, FileText, Gavel, Loader2, Plus, Scale } from 'lucide-react'
+import { toast } from 'sonner'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { EntityBadge } from '../base/entity-badge'
@@ -125,41 +126,75 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
               </Button>
             </div>
             <div className="space-y-2">
-              <div className="flex items-center justify-between rounded-lg border p-3">
-                <div className="flex items-center gap-2">
-                  <User className="text-muted-foreground h-4 w-4" />
-                  <span className="text-sm">الاسم و الصفة</span>
-                </div>
-
-                <div className="flex gap-4">
-                  <EntityBadge type="entityType" value={clientData.clientType} />
-                  <div>
-                    <Text size="sm" weight="semibold" as="span">
-                      {clientData.name}
-                    </Text>
-                  </div>
+              <div className="flex items-center gap-4 rounded-lg border p-3">
+                <Text variant="muted" size="sm">
+                  الاسم
+                </Text>
+                <div className="flex-1 text-right">
+                  <Text size="sm" weight="semibold" as="span">
+                    {clientData.name}
+                  </Text>
                 </div>
               </div>
-              <div className="flex items-center justify-between rounded-lg border p-3">
-                <div className="flex items-center gap-2">
-                  <Mail className="text-muted-foreground h-4 w-4" />
-                  <span className="text-sm">البريد الإلكتروني</span>
-                </div>
-                <ValueText value={clientData.email} size="sm" className="font-medium" fallbackText="غير محدد" />
+              <div className="flex items-center gap-4 rounded-lg border p-3">
+                <Text variant="muted" size="sm">
+                  الصفة
+                </Text>
+                <EntityBadge type="entityType" value={clientData.clientType} />
               </div>
-              <div className="flex items-center justify-between rounded-lg border p-3">
-                <div className="flex items-center gap-2">
-                  <Phone className="text-muted-foreground h-4 w-4" />
-                  <span className="text-sm">رقم الهاتف</span>
+              <div className="flex items-center gap-4 rounded-lg border p-3">
+                <Text variant="muted" size="sm">
+                  البريد الإلكتروني
+                </Text>
+                <div className="flex-1">
+                  <ValueText value={clientData.email} size="sm" fallbackText="غير محدد" />
                 </div>
-                <ValueText value={clientData.phone} size="sm" className="font-medium" fallbackText="غير محدد" />
+                {clientData.email && (
+                  <CopyButton
+                    content={clientData.email}
+                    variant={'outline'}
+                    size="md"
+                    onCopy={() => {
+                      toast.success('تم نسخ البريد الإلكتروني')
+                    }}
+                  />
+                )}
               </div>
-              <div className="flex items-center justify-between rounded-lg border p-3">
-                <div className="flex items-center gap-2">
-                  <Phone className="text-muted-foreground h-4 w-4" />
-                  <span className="text-sm">رقم الهوية</span>
+              <div className="flex items-center gap-4 rounded-lg border p-3">
+                <Text variant="muted" size="sm">
+                  رقم الهاتف
+                </Text>
+                <div className="flex-1">
+                  <ValueText value={clientData.phone} size="sm" fallbackText="غير محدد" />
                 </div>
-                <ValueText value={clientData.nationalId} size="sm" className="font-medium" fallbackText="غير محدد" />
+                {clientData.phone && (
+                  <CopyButton
+                    content={clientData.phone}
+                    variant={'outline'}
+                    size="md"
+                    onCopy={() => {
+                      toast.success('تم نسخ رقم الهاتف')
+                    }}
+                  />
+                )}
+              </div>
+              <div className="flex items-center gap-4 rounded-lg border p-3">
+                <Text variant="muted" size="sm">
+                  رقم الهوية
+                </Text>
+                <div className="flex-1">
+                  <ValueText value={clientData.nationalId} size="sm" className="font-mono" fallbackText="غير محدد" />
+                </div>
+                {clientData.nationalId && (
+                  <CopyButton
+                    content={clientData.nationalId}
+                    variant={'outline'}
+                    size="md"
+                    onCopy={() => {
+                      toast.success('تم نسخ رقم الهوية')
+                    }}
+                  />
+                )}
               </div>
             </div>
           </div>

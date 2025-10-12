@@ -1,26 +1,13 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { Badge, Button, Separator } from '@repo/ui'
+import { Button, CopyButton, Separator, Text, ValueText } from '@repo/ui'
 import { orpc } from '@/utils/orpc'
 import { globalSheet } from '@/stores/global-sheet-store'
-import {
-  Calendar,
-  Clock,
-  Loader2,
-  AlertCircle,
-  Edit,
-  Gavel,
-  Users,
-  User,
-  UserX,
-  Briefcase,
-  MapPin,
-  Hash,
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Calendar, Clock, Loader2, AlertCircle, Edit } from 'lucide-react'
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
+import { toast } from 'sonner'
 
 interface TrialDetailsSheetProps {
   trialId: string
@@ -75,7 +62,7 @@ export function TrialDetails({ trialId, renderMode = 'content' }: TrialDetailsSh
     globalSheet.openCaseDetails({
       slug: 'cases',
       caseId: trialData.case.id,
-      size: 'lg',
+      size: 'md',
     })
   }
 
@@ -83,7 +70,7 @@ export function TrialDetails({ trialId, renderMode = 'content' }: TrialDetailsSh
     globalSheet.openClientDetails({
       slug: 'clients',
       clientId: trialData.client.id,
-      size: 'lg',
+      size: 'md',
       reset: false,
     })
   }
@@ -91,168 +78,151 @@ export function TrialDetails({ trialId, renderMode = 'content' }: TrialDetailsSh
   const trialDate = new Date(trialData.trialDateTime)
 
   return (
-    <div className="space-y-6 p-6">
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <div className="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-full">
-              <span className="text-lg font-bold">#{trialData.trialNumber}</span>
-            </div>
-            <div>
-              <h2 className="text-foreground text-2xl font-bold">الجلسة رقم {trialData.trialNumber}</h2>
-              <p className="text-muted-foreground text-sm">معلومات الجلسة والأطراف المعنية</p>
-            </div>
-          </div>
-        </div>
-        <div className="flex gap-2">
+    <div className="space-y-6 p-2">
+      <div className="space-y-3">
+        <div className="flex justify-end gap-2">
           <Button variant="outline" size="sm" onClick={handleEdit}>
             <Edit className="ml-1 h-4 w-4" />
             تعديل
           </Button>
         </div>
-      </div>
-
-      <Separator />
-
-      {/* Date and Time */}
-      <div className="bg-muted/50 rounded-lg p-4">
-        <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold">
-          <Calendar className="h-5 w-5" />
-          موعد الجلسة
-        </h3>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="space-y-1">
-            <p className="text-muted-foreground text-sm">التاريخ</p>
-            <p className="flex items-center gap-2 font-medium">
-              <Calendar className="text-primary h-4 w-4" />
-              {format(trialDate, 'EEEE، dd MMMM yyyy', { locale: ar })}
-            </p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-muted-foreground text-sm">الوقت</p>
-            <p className="flex items-center gap-2 font-medium">
-              <Clock className="text-primary h-4 w-4" />
-              {format(trialDate, 'hh:mm a', { locale: ar })}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Case Information */}
-      <div className="space-y-4">
-        <h3 className="flex items-center gap-2 text-lg font-semibold">
-          <Briefcase className="h-5 w-5" />
-          معلومات القضية
-        </h3>
-
-        <div className="border-border bg-card rounded-lg border p-4">
-          <div className="mb-3 flex items-start justify-between">
+        <div className="space-y-2">
+          <div className="flex items-center gap-4 rounded-lg border p-3">
+            <Text variant="muted" size="sm">
+              رقم الجلسة
+            </Text>
             <div className="flex-1">
-              <div className="mb-1 flex items-center gap-2">
-                <Hash className="text-muted-foreground h-4 w-4" />
-                <span className="text-muted-foreground text-sm">رقم القضية</span>
-              </div>
-              <p className="font-mono text-lg font-semibold">{trialData.case.caseNumber}</p>
+              <ValueText value={`#${trialData.trialNumber}`} size="sm" className="font-mono" />
             </div>
-            <Button variant="ghost" size="sm" onClick={handleViewCase}>
-              عرض التفاصيل
-            </Button>
+            <CopyButton
+              content={trialData.trialNumber.toString()}
+              variant={'outline'}
+              size="md"
+              onCopy={() => {
+                toast.success('تم نسخ رقم الجلسة')
+              }}
+            />
           </div>
-          <div>
-            <div className="text-muted-foreground mb-1 text-sm">عنوان القضية</div>
-            <p className="font-medium">{trialData.case.caseTitle}</p>
+          <div className="flex items-center gap-4 rounded-lg border p-3">
+            <Text variant="muted" size="sm">
+              التاريخ
+            </Text>
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              <Text size="sm">{format(trialDate, 'EEEE، dd MMMM yyyy', { locale: ar })}</Text>
+            </div>
           </div>
-        </div>
-      </div>
-
-      {/* Court Information */}
-      <div className="space-y-4">
-        <h3 className="flex items-center gap-2 text-lg font-semibold">
-          <Gavel className="h-5 w-5" />
-          معلومات المحكمة
-        </h3>
-
-        <div className="border-border bg-card grid grid-cols-1 gap-4 rounded-lg border p-4 md:grid-cols-2">
-          <div>
-            <div className="text-muted-foreground mb-1 text-sm">اسم المحكمة</div>
-            <p className="font-medium">{trialData.court.name}</p>
+          <div className="flex items-center gap-4 rounded-lg border p-3">
+            <Text variant="muted" size="sm">
+              الوقت
+            </Text>
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              <Text size="sm">{format(trialDate, 'hh:mm a', { locale: ar })}</Text>
+            </div>
           </div>
-          <div>
-            <div className="text-muted-foreground mb-1 text-sm">الولاية</div>
-            <p className="flex items-center gap-2 font-medium">
-              <MapPin className="text-muted-foreground h-4 w-4" />
-              {trialData.court.state}
-            </p>
-          </div>
-          <div className="md:col-span-2">
-            <div className="text-muted-foreground mb-1 text-sm">نوع المحكمة</div>
-            <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
-              {trialData.court.courtType}
-            </Badge>
-          </div>
-        </div>
-      </div>
-
-      {/* Client Information */}
-      <div className="space-y-4">
-        <h3 className="flex items-center gap-2 text-lg font-semibold">
-          <User className="h-5 w-5" />
-          العميل
-        </h3>
-
-        <div className="border-border bg-card rounded-lg border p-4">
-          <div className="mb-3 flex items-start justify-between">
+          <div className="flex items-center gap-4 rounded-lg border p-3">
+            <Text variant="muted" size="sm">
+              رقم القضية
+            </Text>
             <div className="flex-1">
-              <p className="mb-2 text-lg font-semibold">{trialData.client.name}</p>
-              <div className="text-muted-foreground space-y-1 text-sm">
-                {trialData.client.email && (
-                  <p className="flex items-center gap-2">
-                    <span className="font-medium">البريد:</span>
-                    {trialData.client.email}
-                  </p>
-                )}
-                {trialData.client.phone && (
-                  <p className="flex items-center gap-2">
-                    <span className="font-medium">الهاتف:</span>
-                    {trialData.client.phone}
-                  </p>
-                )}
-              </div>
+              <ValueText value={trialData.case.caseNumber} size="sm" className="font-mono" />
             </div>
-            <Button variant="ghost" size="sm" onClick={handleViewClient}>
-              عرض التفاصيل
-            </Button>
+            <CopyButton
+              content={trialData.case.caseNumber}
+              variant={'outline'}
+              size="md"
+              onCopy={() => {
+                toast.success('تم نسخ رقم القضية')
+              }}
+            />
           </div>
+          <div className="flex items-center gap-4 rounded-lg border p-3">
+            <Text variant="muted" size="sm">
+              عنوان القضية
+            </Text>
+            <ValueText value={trialData.case.caseTitle} size="sm" />
+          </div>
+          <div className="flex items-center gap-4 rounded-lg border p-3">
+            <Text variant="muted" size="sm">
+              المحكمة
+            </Text>
+            <ValueText value={trialData.court.name} size="sm" />
+          </div>
+          <div className="flex items-center gap-4 rounded-lg border p-3">
+            <Text variant="muted" size="sm">
+              الولاية
+            </Text>
+            <ValueText value={trialData.court.state} size="sm" />
+          </div>
+          <div className="flex items-center gap-4 rounded-lg border p-3">
+            <Text variant="muted" size="sm">
+              نوع المحكمة
+            </Text>
+            <ValueText value={trialData.court.courtType} size="sm" />
+          </div>
+          <div className="flex items-center gap-4 rounded-lg border p-3">
+            <Text variant="muted" size="sm">
+              العميل
+            </Text>
+            <ValueText value={trialData.client.name} size="sm" />
+          </div>
+          {trialData.client.phone && (
+            <div className="flex items-center gap-4 rounded-lg border p-3">
+              <Text variant="muted" size="sm">
+                هاتف العميل
+              </Text>
+              <div className="flex-1">
+                <ValueText value={trialData.client.phone} size="sm" className="font-mono" />
+              </div>
+              <CopyButton
+                content={trialData.client.phone}
+                variant={'outline'}
+                size="md"
+                onCopy={() => {
+                  toast.success('تم نسخ رقم الهاتف')
+                }}
+              />
+            </div>
+          )}
+          {trialData.assignedLawyer && (
+            <div className="flex items-center gap-4 rounded-lg border p-3">
+              <Text variant="muted" size="sm">
+                المحامي المكلف
+              </Text>
+              <ValueText value={trialData.assignedLawyer.name} size="sm" />
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Assigned Lawyer */}
-      {trialData.assignedLawyer && (
-        <div className="space-y-4">
-          <h3 className="flex items-center gap-2 text-lg font-semibold">
-            <Users className="h-5 w-5" />
-            المحامي المكلف
-          </h3>
-
-          <div className="border-border bg-card rounded-lg border p-4">
-            <p className="mb-1 text-lg font-semibold">{trialData.assignedLawyer.name}</p>
-            <p className="text-muted-foreground text-sm">{trialData.assignedLawyer.email}</p>
+      <Separator className="my-2" />
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
+          <div>
+            <p className="text-muted-foreground">تاريخ الإضافة</p>
+            <Text size="sm">
+              {new Date(trialData.createdAt).toLocaleDateString('ar-TN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </Text>
           </div>
-        </div>
-      )}
 
-      {/* Metadata */}
-      <Separator />
-
-      <div className="text-muted-foreground grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
-        <div>
-          <span className="font-medium">تاريخ الإنشاء: </span>
-          <span>{format(new Date(trialData.createdAt), 'dd/MM/yyyy', { locale: ar })}</span>
-        </div>
-        <div>
-          <span className="font-medium">آخر تحديث: </span>
-          <span>{format(new Date(trialData.updatedAt), 'dd/MM/yyyy', { locale: ar })}</span>
+          <div>
+            <p className="text-muted-foreground">آخر تحديث</p>
+            <Text size="sm">
+              {new Date(trialData.updatedAt).toLocaleDateString('ar-TN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </Text>
+          </div>
         </div>
       </div>
     </div>

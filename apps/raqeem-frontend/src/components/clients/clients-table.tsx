@@ -1,6 +1,23 @@
 'use client'
 
-import { Badge, Button, GenericTable } from '@repo/ui'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  GenericTable,
+  Text,
+  ValueText,
+} from '@repo/ui'
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -9,13 +26,14 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { CalendarCheck, Edit, Eye, Mail, MoreHorizontal, Phone, Plus, Trash2, Users } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useMemo, useState } from 'react'
-// import type { Client } from '@/types';
+import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { globalSheet } from '@/stores/global-sheet-store'
-import { Edit, Eye, Mail, Phone, Plus, Trash2, Users } from 'lucide-react'
-import { ClientAvatar } from './client-avatar'
+import { orpc } from '@/utils/orpc'
 import { EntityBadge } from '../base/entity-badge'
 
 // Client type is now imported from shared types
@@ -46,12 +64,43 @@ export function ClientsTable({
 }: ClientsTableProps) {
   const pathname = usePathname()
   const currentSlug = slug || pathname.split('/')[2] || ''
+  const queryClient = useQueryClient()
+
   const [searchValue, setSearchValue] = useState('')
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
+  const [deletingClientId, setDeletingClientId] = useState<string | null>(null)
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 20,
   })
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    ...orpc.clients.deleteClient.mutationOptions({
+      onSuccess: () => {
+        toast.success('تم حذف العميل بنجاح')
+        queryClient.invalidateQueries({ queryKey: orpc.clients.listClients.key() })
+        setDeletingClientId(null)
+      },
+      onError: (error: any) => {
+        toast.error(`حدث خطأ: ${error.message}`)
+      },
+    }),
+  })
+
+  const handleDelete = (clientId: string) => {
+    if (onDelete) {
+      onDelete(clientId)
+    } else {
+      setDeletingClientId(clientId)
+    }
+  }
+
+  const confirmDelete = () => {
+    if (deletingClientId) {
+      deleteMutation.mutate({ clientId: deletingClientId })
+    }
+  }
 
   const columns = useMemo(
     () => [
@@ -60,11 +109,14 @@ export function ClientsTable({
         header: 'العميل',
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
-            <ClientAvatar client={row.original} size="md" />
             <div>
               <div className="text-foreground font-medium">{row.original.name}</div>
               {row.original.nationalId && (
-                <div className="text-muted-foreground text-sm">الهوية: {row.original.nationalId}</div>
+                <div className="flex justify-items-center gap-2">
+                  <Text variant="muted" size="xs">
+                    الهوية: {row.original.nationalId}
+                  </Text>
+                </div>
               )}
             </div>
           </div>
@@ -99,12 +151,15 @@ export function ClientsTable({
         id: 'created_at',
         header: 'تاريخ الإضافة',
         cell: ({ getValue }) => (
-          <div className="text-muted-foreground text-sm">
-            {new Date(getValue()).toLocaleDateString('ar-TN', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-            })}
+          <div className="flex gap-2">
+            <CalendarCheck className="h-4 w-4" />
+            <Text size="xs">
+              {new Date(getValue()).toLocaleDateString('ar-TN', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+              })}
+            </Text>
           </div>
         ),
       }),
@@ -113,57 +168,57 @@ export function ClientsTable({
         header: 'الإجراءات',
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation()
-                console.log('View button clicked:', row.original.id)
-                globalSheet.openClientDetails({
-                  slug: currentSlug,
-                  clientId: row.original.id,
-                  size: 'md',
-                })
-              }}
-              title="عرض"
-            >
-              <Eye className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation()
-                if (onEdit) {
-                  onEdit(row.original.id)
-                } else {
-                  globalSheet.openClientForm({
-                    mode: 'edit',
-                    slug: currentSlug,
-                    clientId: row.original.id,
-                    size: 'md',
-                    initialData: row.original,
-                  })
-                }
-              }}
-              title="تعديل"
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-            {onDelete && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onDelete(row.original.id)
-                }}
-                title="حذف"
-                className="text-destructive hover:text-destructive"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    globalSheet.openClientDetails({
+                      slug: currentSlug,
+                      clientId: row.original.id,
+                      size: 'md',
+                    })
+                  }}
+                >
+                  <Eye className="ml-2 h-4 w-4" />
+                  عرض
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    if (onEdit) {
+                      onEdit(row.original.id)
+                    } else {
+                      globalSheet.openClientForm({
+                        mode: 'edit',
+                        slug: currentSlug,
+                        clientId: row.original.id,
+                        size: 'md',
+                        initialData: row.original,
+                      })
+                    }
+                  }}
+                >
+                  <Edit className="ml-2 h-4 w-4" />
+                  تعديل
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    handleDelete(row.original.id)
+                  }}
+                  className="text-destructive focus:text-destructive"
+                >
+                  <Trash2 className="ml-2 h-4 w-4" />
+                  حذف
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         ),
       }),
@@ -251,13 +306,12 @@ export function ClientsTable({
     <div className="w-full">
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          <ClientAvatar client={row.original} size="md" />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="text-foreground truncate text-lg font-medium md:text-sm">{row.original.name}</span>
-              <EntityBadge type="entityType" value={row.original.clientType} showIcon={false} className="shrink-0 px-1 py-0 text-base md:text-xs" />
+              <span className="text-foreground truncate text-sm font-medium">{row.original.name}</span>
+              <EntityBadge type="entityType" value={row.original.clientType} showIcon={false} className="shrink-0 px-1 py-0 text-xs" />
             </div>
-            <div className="text-muted-foreground mt-0.5 flex items-center gap-3 text-sm md:text-xs">
+            <div className="text-muted-foreground mt-0.5 flex items-center gap-3 text-xs">
               {row.original.phone && (
                 <div className="flex items-center gap-1">
                   <Phone className="h-2.5 w-2.5" />
@@ -267,7 +321,7 @@ export function ClientsTable({
               {row.original.email && (
                 <div className="flex items-center gap-1">
                   <Mail className="h-2.5 w-2.5" />
-                  <span className="text-sm md:text-xs">{row.original.email}</span>
+                  <span className="truncate">{row.original.email}</span>
                 </div>
               )}
             </div>
@@ -275,7 +329,22 @@ export function ClientsTable({
         </div>
 
         <div className="mx-2">
-          <Eye className="text-muted-foreground h-4 w-4" />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
+            onClick={(event) => {
+              event.stopPropagation()
+              globalSheet.openClientDetails({
+                slug: currentSlug,
+                clientId: row.original.id,
+                size: 'md',
+              })
+            }}
+            title="عرض"
+          >
+            <Eye className="h-4 w-4" />
+          </Button>
         </div>
       </div>
       <div className="bg-border/30 h-px w-full" />
@@ -314,33 +383,55 @@ export function ClientsTable({
   }
 
   return (
-    <GenericTable
-      table={table}
-      isLoading={isLoading}
-      error={error}
-      searchValue={searchValue}
-      onSearchChange={setSearchValue}
-      onRowClick={(row) => {
-        console.log('Row clicked:', row.original)
-        console.log('Current slug:', currentSlug)
-        globalSheet.openClientDetails({
-          slug: currentSlug,
-          clientId: row.original.id,
-          size: 'md',
-        })
-      }}
-      searchPlaceholder="البحث عن عميل (الاسم، الهوية، الهاتف، البريد الإلكتروني...)"
-      noDataMessage="لا يوجد عملاء مطابقين للبحث"
-      mobileCardRenderer={mobileCardRenderer}
-      showQuickFilters={true}
-      quickFilters={quickFilters}
-      activeFilters={activeFilters}
-      onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
-      headerActions={headerActions}
-      emptyStateAction={emptyStateAction}
-      enableVirtualScroll={true}
-      virtualItemHeight={50}
-      className="w-full"
-    />
+    <>
+      <GenericTable
+        table={table}
+        isLoading={isLoading}
+        onRowClick={(row) => {
+          globalSheet.openClientDetails({
+            slug: currentSlug,
+            clientId: row.original.id,
+            size: 'md',
+          })
+        }}
+        error={error}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        searchPlaceholder="البحث عن عميل (الاسم، الهوية، الهاتف، البريد الإلكتروني...)"
+        noDataMessage="لا يوجد عملاء مطابقين للبحث"
+        mobileCardRenderer={mobileCardRenderer}
+        showQuickFilters={true}
+        quickFilters={quickFilters as any}
+        activeFilters={activeFilters}
+        onFilterChange={(key, value) => setActiveFilters((prev) => ({ ...prev, [key]: value }))}
+        headerActions={headerActions}
+        emptyStateAction={emptyStateAction}
+        enableVirtualScroll={true}
+        virtualItemHeight={60}
+        className="w-full"
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deletingClientId} onOpenChange={() => setDeletingClientId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
+            <AlertDialogDescription>
+              هل أنت متأكد من أنك تريد حذف هذا العميل؟ لا يمكن التراجع عن هذا الإجراء.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              disabled={deleteMutation.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteMutation.isPending ? 'جاري الحذف...' : 'حذف'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }
