@@ -20,10 +20,11 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
-            <Link href="#features" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={(e) => {e.preventDefault(); document.getElementById('features')?.scrollIntoView({behavior: 'smooth'});}}>الميزات</Link>
-            <Link href="#showcase" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={(e) => {e.preventDefault(); document.getElementById('showcase')?.scrollIntoView({behavior: 'smooth'});}}>عرض المنتج</Link>
-            <Link href="#problems" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={(e) => {e.preventDefault(); document.getElementById('problems')?.scrollIntoView({behavior: 'smooth'});}}>حلول المشاكل</Link>
-            <Link href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={(e) => {e.preventDefault(); document.getElementById('pricing')?.scrollIntoView({behavior: 'smooth'});}}>الأسعار</Link>
+            <Link href="/" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">الرئيسية</Link>
+            <Link href="/features" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">الميزات</Link>
+            <Link href="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">الأسعار</Link>
+            <Link href="/about" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">من نحن</Link>
+            <Link href="/contact" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">اتصل بنا</Link>
           </nav>
 
           {/* Desktop Actions */}
@@ -56,33 +57,20 @@ export function Header() {
         {mobileMenuOpen && (
           <div className="lg:hidden border-t bg-white py-4">
             <nav className="flex flex-col gap-4">
-              <Link
-                href="#features"
-                className="text-gray-600 hover:text-gray-900 py-2"
-                onClick={(e) => {e.preventDefault(); document.getElementById('features')?.scrollIntoView({behavior: 'smooth'}); setMobileMenuOpen(false);}}
-              >
+              <Link href="/" className="text-gray-600 hover:text-gray-900 py-2" onClick={() => setMobileMenuOpen(false)}>
+                الرئيسية
+              </Link>
+              <Link href="/features" className="text-gray-600 hover:text-gray-900 py-2" onClick={() => setMobileMenuOpen(false)}>
                 الميزات
               </Link>
-              <Link
-                href="#showcase"
-                className="text-gray-600 hover:text-gray-900 py-2"
-                onClick={(e) => {e.preventDefault(); document.getElementById('showcase')?.scrollIntoView({behavior: 'smooth'}); setMobileMenuOpen(false);}}
-              >
-                عرض المنتج
-              </Link>
-              <Link
-                href="#problems"
-                className="text-gray-600 hover:text-gray-900 py-2"
-                onClick={(e) => {e.preventDefault(); document.getElementById('problems')?.scrollIntoView({behavior: 'smooth'}); setMobileMenuOpen(false);}}
-              >
-                حلول المشاكل
-              </Link>
-              <Link
-                href="#pricing"
-                className="text-gray-600 hover:text-gray-900 py-2"
-                onClick={(e) => {e.preventDefault(); document.getElementById('pricing')?.scrollIntoView({behavior: 'smooth'}); setMobileMenuOpen(false);}}
-              >
+              <Link href="/pricing" className="text-gray-600 hover:text-gray-900 py-2" onClick={() => setMobileMenuOpen(false)}>
                 الأسعار
+              </Link>
+              <Link href="/about" className="text-gray-600 hover:text-gray-900 py-2" onClick={() => setMobileMenuOpen(false)}>
+                من نحن
+              </Link>
+              <Link href="/contact" className="text-gray-600 hover:text-gray-900 py-2" onClick={() => setMobileMenuOpen(false)}>
+                اتصل بنا
               </Link>
               <div className="pt-4 border-t flex flex-col gap-3">
                 <Button asChild variant="outline" className="w-full">

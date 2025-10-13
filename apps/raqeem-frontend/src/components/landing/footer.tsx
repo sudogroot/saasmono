@@ -21,27 +21,27 @@ export function Footer() {
           <div>
             <Heading level={4} className="font-semibold mb-4">المنتج</Heading>
             <ul className="space-y-2 text-gray-400">
-              <li><Link href="#" className="hover:text-white">الميزات</Link></li>
-              <li><Link href="#" className="hover:text-white">الأسعار</Link></li>
-              <li><Link href="#" className="hover:text-white">التحديثات</Link></li>
+              <li><Link href="/features" className="hover:text-white transition-colors">الميزات</Link></li>
+              <li><Link href="/pricing" className="hover:text-white transition-colors">الأسعار</Link></li>
+              <li><Link href="#video-demo" className="hover:text-white transition-colors">العرض التوضيحي</Link></li>
             </ul>
           </div>
 
           <div>
             <Heading level={4} className="font-semibold mb-4">الدعم</Heading>
             <ul className="space-y-2 text-gray-400">
-              <li><Link href="#" className="hover:text-white">مركز المساعدة</Link></li>
-              <li><Link href="#" className="hover:text-white">اتصل بنا</Link></li>
-              <li><Link href="#" className="hover:text-white">التدريب</Link></li>
+              <li><Link href="/contact" className="hover:text-white transition-colors">اتصل بنا</Link></li>
+              <li><Link href="/register" className="hover:text-white transition-colors">ابدأ الآن</Link></li>
+              <li><Link href="/login" className="hover:text-white transition-colors">تسجيل الدخول</Link></li>
             </ul>
           </div>
 
           <div>
             <Heading level={4} className="font-semibold mb-4">الشركة</Heading>
             <ul className="space-y-2 text-gray-400">
-              <li><Link href="#" className="hover:text-white">من نحن</Link></li>
-              <li><Link href="#" className="hover:text-white">الخصوصية</Link></li>
-              <li><Link href="#" className="hover:text-white">الشروط</Link></li>
+              <li><Link href="/about" className="hover:text-white transition-colors">من نحن</Link></li>
+              <li><Link href="/privacy" className="hover:text-white transition-colors">الخصوصية</Link></li>
+              <li><Link href="/terms" className="hover:text-white transition-colors">الشروط</Link></li>
             </ul>
           </div>
         </div>
