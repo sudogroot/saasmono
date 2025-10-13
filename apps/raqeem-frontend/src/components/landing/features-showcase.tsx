@@ -1,5 +1,5 @@
 import React from "react";
-import { Badge, Heading, Text } from "@repo/ui";
+import { Badge, Heading, Text } from "@/components/base";
 import { CheckCircle, Gavel, CalendarDays, FolderOpen, UserCheck } from "lucide-react";
 import { CasesFeature, CalendarFeature, FilesFeature, ClientsFeature } from "./feature-components";
 

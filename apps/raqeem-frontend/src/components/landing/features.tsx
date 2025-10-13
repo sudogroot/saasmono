@@ -1,6 +1,6 @@
 import React from "react";
-import { Badge, Heading, Text } from "@repo/ui";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui";
+import { Badge, Heading, Text } from "@/components/base";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/base";
 import {
   Scale,
   Users,

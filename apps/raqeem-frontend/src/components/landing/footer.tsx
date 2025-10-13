@@ -1,7 +1,7 @@
 import React from "react";
 import { Scale } from "lucide-react";
 import Link from "next/link";
-import { Heading, Text } from "@repo/ui";
+import { Heading, Text } from "@/components/base";
 
 export function Footer() {
   return (

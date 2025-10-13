@@ -11,3 +11,4 @@ export { CTASection1, CTASection2, CTASection3 } from "./cta-sections";
 export { CasesFeature, CalendarFeature, FilesFeature, ClientsFeature } from "./feature-components";
 export { StickyCTA } from "./sticky-cta";
 export { VideoDemo } from "./video-demo";
+export { LandingPageContent } from "./landing-page-content";

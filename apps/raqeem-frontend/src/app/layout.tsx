@@ -14,9 +14,14 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://example.com'),
-  title: 'رقيم - نظام إدارة المؤسسات',
-  description: 'نظام إدارة شامل للمكاتب القانونية والمحاماة',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:4001'),
+  title: {
+    default: 'رقيم - نظام إدارة المؤسسات القانونية',
+    template: '%s | رقيم'
+  },
+  description: 'نظام إدارة شامل ومتطور للمكاتب القانونية ومكاتب المحاماة. إدارة القضايا، العملاء، المواعيد، والمستندات بكفاءة عالية',
+  keywords: ['نظام إدارة قانوني', 'مكاتب المحاماة', 'إدارة القضايا', 'رقيم', 'نظام قانوني'],
+  authors: [{ name: 'رقيم' }],
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
@@ -31,12 +36,35 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'رقيم',
     title: 'رقيم - نظام إدارة المؤسسات القانونية',
-    description: 'نظام إدارة شامل للمكاتب القانونية والمحاماة',
+    description: 'نظام إدارة شامل ومتطور للمكاتب القانونية ومكاتب المحاماة. إدارة القضايا، العملاء، المواعيد، والمستندات بكفاءة عالية',
+    url: '/',
+    locale: 'ar_SA',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'رقيم - نظام إدارة المؤسسات القانونية',
+        type: 'image/png',
+      }
+    ],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'رقيم - نظام إدارة المؤسسات القانونية',
-    description: 'نظام إدارة شامل للمكاتب القانونية والمحاماة',
+    description: 'نظام إدارة شامل ومتطور للمكاتب القانونية ومكاتب المحاماة',
+    images: ['/og-image.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
 }
 

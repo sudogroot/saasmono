@@ -1,7 +1,7 @@
 import React from "react";
-import { Badge, Heading, Text } from "@repo/ui";
-import { Button } from "@repo/ui";
-import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui";
+import { Badge, Heading, Text } from "@/components/base";
+import { Button } from "@/components/base";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/base";
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
 

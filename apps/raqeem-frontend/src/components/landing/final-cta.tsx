@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Heading, Text } from "@repo/ui";
+import { Button, Heading, Text } from "@/components/base";
 import Link from "next/link";
 
 export function FinalCTA() {

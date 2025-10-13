@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Text } from "@repo/ui";
+import { Button, Text } from "@/components/base";
 import Link from "next/link";
 
 export function CTASection1() {

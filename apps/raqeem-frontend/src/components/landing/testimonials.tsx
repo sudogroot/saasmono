@@ -1,6 +1,6 @@
 import React from "react";
-import { Badge, Heading, Text } from "@repo/ui";
-import { Card, CardContent } from "@repo/ui";
+import { Badge, Heading, Text } from "@/components/base";
+import { Card, CardContent } from "@/components/base";
 import { Calendar, Search, Shield, CheckCircle } from "lucide-react";
 
 const problemsSolved = [
