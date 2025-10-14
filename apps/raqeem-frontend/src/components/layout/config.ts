@@ -63,11 +63,18 @@ export const drawerItems = [
     description: 'قائمة المحاكم والجهات',
   },
   {
+    title: 'الملفات',
+    href: 'files',
+    icon: FileText,
+    description: 'إدارة الملفات والمستندات',
+  },
+  {
     title: 'المواعيد',
     href: 'appointments',
     icon: Clock,
     description: 'جدولة المواعيد',
   },
+
   // {
   //   category: 'الوثائق والتقارير',
   //   items: [
@@ -175,8 +182,8 @@ export const navigationItems = [
     href: '/appointments',
   },
   {
-    title: 'الوثائق',
+    title: 'الملفات',
     icon: FileText,
-    href: '/documents',
+    href: '/files',
   },
 ]
