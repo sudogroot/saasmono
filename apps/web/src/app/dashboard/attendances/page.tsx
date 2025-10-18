@@ -14,9 +14,6 @@ export default function AttendancesPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">سجلات الحضور</h1>
-        <p className="text-muted-foreground mt-2">
-          إدارة وتتبع حضور الطلاب في الجلسات المختلفة
-        </p>
       </div>
 
       <AttendanceTable onCreateNew={handleCreateNew} />

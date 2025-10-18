@@ -63,29 +63,39 @@ export function DashboardLayout({
 
   // Get header title from sidebar data based on pathname
   const getHeaderTitleFromPath = (pathname: string, sidebarData: any) => {
+    // Helper function to find best match (exact or parent path)
+    const findBestMatch = (items: any[], key: string) => {
+      // Try exact match first
+      const exactMatch = items.find((item: any) => item.url === pathname);
+      if (exactMatch) return exactMatch[key];
+
+      // Try parent path matching - find longest matching URL
+      const parentMatches = items
+        .filter((item: any) => item.url && pathname.startsWith(item.url + '/'))
+        .sort((a: any, b: any) => b.url.length - a.url.length); // Longest first
+
+      return parentMatches.length > 0 ? parentMatches[0][key] : null;
+    };
+
     // Check navMain items
     if (sidebarData.navMain) {
-      const mainItem = sidebarData.navMain.find(
-        (item: any) => item.url === pathname,
-      );
-      if (mainItem) return mainItem.title;
+      const result = findBestMatch(sidebarData.navMain, 'title');
+      if (result) return result;
     }
 
     // Check navSecondary items
     if (sidebarData.navSecondary) {
-      const secondaryItem = sidebarData.navSecondary.find(
-        (item: any) => item.url === pathname,
-      );
-      if (secondaryItem) return secondaryItem.title;
+      const result = findBestMatch(sidebarData.navSecondary, 'title');
+      if (result) return result;
     }
 
     // Check documents items
     if (sidebarData.documents) {
-      const documentItem = sidebarData.documents.find(
-        (item: any) => item.url === pathname,
-      );
-      if (documentItem) return documentItem.name;
+      const result = findBestMatch(sidebarData.documents, 'name');
+      if (result) return result;
     }
+
+    return undefined;
   };
 
   const dynamicHeaderTitle = getHeaderTitleFromPath(pathName, sidebarData);

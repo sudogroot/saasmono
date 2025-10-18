@@ -35,7 +35,6 @@ export default function Classrooms() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">إدارة الفصول الدراسية</h1>
-          <p className="text-muted-foreground">إدارة الفصول الدراسية والطلاب والمعلمين</p>
         </div>
       </div>
 
