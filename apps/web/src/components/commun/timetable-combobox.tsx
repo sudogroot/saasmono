@@ -130,6 +130,26 @@ export function TimetableCombobox({
     enabled: !!weekBounds && hasValidFilter,
   }) as any
 
+  // Fetch the selected timetable by ID if value is provided (for edit mode)
+  const { data: selectedTimetableData } = useQuery({
+    ...orpc.management.timetables.getTimetableById.queryOptions({
+      input: { timetableId: value || '' },
+    }),
+    enabled: !!value,
+  }) as any
+
+  // Auto-populate classroom/group from selected timetable in edit mode
+  useEffect(() => {
+    if (selectedTimetableData && !classroomId && !classroomGroupId) {
+      // Set classroom or classroom group based on the timetable data
+      if (selectedTimetableData.classroomId) {
+        setClassroomId(selectedTimetableData.classroomId)
+      } else if (selectedTimetableData.classroomGroupId) {
+        setClassroomGroupId(selectedTimetableData.classroomGroupId)
+      }
+    }
+  }, [selectedTimetableData, classroomId, classroomGroupId])
+
   // Filter and sort timetables by search and time (Monday to Saturday, chronological)
   const sortedTimetables = useMemo(() => {
     let filtered = timetables
@@ -195,7 +215,8 @@ export function TimetableCombobox({
     }
   }
 
-  const selectedTimetable = timetables.find((t: any) => t.id === value)
+  // Find selected timetable in the list, or use the one fetched by ID
+  const selectedTimetable = timetables.find((t: any) => t.id === value) || selectedTimetableData
   const selectedLabel = selectedTimetable
     ? `${selectedTimetable.title} - ${formatDate(selectedTimetable.startDateTime)}`
     : undefined
@@ -248,8 +269,10 @@ export function TimetableCombobox({
                         onSelect={() => handleClassroomChange('clear')}
                         className="text-muted-foreground"
                       >
-                        <X className="h-4 w-4" />
-                        مسح الاختيار
+                        <div className="flex items-center gap-2">
+                          <X className="h-4 w-4" />
+                          مسح الاختيار
+                        </div>
                       </ComboboxItem>
                     </ComboboxGroup>
                     <ComboboxSeparator />
@@ -322,8 +345,10 @@ export function TimetableCombobox({
                         onSelect={() => handleClassroomGroupChange('clear')}
                         className="text-muted-foreground"
                       >
-                        <X className="h-4 w-4" />
-                        مسح الاختيار
+                        <div className="flex items-center gap-2">
+                          <X className="h-4 w-4" />
+                          مسح الاختيار
+                        </div>
                       </ComboboxItem>
                     </ComboboxGroup>
                     <ComboboxSeparator />
@@ -393,8 +418,10 @@ export function TimetableCombobox({
                         onSelect={() => handleTimetableSelect('clear')}
                         className="text-muted-foreground"
                       >
-                        <X className="h-4 w-4" />
-                        مسح الاختيار
+                        <div className="flex items-center gap-2">
+                          <X className="h-4 w-4" />
+                          مسح الاختيار
+                        </div>
                       </ComboboxItem>
                     </ComboboxGroup>
                     <ComboboxSeparator />

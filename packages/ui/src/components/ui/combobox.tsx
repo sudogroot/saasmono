@@ -170,7 +170,7 @@ function ComboboxButton({
       )}
       {...props}
     >
-      <div className="flex-1 text-left truncate">
+      <div className="flex-1 text-start truncate">
         {selectedLabel || placeholder}
       </div>
       <div className="flex items-center gap-1 shrink-0">
@@ -258,17 +258,25 @@ function ComboboxItem({
   searchValue?: string
   value?: string
 }) {
+  const { setOpen } = useComboboxContext()
+
   // Use id as primary value for unique identification, fallback to value for backward compatibility
   const itemValue = id || value
 
   // If searchValue is provided, use it for keywords; otherwise use the value
   const keywords = searchValue ? [searchValue] : undefined
 
+  const handleSelect = (value: string) => {
+    onSelect?.(value)
+    // Add a small delay for smooth closing animation
+    setTimeout(() => setOpen(false), 150)
+  }
+
   return (
     <CommandItem
       data-slot="combobox-item"
       className={cn("cursor-pointer", className)}
-      onSelect={onSelect}
+      onSelect={handleSelect}
       value={itemValue}
       keywords={keywords}
       {...props}
