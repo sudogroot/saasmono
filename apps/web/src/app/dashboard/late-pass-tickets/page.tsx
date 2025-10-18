@@ -13,7 +13,7 @@ export default function LatePassTicketsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">تذاكر الدخول المتأخر</h1>
+        <h1 className="text-3xl font-bold tracking-tight">تذاكر الدخول</h1>
         <p className="text-muted-foreground mt-2">إدارة تذاكر الدخول للطلاب المتغيبين</p>
       </div>
 

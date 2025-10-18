@@ -77,10 +77,10 @@ export function TimetableSelectionDialog({
         description: `رقم التذكرة: ${data.ticketNumber}`,
         action: data.pdfPath
           ? {
-              label: 'تحميل PDF',
+              label: 'تحميل التذكرة',
               onClick: () => {
                 window.open(
-                  `${process.env.NEXT_PUBLIC_SERVER_URL}/${data.pdfPath}`,
+                  `${process.env.NEXT_PUBLIC_SERVER_URL}/public/${data.pdfPath}`,
                   '_blank'
                 )
               },
@@ -102,7 +102,7 @@ export function TimetableSelectionDialog({
       toast.error('يرجى اختيار حصة')
       return
     }
-    generateTicketMutation.mutateAsync({
+    generateTicketMutation.mutate({
       studentId: student.id,
       timetableId: selectedTimetableId,
     })

@@ -240,7 +240,7 @@ importers:
         version: 19.1.1(react@19.1.1)
       redoc-cli:
         specifier: ^0.13.21
-        version: 0.13.21(@babel/core@7.28.4)(core-js@3.45.1)(react-is@19.1.1)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.1))(webpack@5.101.3(esbuild@0.25.10))
+        version: 0.13.21(@babel/core@7.28.4)(core-js@3.45.1)(react-is@19.1.1)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.1))(webpack@5.101.3)
       supertest:
         specifier: ^7.1.4
         version: 7.1.4
@@ -401,6 +401,9 @@ importers:
       '@better-auth/expo':
         specifier: ^1.3.12
         version: 1.3.12(better-auth@1.3.12(next@15.5.0(@babel/core@7.28.4)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(expo-constants@18.0.9)(expo-crypto@15.0.7(expo@54.0.9))(expo-linking@8.0.8)(expo-secure-store@15.0.7(expo@54.0.9))(expo-web-browser@15.0.7(expo@54.0.9)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.1)))
+      '@fontsource/cairo':
+        specifier: ^5.2.7
+        version: 5.2.7
       '@orpc/client':
         specifier: ^1.8.9
         version: 1.8.9
@@ -545,7 +548,7 @@ importers:
         version: 19.1.1(react@19.1.1)
       redoc-cli:
         specifier: ^0.13.21
-        version: 0.13.21(@babel/core@7.28.4)(core-js@3.45.1)(react-is@19.1.1)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.1))(webpack@5.101.3)
+        version: 0.13.21(@babel/core@7.28.4)(core-js@3.45.1)(react-is@19.1.1)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.1))(webpack@5.101.3(esbuild@0.25.10))
       supertest:
         specifier: ^7.1.4
         version: 7.1.4
@@ -2117,6 +2120,9 @@ packages:
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
+
+  '@fontsource/cairo@5.2.7':
+    resolution: {integrity: sha512-t9UGffaDSoAHYmGS5bR5rM79B93wrhj38Co9mnT43B/PjuaXc6ErrMo+upL2I0Yvik7I47uTC79aRmBWPh0Y6Q==}
 
   '@fullcalendar/core@6.1.19':
     resolution: {integrity: sha512-z0aVlO5e4Wah6p6mouM0UEqtRf1MZZPt4mwzEyU6kusaNL+dlWQgAasF2cK23hwT4cmxkEmr4inULXgpyeExdQ==}
@@ -11260,7 +11266,7 @@ snapshots:
       postcss: 8.4.49
       resolve-from: 5.0.0
     optionalDependencies:
-      expo: 54.0.9(@babel/core@7.28.4)(@expo/metro-runtime@6.1.2)(expo-router@6.0.7)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
+      expo: 54.0.9(@babel/core@7.28.4)(@expo/metro-runtime@6.1.2)(expo-router@6.0.7)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.1))(react@19.1.1)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -11339,7 +11345,7 @@ snapshots:
       '@expo/json-file': 10.0.7
       '@react-native/normalize-colors': 0.81.4
       debug: 4.4.3(supports-color@5.5.0)
-      expo: 54.0.9(@babel/core@7.28.4)(@expo/metro-runtime@6.1.2)(expo-router@6.0.7)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
+      expo: 54.0.9(@babel/core@7.28.4)(@expo/metro-runtime@6.1.2)(expo-router@6.0.7)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.1))(react@19.1.1)
       resolve-from: 5.0.0
       semver: 7.7.2
       xml2js: 0.6.0
@@ -11408,6 +11414,8 @@ snapshots:
       react-dom: 19.1.1(react@19.1.1)
 
   '@floating-ui/utils@0.2.10': {}
+
+  '@fontsource/cairo@5.2.7': {}
 
   '@fullcalendar/core@6.1.19':
     dependencies:
@@ -15309,7 +15317,7 @@ snapshots:
       resolve-from: 5.0.0
     optionalDependencies:
       '@babel/runtime': 7.28.4
-      expo: 54.0.9(@babel/core@7.28.4)(@expo/metro-runtime@6.1.2)(expo-router@6.0.7)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
+      expo: 54.0.9(@babel/core@7.28.4)(@expo/metro-runtime@6.1.2)(expo-router@6.0.7)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.1))(react@19.1.1)
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
@@ -16793,7 +16801,7 @@ snapshots:
   expo-crypto@15.0.7(expo@54.0.9):
     dependencies:
       base64-js: 1.5.1
-      expo: 54.0.9(@babel/core@7.28.4)(@expo/metro-runtime@6.1.2)(expo-router@6.0.7)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
+      expo: 54.0.9(@babel/core@7.28.4)(@expo/metro-runtime@6.1.2)(expo-router@6.0.7)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.1))(react@19.1.1)
 
   expo-file-system@19.0.14(expo@54.0.9)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0)):
     dependencies:
@@ -16972,7 +16980,7 @@ snapshots:
 
   expo-secure-store@15.0.7(expo@54.0.9):
     dependencies:
-      expo: 54.0.9(@babel/core@7.28.4)(@expo/metro-runtime@6.1.2)(expo-router@6.0.7)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
+      expo: 54.0.9(@babel/core@7.28.4)(@expo/metro-runtime@6.1.2)(expo-router@6.0.7)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.1))(react@19.1.1)
 
   expo-splash-screen@31.0.10(expo@54.0.9):
     dependencies:

@@ -25,7 +25,7 @@ Complete frontend implementation for the Late Pass Ticket system, following the 
 - **Location:** `/apps/web/src/app/dashboard/late-pass-tickets/page.tsx`
 - **Purpose:** Main entry point for late pass tickets management
 - **Features:**
-  - Page title: "تذاكر الدخول المتأخر"
+  - Page title: "تذاكر الدخول"
   - Navigation to generate page
   - Renders LatePassTicketsTable component
 

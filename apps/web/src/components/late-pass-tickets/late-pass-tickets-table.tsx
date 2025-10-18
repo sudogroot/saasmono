@@ -96,7 +96,7 @@ export function LatePassTicketsTable({ onGenerateNew }: LatePassTicketsTableProp
   const handleCancelTicket = (ticketId: string) => {
     const reason = window.prompt('السبب لإلغاء التذكرة (اختياري):')
     if (reason !== null) {
-      cancelTicketMutation.mutateAsync({
+      cancelTicketMutation.mutate({
         ticketId,
         reason: reason || 'لا يوجد سبب محدد',
       })
@@ -105,10 +105,10 @@ export function LatePassTicketsTable({ onGenerateNew }: LatePassTicketsTableProp
 
   const handleDownloadPDF = (pdfPath: string | null) => {
     if (!pdfPath) {
-      toast.error('ملف PDF غير متوفر')
+      toast.error('التذكرة غير متوفرة')
       return
     }
-    window.open(`${process.env.NEXT_PUBLIC_SERVER_URL}/${pdfPath}`, '_blank')
+    window.open(`${process.env.NEXT_PUBLIC_SERVER_URL}/public/${pdfPath}`, '_blank')
   }
 
   const getStatusBadge = (status: TicketStatus) => {
@@ -234,12 +234,12 @@ export function LatePassTicketsTable({ onGenerateNew }: LatePassTicketsTableProp
         header: 'الإجراءات',
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
-            {row.original.pdfPath && (
+            {row.original.pdfPath && row.original.status !== 'CANCELED' && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => handleDownloadPDF(row.original.pdfPath)}
-                title="تحميل PDF"
+                title="تحميل التذكرة"
               >
                 <Download className="h-4 w-4" />
               </Button>
@@ -351,7 +351,7 @@ export function LatePassTicketsTable({ onGenerateNew }: LatePassTicketsTableProp
       </div>
 
       <div className="flex items-center gap-2 mt-2">
-        {row.original.pdfPath && (
+        {row.original.pdfPath && row.original.status !== 'CANCELED' && (
           <Button
             variant="outline"
             size="sm"
@@ -359,7 +359,7 @@ export function LatePassTicketsTable({ onGenerateNew }: LatePassTicketsTableProp
             className="flex-1"
           >
             <Download className="h-4 w-4 ml-1" />
-            تحميل PDF
+            تحميل التذكرة
           </Button>
         )}
         {row.original.status === 'ISSUED' && (
@@ -400,7 +400,7 @@ export function LatePassTicketsTable({ onGenerateNew }: LatePassTicketsTableProp
           <div>
             <h3 className="text-lg font-semibold">لا توجد تذاكر</h3>
             <p className="text-muted-foreground mt-1">
-              ابدأ بإصدار تذاكر الدخول المتأخر للطلاب المتغيبين
+              ابدأ بإصدار تذاكر الدخول للطلاب المتغيبين
             </p>
           </div>
           {emptyStateAction}

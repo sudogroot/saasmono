@@ -1,8 +1,14 @@
 import fs from 'fs-extra'
 import path from 'path'
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
 import PDFDocument from 'pdfkit'
 import type { LatePassConfig, LatePassTicket } from '@/types/late-pass-ticket'
 import { qrCodeGenerator } from './qr-code-generator'
+
+// ES module equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 export interface TicketPDFData {
   ticket: LatePassTicket
@@ -65,148 +71,151 @@ export class LatePassTicketPDFGenerator {
     const pageHeight = doc.page.height
     const margin = 50
 
-    // Header - Title
+    // Register Arabic font (variable font supports multiple weights)
+    const fontPath = path.join(__dirname, 'fonts')
+    doc.registerFont('Cairo', path.join(fontPath, 'Cairo-Variable.ttf'))
+
+    // Header - Title (Arabic only, RTL)
     doc
       .fontSize(24)
-      .font('Helvetica-Bold')
+      .font('Cairo')
       .fillColor('#2563eb')
-      .text('Late Pass Ticket', margin, margin, { align: 'center' })
-      .text('تذكرة الدخول المتأخر', margin, margin + 30, { align: 'center' })
+      .text('تذكرة الدخول المتأخر', margin, margin, { align: 'center' })
 
     // Reset color and move down
     doc.fillColor('#000000')
     doc.moveDown(3)
 
     // Ticket Number Box
-    const ticketBoxY = margin + 100
+    const ticketBoxY = margin + 80
     doc
       .rect(margin, ticketBoxY, pageWidth - 2 * margin, 50)
       .fillAndStroke('#f0f9ff', '#2563eb')
 
     doc
       .fontSize(16)
-      .font('Helvetica-Bold')
+      .font('Cairo')
       .fillColor('#1e40af')
-      .text(`Ticket #: ${ticket.ticketNumber}`, margin + 20, ticketBoxY + 15, { width: pageWidth - 2 * margin - 40 })
+      .text(`رقم التذكرة: ${ticket.ticketNumber}`, margin + 20, ticketBoxY + 15, {
+        width: pageWidth - 2 * margin - 40,
+        align: 'right'
+      })
 
     doc.fillColor('#000000')
 
-    // Student Information Section
+    // Student Information Section (RTL)
     let currentY = ticketBoxY + 80
+    const labelWidth = 120
+    const contentX = pageWidth - margin - labelWidth
 
     doc
       .fontSize(14)
-      .font('Helvetica-Bold')
-      .text('Student Information / معلومات الطالب', margin, currentY)
+      .font('Cairo')
+      .text('معلومات الطالب', margin, currentY, { align: 'right', width: pageWidth - 2 * margin })
 
     currentY += 25
 
     doc
       .fontSize(11)
-      .font('Helvetica')
-      .text('Name / الاسم:', margin, currentY)
-      .font('Helvetica-Bold')
-      .text(`${ticket.student.name} ${ticket.student.lastName}`, margin + 120, currentY)
+      .font('Cairo')
+      .text('الاسم:', contentX, currentY, { align: 'right' })
+      .text(`${ticket.student.name} ${ticket.student.lastName}`, margin, currentY, { align: 'right', width: contentX - margin - 10 })
 
     currentY += 20
 
     doc
-      .font('Helvetica')
-      .text('Email / البريد:', margin, currentY)
-      .font('Helvetica-Bold')
-      .text(ticket.student.email, margin + 120, currentY)
+      .font('Cairo')
+      .text('البريد الإلكتروني:', contentX, currentY, { align: 'right' })
+      .text(ticket.student.email, margin, currentY, { align: 'right', width: contentX - margin - 10 })
 
-    // Timetable Information Section
+    // Timetable Information Section (RTL)
     currentY += 40
 
     doc
       .fontSize(14)
-      .font('Helvetica-Bold')
-      .text('Class Information / معلومات الحصة', margin, currentY)
+      .font('Cairo')
+      .text('معلومات الحصة', margin, currentY, { align: 'right', width: pageWidth - 2 * margin })
 
     currentY += 25
 
     doc
       .fontSize(11)
-      .font('Helvetica')
-      .text('Class / الحصة:', margin, currentY)
-      .font('Helvetica-Bold')
-      .text(ticket.timetable.title, margin + 120, currentY)
+      .font('Cairo')
+      .text('الحصة:', contentX, currentY, { align: 'right' })
+      .text(ticket.timetable.title, margin, currentY, { align: 'right', width: contentX - margin - 10 })
 
     currentY += 20
 
     if (ticket.timetable.educationSubject) {
       doc
-        .font('Helvetica')
-        .text('Subject / المادة:', margin, currentY)
-        .font('Helvetica-Bold')
+        .font('Cairo')
+        .text('المادة:', contentX, currentY, { align: 'right' })
         .text(
-          ticket.timetable.educationSubject.displayNameEn || ticket.timetable.educationSubject.displayNameAr,
-          margin + 120,
-          currentY
+          ticket.timetable.educationSubject.displayNameAr,
+          margin,
+          currentY,
+          { align: 'right', width: contentX - margin - 10 }
         )
       currentY += 20
     }
 
     doc
-      .font('Helvetica')
-      .text('Room / القاعة:', margin, currentY)
-      .font('Helvetica-Bold')
-      .text(ticket.timetable.room.name, margin + 120, currentY)
+      .font('Cairo')
+      .text('القاعة:', contentX, currentY, { align: 'right' })
+      .text(ticket.timetable.room.name, margin, currentY, { align: 'right', width: contentX - margin - 10 })
 
     currentY += 20
 
-    const classTime = `${new Date(ticket.timetable.startDateTime).toLocaleString('en-US', {
+    const classTime = `${new Date(ticket.timetable.startDateTime).toLocaleString('ar-SA', {
       dateStyle: 'medium',
       timeStyle: 'short',
-    })} - ${new Date(ticket.timetable.endDateTime).toLocaleTimeString('en-US', {
+    })} - ${new Date(ticket.timetable.endDateTime).toLocaleTimeString('ar-SA', {
       timeStyle: 'short',
     })}`
 
     doc
-      .font('Helvetica')
-      .text('Time / الوقت:', margin, currentY)
-      .font('Helvetica-Bold')
-      .text(classTime, margin + 120, currentY)
+      .font('Cairo')
+      .text('الوقت:', contentX, currentY, { align: 'right' })
+      .text(classTime, margin, currentY, { align: 'right', width: contentX - margin - 10 })
 
-    // Ticket Validity Section
+    // Ticket Validity Section (RTL)
     currentY += 40
 
     doc
       .fontSize(14)
-      .font('Helvetica-Bold')
-      .text('Ticket Validity / صلاحية التذكرة', margin, currentY)
+      .font('Cairo')
+      .text('صلاحية التذكرة', margin, currentY, { align: 'right', width: pageWidth - 2 * margin })
 
     currentY += 25
 
     doc
       .fontSize(11)
-      .font('Helvetica')
-      .text('Issued At / تاريخ الإصدار:', margin, currentY)
-      .font('Helvetica-Bold')
+      .font('Cairo')
+      .text('تاريخ الإصدار:', contentX, currentY, { align: 'right' })
       .text(
-        new Date(ticket.issuedAt).toLocaleString('en-US', {
+        new Date(ticket.issuedAt).toLocaleString('ar-SA', {
           dateStyle: 'medium',
           timeStyle: 'short',
         }),
-        margin + 150,
-        currentY
+        margin,
+        currentY,
+        { align: 'right', width: contentX - margin - 10 }
       )
 
     currentY += 20
 
     doc
-      .font('Helvetica')
-      .text('Expires At / تنتهي في:', margin, currentY)
-      .font('Helvetica-Bold')
+      .font('Cairo')
+      .text('تنتهي في:', contentX, currentY, { align: 'right' })
       .fillColor('#dc2626')
       .text(
-        new Date(ticket.expiresAt).toLocaleString('en-US', {
+        new Date(ticket.expiresAt).toLocaleString('ar-SA', {
           dateStyle: 'medium',
           timeStyle: 'short',
         }),
-        margin + 150,
-        currentY
+        margin,
+        currentY,
+        { align: 'right', width: contentX - margin - 10 }
       )
 
     doc.fillColor('#000000')
@@ -227,49 +236,41 @@ export class LatePassTicketPDFGenerator {
       height: qrSize,
     })
 
-    // QR Code instructions
+    // QR Code instructions (Arabic only)
     const instructionY = qrY + qrSize + 15
 
     doc
       .fontSize(10)
-      .font('Helvetica')
+      .font('Cairo')
       .fillColor('#6b7280')
-      .text('Scan this QR code to mark attendance', margin, instructionY, {
-        width: pageWidth - 2 * margin,
-        align: 'center',
-      })
-      .text('امسح رمز الاستجابة السريعة لتسجيل الحضور', margin, instructionY + 15, {
+      .text('امسح رمز الاستجابة السريعة لتسجيل الحضور', margin, instructionY, {
         width: pageWidth - 2 * margin,
         align: 'center',
       })
 
-    // Footer - Important Notes
+    // Footer - Important Notes (Arabic only, RTL)
     const footerY = pageHeight - margin - 80
 
     doc
       .fontSize(9)
-      .font('Helvetica-Bold')
+      .font('Cairo')
       .fillColor('#991b1b')
-      .text('IMPORTANT NOTES / ملاحظات مهمة', margin, footerY)
+      .text('ملاحظات مهمة', margin, footerY, { align: 'right', width: pageWidth - 2 * margin })
 
     doc
       .fontSize(8)
-      .font('Helvetica')
+      .font('Cairo')
       .fillColor('#6b7280')
-      .text(
-        '• This ticket is valid for ONE class session only / هذه التذكرة صالحة لحصة واحدة فقط',
-        margin,
-        footerY + 15
-      )
-      .text('• Must be scanned before expiration time / يجب مسحها قبل انتهاء الصلاحية', margin, footerY + 28)
-      .text('• Cannot be reused after scanning / لا يمكن إعادة استخدامها بعد المسح', margin, footerY + 41)
+      .text('• هذه التذكرة صالحة لحصة واحدة فقط', margin, footerY + 15, { align: 'right', width: pageWidth - 2 * margin })
+      .text('• يجب مسحها قبل انتهاء الصلاحية', margin, footerY + 28, { align: 'right', width: pageWidth - 2 * margin })
+      .text('• لا يمكن إعادة استخدامها بعد المسح', margin, footerY + 41, { align: 'right', width: pageWidth - 2 * margin })
 
-    // Issued by footer
+    // Issued by footer (Arabic)
     doc
       .fontSize(8)
       .fillColor('#9ca3af')
       .text(
-        `Issued by: ${ticket.issuedBy.name} ${ticket.issuedBy.lastName}`,
+        `أصدرت بواسطة: ${ticket.issuedBy.name} ${ticket.issuedBy.lastName}`,
         margin,
         pageHeight - margin - 15,
         {

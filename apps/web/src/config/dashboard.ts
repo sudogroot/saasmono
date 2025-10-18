@@ -48,7 +48,7 @@ export const dashboardSidebarData = {
       icon: CheckSquare,
     },
     {
-      title: 'تذاكر الدخول المتأخر',
+      title: 'تذاكر الدخول',
       url: '/dashboard/late-pass-tickets',
       icon: Ticket,
     },
@@ -320,7 +320,7 @@ export const dashboardMobileDrawerItems = [
         description: 'إدارة ملفات الطلاب',
       },
       {
-        title: 'تذاكر الدخول المتأخر',
+        title: 'تذاكر الدخول',
         href: 'late-pass-tickets',
         icon: Ticket,
         description: 'إصدار وإدارة تذاكر الدخول للطلاب المتغيبين',
