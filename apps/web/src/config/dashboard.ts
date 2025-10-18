@@ -16,6 +16,7 @@ import {
   Plus,
   Search,
   Settings,
+  Ticket,
   Users,
 } from 'lucide-react'
 
@@ -45,6 +46,11 @@ export const dashboardSidebarData = {
       title: 'سجلات الحضور',
       url: '/dashboard/attendances',
       icon: CheckSquare,
+    },
+    {
+      title: 'تذاكر الدخول المتأخر',
+      url: '/dashboard/late-pass-tickets',
+      icon: Ticket,
     },
     {
       title: 'المعلمون',
@@ -240,6 +246,13 @@ export const dashboardMobileNavItems = [
     bgColor: 'bg-teal-50',
   },
   {
+    title: 'تذاكر الدخول',
+    href: 'late-pass-tickets',
+    icon: Ticket,
+    color: 'text-rose-600',
+    bgColor: 'bg-rose-50',
+  },
+  {
     title: 'المعلمون',
     href: 'institution-settings/teachers',
     icon: BookUser,
@@ -305,6 +318,12 @@ export const dashboardMobileDrawerItems = [
         href: 'students',
         icon: Users,
         description: 'إدارة ملفات الطلاب',
+      },
+      {
+        title: 'تذاكر الدخول المتأخر',
+        href: 'late-pass-tickets',
+        icon: Ticket,
+        description: 'إصدار وإدارة تذاكر الدخول للطلاب المتغيبين',
       },
       {
         title: 'التقارير',
