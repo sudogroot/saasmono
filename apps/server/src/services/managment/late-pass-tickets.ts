@@ -827,15 +827,27 @@ export class LatePassTicketService {
         ticketIssuedAt: latePassTicket.issuedAt,
         ticketExpiresAt: latePassTicket.expiresAt,
         ticketUsedAt: latePassTicket.usedAt,
+        ticketCanceledAt: latePassTicket.canceledAt,
+        ticketCancellationReason: latePassTicket.cancellationReason,
+        ticketQrCodeImagePath: latePassTicket.qrCodeImagePath,
+        ticketPdfPath: latePassTicket.pdfPath,
         // Student
         studentId: user.id,
         studentName: user.name,
         studentLastName: user.lastName,
+        studentEmail: user.email,
         // Timetable
         timetableId: timetable.id,
         timetableTitle: timetable.title,
         timetableStartDateTime: timetable.startDateTime,
         timetableEndDateTime: timetable.endDateTime,
+        // Subject
+        subjectId: educationSubject.id,
+        subjectDisplayNameAr: educationSubject.displayNameAr,
+        subjectDisplayNameEn: educationSubject.displayNameEn,
+        // Room
+        roomId: room.id,
+        roomName: room.name,
         // Issued by
         issuedById: sql<string>`issued_by.id`,
         issuedByName: sql<string>`issued_by.name`,
@@ -844,6 +856,8 @@ export class LatePassTicketService {
       .from(latePassTicket)
       .innerJoin(user, eq(latePassTicket.studentId, user.id))
       .innerJoin(timetable, eq(latePassTicket.timetableId, timetable.id))
+      .leftJoin(educationSubject, eq(timetable.educationSubjectId, educationSubject.id))
+      .leftJoin(room, eq(timetable.roomId, room.id))
       .leftJoin(
         sql`${user} AS issued_by`,
         sql`${latePassTicket.issuedByUserId} = issued_by.id`
@@ -859,16 +873,28 @@ export class LatePassTicketService {
       issuedAt: t.ticketIssuedAt,
       expiresAt: t.ticketExpiresAt,
       usedAt: t.ticketUsedAt,
+      canceledAt: t.ticketCanceledAt,
+      cancellationReason: t.ticketCancellationReason,
+      qrCodeImagePath: t.ticketQrCodeImagePath,
+      pdfPath: t.ticketPdfPath,
       student: {
         id: t.studentId,
         name: t.studentName,
         lastName: t.studentLastName,
+        email: t.studentEmail,
       },
       timetable: {
         id: t.timetableId,
         title: t.timetableTitle,
         startDateTime: t.timetableStartDateTime,
         endDateTime: t.timetableEndDateTime,
+        educationSubject: t.subjectId ? {
+          displayNameAr: t.subjectDisplayNameAr!,
+          displayNameEn: t.subjectDisplayNameEn,
+        } : null,
+        room: {
+          name: t.roomName!,
+        },
       },
       issuedBy: {
         id: t.issuedById,

@@ -5,6 +5,7 @@ import { dirname } from 'path'
 import PDFDocument from 'pdfkit'
 import type { LatePassConfig, LatePassTicket } from '@/types/late-pass-ticket'
 import { qrCodeGenerator } from './qr-code-generator'
+import { formatTime } from './date'
 
 // ES module equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url)
@@ -80,7 +81,7 @@ export class LatePassTicketPDFGenerator {
       .fontSize(24)
       .font('Cairo')
       .fillColor('#2563eb')
-      .text('تذكرة الدخول المتأخر', margin, margin, { align: 'center' })
+      .text('تصريح حضور للحصة', margin, margin, { align: 'center' })
 
     // Reset color and move down
     doc.fillColor('#000000')
@@ -96,7 +97,7 @@ export class LatePassTicketPDFGenerator {
       .fontSize(16)
       .font('Cairo')
       .fillColor('#1e40af')
-      .text(`رقم التذكرة: ${ticket.ticketNumber}`, margin + 20, ticketBoxY + 15, {
+      .text(`رقم التصريح: ${ticket.ticketNumber}`, margin + 20, ticketBoxY + 15, {
         width: pageWidth - 2 * margin - 40,
         align: 'right'
       })
@@ -111,7 +112,7 @@ export class LatePassTicketPDFGenerator {
     doc
       .fontSize(14)
       .font('Cairo')
-      .text('معلومات الطالب', margin, currentY, { align: 'right', width: pageWidth - 2 * margin })
+      .text('بيانات الطالب', margin, currentY, { align: 'right', width: pageWidth - 2 * margin })
 
     currentY += 25
 
@@ -125,7 +126,7 @@ export class LatePassTicketPDFGenerator {
 
     doc
       .font('Cairo')
-      .text('البريد الإلكتروني:', contentX, currentY, { align: 'right' })
+      .text('البريد:', contentX, currentY, { align: 'right' })
       .text(ticket.student.email, margin, currentY, { align: 'right', width: contentX - margin - 10 })
 
     // Timetable Information Section (RTL)
@@ -134,14 +135,14 @@ export class LatePassTicketPDFGenerator {
     doc
       .fontSize(14)
       .font('Cairo')
-      .text('معلومات الحصة', margin, currentY, { align: 'right', width: pageWidth - 2 * margin })
+      .text('تفاصيل الحصة', margin, currentY, { align: 'right', width: pageWidth - 2 * margin })
 
     currentY += 25
 
     doc
       .fontSize(11)
       .font('Cairo')
-      .text('الحصة:', contentX, currentY, { align: 'right' })
+      .text('عنوان الحصة:', contentX, currentY, { align: 'right' })
       .text(ticket.timetable.title, margin, currentY, { align: 'right', width: contentX - margin - 10 })
 
     currentY += 20
@@ -149,7 +150,7 @@ export class LatePassTicketPDFGenerator {
     if (ticket.timetable.educationSubject) {
       doc
         .font('Cairo')
-        .text('المادة:', contentX, currentY, { align: 'right' })
+        .text('المادة الدراسية:', contentX, currentY, { align: 'right' })
         .text(
           ticket.timetable.educationSubject.displayNameAr,
           margin,
@@ -166,16 +167,11 @@ export class LatePassTicketPDFGenerator {
 
     currentY += 20
 
-    const classTime = `${new Date(ticket.timetable.startDateTime).toLocaleString('ar-SA', {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    })} - ${new Date(ticket.timetable.endDateTime).toLocaleTimeString('ar-SA', {
-      timeStyle: 'short',
-    })}`
+    const classTime = `${formatTime(ticket.timetable.startDateTime)} - ${formatTime(ticket.timetable.endDateTime)}`
 
     doc
       .font('Cairo')
-      .text('الوقت:', contentX, currentY, { align: 'right' })
+      .text('موعد الحصة:', contentX, currentY, { align: 'right' })
       .text(classTime, margin, currentY, { align: 'right', width: contentX - margin - 10 })
 
     // Ticket Validity Section (RTL)
@@ -184,7 +180,7 @@ export class LatePassTicketPDFGenerator {
     doc
       .fontSize(14)
       .font('Cairo')
-      .text('صلاحية التذكرة', margin, currentY, { align: 'right', width: pageWidth - 2 * margin })
+      .text('مدة الصلاحية', margin, currentY, { align: 'right', width: pageWidth - 2 * margin })
 
     currentY += 25
 
@@ -193,10 +189,7 @@ export class LatePassTicketPDFGenerator {
       .font('Cairo')
       .text('تاريخ الإصدار:', contentX, currentY, { align: 'right' })
       .text(
-        new Date(ticket.issuedAt).toLocaleString('ar-SA', {
-          dateStyle: 'medium',
-          timeStyle: 'short',
-        }),
+        formatTime(ticket.issuedAt),
         margin,
         currentY,
         { align: 'right', width: contentX - margin - 10 }
@@ -206,13 +199,10 @@ export class LatePassTicketPDFGenerator {
 
     doc
       .font('Cairo')
-      .text('تنتهي في:', contentX, currentY, { align: 'right' })
+      .text('تنتهي الصلاحية:', contentX, currentY, { align: 'right' })
       .fillColor('#dc2626')
       .text(
-        new Date(ticket.expiresAt).toLocaleString('ar-SA', {
-          dateStyle: 'medium',
-          timeStyle: 'short',
-        }),
+        formatTime(ticket.expiresAt),
         margin,
         currentY,
         { align: 'right', width: contentX - margin - 10 }
@@ -243,7 +233,7 @@ export class LatePassTicketPDFGenerator {
       .fontSize(10)
       .font('Cairo')
       .fillColor('#6b7280')
-      .text('امسح رمز الاستجابة السريعة لتسجيل الحضور', margin, instructionY, {
+      .text('امسح الرمز لتسجيل حضورك', margin, instructionY, {
         width: pageWidth - 2 * margin,
         align: 'center',
       })
@@ -255,22 +245,22 @@ export class LatePassTicketPDFGenerator {
       .fontSize(9)
       .font('Cairo')
       .fillColor('#991b1b')
-      .text('ملاحظات مهمة', margin, footerY, { align: 'right', width: pageWidth - 2 * margin })
+      .text('تنبيهات مهمة', margin, footerY, { align: 'right', width: pageWidth - 2 * margin })
 
     doc
       .fontSize(8)
       .font('Cairo')
       .fillColor('#6b7280')
-      .text('• هذه التذكرة صالحة لحصة واحدة فقط', margin, footerY + 15, { align: 'right', width: pageWidth - 2 * margin })
-      .text('• يجب مسحها قبل انتهاء الصلاحية', margin, footerY + 28, { align: 'right', width: pageWidth - 2 * margin })
-      .text('• لا يمكن إعادة استخدامها بعد المسح', margin, footerY + 41, { align: 'right', width: pageWidth - 2 * margin })
+      .text('التصريح صالح لحصة واحدة فقط •', margin, footerY + 15, { align: 'right', width: pageWidth - 2 * margin })
+      .text('يجب المسح قبل انتهاء الوقت المحدد •', margin, footerY + 28, { align: 'right', width: pageWidth - 2 * margin })
+      .text('لا يمكن استخدامه أكثر من مرة •', margin, footerY + 41, { align: 'right', width: pageWidth - 2 * margin })
 
     // Issued by footer (Arabic)
     doc
       .fontSize(8)
       .fillColor('#9ca3af')
       .text(
-        `أصدرت بواسطة: ${ticket.issuedBy.name} ${ticket.issuedBy.lastName}`,
+        `صادر من: ${ticket.issuedBy.name} ${ticket.issuedBy.lastName}`,
         margin,
         pageHeight - margin - 15,
         {

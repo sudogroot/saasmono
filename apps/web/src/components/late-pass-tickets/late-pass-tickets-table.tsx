@@ -20,7 +20,7 @@ import {
   User,
   X,
 } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 
 type TicketStatus = 'ISSUED' | 'USED' | 'EXPIRED' | 'CANCELED'
@@ -93,7 +93,7 @@ export function LatePassTicketsTable({ onGenerateNew }: LatePassTicketsTableProp
     },
   })
 
-  const handleCancelTicket = (ticketId: string) => {
+  const handleCancelTicket = useCallback((ticketId: string) => {
     const reason = window.prompt('السبب لإلغاء التذكرة (اختياري):')
     if (reason !== null) {
       cancelTicketMutation.mutate({
@@ -101,15 +101,15 @@ export function LatePassTicketsTable({ onGenerateNew }: LatePassTicketsTableProp
         reason: reason || 'لا يوجد سبب محدد',
       })
     }
-  }
+  }, [cancelTicketMutation])
 
-  const handleDownloadPDF = (pdfPath: string | null) => {
+  const handleDownloadPDF = useCallback((pdfPath: string | null) => {
     if (!pdfPath) {
       toast.error('التذكرة غير متوفرة')
       return
     }
     window.open(`${process.env.NEXT_PUBLIC_SERVER_URL}/public/${pdfPath}`, '_blank')
-  }
+  }, [])
 
   const getStatusBadge = (status: TicketStatus) => {
     const statusConfig = {
@@ -259,7 +259,7 @@ export function LatePassTicketsTable({ onGenerateNew }: LatePassTicketsTableProp
         ),
       }),
     ],
-    [cancelTicketMutation.isPending]
+    [cancelTicketMutation.isPending, handleDownloadPDF, handleCancelTicket]
   )
 
   const quickFilters = useMemo(

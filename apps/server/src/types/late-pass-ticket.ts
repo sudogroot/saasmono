@@ -92,16 +92,28 @@ export const LatePassTicketListItemSchema = z.object({
   issuedAt: z.date(),
   expiresAt: z.date(),
   usedAt: z.date().nullable(),
+  canceledAt: z.date().nullable(),
+  cancellationReason: z.string().nullable(),
+  qrCodeImagePath: z.string().nullable(),
+  pdfPath: z.string().nullable(),
   student: z.object({
     id: z.string(),
     name: z.string(),
     lastName: z.string(),
+    email: z.string(),
   }),
   timetable: z.object({
     id: z.uuid(),
     title: z.string(),
     startDateTime: z.date(),
     endDateTime: z.date(),
+    educationSubject: z.object({
+      displayNameAr: z.string(),
+      displayNameEn: z.string().nullable(),
+    }).nullable(),
+    room: z.object({
+      name: z.string(),
+    }),
   }),
   issuedBy: z.object({
     id: z.string(),
