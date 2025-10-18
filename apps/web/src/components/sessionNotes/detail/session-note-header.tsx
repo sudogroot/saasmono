@@ -3,6 +3,7 @@
 import { Badge, Button } from '@repo/ui'
 import { BookOpen, Calendar, Clock, Lock, Edit, Trash2, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { formatDate, formatTime } from '@/lib/date'
 
 interface SessionNoteHeaderProps {
   title: string
@@ -67,7 +68,7 @@ export function SessionNoteHeader({
                   </Badge>
                   <span className="text-muted-foreground text-sm flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
-                    {new Date(createdAt).toLocaleDateString('ar-SA')}
+                    <span dir="ltr">{formatDate(createdAt)}</span>
                   </span>
                 </div>
                 <div className="flex items-center gap-1 mt-1 text-muted-foreground text-sm">
@@ -99,19 +100,13 @@ export function SessionNoteHeader({
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
-                {new Date(timetable.startDateTime).toLocaleDateString('ar-SA')}
+                {formatDate(timetable.startDateTime)}
               </span>
               <span className="flex items-center gap-1">
                 <Clock className="h-3 w-3" />
-                {new Date(timetable.startDateTime).toLocaleTimeString('ar-SA', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}{' '}
+                {formatTime(timetable.startDateTime)}{' '}
                 -{' '}
-                {new Date(timetable.endDateTime).toLocaleTimeString('ar-SA', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
+                {formatTime(timetable.endDateTime)}
               </span>
             </div>
           </div>

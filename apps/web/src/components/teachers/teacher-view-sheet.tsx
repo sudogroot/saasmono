@@ -1,5 +1,6 @@
 'use client'
 
+import { formatDate } from '@/lib/date'
 import { Badge, Sheet, SheetBody, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@repo/ui'
 import { BookOpen, Building2, Calendar, Mail, Shield, User } from 'lucide-react'
 
@@ -89,13 +90,13 @@ export function TeacherViewSheet({ teacher, open, onOpenChange }: TeacherViewShe
                   <span className="text-muted-foreground text-sm">تاريخ الانضمام</span>
                   <div className="flex items-center gap-1 text-sm">
                     <Calendar className="h-3 w-3" />
-                    {new Date(teacher.createdAt).toLocaleDateString('ar-SA')}
+                    {formatDate(teacher.createdAt)}
                   </div>
                 </div>
                 <div className="flex items-center justify-between py-2">
                   <span className="text-muted-foreground text-sm">آخر تحديث</span>
                   <div className="text-muted-foreground text-sm">
-                    {new Date(teacher.updatedAt).toLocaleDateString('ar-SA')}
+                    {formatDate(teacher.updatedAt)}
                   </div>
                 </div>
               </div>

@@ -14,6 +14,7 @@ import {
 import { Calendar, Clock, Edit, Eye, Users, Building2, User } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { formatDate, formatTime } from '@/lib/date'
 
 interface AttendanceSessionListItem {
   id: string
@@ -114,11 +115,9 @@ export function AttendanceTable({ onCreateNew }: AttendanceTableProps) {
                 <div className="text-foreground font-medium">{timetable.title}</div>
                 <div className="text-muted-foreground flex items-center gap-2 text-sm">
                   <Clock className="h-3 w-3" />
-                  {new Date(timetable.startDateTime).toLocaleDateString('ar-SA')} -{' '}
-                  {new Date(timetable.startDateTime).toLocaleTimeString('ar-SA', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                  {formatDate(timetable.startDateTime)} -{' '}
+                  {formatTime(timetable.startDateTime)}
+                  
                 </div>
               </div>
             </div>
@@ -257,7 +256,7 @@ export function AttendanceTable({ onCreateNew }: AttendanceTableProps) {
         attendance.classroomGroup?.name,
         attendance.createdBy.name,
         attendance.createdBy.lastName,
-        new Date(attendance.timetable.startDateTime).toLocaleDateString('ar-SA'),
+        formatDate(attendance.timetable.startDateTime),
       ]
         .filter(Boolean)
         .join(' ')
@@ -290,7 +289,7 @@ export function AttendanceTable({ onCreateNew }: AttendanceTableProps) {
         </div>
         <div className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
           <Clock className="h-3 w-3" />
-          {new Date(row.original.timetable.startDateTime).toLocaleDateString('ar-SA')}
+          {formatDate(row.original.timetable.startDateTime)}
           <User className="h-3 w-3 mr-2" />
           {row.original.studentsMarked} طالب
         </div>

@@ -1,5 +1,6 @@
 'use client'
 
+import { formatDate } from '@/lib/date'
 import { orpc } from '@/utils/orpc'
 import { Badge, Sheet, SheetBody, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@repo/ui'
 import { useQuery } from '@tanstack/react-query'
@@ -121,7 +122,7 @@ export function ParentViewSheet({ parent, open, onOpenChange }: ParentViewSheetP
                     <span className="text-sm">تاريخ التسجيل</span>
                   </div>
                   <span className="text-sm font-medium">
-                    {new Date(parentData.createdAt).toLocaleDateString('ar-SA')}
+                    {formatDate(parentData.createdAt)}
                   </span>
                 </div>
               </div>
@@ -173,7 +174,7 @@ export function ParentViewSheet({ parent, open, onOpenChange }: ParentViewSheetP
                             {child.relationshipType === 'parent' ? 'ابن/ابنة' : child.relationshipType}
                           </Badge>
                           <div className="text-muted-foreground mt-1 text-xs">
-                            {new Date(child.relationCreatedAt).toLocaleDateString('ar-SA')}
+                            {formatDate(child.relationCreatedAt)}
                           </div>
                         </div>
                       </div>

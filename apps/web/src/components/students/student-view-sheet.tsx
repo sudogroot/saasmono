@@ -1,5 +1,6 @@
 'use client'
 
+import { formatDate } from '@/lib/date'
 import { orpc } from '@/utils/orpc'
 import { Badge, Sheet, SheetBody, SheetContent, SheetDescription, SheetHeader, SheetTitle, Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui'
 import { useQuery } from '@tanstack/react-query'
@@ -171,7 +172,7 @@ export function StudentViewSheet({ student, open, onOpenChange }: StudentViewShe
                         <Calendar className="text-muted-foreground h-4 w-4" />
                         <span className="text-sm">تاريخ التسجيل</span>
                       </div>
-                      <span className="text-sm font-medium">{new Date(student.createdAt).toLocaleDateString('ar-SA')}</span>
+                      <span className="text-sm font-medium">{formatDate(student.createdAt)}</span>
                     </div>
                   </div>
                 </div>

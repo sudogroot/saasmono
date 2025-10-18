@@ -14,6 +14,7 @@ import {
 import { BookOpen, Calendar, Edit, Eye, Lock, Paperclip, Plus } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { formatDate, formatTime } from '@/lib/date'
 
 interface SessionNoteListItem {
   id: string
@@ -72,7 +73,7 @@ export function SessionNotesTable({ onCreateNew }: SessionNotesTableProps) {
               <div className="text-foreground font-medium">{row.original.title}</div>
               <div className="text-muted-foreground flex items-center gap-2 text-sm">
                 <Calendar className="h-3 w-3" />
-                {new Date(row.original.createdAt).toLocaleDateString('ar-SA')}
+                {formatDate(row.original.createdAt)}
               </div>
             </div>
           </div>
@@ -87,11 +88,8 @@ export function SessionNotesTable({ onCreateNew }: SessionNotesTableProps) {
             <div className="space-y-1">
               <div className="text-sm font-medium">{timetable.title}</div>
               <div className="text-muted-foreground text-xs">
-                {new Date(timetable.startDateTime).toLocaleDateString('ar-SA')} -{' '}
-                {new Date(timetable.startDateTime).toLocaleTimeString('ar-SA', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
+                {formatDate(timetable.startDateTime)} -{' '}
+                {formatTime(timetable.startDateTime)}
               </div>
             </div>
           )
@@ -190,7 +188,7 @@ export function SessionNotesTable({ onCreateNew }: SessionNotesTableProps) {
       const searchableText = [
         note.title,
         note.timetable.title,
-        new Date(note.createdAt).toLocaleDateString('ar-SA'),
+        formatDate(note.createdAt),
       ]
         .filter(Boolean)
         .join(' ')
@@ -224,7 +222,7 @@ export function SessionNotesTable({ onCreateNew }: SessionNotesTableProps) {
         </div>
         <div className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
           <Calendar className="h-3 w-3" />
-          {new Date(row.original.createdAt).toLocaleDateString('ar-SA')}
+          {formatDate(row.original.createdAt)}
           {(row.original.attachmentCount || 0) > 0 && (
             <>
               <Paperclip className="h-3 w-3 mr-2" />

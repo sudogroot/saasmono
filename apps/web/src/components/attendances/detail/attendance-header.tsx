@@ -1,5 +1,6 @@
 'use client'
 
+import { formatDate, formatTime } from '@/lib/date'
 import { Badge, Button } from '@repo/ui'
 import { Calendar, Clock, Edit, Building2, Users, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -88,7 +89,7 @@ export function AttendanceHeader({
                 <div className="flex flex-wrap items-center gap-2 mt-2">
                   <span className="text-muted-foreground text-sm flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
-                    {new Date(createdAt).toLocaleDateString('ar-SA')}
+                    {formatDate(createdAt)}
                   </span>
                 </div>
                 <div className="flex items-center gap-1 mt-1 text-muted-foreground text-sm">
@@ -118,17 +119,11 @@ export function AttendanceHeader({
                 <div className="text-xs text-muted-foreground">التاريخ والوقت</div>
                 <div className="flex items-center gap-2 text-sm">
                   <Clock className="h-3 w-3" />
-                  {new Date(timetable.startDateTime).toLocaleDateString('ar-SA')}
+                  {formatDate(timetable.startDateTime)}
                   {' - '}
-                  {new Date(timetable.startDateTime).toLocaleTimeString('ar-SA', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                  {formatTime(timetable.startDateTime)}
                   {' إلى '}
-                  {new Date(timetable.endDateTime).toLocaleTimeString('ar-SA', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                  {formatDate(timetable.endDateTime)}
                 </div>
               </div>
               <div className="space-y-1">

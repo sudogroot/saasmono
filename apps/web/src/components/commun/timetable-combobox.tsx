@@ -19,6 +19,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Building2, Users, Calendar, X } from 'lucide-react'
 import { useDebouncedSearch } from '@/lib/utils'
 import { useMemo, useState, useEffect } from 'react'
+import { formatDate, formatTime } from '@/lib/date'
 
 interface TimetableComboboxProps {
   value: string | undefined
@@ -196,7 +197,7 @@ export function TimetableCombobox({
 
   const selectedTimetable = timetables.find((t: any) => t.id === value)
   const selectedLabel = selectedTimetable
-    ? `${selectedTimetable.title} - ${new Date(selectedTimetable.startDateTime).toLocaleDateString('ar-SA')}`
+    ? `${selectedTimetable.title} - ${formatDate(selectedTimetable.startDateTime)}`
     : undefined
 
   const selectedClassroom = classrooms.find(c => c.id === classroomId)
@@ -422,15 +423,9 @@ export function TimetableCombobox({
                             <span className="text-xs text-muted-foreground">{dayName}</span>
                           </div>
                           <div className="text-xs text-muted-foreground mt-0.5">
-                            {startDate.toLocaleTimeString('ar-SA', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
+                            {formatTime(startDate)}
                             {' - '}
-                            {startDate.toLocaleDateString('ar-SA', {
-                              day: 'numeric',
-                              month: 'short'
-                            })}
+                            {formatTime(startDate)}
                           </div>
                           {timetable.teacher && (
                             <div className="text-xs text-muted-foreground">
