@@ -27,7 +27,7 @@ export default function EditSessionNotePage({ params }: PageProps) {
   const updateMutation = useMutation({
     ...orpc.management.sessionNotes.updateSessionNote.mutationOptions(),
     onSuccess: () => {
-      toast.success('تم تحديث الملاحظة بنجاح')
+      toast.success('تم تحديث كراس القسم بنجاح')
       // Invalidate queries
       queryClient.invalidateQueries({
         queryKey: orpc.management.sessionNotes.getSessionNotesList.queryKey({}),
@@ -41,7 +41,7 @@ export default function EditSessionNotePage({ params }: PageProps) {
       router.push(`/dashboard/session-notes/${params.noteId}`)
     },
     onError: (error: any) => {
-      toast.error(error.message || 'حدث خطأ أثناء تحديث الملاحظة')
+      toast.error(error.message || 'حدث خطأ أثناء تحديث كراس القسم')
     },
   })
 
@@ -70,9 +70,9 @@ export default function EditSessionNotePage({ params }: PageProps) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-2">
-          <h3 className="text-lg font-semibold">خطأ في تحميل الملاحظة</h3>
+          <h3 className="text-lg font-semibold">خطأ في تحميل كراس القسم</h3>
           <p className="text-muted-foreground">
-            {error?.message || 'لم يتم العثور على الملاحظة'}
+            {error?.message || 'لم يتم العثور على كراس القسم'}
           </p>
         </div>
       </div>
@@ -84,7 +84,7 @@ export default function EditSessionNotePage({ params }: PageProps) {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            تعديل ملاحظة: {sessionNote.title}
+            تعديل كراس القسم: {sessionNote.title}
           </h1>
         </div>
         <Button

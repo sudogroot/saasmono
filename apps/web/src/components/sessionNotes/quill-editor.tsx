@@ -58,7 +58,7 @@ export function QuillEditor({
   value,
   onChange,
   readonly = false,
-  placeholder = 'اكتب الملاحظات هنا...',
+  placeholder = 'اكتب المحتوى هنا...',
   className = '',
 }: TiptapEditorProps) {
   const editor = useEditor({

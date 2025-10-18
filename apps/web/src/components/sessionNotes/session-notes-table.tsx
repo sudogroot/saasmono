@@ -63,7 +63,7 @@ export function SessionNotesTable({ onCreateNew }: SessionNotesTableProps) {
     () => [
       columnHelper.accessor('title', {
         id: 'title',
-        header: 'عنوان الملاحظة',
+        header: 'عنوان كراس القسم',
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
             <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
@@ -241,14 +241,14 @@ export function SessionNotesTable({ onCreateNew }: SessionNotesTableProps) {
   const emptyStateAction = onCreateNew ? (
     <Button onClick={onCreateNew} className="mt-4">
       <Plus className="ml-1 h-4 w-4" />
-      إضافة ملاحظة جديدة
+      إضافة كراس قسم جديد
     </Button>
   ) : null
 
   const headerActions = onCreateNew ? (
     <Button onClick={onCreateNew}>
       <Plus className="ml-1 h-4 w-4" />
-      إضافة ملاحظة
+      إضافة كراس قسم
     </Button>
   ) : null
 
@@ -260,7 +260,7 @@ export function SessionNotesTable({ onCreateNew }: SessionNotesTableProps) {
             <BookOpen className="text-muted-foreground h-8 w-8" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold">لا توجد ملاحظات</h3>
+            <h3 className="text-lg font-semibold">لا يوجد كراس قسم</h3>
             <p className="text-muted-foreground mt-1">ابدأ بإضافة كراس القسم</p>
           </div>
           {emptyStateAction}
@@ -276,8 +276,8 @@ export function SessionNotesTable({ onCreateNew }: SessionNotesTableProps) {
       error={error}
       searchValue={searchValue}
       onSearchChange={setSearchValue}
-      searchPlaceholder="البحث عن ملاحظة (العنوان، الجلسة، التاريخ...)"
-      noDataMessage="لا توجد ملاحظات مطابقة للبحث"
+      searchPlaceholder="البحث (العنوان، الجلسة، التاريخ...)"
+      noDataMessage="لا يوجد كراس قسم مطابق للبحث"
       mobileCardRenderer={mobileCardRenderer}
       showQuickFilters={true}
       quickFilters={quickFilters}

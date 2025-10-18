@@ -15,7 +15,7 @@ export default function CreateSessionNotePage() {
   const createMutation = useMutation({
     ...orpc.management.sessionNotes.createSessionNote.mutationOptions(),
     onSuccess: (data: any) => {
-      toast.success('تم إنشاء الملاحظة بنجاح')
+      toast.success('تم إنشاء كراس القسم بنجاح')
       // Invalidate list query
       queryClient.invalidateQueries({
         queryKey: orpc.management.sessionNotes.getSessionNotesList.queryKey({}),
@@ -24,7 +24,7 @@ export default function CreateSessionNotePage() {
       router.push(`/dashboard/session-notes/${data.id}`)
     },
     onError: (error: any) => {
-      toast.error(error.message || 'حدث خطأ أثناء إنشاء الملاحظة')
+      toast.error(error.message || 'حدث خطأ أثناء إنشاء كراس القسم')
     },
   })
 
@@ -40,9 +40,9 @@ export default function CreateSessionNotePage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">إضافة ملاحظة جديدة</h1>
+          <h1 className="text-3xl font-bold tracking-tight">إضافة كراس قسم جديد</h1>
           <p className="text-muted-foreground mt-2">
-            إنشاء ملاحظة جلسة جديدة باستخدام نموذج كورنيل
+            إنشاء كراس قسم جديد باستخدام نموذج كورنيل
           </p>
         </div>
         <Button
@@ -57,7 +57,7 @@ export default function CreateSessionNotePage() {
       <SessionNoteForm
         onSubmit={handleSubmit}
         onCancel={handleCancel}
-        submitLabel="إنشاء الملاحظة"
+        submitLabel="إنشاء كراس القسم"
         isLoading={createMutation.isPending}
       />
     </div>

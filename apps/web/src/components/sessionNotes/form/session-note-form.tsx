@@ -110,13 +110,13 @@ export function SessionNoteForm({
           {/* Title */}
           <div className="space-y-2">
             <Label htmlFor="title">
-              عنوان الملاحظة <span className="text-destructive">*</span>
+              عنوان كراس القسم <span className="text-destructive">*</span>
             </Label>
             <Input
               id="title"
               value={formData.title}
               onChange={(e) => handleChange('title', e.target.value)}
-              placeholder="أدخل عنوان الملاحظة"
+              placeholder="أدخل عنوان كراس القسم"
               disabled={isLoading}
             />
             {errors.title && (
@@ -151,7 +151,7 @@ export function SessionNoteForm({
               id="content"
               value={formData.content}
               onChange={(e) => handleChange('content', e.target.value)}
-              placeholder="وصف مختصر للملاحظة"
+              placeholder="وصف مختصر"
               disabled={isLoading}
             />
             {errors.content && (
@@ -162,9 +162,9 @@ export function SessionNoteForm({
           {/* Privacy Toggle */}
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label htmlFor="privacy">ملاحظة خاصة</Label>
+              <Label htmlFor="privacy">خاص</Label>
               <p className="text-sm text-muted-foreground">
-                الملاحظات الخاصة مرئية لك فقط
+                المحتوى الخاص مرئي لك فقط
               </p>
             </div>
             <Switch
@@ -179,7 +179,7 @@ export function SessionNoteForm({
 
       {/* Cornell Notes Section */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4">ملاحظات كورنيل</h3>
+        <h3 className="text-lg font-semibold mb-4">نموذج كورنيل</h3>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Keywords (Sidebar) */}
           <div className="lg:col-span-1 space-y-2">
@@ -197,12 +197,12 @@ export function SessionNoteForm({
 
           {/* Notes (Main Area) */}
           <div className="lg:col-span-2 space-y-2">
-            <Label htmlFor="notes">الملاحظات الرئيسية</Label>
+            <Label htmlFor="notes">المحتوى الرئيسي</Label>
             <div className="min-h-[300px]">
               <QuillEditor
                 value={formData.notes}
                 onChange={(value) => handleChange('notes', value)}
-                placeholder="اكتب الملاحظات الرئيسية هنا..."
+                placeholder="اكتب المحتوى الرئيسي هنا..."
                 readonly={isLoading}
               />
             </div>
@@ -215,7 +215,7 @@ export function SessionNoteForm({
           <SummaryInput
             value={formData.summary}
             onChange={(value) => handleChange('summary', value)}
-            placeholder="اكتب ملخصاً للملاحظات..."
+            placeholder="اكتب ملخصاً..."
             disabled={isLoading}
           />
         </div>

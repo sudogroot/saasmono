@@ -12,7 +12,7 @@ interface SummaryInputProps {
 export function SummaryInput({
   value,
   onChange,
-  placeholder = 'اكتب ملخصاً للملاحظات...',
+  placeholder = 'اكتب ملخصاً...',
   disabled = false,
 }: SummaryInputProps) {
   return (

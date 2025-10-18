@@ -26,7 +26,7 @@ export default function SessionNoteDetailPage({ params }: PageProps) {
   const deleteMutation = useMutation({
     ...orpc.management.sessionNotes.deleteSessionNote.mutationOptions(),
     onSuccess: () => {
-      toast.success('تم حذف الملاحظة بنجاح')
+      toast.success('تم حذف كراس القسم بنجاح')
       // Invalidate list query
       queryClient.invalidateQueries({
         queryKey: orpc.management.sessionNotes.getSessionNotesList.queryKey({}),
@@ -35,12 +35,12 @@ export default function SessionNoteDetailPage({ params }: PageProps) {
       router.push('/dashboard/session-notes')
     },
     onError: (error: any) => {
-      toast.error(error.message || 'حدث خطأ أثناء حذف الملاحظة')
+      toast.error(error.message || 'حدث خطأ أثناء حذف كراس القسم')
     },
   })
 
   const handleDelete = () => {
-    if (window.confirm('هل أنت متأكد من حذف هذه الملاحظة؟')) {
+    if (window.confirm('هل أنت متأكد من حذف كراس القسم؟')) {
       deleteMutation.mutate({ sessionNoteId: params.noteId })
     }
   }
@@ -57,9 +57,9 @@ export default function SessionNoteDetailPage({ params }: PageProps) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-2">
-          <h3 className="text-lg font-semibold">خطأ في تحميل الملاحظة</h3>
+          <h3 className="text-lg font-semibold">خطأ في تحميل كراس القسم</h3>
           <p className="text-muted-foreground">
-            {error?.message || 'لم يتم العثور على الملاحظة'}
+            {error?.message || 'لم يتم العثور على كراس القسم'}
           </p>
         </div>
       </div>
