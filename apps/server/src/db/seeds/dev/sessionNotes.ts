@@ -160,16 +160,56 @@ async function seedSessionNotes(orgId: string) {
       // Pick a random template
       const template = NOTE_TEMPLATES[Math.floor(Math.random() * NOTE_TEMPLATES.length)]!
 
-      // Generate notes in Delta format (QuillJS)
-      const notesInDelta = {
-        ops: [
-          { insert: '📋 الملاحظات الرئيسية\n', attributes: { bold: true } },
-          { insert: '\n' },
-          { insert: template.notesContent },
-          { insert: '\n\n' },
-          { insert: '🔑 الكلمات المفتاحية\n', attributes: { bold: true } },
-          { insert: template.keywords },
-          { insert: '\n' },
+      // Generate notes in Tiptap JSON format
+      const notesInTiptap = {
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              {
+                type: 'text',
+                text: '📋 الملاحظات الرئيسية',
+                marks: [{ type: 'bold' }]
+              }
+            ]
+          },
+          {
+            type: 'paragraph',
+            content: []
+          },
+          {
+            type: 'paragraph',
+            content: [
+              {
+                type: 'text',
+                text: template.notesContent
+              }
+            ]
+          },
+          {
+            type: 'paragraph',
+            content: []
+          },
+          {
+            type: 'paragraph',
+            content: [
+              {
+                type: 'text',
+                text: '🔑 الكلمات المفتاحية',
+                marks: [{ type: 'bold' }]
+              }
+            ]
+          },
+          {
+            type: 'paragraph',
+            content: [
+              {
+                type: 'text',
+                text: template.keywords
+              }
+            ]
+          }
         ]
       }
 
@@ -183,7 +223,7 @@ async function seedSessionNotes(orgId: string) {
             title: `${timetable.title} - ${template.titleSuffix}`,
             content: template.notesContent, // Plain text content
             keywords: template.keywords,
-            notes: JSON.stringify(notesInDelta), // QuillJS Delta format
+            notes: JSON.stringify(notesInTiptap), // Tiptap JSON format
             summary: template.summary,
             isPrivate: template.isPrivate,
             timetableId: timetable.id,

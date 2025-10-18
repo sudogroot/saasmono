@@ -1,6 +1,6 @@
 'use client'
 
-import { useEditor, EditorContent } from '@tiptap/react'
+import { useEditor, EditorContent, type JSONContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
 import Link from '@tiptap/extension-link'
@@ -20,7 +20,7 @@ import {
   Heading3,
 } from 'lucide-react'
 import { Button } from '@repo/ui'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 
 interface TiptapEditorProps {
   value: string
@@ -28,6 +28,30 @@ interface TiptapEditorProps {
   readonly?: boolean
   placeholder?: string
   className?: string
+}
+
+// Parse the value string into Tiptap JSON content
+function parseContent(value: string): JSONContent | string {
+  if (!value || value.trim().length === 0) {
+    return ''
+  }
+
+  try {
+    const parsed = JSON.parse(value)
+
+    // Validate that it's a valid Tiptap JSON structure
+    if (parsed && typeof parsed === 'object' && 'type' in parsed) {
+      return parsed as JSONContent
+    }
+
+    // If it doesn't have the expected structure, return empty to avoid errors
+    console.warn('Invalid Tiptap JSON format, using empty content')
+    return ''
+  } catch (error) {
+    // If parsing fails, return empty content
+    console.warn('Failed to parse content as JSON:', error)
+    return ''
+  }
 }
 
 export function QuillEditor({
@@ -58,11 +82,12 @@ export function QuillEditor({
         placeholder,
       }),
     ],
-    content: value || '',
+    content: parseContent(value),
     editable: !readonly,
     onUpdate: ({ editor }) => {
-      const html = editor.getHTML()
-      onChange?.(html)
+      const json = editor.getJSON()
+      const jsonString = JSON.stringify(json)
+      onChange?.(jsonString)
     },
   })
 
@@ -83,20 +108,172 @@ export function QuillEditor({
   }, [editor])
 
   // Update editor content when value changes externally
-  if (editor && value !== editor.getHTML()) {
-    editor.commands.setContent(value || '')
-  }
+  useEffect(() => {
+    if (!editor) return
+
+    const currentContent = JSON.stringify(editor.getJSON())
+    const newContent = value || '{}'
+
+    // Only update if content has actually changed
+    if (currentContent !== newContent) {
+      editor.commands.setContent(parseContent(value))
+    }
+  }, [editor, value])
 
   if (readonly) {
     return (
-      <div className={`tiptap-readonly prose prose-sm max-w-none ${className}`}>
+      <div className={`tiptap-readonly ${className}`} dir="rtl">
+        <style jsx global>{`
+          .tiptap-readonly .ProseMirror {
+            outline: none;
+            direction: rtl;
+            text-align: right;
+          }
+          .tiptap-readonly .ProseMirror * {
+            unicode-bidi: plaintext;
+          }
+          .tiptap-readonly .ProseMirror p {
+            margin: 0.5em 0;
+            line-height: 1.6;
+          }
+          .tiptap-readonly .ProseMirror h1,
+          .tiptap-readonly .ProseMirror h2,
+          .tiptap-readonly .ProseMirror h3 {
+            font-weight: bold;
+            margin: 1em 0 0.5em 0;
+          }
+          .tiptap-readonly .ProseMirror h1 {
+            font-size: 1.5em;
+          }
+          .tiptap-readonly .ProseMirror h2 {
+            font-size: 1.3em;
+          }
+          .tiptap-readonly .ProseMirror h3 {
+            font-size: 1.1em;
+          }
+          .tiptap-readonly .ProseMirror strong {
+            font-weight: bold;
+          }
+          .tiptap-readonly .ProseMirror em {
+            font-style: italic;
+          }
+          .tiptap-readonly .ProseMirror ul,
+          .tiptap-readonly .ProseMirror ol {
+            padding-right: 1.5em;
+            margin: 0.5em 0;
+          }
+          .tiptap-readonly .ProseMirror li {
+            margin: 0.25em 0;
+          }
+          .tiptap-readonly .ProseMirror a {
+            color: hsl(var(--primary));
+            text-decoration: underline;
+          }
+          /* Text selection styling - only within ProseMirror editor */
+          .tiptap-readonly .ProseMirror::selection {
+            background-color: rgba(0, 123, 255, 0.3);
+          }
+          .tiptap-readonly .ProseMirror *::selection {
+            background-color: rgba(0, 123, 255, 0.3);
+          }
+          .tiptap-readonly .ProseMirror::-moz-selection {
+            background-color: rgba(0, 123, 255, 0.3);
+          }
+          .tiptap-readonly .ProseMirror *::-moz-selection {
+            background-color: rgba(0, 123, 255, 0.3);
+          }
+          /* ProseMirror node selection */
+          .tiptap-readonly .ProseMirror-selectednode {
+            outline: 2px solid hsl(var(--primary));
+            background-color: hsl(var(--primary) / 0.1);
+          }
+        `}</style>
         <EditorContent editor={editor} />
       </div>
     )
   }
 
   return (
-    <div className={`tiptap-editor border rounded-md ${className}`}>
+    <div className={`tiptap-editor border rounded-md ${className}`} dir="rtl">
+      <style jsx global>{`
+        .tiptap-editor .ProseMirror {
+          outline: none;
+          direction: rtl;
+          text-align: right;
+          caret-color: currentColor;
+          position: relative;
+        }
+        .tiptap-editor .ProseMirror * {
+          unicode-bidi: plaintext;
+        }
+        .tiptap-editor .ProseMirror p {
+          margin: 0.5em 0;
+          line-height: 1.6;
+        }
+        .tiptap-editor .ProseMirror h1,
+        .tiptap-editor .ProseMirror h2,
+        .tiptap-editor .ProseMirror h3 {
+          font-weight: bold;
+          margin: 1em 0 0.5em 0;
+        }
+        .tiptap-editor .ProseMirror h1 {
+          font-size: 1.5em;
+        }
+        .tiptap-editor .ProseMirror h2 {
+          font-size: 1.3em;
+        }
+        .tiptap-editor .ProseMirror h3 {
+          font-size: 1.1em;
+        }
+        .tiptap-editor .ProseMirror strong {
+          font-weight: bold;
+        }
+        .tiptap-editor .ProseMirror em {
+          font-style: italic;
+        }
+        .tiptap-editor .ProseMirror ul,
+        .tiptap-editor .ProseMirror ol {
+          padding-right: 1.5em;
+          margin: 0.5em 0;
+        }
+        .tiptap-editor .ProseMirror li {
+          margin: 0.25em 0;
+        }
+        .tiptap-editor .ProseMirror a {
+          color: hsl(var(--primary));
+          text-decoration: underline;
+        }
+        /* Text selection styling - only within ProseMirror editor */
+        .tiptap-editor .ProseMirror::selection {
+          background-color: rgba(0, 123, 255, 0.3);
+        }
+        .tiptap-editor .ProseMirror *::selection {
+          background-color: rgba(0, 123, 255, 0.3);
+        }
+        .tiptap-editor .ProseMirror::-moz-selection {
+          background-color: rgba(0, 123, 255, 0.3);
+        }
+        .tiptap-editor .ProseMirror *::-moz-selection {
+          background-color: rgba(0, 123, 255, 0.3);
+        }
+        /* ProseMirror node selection */
+        .tiptap-editor .ProseMirror-selectednode {
+          outline: 2px solid hsl(var(--primary));
+          background-color: hsl(var(--primary) / 0.1);
+        }
+        /* Focus state */
+        .tiptap-editor .ProseMirror-focused {
+          outline: none;
+        }
+        /* Placeholder styling */
+        .tiptap-editor .ProseMirror p.is-editor-empty:first-child::before {
+          color: hsl(var(--muted-foreground));
+          content: attr(data-placeholder);
+          float: right;
+          height: 0;
+          pointer-events: none;
+        }
+      `}</style>
       {/* Toolbar */}
       {editor && (
         <div className="border-b p-2 flex flex-wrap gap-1 bg-muted/50">
