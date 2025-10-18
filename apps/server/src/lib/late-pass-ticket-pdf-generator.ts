@@ -47,9 +47,9 @@ export class LatePassTicketPDFGenerator {
     doc.end()
 
     // Wait for stream to finish
-    await new Promise((resolve, reject) => {
-      stream.on('finish', resolve)
-      stream.on('error', reject)
+    await new Promise<void>((resolve, reject) => {
+      stream.on('finish', () => resolve())
+      stream.on('error', (err) => reject(err))
     })
 
     // Return relative path for storage in database
@@ -217,7 +217,11 @@ export class LatePassTicketPDFGenerator {
     const qrX = (pageWidth - qrSize) / 2
 
     // Add QR code from data URL
-    const qrImageData = Buffer.from(qrCodeDataURL.split(',')[1], 'base64')
+    const base64Data = qrCodeDataURL.split(',')[1]
+    if (!base64Data) {
+      throw new Error('Invalid QR code data URL format')
+    }
+    const qrImageData = Buffer.from(base64Data, 'base64')
     doc.image(qrImageData, qrX, qrY, {
       width: qrSize,
       height: qrSize,

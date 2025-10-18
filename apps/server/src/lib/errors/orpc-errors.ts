@@ -54,6 +54,7 @@ export class OrpcErrorHelper {
   }
 
   static handleServiceError(error: any, defaultMessage: string = 'Operation failed') {
+    console.error('========== error', error);
     if (error.message?.includes('not found')) {
       return this.notFound(error.message)
     }

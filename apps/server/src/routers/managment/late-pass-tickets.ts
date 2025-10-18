@@ -127,7 +127,7 @@ export const latePassTicketRouter = {
       }
       try {
         return await latePassTicketService.generateTicket(input, orgId, userId)
-      } catch (error) {
+      } catch (error) {        
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to generate late pass ticket')
       }
     }),

@@ -22,7 +22,7 @@ import type {
 } from '@/types/late-pass-ticket'
 import { and, count, desc, eq, gte, isNull, lte, or, sql } from 'drizzle-orm'
 import { NodePgDatabase } from 'drizzle-orm/node-postgres'
-import * as jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { generateCompleteTicket } from '@/lib/late-pass-ticket-pdf-generator'
 
 export class LatePassTicketService {
