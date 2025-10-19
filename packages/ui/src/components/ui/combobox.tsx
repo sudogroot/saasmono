@@ -137,10 +137,10 @@ function ComboboxContent({
   return (
     <DrawerContent
       data-slot="combobox-content"
-      className={cn("mb-4 text-lg min-h-2/5", className)}
+      className={cn("mb-4 text-xl min-h-2/5", className)}
       {...props}
     >
-      <div className="mt-4 text-lg border-t">{children}</div>
+      <div className="mt-4 text-xl border-t">{children}</div>
     </DrawerContent>
   );
 }
@@ -217,7 +217,7 @@ function ComboboxInput({
   return (
     <CommandInput
       data-slot="combobox-input"
-      className={cn("h-full text-lg md:text-base pb-2", className)}
+      className={cn("h-full text-xl md:text-base pb-2", className)}
       onValueChange={onValueChange}
       {...props}
     />
