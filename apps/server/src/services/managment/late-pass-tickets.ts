@@ -20,7 +20,7 @@ import type {
   UseTicketInput,
   ValidateTicketQRInput
 } from '@/types/late-pass-ticket'
-import { and, count, desc, eq, gte, isNull, lte, or, sql } from 'drizzle-orm'
+import { and, desc, eq, gte, isNull, lte, or, sql } from 'drizzle-orm'
 import { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import jwt from 'jsonwebtoken'
 import { generateCompleteTicket } from '@/lib/late-pass-ticket-pdf-generator'
@@ -299,10 +299,18 @@ export class LatePassTicketService {
         config
       )
 
-      // Count active tickets (ISSUED status, not expired)
+      // Fetch active tickets (ISSUED status, not expired)
       const activeTicketsResult = await this.db
-        .select({ count: count(latePassTicket.id) })
+        .select({
+          ticketId: latePassTicket.id,
+          ticketNumber: latePassTicket.ticketNumber,
+          ticketPdfPath: latePassTicket.pdfPath,
+          ticketExpiresAt: latePassTicket.expiresAt,
+          timetableId: timetable.id,
+          timetableTitle: timetable.title,
+        })
         .from(latePassTicket)
+        .innerJoin(timetable, eq(latePassTicket.timetableId, timetable.id))
         .where(
           and(
             eq(latePassTicket.studentId, studentId),
@@ -311,6 +319,17 @@ export class LatePassTicketService {
             gte(latePassTicket.expiresAt, now)
           )
         )
+        .orderBy(desc(latePassTicket.issuedAt))
+
+      const activeTickets = activeTicketsResult.map(t => ({
+        id: t.ticketId,
+        ticketNumber: t.ticketNumber,
+        pdfPath: t.ticketPdfPath,
+        expiresAt: t.ticketExpiresAt,
+        timetable: {
+          title: t.timetableTitle,
+        },
+      }))
 
       eligibleStudents.push({
         id: studentInfo[0].id,
@@ -328,7 +347,8 @@ export class LatePassTicketService {
           },
         },
         upcomingTimetablesCount: upcomingCount.length,
-        activeTicketsCount: activeTicketsResult[0]?.count || 0,
+        activeTicketsCount: activeTickets.length,
+        activeTickets: activeTickets,
       })
     }
 

@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@repo/ui'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Calendar, CheckCircle, Clock, DoorClosed, Ticket, User, XCircle } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -56,6 +56,7 @@ export function TimetableSelectionDialog({
   onOpenChange,
 }: TimetableSelectionDialogProps) {
   const [selectedTimetableId, setSelectedTimetableId] = useState<string | null>(null)
+  const queryClient = useQueryClient()
 
   // Fetch upcoming timetables for the student
   const { data: timetables = [], isLoading } = useQuery({
@@ -87,6 +88,42 @@ export function TimetableSelectionDialog({
             }
           : undefined,
       })
+
+      // Optimistically update the cache with the new ticket
+      queryClient.setQueryData(
+        ['management', 'latePassTickets', 'getEligibleStudents'],
+        (oldData: any) => {
+          if (!oldData) return oldData
+
+          return oldData.map((student: any) => {
+            if (student.id === data.studentId) {
+              return {
+                ...student,
+                activeTicketsCount: 1,
+                activeTickets: [{
+                  id: data.id,
+                  ticketNumber: data.ticketNumber,
+                  pdfPath: data.pdfPath,
+                  expiresAt: data.expiresAt,
+                  timetable: {
+                    title: data.timetable.title,
+                  },
+                }],
+              }
+            }
+            return student
+          })
+        }
+      )
+
+      // Invalidate queries to ensure data consistency
+      queryClient.invalidateQueries({
+        queryKey: ['management', 'latePassTickets', 'getEligibleStudents'],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['management', 'latePassTickets', 'getStudentUpcomingTimetables'],
+      })
+
       onOpenChange(false)
       setSelectedTimetableId(null)
     },
@@ -130,7 +167,7 @@ export function TimetableSelectionDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Ticket className="h-5 w-5" />
-            إصدار تذكرة دخول متأخر
+            إصدار تذكرة الدخول
           </DialogTitle>
           <DialogDescription>
             اختر الحصة لإصدار تذكرة دخول للطالب{' '}

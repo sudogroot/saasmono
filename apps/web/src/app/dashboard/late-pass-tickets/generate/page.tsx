@@ -10,7 +10,7 @@ export default function GenerateLatePassTicketPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">إصدار تذكرة دخول متأخر</h1>
+        <h1 className="text-3xl font-bold tracking-tight">إصدار تذكرة الدخول </h1>
         <p className="text-muted-foreground mt-2">
           اختر الفصل أو المجموعة لعرض الطلاب المؤهلين لإصدار تذاكر الدخول
         </p>

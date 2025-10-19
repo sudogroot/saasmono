@@ -49,7 +49,7 @@ Complete frontend implementation for the Late Pass Ticket system, following the 
 - **Location:** `/apps/web/src/app/dashboard/late-pass-tickets/generate/page.tsx`
 - **Purpose:** Page for generating new tickets
 - **Features:**
-  - Title: "إصدار تذكرة دخول متأخر"
+  - Title: "إصدار تذكرة الدخول "
   - Manages classroom/group selection state
   - Renders EligibleStudentsTable
 

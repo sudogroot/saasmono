@@ -8,6 +8,7 @@ node_modules
 .env.develop
 tmp/
 apps/server/src/images
+apps/server/src/public/late-pass-tickets/*
 dist/
 build/
 

@@ -14,12 +14,13 @@ import {
 import {
   Calendar,
   ChevronRight,
+  Download,
   Mail,
   Ticket,
   User,
   UserX,
 } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { ClassroomFilter } from './classroom-filter'
 import { TimetableSelectionDialog } from './timetable-selection-dialog'
@@ -43,6 +44,15 @@ interface EligibleStudent {
   } | null
   upcomingTimetablesCount: number
   activeTicketsCount: number
+  activeTickets: {
+    id: string
+    ticketNumber: string
+    pdfPath: string | null
+    expiresAt: Date
+    timetable: {
+      title: string
+    }
+  }[]
 }
 
 interface EligibleStudentsTableProps {
@@ -91,6 +101,14 @@ export function EligibleStudentsTable({
     setSelectedStudent(student)
     setIsDialogOpen(true)
   }
+
+  const handleDownloadPDF = useCallback((pdfPath: string | null) => {
+    if (!pdfPath) {
+      toast.error('التذكرة غير متوفرة')
+      return
+    }
+    window.open(`${process.env.NEXT_PUBLIC_SERVER_URL}/public/${pdfPath}`, '_blank')
+  }, [])
 
   const getAttendanceStatusBadge = (status: AttendanceStatus) => {
     const statusConfig = {
@@ -183,19 +201,32 @@ export function EligibleStudentsTable({
         id: 'actions',
         header: 'الإجراءات',
         cell: ({ row }) => (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleSelectStudent(row.original)}
-            disabled={row.original.upcomingTimetablesCount === 0}
-          >
-            <ChevronRight className="h-4 w-4 ml-1" />
-            إصدار تذكرة
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleSelectStudent(row.original)}
+              disabled={row.original.upcomingTimetablesCount === 0}
+            >
+              <ChevronRight className="h-4 w-4 ml-1" />
+              إصدار تذكرة
+            </Button>
+            {row.original.activeTickets.length > 0 && row.original.activeTickets[0] && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDownloadPDF(row.original.activeTickets[0]!.pdfPath)}
+                disabled={!row.original.activeTickets[0]!.pdfPath}
+                title="تحميل التذكرة"
+              >
+                <Download className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         ),
       }),
     ],
-    []
+    [handleDownloadPDF]
   )
 
   const table = useReactTable({
