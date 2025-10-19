@@ -156,7 +156,7 @@ export function SearchSelect({
           className={className}
           placeholder={placeholder}
           selectedLabel={selectedLabel}
-          clearable={clearable}
+          clearable={clearable && !!value}
           onClear={handleClear}
           disabled={disabled}
         />
@@ -229,28 +229,6 @@ export function SearchSelect({
                   </ComboboxGroup>
                 ))}
 
-                {/* Empty state with create button */}
-                {!hasResults && !isLoading && (
-                  <div className="py-6 text-center">
-                    <p className="text-muted-foreground text-sm mb-3">
-                      {emptyMessage}
-                    </p>
-                    {showCreateButton && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setOpen(false);
-                          onCreateClick?.(searchValue);
-                        }}
-                        className="gap-2"
-                      >
-                        <Plus className="h-4 w-4" />
-                        {createLabel}
-                      </Button>
-                    )}
-                  </div>
-                )}
                 {/* No results but has items */}
                 {!hasResults &&
                   !isLoading &&
