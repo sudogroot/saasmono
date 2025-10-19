@@ -136,10 +136,10 @@ function ComboboxContent({
   return (
     <DrawerContent
       data-slot="combobox-content"
-      className={cn("p-0", className)}
+      className={cn("mb-4 text-lg", className)}
       {...props}
     >
-      <div className="mt-4 border-t">{children}</div>
+      <div className="mt-4 text-lg border-t">{children}</div>
     </DrawerContent>
   );
 }
