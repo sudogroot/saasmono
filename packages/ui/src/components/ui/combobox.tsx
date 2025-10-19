@@ -187,7 +187,7 @@ function ComboboxButton({
       {clearable && (
         <Button
           size="icon"
-          className="w-1/7"
+          className="w-1/7 h-12"
           onClick={(event) => {
             event.stopPropagation();
             handleClear(event);
@@ -195,7 +195,7 @@ function ComboboxButton({
           variant="outline"
           disabled={!selectedLabel}
         >
-          <X className="h-2 w-2 text-muted-foreground hover:text-foreground cursor-pointer" />
+          <X className="h-4 w-4 text-muted-foreground hover:text-foreground cursor-pointer" />
         </Button>
       )}
     </ButtonGroup>
@@ -216,7 +216,7 @@ function ComboboxInput({
   return (
     <CommandInput
       data-slot="combobox-input"
-      className={cn("h-9", className)}
+      className={cn("h-12 text-lg md:text-base", className)}
       onValueChange={onValueChange}
       {...props}
     />
