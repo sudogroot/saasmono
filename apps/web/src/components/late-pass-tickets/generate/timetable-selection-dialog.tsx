@@ -99,8 +99,7 @@ export function TimetableSelectionDialog({
             if (student.id === data.studentId) {
               return {
                 ...student,
-                activeTicketsCount: 1,
-                activeTickets: [{
+                activeTicket: {
                   id: data.id,
                   ticketNumber: data.ticketNumber,
                   pdfPath: data.pdfPath,
@@ -108,7 +107,7 @@ export function TimetableSelectionDialog({
                   timetable: {
                     title: data.timetable.title,
                   },
-                }],
+                },
               }
             }
             return student

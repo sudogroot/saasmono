@@ -154,8 +154,10 @@ export function ClassroomFilter({
                           onSelect={() => handleClassroomChange('clear')}
                           className="text-muted-foreground"
                         >
-                          <X className="h-4 w-4" />
-                          مسح الاختيار
+                          <div className="flex items-center gap-2">
+                            <X className="h-4 w-4" />
+                            مسح الاختيار
+                          </div>
                         </ComboboxItem>
                       </ComboboxGroup>
                       <ComboboxSeparator />
@@ -234,8 +236,10 @@ export function ClassroomFilter({
                           onSelect={() => handleClassroomGroupChange('clear')}
                           className="text-muted-foreground"
                         >
+                        <div className="flex items-center gap-2">
                           <X className="h-4 w-4" />
                           مسح الاختيار
+                        </div>
                         </ComboboxItem>
                       </ComboboxGroup>
                       <ComboboxSeparator />

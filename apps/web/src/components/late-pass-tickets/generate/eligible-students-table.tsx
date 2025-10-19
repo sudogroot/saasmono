@@ -2,7 +2,7 @@
 
 import { orpc } from '@/utils/orpc'
 import { Badge, Button, GenericTable } from '@repo/ui'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -13,15 +13,18 @@ import {
 } from '@tanstack/react-table'
 import {
   Calendar,
+  ChevronLeft,
   ChevronRight,
   Download,
   Mail,
   Ticket,
   User,
   UserX,
+  X,
 } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import { CancelTicketDialog } from '../cancel-ticket-dialog'
 import { ClassroomFilter } from './classroom-filter'
 import { TimetableSelectionDialog } from './timetable-selection-dialog'
 
@@ -43,8 +46,7 @@ interface EligibleStudent {
     }
   } | null
   upcomingTimetablesCount: number
-  activeTicketsCount: number
-  activeTickets: {
+  activeTicket: {
     id: string
     ticketNumber: string
     pdfPath: string | null
@@ -52,7 +54,7 @@ interface EligibleStudent {
     timetable: {
       title: string
     }
-  }[]
+  } | null
 }
 
 interface EligibleStudentsTableProps {
@@ -80,6 +82,12 @@ export function EligibleStudentsTable({
   const [selectedStudent, setSelectedStudent] = useState<EligibleStudent | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
+  // Cancel ticket dialog state
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
+  const [selectedTicket, setSelectedTicket] = useState<{ id: string; ticketNumber: string } | null>(null)
+
+  const queryClient = useQueryClient()
+
   // Fetch eligible students
   const { data: students = [], isLoading, error } = useQuery({
     ...orpc.management.latePassTickets.getEligibleStudents.queryOptions({
@@ -92,6 +100,21 @@ export function EligibleStudentsTable({
   })
 
   const typedStudents = (students as EligibleStudent[]) || []
+
+  // Cancel ticket mutation
+  const cancelTicketMutation = useMutation({
+    ...orpc.management.latePassTickets.cancelTicket.mutationOptions(),
+    onSuccess: () => {
+      toast.success('تم إلغاء التذكرة بنجاح')
+      // Invalidate queries to refresh the data
+      queryClient.invalidateQueries({
+        queryKey: ['management', 'latePassTickets', 'getEligibleStudents'],
+      })
+    },
+    onError: (error: any) => {
+      toast.error(`فشل إلغاء التذكرة: ${error.message}`)
+    },
+  })
 
   const handleSelectStudent = (student: EligibleStudent) => {
     if (student.upcomingTimetablesCount === 0) {
@@ -109,6 +132,20 @@ export function EligibleStudentsTable({
     }
     window.open(`${process.env.NEXT_PUBLIC_SERVER_URL}/public/${pdfPath}`, '_blank')
   }, [])
+
+  const handleCancelTicket = useCallback((ticketId: string, ticketNumber: string) => {
+    setSelectedTicket({ id: ticketId, ticketNumber })
+    setCancelDialogOpen(true)
+  }, [])
+
+  const handleConfirmCancel = useCallback((reason: string) => {
+    if (selectedTicket) {
+      cancelTicketMutation.mutate({
+        ticketId: selectedTicket.id,
+        reason,
+      })
+    }
+  }, [selectedTicket, cancelTicketMutation])
 
   const getAttendanceStatusBadge = (status: AttendanceStatus) => {
     const statusConfig = {
@@ -189,9 +226,9 @@ export function EligibleStudentsTable({
             <div className="font-medium text-sm">
               {row.original.upcomingTimetablesCount} حصة
             </div>
-            {row.original.activeTicketsCount > 0 && (
+            {row.original.activeTicket && (
               <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700">
-                {row.original.activeTicketsCount} تذكرة نشطة
+                تذكرة نشطة
               </Badge>
             )}
           </div>
@@ -200,33 +237,48 @@ export function EligibleStudentsTable({
       columnHelper.display({
         id: 'actions',
         header: 'الإجراءات',
-        cell: ({ row }) => (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleSelectStudent(row.original)}
-              disabled={row.original.upcomingTimetablesCount === 0}
-            >
-              <ChevronRight className="h-4 w-4 ml-1" />
-              إصدار تذكرة
-            </Button>
-            {row.original.activeTickets.length > 0 && row.original.activeTickets[0] && (
+        cell: ({ row }) => {
+          const isDisabled = !row.original.upcomingTimetablesCount || !!row.original.activeTicket
+          return (
+            <div className="flex items-center gap-2">
               <Button
-                variant="ghost"
+                className='flex gap-1'
+                variant="outline"
                 size="sm"
-                onClick={() => handleDownloadPDF(row.original.activeTickets[0]!.pdfPath)}
-                disabled={!row.original.activeTickets[0]!.pdfPath}
-                title="تحميل التذكرة"
+                onClick={isDisabled ? undefined : () => handleSelectStudent(row.original)}
+                disabled={isDisabled}
               >
-                <Download className="h-4 w-4" />
+                إصدار تذكرة
+                <ChevronLeft className="h-4 w-4" />
               </Button>
-            )}
-          </div>
-        ),
+              {row.original.activeTicket && (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDownloadPDF(row.original.activeTicket!.pdfPath)}
+                    disabled={!row.original.activeTicket.pdfPath}
+                    title="تحميل التذكرة"
+                  >
+                    <Download className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleCancelTicket(row.original.activeTicket!.id, row.original.activeTicket!.ticketNumber)}
+                    disabled={cancelTicketMutation.isPending}
+                    title="إلغاء التذكرة"
+                  >
+                    <X className="h-4 w-4 text-red-600" />
+                  </Button>
+                </>
+              )}
+            </div>
+          )
+        }
       }),
     ],
-    [handleDownloadPDF]
+    [handleDownloadPDF, handleCancelTicket, cancelTicketMutation.isPending]
   )
 
   const table = useReactTable({
@@ -288,9 +340,9 @@ export function EligibleStudentsTable({
 
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>{row.original.upcomingTimetablesCount} حصة قادمة</span>
-        {row.original.activeTicketsCount > 0 && (
+        {row.original.activeTicket && (
           <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700">
-            {row.original.activeTicketsCount} تذكرة نشطة
+            تذكرة نشطة
           </Badge>
         )}
       </div>
@@ -383,6 +435,16 @@ export function EligibleStudentsTable({
           student={selectedStudent}
           open={isDialogOpen}
           onOpenChange={setIsDialogOpen}
+        />
+      )}
+
+      {selectedTicket && (
+        <CancelTicketDialog
+          open={cancelDialogOpen}
+          onOpenChange={setCancelDialogOpen}
+          onConfirm={handleConfirmCancel}
+          ticketNumber={selectedTicket.ticketNumber}
+          isPending={cancelTicketMutation.isPending}
         />
       )}
     </>

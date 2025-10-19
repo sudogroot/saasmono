@@ -20,6 +20,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Building2, Users, X } from 'lucide-react'
 import { TimetableFilterState } from './timetable-visualization'
 import { useDebouncedSearch } from '@/lib/utils'
+import { any } from 'zod'
 
 interface TimetableFiltersProps {
   filters: TimetableFilterState
@@ -106,21 +107,24 @@ export function TimetableFilters({
   // Group classrooms by education level if enabled
   const groupedClassrooms = groupClassroomsByLevel
     ? displayedClassrooms.reduce((groups, classroom) => {
-        const level = classroom.educationLevel.displayNameAr
-        if (!groups[level]) groups[level] = []
-        groups[level].push(classroom)
-        return groups
-      }, {} as Record<string, typeof displayedClassrooms>)
+      const level = classroom.educationLevel.displayNameAr
+      if (!level) {
+        return [] as any
+      }
+      if (!groups[level]) groups[level] = []
+      groups[level].push(classroom)
+      return groups
+    }, {} as Record<string, typeof displayedClassrooms>)
     : null
 
   // Group classroom groups by classroom if enabled
   const groupedClassroomGroups = groupClassroomGroupsByClassroom
     ? displayedClassroomGroups.reduce((groups, group) => {
-        const classroomName = `${group.classroomName} - ${group.classroomAcademicYear}`
-        if (!groups[classroomName]) groups[classroomName] = []
-        groups[classroomName].push(group)
-        return groups
-      }, {} as Record<string, typeof displayedClassroomGroups>)
+      const classroomName = `${group.classroomName} - ${group.classroomAcademicYear}`
+      if (!groups[classroomName]) groups[classroomName] = []
+      groups[classroomName].push(group)
+      return groups
+    }, {} as Record<string, typeof displayedClassroomGroups>)
     : null
 
   return (
@@ -166,8 +170,10 @@ export function TimetableFilters({
                           onSelect={() => handleClassroomChange('clear')}
                           className="text-muted-foreground"
                         >
-                          <X className="h-4 w-4" />
-                          مسح الاختيار
+                          <div className="flex items-center gap-2">
+                            <X className="h-4 w-4" />
+                            مسح الاختيار
+                          </div>
                         </ComboboxItem>
                       </ComboboxGroup>
                       <ComboboxSeparator />
@@ -266,8 +272,10 @@ export function TimetableFilters({
                           onSelect={() => handleClassroomGroupChange('clear')}
                           className="text-muted-foreground"
                         >
-                          <X className="h-4 w-4" />
-                          مسح الاختيار
+                          <div className="flex items-center gap-2">
+                            <X className="h-4 w-4" />
+                            مسح الاختيار
+                          </div>
                         </ComboboxItem>
                       </ComboboxGroup>
                       <ComboboxSeparator />

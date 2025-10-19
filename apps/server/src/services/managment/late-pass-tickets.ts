@@ -299,7 +299,7 @@ export class LatePassTicketService {
         config
       )
 
-      // Fetch active tickets (ISSUED status, not expired)
+      // Fetch active ticket (ISSUED status, not expired) - limit to 1
       const activeTicketsResult = await this.db
         .select({
           ticketId: latePassTicket.id,
@@ -320,16 +320,17 @@ export class LatePassTicketService {
           )
         )
         .orderBy(desc(latePassTicket.issuedAt))
+        .limit(1)
 
-      const activeTickets = activeTicketsResult.map(t => ({
-        id: t.ticketId,
-        ticketNumber: t.ticketNumber,
-        pdfPath: t.ticketPdfPath,
-        expiresAt: t.ticketExpiresAt,
+      const activeTicket = activeTicketsResult[0] ? {
+        id: activeTicketsResult[0].ticketId,
+        ticketNumber: activeTicketsResult[0].ticketNumber,
+        pdfPath: activeTicketsResult[0].ticketPdfPath,
+        expiresAt: activeTicketsResult[0].ticketExpiresAt,
         timetable: {
-          title: t.timetableTitle,
+          title: activeTicketsResult[0].timetableTitle,
         },
-      }))
+      } : null
 
       eligibleStudents.push({
         id: studentInfo[0].id,
@@ -347,8 +348,7 @@ export class LatePassTicketService {
           },
         },
         upcomingTimetablesCount: upcomingCount.length,
-        activeTicketsCount: activeTickets.length,
-        activeTickets: activeTickets,
+        activeTicket: activeTicket,
       })
     }
 

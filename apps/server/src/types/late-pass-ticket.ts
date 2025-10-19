@@ -139,8 +139,7 @@ export const EligibleStudentSchema = z.object({
     }),
   }).nullable(),
   upcomingTimetablesCount: z.number(),
-  activeTicketsCount: z.number(), // Number of active (ISSUED) tickets
-  activeTickets: z.array(z.object({
+  activeTicket: z.object({
     id: z.uuid(),
     ticketNumber: z.string(),
     pdfPath: z.string().nullable(),
@@ -148,7 +147,7 @@ export const EligibleStudentSchema = z.object({
     timetable: z.object({
       title: z.string(),
     }),
-  })),
+  }).nullable(),
 })
 
 // Upcoming Timetable Schema (for ticket generation selection)

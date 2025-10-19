@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import { CancelTicketDialog } from './cancel-ticket-dialog'
 
 type TicketStatus = 'ISSUED' | 'USED' | 'EXPIRED' | 'CANCELED'
 
@@ -80,6 +81,8 @@ export function LatePassTicketsTable({ onGenerateNew }: LatePassTicketsTableProp
     pageIndex: 0,
     pageSize: 20,
   })
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
+  const [selectedTicket, setSelectedTicket] = useState<{ id: string; ticketNumber: string } | null>(null)
 
   // Cancel ticket mutation
   const cancelTicketMutation = useMutation({
@@ -93,15 +96,19 @@ export function LatePassTicketsTable({ onGenerateNew }: LatePassTicketsTableProp
     },
   })
 
-  const handleCancelTicket = useCallback((ticketId: string) => {
-    const reason = window.prompt('السبب لإلغاء التذكرة (اختياري):')
-    if (reason !== null) {
+  const handleCancelTicket = useCallback((ticketId: string, ticketNumber: string) => {
+    setSelectedTicket({ id: ticketId, ticketNumber })
+    setCancelDialogOpen(true)
+  }, [])
+
+  const handleConfirmCancel = useCallback((reason: string) => {
+    if (selectedTicket) {
       cancelTicketMutation.mutate({
-        ticketId,
-        reason: reason || 'لا يوجد سبب محدد',
+        ticketId: selectedTicket.id,
+        reason,
       })
     }
-  }, [cancelTicketMutation])
+  }, [selectedTicket, cancelTicketMutation])
 
   const handleDownloadPDF = useCallback((pdfPath: string | null) => {
     if (!pdfPath) {
@@ -248,7 +255,7 @@ export function LatePassTicketsTable({ onGenerateNew }: LatePassTicketsTableProp
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => handleCancelTicket(row.original.id)}
+                onClick={() => handleCancelTicket(row.original.id, row.original.ticketNumber)}
                 title="إلغاء التذكرة"
                 disabled={cancelTicketMutation.isPending}
               >
@@ -366,7 +373,7 @@ export function LatePassTicketsTable({ onGenerateNew }: LatePassTicketsTableProp
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => handleCancelTicket(row.original.id)}
+            onClick={() => handleCancelTicket(row.original.id, row.original.ticketNumber)}
             disabled={cancelTicketMutation.isPending}
           >
             <X className="h-4 w-4 text-red-600" />
@@ -410,26 +417,38 @@ export function LatePassTicketsTable({ onGenerateNew }: LatePassTicketsTableProp
   }
 
   return (
-    <GenericTable
-      table={table}
-      isLoading={isLoading}
-      error={error}
-      searchValue={searchValue}
-      onSearchChange={setSearchValue}
-      searchPlaceholder="البحث عن تذكرة (رقم التذكرة، الطالب، الحصة...)"
-      noDataMessage="لا توجد تذاكر مطابقة للبحث"
-      mobileCardRenderer={mobileCardRenderer}
-      showQuickFilters={true}
-      quickFilters={quickFilters}
-      activeFilters={activeFilters}
-      onFilterChange={(key, value) =>
-        setActiveFilters((prev) => ({ ...prev, [key]: value }))
-      }
-      headerActions={headerActions}
-      emptyStateAction={emptyStateAction}
-      enableVirtualScroll={true}
-      virtualItemHeight={120}
-      className="w-full"
-    />
+    <>
+      <GenericTable
+        table={table}
+        isLoading={isLoading}
+        error={error}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        searchPlaceholder="البحث عن تذكرة (رقم التذكرة، الطالب، الحصة...)"
+        noDataMessage="لا توجد تذاكر مطابقة للبحث"
+        mobileCardRenderer={mobileCardRenderer}
+        showQuickFilters={true}
+        quickFilters={quickFilters}
+        activeFilters={activeFilters}
+        onFilterChange={(key, value) =>
+          setActiveFilters((prev) => ({ ...prev, [key]: value }))
+        }
+        headerActions={headerActions}
+        emptyStateAction={emptyStateAction}
+        enableVirtualScroll={true}
+        virtualItemHeight={120}
+        className="w-full"
+      />
+
+      {selectedTicket && (
+        <CancelTicketDialog
+          open={cancelDialogOpen}
+          onOpenChange={setCancelDialogOpen}
+          onConfirm={handleConfirmCancel}
+          ticketNumber={selectedTicket.ticketNumber}
+          isPending={cancelTicketMutation.isPending}
+        />
+      )}
+    </>
   )
 }
