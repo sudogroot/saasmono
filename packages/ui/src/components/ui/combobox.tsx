@@ -216,7 +216,7 @@ function ComboboxInput({
   return (
     <CommandInput
       data-slot="combobox-input"
-      className={cn("h-12 text-lg md:text-base", className)}
+      className={cn("h-full text-lg md:text-base pb-2", className)}
       onValueChange={onValueChange}
       {...props}
     />
@@ -293,11 +293,11 @@ function ComboboxItem({
       keywords={keywords}
       {...props}
     >
-      <div className="flex items-center w-full">
+      <div className="flex text-xl md:text-lg items-center w-full">
         <Check
           className={cn("mr-2 h-4 w-4", selected ? "opacity-100" : "opacity-0")}
         />
-        <div className="flex-1">{children}</div>
+        <div className="flex-1 text-xl  md:text-lg">{children}</div>
       </div>
     </CommandItem>
   );

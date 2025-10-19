@@ -65,9 +65,9 @@ function CommandInput({
   return (
     <div
       data-slot="command-input-wrapper"
-      className="flex h-9 items-center gap-2 border-b px-3"
+      className="flex h-12 text-lg md:text-base items-center gap-2 border-b px-3"
     >
-      <SearchIcon className="size-4 shrink-0 opacity-50" />
+      <SearchIcon className="size-6 md:size-4 shrink-0 opacity-50" />
       <CommandPrimitive.Input
         data-slot="command-input"
         dir="auto"
@@ -88,10 +88,7 @@ function CommandList({
   return (
     <CommandPrimitive.List
       data-slot="command-list"
-      className={cn(
-        "max-h-[300px] overflow-y-auto",
-        className,
-      )}
+      className={cn("max-h-[300px] overflow-y-auto", className)}
       {...props}
     />
   );
