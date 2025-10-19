@@ -133,10 +133,11 @@ function ComboboxContent({
     );
   }
 
+  // this is mobile only
   return (
     <DrawerContent
       data-slot="combobox-content"
-      className={cn("mb-4 text-lg", className)}
+      className={cn("mb-4 text-lg min-h-2/5", className)}
       {...props}
     >
       <div className="mt-4 text-lg border-t">{children}</div>
