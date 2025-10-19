@@ -4,7 +4,6 @@ import { globalSheet } from '@/stores/global-sheet-store'
 import { useSheetFormState } from '@/stores/sheet-form-state-store'
 import { orpc } from '@/utils/orpc'
 import {
-  Badge,
   Button,
   Field,
   FieldError,
@@ -248,38 +247,38 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-4">
       {/* Preset Context Banner */}
       {(presetClient || presetOpponent || presetCourt) && (
-        <div className="bg-primary/5 border-primary/20 -mt-2 mb-4 rounded-lg border px-3 py-3 space-y-2">
+        <div className="bg-primary/5 border-primary/20 -mt-2 mb-4 space-y-2 rounded-lg border px-3 py-3">
           <div className="flex items-start gap-2">
-            <User className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-            <div className="flex-1 min-w-0 space-y-1">
-              <p className="text-xs font-medium text-muted-foreground">تم تحديد البيانات مسبقاً</p>
+            <User className="text-primary mt-0.5 h-4 w-4 shrink-0" />
+            <div className="min-w-0 flex-1 space-y-1">
+              <p className="text-muted-foreground text-xs font-medium">تم تحديد البيانات مسبقاً</p>
               <div className="space-y-1.5">
                 {presetClient && (
-                  <div className="flex items-center gap-2 min-w-0">
-                    <User className="h-3 w-3 text-muted-foreground shrink-0" />
-                    <span className="text-xs text-muted-foreground shrink-0">العميل:</span>
-                    <span className="text-sm font-medium truncate">{presetClient.name}</span>
+                  <div className="flex min-w-0 items-center gap-2">
+                    <User className="text-muted-foreground h-3 w-3 shrink-0" />
+                    <span className="text-muted-foreground shrink-0 text-xs">العميل:</span>
+                    <span className="truncate text-sm font-medium">{presetClient.name}</span>
                   </div>
                 )}
                 {presetOpponent && (
-                  <div className="flex items-center gap-2 min-w-0">
-                    <User className="h-3 w-3 text-muted-foreground shrink-0" />
-                    <span className="text-xs text-muted-foreground shrink-0">الخصم:</span>
-                    <span className="text-sm font-medium truncate">{presetOpponent.name}</span>
+                  <div className="flex min-w-0 items-center gap-2">
+                    <User className="text-muted-foreground h-3 w-3 shrink-0" />
+                    <span className="text-muted-foreground shrink-0 text-xs">الخصم:</span>
+                    <span className="truncate text-sm font-medium">{presetOpponent.name}</span>
                   </div>
                 )}
                 {presetCourt && (
-                  <div className="flex items-center gap-2 min-w-0">
-                    <Gavel className="h-3 w-3 text-muted-foreground shrink-0" />
-                    <span className="text-xs text-muted-foreground shrink-0">المحكمة:</span>
-                    <span className="text-sm font-medium truncate">{presetCourt.name}</span>
+                  <div className="flex min-w-0 items-center gap-2">
+                    <Gavel className="text-muted-foreground h-3 w-3 shrink-0" />
+                    <span className="text-muted-foreground shrink-0 text-xs">المحكمة:</span>
+                    <span className="truncate text-sm font-medium">{presetCourt.name}</span>
                   </div>
                 )}
               </div>
             </div>
           </div>
           <div className="bg-primary/10 rounded-md px-3 py-2 pr-6">
-            <p className="text-sm font-medium text-primary">
+            <p className="text-primary text-sm font-medium">
               {presetClient && 'القضية ستُضاف لهذا العميل'}
               {presetOpponent && !presetClient && 'القضية ستُضاف ضد هذا الخصم'}
             </p>
@@ -458,7 +457,7 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
         </Heading>
       </div>
       <div className="space-y-4">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-1">
           <Controller
             control={form.control}
             name="clientId"

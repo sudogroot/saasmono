@@ -29,6 +29,7 @@ export {
   BreadcrumbSeparator,
 } from "./breadcrumb";
 export { Button, buttonVariants } from "./button";
+export { ButtonGroup } from "./button-group";
 export { Calendar } from "./calendar";
 export {
   Card,

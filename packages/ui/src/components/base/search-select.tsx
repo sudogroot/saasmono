@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Button } from "../ui/button"
+import * as React from "react";
+import { Button } from "../ui/button";
 import {
   Combobox,
   ComboboxButton,
@@ -13,53 +13,53 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxTrigger,
-} from "../ui/combobox"
-import { Plus } from "lucide-react"
+} from "../ui/combobox";
+import { Plus } from "lucide-react";
 
 export interface SearchSelectOption {
-  id: string
-  label: string
-  searchLabel?: string
-  metadata?: string
-  disabled?: boolean
+  id: string;
+  label: string;
+  searchLabel?: string;
+  metadata?: string;
+  disabled?: boolean;
 }
 
 export interface SearchSelectGroup {
-  groupLabel: string
-  options: SearchSelectOption[]
+  groupLabel: string;
+  options: SearchSelectOption[];
 }
 
 export interface SearchSelectProps {
   // Core data
-  options?: SearchSelectOption[]
-  groups?: SearchSelectGroup[]
-  value?: string
-  onValueChange?: (value: string) => void
+  options?: SearchSelectOption[];
+  groups?: SearchSelectGroup[];
+  value?: string;
+  onValueChange?: (value: string) => void;
 
   // Display
-  placeholder?: string
-  emptyMessage?: string
-  searchPlaceholder?: string
-  className?: string
-  disabled?: boolean
-  clearable?: boolean
+  placeholder?: string;
+  emptyMessage?: string;
+  searchPlaceholder?: string;
+  className?: string;
+  disabled?: boolean;
+  clearable?: boolean;
 
   // Loading
-  isLoading?: boolean
-  loadingMessage?: string
+  isLoading?: boolean;
+  loadingMessage?: string;
 
   // Create new entity
-  allowCreate?: boolean
-  createLabel?: string
-  onCreateClick?: (searchValue: string) => void
+  allowCreate?: boolean;
+  createLabel?: string;
+  onCreateClick?: (searchValue: string) => void;
 
   // Search
-  searchable?: boolean
-  onSearchChange?: (search: string) => void
+  searchable?: boolean;
+  onSearchChange?: (search: string) => void;
 
   // Optional "none" option
-  allowNone?: boolean
-  noneLabel?: string
+  allowNone?: boolean;
+  noneLabel?: string;
 }
 
 export function SearchSelect({
@@ -83,71 +83,80 @@ export function SearchSelect({
   allowNone = false,
   noneLabel = "بدون",
 }: SearchSelectProps) {
-  const [open, setOpen] = React.useState(false)
-  const [searchValue, setSearchValue] = React.useState("")
+  const [open, setOpen] = React.useState(false);
+  const [searchValue, setSearchValue] = React.useState("");
 
   // Get selected option label
   const getSelectedLabel = () => {
-    if (!value) return null
+    if (!value) return null;
 
-    if (value === "none") return noneLabel
+    if (value === "none") return noneLabel;
 
     // Check in flat options
-    const flatOption = options.find((opt) => opt.id === value)
-    if (flatOption) return flatOption.label
+    const flatOption = options.find((opt) => opt.id === value);
+    if (flatOption) return flatOption.label;
 
     // Check in grouped options
     for (const group of groups) {
-      const groupOption = group.options.find((opt) => opt.id === value)
-      if (groupOption) return groupOption.label
+      const groupOption = group.options.find((opt) => opt.id === value);
+      if (groupOption) return groupOption.label;
     }
 
-    return null
-  }
+    return null;
+  };
 
-  const selectedLabel = getSelectedLabel()
+  const selectedLabel = getSelectedLabel();
 
   const handleSelect = (selectedValue: string) => {
-    onValueChange?.(selectedValue === value ? "" : selectedValue)
-    setOpen(false)
-  }
+    onValueChange?.(selectedValue === value ? "" : selectedValue);
+    setOpen(false);
+  };
 
   const handleClear = () => {
-    onValueChange?.("")
-  }
+    onValueChange?.("");
+  };
 
   const handleSearchChange = (search: string) => {
-    setSearchValue(search)
-    onSearchChange?.(search)
-  }
+    setSearchValue(search);
+    onSearchChange?.(search);
+  };
 
   // Filter options based on search
   const filterOptions = (opts: SearchSelectOption[]) => {
-    if (!searchValue) return opts
-    const searchLower = searchValue.toLowerCase()
+    if (!searchValue) return opts;
+    const searchLower = searchValue.toLowerCase();
     return opts.filter((opt) => {
-      const searchIn = opt.searchLabel || opt.label
-      return searchIn.toLowerCase().includes(searchLower)
-    })
-  }
+      const searchIn = opt.searchLabel || opt.label;
+      return searchIn.toLowerCase().includes(searchLower);
+    });
+  };
 
-  const filteredOptions = filterOptions(options)
-  const filteredGroups = groups.map((group) => ({
-    ...group,
-    options: filterOptions(group.options),
-  })).filter((group) => group.options.length > 0)
+  const filteredOptions = filterOptions(options);
+  const filteredGroups = groups
+    .map((group) => ({
+      ...group,
+      options: filterOptions(group.options),
+    }))
+    .filter((group) => group.options.length > 0);
 
-  const hasResults = filteredOptions.length > 0 || filteredGroups.length > 0
-  const showCreateButton = allowCreate && onCreateClick && searchValue && !hasResults
-
+  const hasResults = filteredOptions.length > 0 || filteredGroups.length > 0;
+  const showCreateButton =
+    allowCreate && onCreateClick && searchValue && !hasResults;
   return (
-    <Combobox open={open} onOpenChange={setOpen}>
+    <Combobox
+      open={open}
+      onOpenChange={(value) => {
+        setOpen(value);
+        setSearchValue("");
+        onSearchChange?.("");
+      }}
+    >
       <ComboboxTrigger asChild>
         <ComboboxButton
           className={className}
           placeholder={placeholder}
           selectedLabel={selectedLabel}
-          clearable={clearable && !!value}
+          clearable={clearable}
           onClear={handleClear}
           disabled={disabled}
         />
@@ -196,7 +205,10 @@ export function SearchSelect({
 
                 {/* Grouped options */}
                 {filteredGroups.map((group) => (
-                  <ComboboxGroup key={group.groupLabel} heading={group.groupLabel}>
+                  <ComboboxGroup
+                    key={group.groupLabel}
+                    heading={group.groupLabel}
+                  >
                     {group.options.map((option) => (
                       <ComboboxItem
                         key={option.id}
@@ -228,8 +240,8 @@ export function SearchSelect({
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          setOpen(false)
-                          onCreateClick?.(searchValue)
+                          setOpen(false);
+                          onCreateClick?.(searchValue);
                         }}
                         className="gap-2"
                       >
@@ -239,12 +251,25 @@ export function SearchSelect({
                     )}
                   </div>
                 )}
-
                 {/* No results but has items */}
-                {!hasResults && !isLoading && (options.length > 0 || groups.length > 0) && !showCreateButton && (
-                  <ComboboxEmpty>
-                    {emptyMessage}
-                  </ComboboxEmpty>
+                {!hasResults &&
+                  !isLoading &&
+                  (options.length > 0 || groups.length > 0) && (
+                    <ComboboxEmpty>{emptyMessage}</ComboboxEmpty>
+                  )}
+                {showCreateButton && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setOpen(false);
+                      onCreateClick?.(searchValue);
+                    }}
+                    className="gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    {createLabel}
+                  </Button>
                 )}
               </>
             )}
@@ -252,5 +277,5 @@ export function SearchSelect({
         </ComboboxCommand>
       </ComboboxContent>
     </Combobox>
-  )
+  );
 }

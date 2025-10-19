@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Check, ChevronsUpDown, X } from "lucide-react"
+import * as React from "react";
+import { Check, ChevronsUpDown, X } from "lucide-react";
 
-import { Button } from "./button"
+import { Button } from "./button";
 import {
   Command,
   CommandEmpty,
@@ -11,33 +11,26 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "./command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "./popover"
-import {
-  Drawer,
-  DrawerContent,
-  DrawerTrigger,
-} from "./drawer"
-import { cn } from "../../lib/utils"
-import { useMediaQuery } from "../../hooks/use-media-query"
+} from "./command";
+import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+import { Drawer, DrawerContent, DrawerTrigger } from "./drawer";
+import { cn } from "../../lib/utils";
+import { useMediaQuery } from "../../hooks/use-media-query";
+import { ButtonGroup } from "./button-group";
 
 // Context for sharing state between Combobox components
 const ComboboxContext = React.createContext<{
-  open: boolean
-  setOpen: (open: boolean) => void
-  isDesktop: boolean
-} | null>(null)
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  isDesktop: boolean;
+} | null>(null);
 
 function useComboboxContext() {
-  const context = React.useContext(ComboboxContext)
+  const context = React.useContext(ComboboxContext);
   if (!context) {
-    throw new Error("Combobox components must be used within a Combobox")
+    throw new Error("Combobox components must be used within a Combobox");
   }
-  return context
+  return context;
 }
 
 function Combobox({
@@ -46,29 +39,41 @@ function Combobox({
   children,
   ...props
 }: {
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
-  children: React.ReactNode
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  children: React.ReactNode;
 }) {
-  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(false)
-  const isDesktop = useMediaQuery("(min-width: 768px)")
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(false);
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  const open = controlledOpen ?? uncontrolledOpen
-  const setOpen = onOpenChange ?? setUncontrolledOpen
+  const open = controlledOpen ?? uncontrolledOpen;
+  const setOpen = onOpenChange ?? setUncontrolledOpen;
 
   return (
     <ComboboxContext.Provider value={{ open, setOpen, isDesktop }}>
       {isDesktop ? (
-        <Popover data-slot="combobox" open={open} onOpenChange={setOpen} modal={true} {...props}>
+        <Popover
+          data-slot="combobox"
+          open={open}
+          onOpenChange={setOpen}
+          modal={true}
+          {...props}
+        >
           {children}
         </Popover>
       ) : (
-        <Drawer data-slot="combobox" direction="bottom" open={open} onOpenChange={setOpen} {...props}>
+        <Drawer
+          data-slot="combobox"
+          direction="bottom"
+          open={open}
+          onOpenChange={setOpen}
+          {...props}
+        >
           {children}
         </Drawer>
       )}
     </ComboboxContext.Provider>
-  )
+  );
 }
 
 function ComboboxTrigger({
@@ -77,13 +82,13 @@ function ComboboxTrigger({
   asChild,
   ...props
 }: {
-  className?: string
-  children: React.ReactNode
-  asChild?: boolean
+  className?: string;
+  children: React.ReactNode;
+  asChild?: boolean;
 }) {
-  const { isDesktop } = useComboboxContext()
+  const { isDesktop } = useComboboxContext();
 
-  const TriggerComponent = isDesktop ? PopoverTrigger : DrawerTrigger
+  const TriggerComponent = isDesktop ? PopoverTrigger : DrawerTrigger;
 
   return (
     <TriggerComponent
@@ -94,7 +99,7 @@ function ComboboxTrigger({
     >
       {children}
     </TriggerComponent>
-  )
+  );
 }
 
 function ComboboxContent({
@@ -104,12 +109,12 @@ function ComboboxContent({
   children,
   ...props
 }: {
-  className?: string
-  align?: "start" | "center" | "end"
-  sideOffset?: number
-  children: React.ReactNode
+  className?: string;
+  align?: "start" | "center" | "end";
+  sideOffset?: number;
+  children: React.ReactNode;
 }) {
-  const { isDesktop } = useComboboxContext()
+  const { isDesktop } = useComboboxContext();
 
   if (isDesktop) {
     return (
@@ -117,12 +122,15 @@ function ComboboxContent({
         data-slot="combobox-content"
         align={align}
         sideOffset={sideOffset}
-        className={cn("w-full min-w-[var(--radix-popover-trigger-width)] p-0", className)}
+        className={cn(
+          "w-full min-w-[var(--radix-popover-trigger-width)] p-0",
+          className,
+        )}
         {...props}
       >
         {children}
       </PopoverContent>
-    )
+    );
   }
 
   return (
@@ -131,11 +139,9 @@ function ComboboxContent({
       className={cn("p-0", className)}
       {...props}
     >
-      <div className="mt-4 border-t">
-        {children}
-      </div>
+      <div className="mt-4 border-t">{children}</div>
     </DrawerContent>
-  )
+  );
 }
 
 function ComboboxButton({
@@ -147,49 +153,57 @@ function ComboboxButton({
   children,
   ...props
 }: React.ComponentProps<typeof Button> & {
-  placeholder?: string
-  clearable?: boolean
-  onClear?: () => void
-  selectedLabel?: string | React.ReactNode
+  placeholder?: string;
+  clearable?: boolean;
+  onClear?: () => void;
+  selectedLabel?: string | React.ReactNode;
 }) {
   const handleClear = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    onClear?.()
-  }
+    e.preventDefault();
+    e.stopPropagation();
+    onClear?.();
+  };
 
   return (
-    <Button
-      variant="outline"
-      role="combobox"
-      data-slot="combobox-button"
-      className={cn(
-        "w-full justify-between font-normal",
-        !selectedLabel && "text-muted-foreground",
-        className
-      )}
-      {...props}
-    >
-      <div className="flex-1 text-start truncate">
-        {selectedLabel || placeholder}
-      </div>
-      <div className="flex items-center gap-1 shrink-0">
-        {clearable && selectedLabel && (
-          <X
-            className="h-4 w-4 text-muted-foreground hover:text-foreground cursor-pointer"
-            onClick={handleClear}
-          />
+    <ButtonGroup className="text-lg md:text-base">
+      <Button
+        variant="outline"
+        role="combobox"
+        data-slot="combobox-button"
+        className={cn(
+          "w-6/7",
+          !selectedLabel && "text-muted-foreground",
+          className,
         )}
-        <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
-      </div>
-    </Button>
-  )
+        {...props}
+      >
+        <div className="flex-1 text-start truncate">
+          {selectedLabel || placeholder}
+        </div>
+        <div className="flex items-center gap-1 shrink-0">
+          <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+        </div>
+      </Button>
+      {clearable && (
+        <Button
+          size="icon"
+          className="w-1/7"
+          onClick={(event) => {
+            event.stopPropagation();
+            handleClear(event);
+          }}
+          variant="outline"
+          disabled={!selectedLabel}
+        >
+          <X className="h-2 w-2 text-muted-foreground hover:text-foreground cursor-pointer" />
+        </Button>
+      )}
+    </ButtonGroup>
+  );
 }
 
-function ComboboxCommand({
-  ...props
-}: React.ComponentProps<typeof Command>) {
-  return <Command data-slot="combobox-command" {...props} />
+function ComboboxCommand({ ...props }: React.ComponentProps<typeof Command>) {
+  return <Command data-slot="combobox-command" {...props} />;
 }
 
 function ComboboxInput({
@@ -197,7 +211,7 @@ function ComboboxInput({
   onValueChange,
   ...props
 }: React.ComponentProps<typeof CommandInput> & {
-  onValueChange?: (value: string) => void
+  onValueChange?: (value: string) => void;
 }) {
   return (
     <CommandInput
@@ -206,13 +220,11 @@ function ComboboxInput({
       onValueChange={onValueChange}
       {...props}
     />
-  )
+  );
 }
 
-function ComboboxList({
-  ...props
-}: React.ComponentProps<typeof CommandList>) {
-  return <CommandList data-slot="combobox-list" {...props} />
+function ComboboxList({ ...props }: React.ComponentProps<typeof CommandList>) {
+  return <CommandList data-slot="combobox-list" {...props} />;
 }
 
 function ComboboxEmpty({
@@ -223,7 +235,7 @@ function ComboboxEmpty({
     <CommandEmpty data-slot="combobox-empty" {...props}>
       {children}
     </CommandEmpty>
-  )
+  );
 }
 
 function ComboboxLoading({
@@ -234,13 +246,13 @@ function ComboboxLoading({
     <CommandEmpty data-slot="combobox-loading" {...props}>
       {children}
     </CommandEmpty>
-  )
+  );
 }
 
 function ComboboxGroup({
   ...props
 }: React.ComponentProps<typeof CommandGroup>) {
-  return <CommandGroup data-slot="combobox-group" {...props} />
+  return <CommandGroup data-slot="combobox-group" {...props} />;
 }
 
 function ComboboxItem({
@@ -252,25 +264,25 @@ function ComboboxItem({
   searchValue,
   value,
   ...props
-}: Omit<React.ComponentProps<typeof CommandItem>, 'value'> & {
-  selected?: boolean
-  id?: string
-  searchValue?: string
-  value?: string
+}: Omit<React.ComponentProps<typeof CommandItem>, "value"> & {
+  selected?: boolean;
+  id?: string;
+  searchValue?: string;
+  value?: string;
 }) {
-  const { setOpen } = useComboboxContext()
+  const { setOpen } = useComboboxContext();
 
   // Use id as primary value for unique identification, fallback to value for backward compatibility
-  const itemValue = id || value
+  const itemValue = id || value;
 
   // If searchValue is provided, use it for keywords; otherwise use the value
-  const keywords = searchValue ? [searchValue] : undefined
+  const keywords = searchValue ? [searchValue] : undefined;
 
   const handleSelect = (value: string) => {
-    onSelect?.(value)
+    onSelect?.(value);
     // Add a small delay for smooth closing animation
-    setTimeout(() => setOpen(false), 150)
-  }
+    setTimeout(() => setOpen(false), 150);
+  };
 
   return (
     <CommandItem
@@ -283,17 +295,12 @@ function ComboboxItem({
     >
       <div className="flex items-center w-full">
         <Check
-          className={cn(
-            "mr-2 h-4 w-4",
-            selected ? "opacity-100" : "opacity-0"
-          )}
+          className={cn("mr-2 h-4 w-4", selected ? "opacity-100" : "opacity-0")}
         />
-        <div className="flex-1">
-          {children}
-        </div>
+        <div className="flex-1">{children}</div>
       </div>
     </CommandItem>
-  )
+  );
 }
 
 function ComboboxSeparator({
@@ -306,7 +313,7 @@ function ComboboxSeparator({
       className={cn("border-b mx-2", className)}
       {...props}
     />
-  )
+  );
 }
 
 export {
@@ -322,4 +329,4 @@ export {
   ComboboxGroup,
   ComboboxItem,
   ComboboxSeparator,
-}
+};

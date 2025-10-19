@@ -13,7 +13,6 @@ export default function NewLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
   const { data: session, isPending } = authClient.useSession()
-
   if (!session && !isPending) {
     router.push('/login') // back to  login
   }
@@ -128,7 +127,7 @@ export default function NewLayout({ children }: { children: React.ReactNode }) {
           }}
         />
       </DashboardLayout>
-      <Toaster richColors position="bottom-right" dir="rtl" />
+      <Toaster richColors position="top-center" dir="rtl" />
     </>
   )
 }
