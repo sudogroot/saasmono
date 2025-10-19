@@ -5,7 +5,7 @@ import { dirname } from 'path'
 import PDFDocument from 'pdfkit'
 import type { LatePassConfig, LatePassTicket } from '@/types/late-pass-ticket'
 import { qrCodeGenerator } from './qr-code-generator'
-import { formatTime } from './date'
+import { formatDateTime, formatTime } from './date'
 
 // ES module equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url)
@@ -167,7 +167,7 @@ export class LatePassTicketPDFGenerator {
 
     currentY += 20
 
-    const classTime = `${formatTime(ticket.timetable.startDateTime)} - ${formatTime(ticket.timetable.endDateTime)}`
+    const classTime = `${formatTime(ticket.timetable.endDateTime)} - ${formatTime(ticket.timetable.startDateTime)}`
 
     doc
       .font('Cairo')
@@ -189,7 +189,7 @@ export class LatePassTicketPDFGenerator {
       .font('Cairo')
       .text('الإصدار: تاريخ', contentX, currentY, { align: 'right' })
       .text(
-        formatTime(ticket.issuedAt),
+        formatDateTime(ticket.issuedAt),
         margin,
         currentY,
         { align: 'right', width: contentX - margin - 10 }
@@ -202,7 +202,7 @@ export class LatePassTicketPDFGenerator {
       .text('الصلاحية: تنتهي', contentX, currentY, { align: 'right' })
       .fillColor('#dc2626')
       .text(
-        formatTime(ticket.expiresAt),
+        formatDateTime(ticket.expiresAt),
         margin,
         currentY,
         { align: 'right', width: contentX - margin - 10 }
