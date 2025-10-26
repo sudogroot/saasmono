@@ -135,18 +135,11 @@ export function LatePassTicketsTable({ onGenerateNew }: LatePassTicketsTableProp
   }
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('ar-SA', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
+    return formatTime(date)
   }
 
   const formatTime = (date: Date) => {
-    return new Date(date).toLocaleTimeString('ar-SA', {
-      hour: '2-digit',
-      minute: '2-digit',
-    })
+    return new Date(date)
   }
 
   const columns = useMemo(
