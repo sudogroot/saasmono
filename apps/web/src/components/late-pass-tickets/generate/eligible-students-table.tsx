@@ -27,6 +27,7 @@ import { toast } from 'sonner'
 import { CancelTicketDialog } from '../cancel-ticket-dialog'
 import { ClassroomFilter } from './classroom-filter'
 import { TimetableSelectionDialog } from './timetable-selection-dialog'
+import { formatTime } from '@/lib/date'
 
 type AttendanceStatus = 'ABSENT' | 'EXCUSED' | 'SICK'
 
@@ -163,11 +164,7 @@ export function EligibleStudentsTable({
   }
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('ar-SA', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
+    return formatTime(date)
   }
 
   const columns = useMemo(

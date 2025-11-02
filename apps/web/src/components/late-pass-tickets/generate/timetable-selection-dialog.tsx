@@ -145,19 +145,11 @@ export function TimetableSelectionDialog({
   }
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('ar-SA', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
+    return formatTime(date)
   }
 
   const formatTime = (date: Date) => {
-    return new Date(date).toLocaleTimeString('ar-SA', {
-      hour: '2-digit',
-      minute: '2-digit',
-    })
+    return formatTime(date)
   }
 
   return (
