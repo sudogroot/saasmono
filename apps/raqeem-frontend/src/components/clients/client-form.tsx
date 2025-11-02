@@ -8,6 +8,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { globalSheet } from '@/stores/global-sheet-store'
 // import type { ClientData, Client } from '../../../../server/src/types/clients';
 import { orpc } from '@/utils/orpc'
+import { getErrorMessage } from '@/utils/error-utils'
 import {
   Field,
   FieldError,
@@ -18,9 +19,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@repo/ui'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Phone, Save, User } from 'lucide-react'
 import { toast } from 'sonner'
+import { z } from 'zod'
 import { EntityBadge } from '../base/entity-badge'
+
+const clientFormSchema = z.object({
+  name: z.string().min(1, 'اسم العميل مطلوب'),
+  nationalId: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().email('البريد الإلكتروني غير صحيح').optional().or(z.literal('')),
+  clientType: z.enum(['individual', 'company', 'institution', 'organization', 'government', 'association'], {
+    errorMap: () => ({ message: 'نوع العميل مطلوب' }),
+  }),
+})
+
+type ClientFormData = z.infer<typeof clientFormSchema>
 
 interface ClientFormProps {
   initialData?: Partial<any> // client type
@@ -34,8 +49,8 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
   const isEditing = !!clientId
   const queryClient = useQueryClient()
 
-  const form = useForm({
-    // resolver: zodResolver(clientFormSchema),
+  const form = useForm<ClientFormData>({
+    resolver: zodResolver(clientFormSchema),
     defaultValues: {
       name: initialData?.name || '',
       nationalId: initialData?.nationalId || '',
@@ -69,7 +84,8 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
         }
       },
       onError: (error: any) => {
-        toast.error(`حدث خطأ: ${error.message}`)
+        const errorMessage = getErrorMessage(error)
+        toast.error(errorMessage)
       },
       onSettled: () => {
         setIsSubmitting(false)
@@ -101,7 +117,8 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
         }
       },
       onError: (error: any) => {
-        toast.error(`حدث خطأ: ${error.message}`)
+        const errorMessage = getErrorMessage(error)
+        toast.error(errorMessage)
       },
       onSettled: () => {
         setIsSubmitting(false)

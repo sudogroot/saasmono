@@ -3,6 +3,7 @@
 import { globalSheet } from '@/stores/global-sheet-store'
 import type { OpponentListItem } from '@/types'
 import { orpc } from '@/utils/orpc'
+import { getErrorMessage } from '@/utils/error-utils'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -82,7 +83,8 @@ export function OpponentsTable({
         setDeletingOpponentId(null)
       },
       onError: (error: any) => {
-        toast.error(`حدث خطأ: ${error.message}`)
+        const errorMessage = getErrorMessage(error)
+        toast.error(errorMessage)
       },
     }),
   })

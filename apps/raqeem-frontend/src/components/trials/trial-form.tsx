@@ -1,6 +1,7 @@
 'use client'
 
 import { orpc } from '@/utils/orpc'
+import { getErrorMessage } from '@/utils/error-utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Badge, Button, Field, FieldError, FieldLabel, Heading, Input, SearchSelect } from '@repo/ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -12,7 +13,10 @@ import { z } from 'zod'
 
 const trialFormSchema = z.object({
   caseId: z.string().min(1, 'يجب اختيار قضية'),
-  trialNumber: z.number().int().min(1, 'رقم الجلسة مطلوب'),
+  trialNumber: z.number({
+    required_error: 'رقم الجلسة مطلوب',
+    invalid_type_error: 'رقم الجلسة يجب أن يكون رقماً',
+  }).int('رقم الجلسة يجب أن يكون رقماً صحيحاً').min(1, 'رقم الجلسة يجب أن يكون أكبر من 0'),
   courtId: z.string().min(1, 'يجب اختيار محكمة'),
   trialDate: z.string().min(1, 'تاريخ الجلسة مطلوب'),
   trialTime: z.string().min(1, 'وقت الجلسة مطلوب'),
@@ -92,7 +96,8 @@ export function TrialForm({ initialData, trialId, caseId, presetData, onSuccess,
         onSuccess?.(data)
       },
       onError: (error: any) => {
-        toast.error(`حدث خطأ: ${error.message}`)
+        const errorMessage = getErrorMessage(error)
+        toast.error(errorMessage)
       },
       onSettled: () => {
         setIsSubmitting(false)
@@ -113,7 +118,8 @@ export function TrialForm({ initialData, trialId, caseId, presetData, onSuccess,
         onSuccess?.(data)
       },
       onError: (error: any) => {
-        toast.error(`حدث خطأ: ${error.message}`)
+        const errorMessage = getErrorMessage(error)
+        toast.error(errorMessage)
       },
       onSettled: () => {
         setIsSubmitting(false)

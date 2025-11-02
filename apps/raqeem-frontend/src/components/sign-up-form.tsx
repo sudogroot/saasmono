@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import z from 'zod'
 import Loader from './loader'
+import { getErrorMessage } from '@/utils/error-utils'
 
 export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) {
   const router = useRouter()
@@ -41,7 +42,8 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
             toast.success('Sign up successful')
           },
           onError: (error) => {
-            toast.error(error.error.message || error.error.statusText)
+            const errorMessage = getErrorMessage(error)
+            toast.error(errorMessage)
           },
         }
       )

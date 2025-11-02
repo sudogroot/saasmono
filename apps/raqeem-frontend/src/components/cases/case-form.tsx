@@ -3,6 +3,7 @@
 import { globalSheet } from '@/stores/global-sheet-store'
 import { useSheetFormState } from '@/stores/sheet-form-state-store'
 import { orpc } from '@/utils/orpc'
+import { getErrorMessage } from '@/utils/error-utils'
 import {
   Button,
   Field,
@@ -25,6 +26,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { EntityBadge } from '../base/entity-badge'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 const caseFormSchema = z.object({
   caseNumber: z.string().min(1, 'رقم القضية مطلوب'),
@@ -46,12 +48,16 @@ const caseFormSchema = z.object({
       'closed',
       'withdrawn',
       'suspended',
-    ])
+    ], {
+      errorMap: () => ({ message: 'حالة القضية مطلوبة' }),
+    })
     .default('new'),
-  priority: z.enum(['low', 'normal', 'medium', 'high', 'urgent', 'critical']).default('medium'),
+  priority: z.enum(['low', 'normal', 'medium', 'high', 'urgent', 'critical'], {
+    errorMap: () => ({ message: 'الأولوية مطلوبة' }),
+  }).default('medium'),
 })
 
-// type CaseFormData = z.infer<typeof caseFormSchema>
+type CaseFormData = z.infer<typeof caseFormSchema>
 
 interface CaseFormProps {
   initialData?: Partial<any>
@@ -88,8 +94,8 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
     enabled: isEditing && !initialData, // Only fetch if editing and no initialData provided
   })
 
-  const form = useForm({
-    // resolver: zodResolver(caseFormSchema),
+  const form = useForm<CaseFormData>({
+    resolver: zodResolver(caseFormSchema),
     defaultValues: savedFormState || {
       caseNumber: initialData?.caseNumber || '',
       caseTitle: initialData?.caseTitle || '',
@@ -162,7 +168,8 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
         }
       },
       onError: (error: any) => {
-        toast.error(`حدث خطأ: ${error.message}`)
+        const errorMessage = getErrorMessage(error)
+        toast.error(errorMessage)
       },
       onSettled: () => {
         setIsSubmitting(false)
@@ -194,7 +201,8 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
         }
       },
       onError: (error: any) => {
-        toast.error(`حدث خطأ: ${error.message}`)
+        const errorMessage = getErrorMessage(error)
+        toast.error(errorMessage)
       },
       onSettled: () => {
         setIsSubmitting(false)

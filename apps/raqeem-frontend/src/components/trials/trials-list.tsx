@@ -36,6 +36,7 @@ import {
 } from "@repo/ui";
 import { TrialForm } from "./trial-form";
 import { orpc } from "@/utils/orpc";
+import { getErrorMessage } from "@/utils/error-utils";
 import { 
   Plus, 
   Calendar, 
@@ -74,7 +75,8 @@ export function TrialsList({}: TrialsListProps) {
         setDeletingTrialId(null);
       },
       onError: (error: any) => {
-        toast.error(`حدث خطأ: ${error.message}`);
+        const errorMessage = getErrorMessage(error);
+        toast.error(errorMessage);
       },
     }),
   });

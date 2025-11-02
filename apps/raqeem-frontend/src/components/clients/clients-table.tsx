@@ -2,6 +2,7 @@
 
 import { globalSheet } from '@/stores/global-sheet-store'
 import { orpc } from '@/utils/orpc'
+import { getErrorMessage } from '@/utils/error-utils'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -82,7 +83,8 @@ export function ClientsTable({
         setDeletingClientId(null)
       },
       onError: (error: any) => {
-        toast.error(`حدث خطأ: ${error.message}`)
+        const errorMessage = getErrorMessage(error)
+        toast.error(errorMessage)
       },
     }),
   })

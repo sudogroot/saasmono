@@ -33,6 +33,7 @@ import { useMemo, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { globalSheet } from '@/stores/global-sheet-store'
 import { orpc } from '@/utils/orpc'
+import { getErrorMessage } from '@/utils/error-utils'
 import { Calendar, Clock, Edit, Eye, Gavel, MoreHorizontal, Plus, Trash2, Users } from 'lucide-react'
 import { format, isToday, isTomorrow, isThisWeek, isThisMonth, isPast, isFuture } from 'date-fns'
 import { ar } from 'date-fns/locale'
@@ -109,7 +110,8 @@ export function TrialsTable({
         setDeletingTrialId(null)
       },
       onError: (error: any) => {
-        toast.error(`حدث خطأ: ${error.message}`)
+        const errorMessage = getErrorMessage(error)
+        toast.error(errorMessage)
       },
     }),
   })

@@ -4,6 +4,7 @@ import { useForm } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import z from 'zod'
 import Loader from './loader'
+import { getErrorMessage } from '@/utils/error-utils'
 
 import { Lock, Mail, Plus } from 'lucide-react'
 import Image from 'next/image'
@@ -36,7 +37,8 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
             toast.success('Sign in successful')
           },
           onError: (error) => {
-            toast.error(error.error.message || error.error.statusText)
+            const errorMessage = getErrorMessage(error)
+            toast.error(errorMessage)
           },
         }
       )

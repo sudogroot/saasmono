@@ -2,6 +2,7 @@
 
 import type { Opponent } from '@/types'
 import { orpc } from '@/utils/orpc'
+import { getErrorMessage } from '@/utils/error-utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Button,
@@ -30,7 +31,9 @@ import { EntityBadge } from '../base/entity-badge'
 const opponentFormSchema = z.object({
   name: z.string().min(1, 'اسم الخصم مطلوب'),
   opponentType: z
-    .enum(['individual', 'company', 'institution', 'organization', 'government', 'association'])
+    .enum(['individual', 'company', 'institution', 'organization', 'government', 'association'], {
+      errorMap: () => ({ message: 'نوع الخصم مطلوب' }),
+    })
     .default('individual'),
 })
 
@@ -49,7 +52,7 @@ export function OpponentForm({ initialData, opponentId, onSuccess, onCancel }: O
   const queryClient = useQueryClient()
 
   const form = useForm<OpponentFormData>({
-    resolver: zodResolver(opponentFormSchema) as any,
+    resolver: zodResolver(opponentFormSchema),
     defaultValues: {
       name: initialData?.name || '',
       opponentType: initialData?.opponentType || 'individual',
@@ -65,7 +68,8 @@ export function OpponentForm({ initialData, opponentId, onSuccess, onCancel }: O
         onSuccess?.(data)
       },
       onError: (error: any) => {
-        toast.error(`حدث خطأ: ${error.message}`)
+        const errorMessage = getErrorMessage(error)
+        toast.error(errorMessage)
       },
       onSettled: () => {
         setIsSubmitting(false)
@@ -84,7 +88,8 @@ export function OpponentForm({ initialData, opponentId, onSuccess, onCancel }: O
         onSuccess?.(data)
       },
       onError: (error: any) => {
-        toast.error(`حدث خطأ: ${error.message}`)
+        const errorMessage = getErrorMessage(error)
+        toast.error(errorMessage)
       },
       onSettled: () => {
         setIsSubmitting(false)
@@ -112,7 +117,7 @@ export function OpponentForm({ initialData, opponentId, onSuccess, onCancel }: O
   }
 
   return (
-      <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {/* Basic Information */}
         <Card>
           <CardHeader>
@@ -123,7 +128,7 @@ export function OpponentForm({ initialData, opponentId, onSuccess, onCancel }: O
           </CardHeader>
           <CardContent className="space-y-4">
             <Controller
-              control={form.control as any}
+              control={form.control}
               name="name"
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
@@ -140,7 +145,7 @@ export function OpponentForm({ initialData, opponentId, onSuccess, onCancel }: O
             />
 
             <Controller
-              control={form.control as any}
+              control={form.control}
               name="opponentType"
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>

@@ -22,6 +22,7 @@ import {
 } from '@repo/ui'
 // import type { Case } from '@/types'
 import { orpc } from '@/utils/orpc'
+import { getErrorMessage } from '@/utils/error-utils'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   createColumnHelper,
@@ -100,7 +101,8 @@ export function CasesTable({
         setDeletingCaseId(null)
       },
       onError: (error: any) => {
-        toast.error(`حدث خطأ: ${error.message}`)
+        const errorMessage = getErrorMessage(error)
+        toast.error(errorMessage)
       },
     }),
   })
