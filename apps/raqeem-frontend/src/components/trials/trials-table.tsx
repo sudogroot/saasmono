@@ -133,9 +133,10 @@ export function TrialsTable({
       columnHelper.accessor('trialNumber', {
         id: 'trialNumber',
         header: 'رقم الجلسة',
+        size: 100,
         cell: ({ getValue }) => (
           <div className="flex items-center gap-2">
-            <div className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full">
+            <div className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full shrink-0">
               <span className="text-sm font-bold">#{getValue()}</span>
             </div>
           </div>
@@ -144,49 +145,53 @@ export function TrialsTable({
       columnHelper.accessor('caseNumber', {
         id: 'case',
         header: 'القضية',
+        size: 250,
         cell: ({ row }) => (
-          <div>
-            <div className="text-foreground font-medium">{row.original.caseNumber}</div>
-            <div className="text-muted-foreground text-sm">{row.original.caseTitle}</div>
+          <div className="min-w-0 max-w-[250px] overflow-hidden">
+            <div className="text-foreground font-medium truncate">{row.original.caseNumber}</div>
+            <div className="text-muted-foreground text-sm truncate">{row.original.caseTitle}</div>
           </div>
         ),
       }),
       columnHelper.accessor('clientName', {
         id: 'client',
         header: 'العميل',
+        size: 150,
         cell: ({ getValue }) => (
-          <div className="flex items-center gap-2">
-            <Users className="text-muted-foreground h-4 w-4" />
-            <span>{getValue()}</span>
+          <div className="flex items-center gap-2 min-w-0 max-w-[150px]">
+            <Users className="text-muted-foreground h-4 w-4 shrink-0" />
+            <span className="truncate">{getValue()}</span>
           </div>
         ),
       }),
       columnHelper.accessor('courtName', {
         id: 'court',
         header: 'المحكمة',
+        size: 150,
         cell: ({ getValue }) => (
-          <div className="flex items-center gap-2">
-            <Gavel className="text-muted-foreground h-4 w-4" />
-            <span className="text-sm">{getValue()}</span>
+          <div className="flex items-center gap-2 min-w-0 max-w-[150px]">
+            <Gavel className="text-muted-foreground h-4 w-4 shrink-0" />
+            <span className="text-sm truncate">{getValue()}</span>
           </div>
         ),
       }),
       columnHelper.accessor('trialDateTime', {
         id: 'datetime',
         header: 'التاريخ والوقت',
+        size: 180,
         cell: ({ getValue }) => {
           const date = new Date(getValue())
           const timeBadge = getTrialTimeBadge(date)
 
           return (
-            <div className="space-y-1">
+            <div className="space-y-1 min-w-0">
               <div className="flex items-center gap-2 text-sm">
-                <Calendar className="text-muted-foreground h-3.5 w-3.5" />
-                <span>{format(date, 'dd MMM yyyy', { locale: ar })}</span>
+                <Calendar className="text-muted-foreground h-3.5 w-3.5 shrink-0" />
+                <span className="whitespace-nowrap">{format(date, 'dd MMM yyyy', { locale: ar })}</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
-                <Clock className="text-muted-foreground h-3.5 w-3.5" />
-                <span>{format(date, 'hh:mm a', { locale: ar })}</span>
+                <Clock className="text-muted-foreground h-3.5 w-3.5 shrink-0" />
+                <span className="whitespace-nowrap">{format(date, 'hh:mm a', { locale: ar })}</span>
               </div>
               <Badge variant="outline" className={cn('text-xs', timeBadge.className)}>
                 {timeBadge.label}
@@ -198,6 +203,7 @@ export function TrialsTable({
       columnHelper.display({
         id: 'actions',
         header: 'الإجراءات',
+        size: 80,
         cell: ({ row }) => {
           const trial = row.original
 

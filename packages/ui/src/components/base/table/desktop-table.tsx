@@ -98,9 +98,8 @@ export function DesktopTable<TData>({
         {headerActions && <div>{headerActions}</div>}
       </div>
 
-      <div className="rounded-md border">
-        <div className="overflow-x-auto">
-          <Table dir={dir || "rtl"}>
+      <div className="rounded-md border overflow-hidden">
+          <Table dir={dir || "rtl"} className="table-fixed min-w-full">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
@@ -182,7 +181,6 @@ export function DesktopTable<TData>({
               )}
             </TableBody>
           </Table>
-        </div>
 
         {showPagination && (
           <>

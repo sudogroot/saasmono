@@ -106,12 +106,13 @@ export function ClientsTable({
       columnHelper.accessor('name', {
         id: 'client',
         header: 'العميل',
+        size: 250,
         cell: ({ row }) => (
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-3 min-w-0 max-w-[250px]">
+            <div className="min-w-0 flex-1 overflow-hidden">
               <div className="text-foreground font-medium truncate">{row.original.name}</div>
               {row.original.nationalId && (
-                <div className="flex justify-items-center gap-2">
+                <div className="flex justify-items-center gap-2 min-w-0">
                   <Text variant="muted" size="xs" className="truncate">
                     الهوية: {row.original.nationalId}
                   </Text>
@@ -124,23 +125,25 @@ export function ClientsTable({
       columnHelper.accessor('clientType', {
         id: 'type',
         header: 'النوع',
+        size: 120,
         cell: ({ getValue }) => <EntityBadge type="entityType" value={getValue()} />,
       }),
       columnHelper.display({
         id: 'contact',
         header: 'معلومات الاتصال',
+        size: 200,
         cell: ({ row }) => (
-          <div className="space-y-1">
+          <div className="space-y-1 min-w-0 max-w-[200px]">
             {row.original.phone && (
-              <div className="flex items-center gap-2 text-sm">
-                <Phone className="text-muted-foreground h-3 w-3" />
-                <span className="font-mono">{row.original.phone}</span>
+              <div className="flex items-center gap-2 text-sm min-w-0">
+                <Phone className="text-muted-foreground h-3 w-3 shrink-0" />
+                <span className="font-mono truncate">{row.original.phone}</span>
               </div>
             )}
             {row.original.email && (
-              <div className="flex items-center gap-2 text-sm">
-                <Mail className="text-muted-foreground h-3 w-3" />
-                <span className="max-w-[150px] truncate">{row.original.email}</span>
+              <div className="flex items-center gap-2 text-sm min-w-0">
+                <Mail className="text-muted-foreground h-3 w-3 shrink-0" />
+                <span className="truncate">{row.original.email}</span>
               </div>
             )}
           </div>
@@ -149,10 +152,11 @@ export function ClientsTable({
       columnHelper.accessor('createdAt', {
         id: 'created_at',
         header: 'تاريخ الإضافة',
+        size: 130,
         cell: ({ getValue }) => (
-          <div className="flex gap-2">
-            <CalendarCheck className="h-4 w-4" />
-            <Text size="xs">
+          <div className="flex gap-2 items-center min-w-0">
+            <CalendarCheck className="h-4 w-4 shrink-0" />
+            <Text size="xs" className="whitespace-nowrap">
               {new Date(getValue()).toLocaleDateString('ar-TN', {
                 year: 'numeric',
                 month: 'short',
@@ -165,6 +169,7 @@ export function ClientsTable({
       columnHelper.display({
         id: 'actions',
         header: 'الإجراءات',
+        size: 80,
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
             <DropdownMenu>

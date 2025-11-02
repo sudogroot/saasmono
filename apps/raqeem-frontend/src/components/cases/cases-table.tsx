@@ -124,12 +124,13 @@ export function CasesTable({
       columnHelper.accessor('caseTitle', {
         id: 'case',
         header: 'القضية',
+        size: 300,
         cell: ({ row }) => (
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-3 min-w-0 max-w-[300px]">
+            <div className="min-w-0 flex-1 overflow-hidden">
               <div className="text-foreground font-medium truncate">{row.original.caseTitle}</div>
               {row.original.caseSubject && (
-                <div className="flex justify-items-center gap-2">
+                <div className="flex justify-items-center gap-2 min-w-0">
                   <Text variant="muted" size="xs" className="truncate">
                     {row.original.caseSubject}
                   </Text>
@@ -142,40 +143,45 @@ export function CasesTable({
       columnHelper.accessor('caseStatus', {
         id: 'status',
         header: 'الحالة',
+        size: 120,
         cell: ({ getValue }) => <EntityBadge type="caseStatus" value={getValue()} />,
       }),
       columnHelper.accessor('priority', {
         id: 'priority',
         header: 'الأولوية',
+        size: 100,
         cell: ({ getValue }) => <EntityBadge type="priority" value={getValue()} />,
       }),
       columnHelper.display({
         id: 'client',
         header: 'العميل',
+        size: 150,
         cell: ({ row }) => (
-          <div className="flex items-center gap-2">
-            <Users className="text-muted-foreground h-4 w-4" />
-            <ValueText fallbackText="غير محدد" className="text-sm" value={row.original.clientName} />
+          <div className="flex items-center gap-2 min-w-0 max-w-[150px]">
+            <Users className="text-muted-foreground h-4 w-4 shrink-0" />
+            <ValueText fallbackText="غير محدد" className="text-sm truncate" value={row.original.clientName} />
           </div>
         ),
       }),
       columnHelper.display({
         id: 'opponent',
         header: 'الخصم',
+        size: 150,
         cell: ({ row }) => (
-          <div className="flex items-center gap-2">
-            <Users className="text-muted-foreground h-4 w-4" />
-            <ValueText fallbackText="غير محدد" className="text-sm" value={row.original.opponentName} />
+          <div className="flex items-center gap-2 min-w-0 max-w-[150px]">
+            <Users className="text-muted-foreground h-4 w-4 shrink-0" />
+            <ValueText fallbackText="غير محدد" className="text-sm truncate" value={row.original.opponentName} />
           </div>
         ),
       }),
       columnHelper.accessor('createdAt', {
         id: 'created_at',
         header: 'تاريخ الإضافة',
+        size: 130,
         cell: ({ getValue }) => (
-          <div className="flex gap-2">
-            <CalendarCheck className="h-4 w-4" />
-            <Text size="xs">
+          <div className="flex gap-2 items-center min-w-0">
+            <CalendarCheck className="h-4 w-4 shrink-0" />
+            <Text size="xs" className="whitespace-nowrap">
               {new Date(getValue()).toLocaleDateString('ar-TN', {
                 year: 'numeric',
                 month: 'short',
@@ -188,6 +194,7 @@ export function CasesTable({
       columnHelper.display({
         id: 'actions',
         header: 'الإجراءات',
+        size: 80,
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
             <DropdownMenu>
