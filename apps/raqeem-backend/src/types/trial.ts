@@ -4,14 +4,11 @@ import { z } from 'zod'
 export const CreateTrialSchema = z.object({
   caseId: z.string().min(1),
   courtId: z.string().min(1),
-  trialNumber: z.number().int().positive(),
   trialDateTime: z.coerce.date(),
 })
 
 export const UpdateTrialSchema = z.object({
-  caseId: z.string().min(1).optional(),
   courtId: z.string().min(1).optional(),
-  trialNumber: z.number().int().positive().optional(),
   trialDateTime: z.coerce.date().optional(),
 })
 

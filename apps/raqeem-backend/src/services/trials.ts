@@ -1,4 +1,4 @@
-import { and, eq, isNull } from 'drizzle-orm'
+import { and, desc, eq, isNull } from 'drizzle-orm'
 import { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import { member, user } from '../db/schema/auth'
 import { cases } from '../db/schema/cases'
@@ -49,10 +49,23 @@ export class TrialService {
         throw new Error('Court not found')
       }
 
+      // Auto-generate trial number (including soft-deleted trials in count)
+      const existingTrials = await this.db
+        .select({ trialNumber: trials.trialNumber })
+        .from(trials)
+        .where(eq(trials.caseId, data.caseId))
+        .orderBy(desc(trials.trialNumber))
+        .limit(1)
+
+      const nextTrialNumber = existingTrials.length > 0 && existingTrials[0]
+        ? existingTrials[0].trialNumber + 1
+        : 1
+
       const [newTrial] = await this.db
         .insert(trials)
         .values({
           ...data,
+          trialNumber: nextTrialNumber,
           organizationId: orgId,
           createdBy: userId,
         })

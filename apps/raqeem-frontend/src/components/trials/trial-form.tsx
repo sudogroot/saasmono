@@ -6,17 +6,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Badge, Button, Field, FieldError, FieldLabel, Heading, Input, SearchSelect } from '@repo/ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Briefcase, Calendar, Clock, FileText, Gavel, Loader2, Save, User } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
 const trialFormSchema = z.object({
   caseId: z.string().min(1, 'يجب اختيار قضية'),
-  trialNumber: z.number({
-    required_error: 'رقم الجلسة مطلوب',
-    invalid_type_error: 'رقم الجلسة يجب أن يكون رقماً',
-  }).int('رقم الجلسة يجب أن يكون رقماً صحيحاً').min(1, 'رقم الجلسة يجب أن يكون أكبر من 0'),
   courtId: z.string().min(1, 'يجب اختيار محكمة'),
   trialDate: z.string().min(1, 'تاريخ الجلسة مطلوب'),
   trialTime: z.string().min(1, 'وقت الجلسة مطلوب'),
@@ -50,19 +46,11 @@ export function TrialForm({ initialData, trialId, caseId, presetData, onSuccess,
     resolver: zodResolver(trialFormSchema),
     defaultValues: {
       caseId: presetData?.caseId || caseId || initialData?.caseId || '',
-      trialNumber: initialData?.trialNumber || 1,
       courtId: presetData?.courtId || initialData?.courtId || '',
       trialDate: initialDate,
       trialTime: initialTime,
     },
   })
-
-  // Auto-generate trial number
-  useEffect(() => {
-    if (!isEditing) {
-      form.setValue('trialNumber', 1)
-    }
-  }, [isEditing, form])
 
   // Fetch courts for dropdown
   const { data: courts = [] } = useQuery({
@@ -136,7 +124,6 @@ export function TrialForm({ initialData, trialId, caseId, presetData, onSuccess,
 
       const submitData = {
         caseId: data.caseId,
-        trialNumber: data.trialNumber,
         courtId: data.courtId,
         trialDateTime,
       }
@@ -201,55 +188,30 @@ export function TrialForm({ initialData, trialId, caseId, presetData, onSuccess,
         </Heading>
       </div>
       <div className="space-y-4">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <Controller
-            control={form.control}
-            name="caseId"
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="case-select">القضية *</FieldLabel>
-                <SearchSelect
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  options={cases.map((caseItem: any) => ({
-                    id: caseItem.id,
-                    label: `${caseItem.caseNumber} - ${caseItem.caseTitle}`,
-                    searchLabel: `${caseItem.caseNumber} ${caseItem.caseTitle}`,
-                  }))}
-                  placeholder="اختر القضية"
-                  searchPlaceholder="ابحث عن قضية..."
-                  emptyMessage="لا توجد قضايا"
-                  disabled={!!(presetData?.caseId || caseId)}
-                  clearable={false}
-                />
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-              </Field>
-            )}
-          />
-
-          <Controller
-            control={form.control}
-            name="trialNumber"
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor={field.name}>رقم الجلسة *</FieldLabel>
-                <Input
-                  type="number"
-                  placeholder="رقم الجلسة"
-                  {...field}
-                  id={field.name}
-                  onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                  value={field.value || ''}
-                  disabled={isEditing}
-                  className="font-mono"
-                  aria-invalid={fieldState.invalid}
-                />
-                {isEditing && <p className="text-muted-foreground text-xs">لا يمكن تعديل رقم الجلسة</p>}
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-              </Field>
-            )}
-          />
-        </div>
+        <Controller
+          control={form.control}
+          name="caseId"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="case-select">القضية *</FieldLabel>
+              <SearchSelect
+                value={field.value}
+                onValueChange={field.onChange}
+                options={cases.map((caseItem: any) => ({
+                  id: caseItem.id,
+                  label: `${caseItem.caseNumber} - ${caseItem.caseTitle}`,
+                  searchLabel: `${caseItem.caseNumber} ${caseItem.caseTitle}`,
+                }))}
+                placeholder="اختر القضية"
+                searchPlaceholder="ابحث عن قضية..."
+                emptyMessage="لا توجد قضايا"
+                disabled={!!(presetData?.caseId || caseId)}
+                clearable={false}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
       </div>
 
       {/* Court Information */}
