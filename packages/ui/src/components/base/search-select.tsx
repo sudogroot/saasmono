@@ -15,6 +15,7 @@ import {
   ComboboxTrigger,
 } from "../ui/combobox";
 import { Plus } from "lucide-react";
+import { cn } from "../../lib/utils";
 
 export interface SearchSelectOption {
   id: string;
@@ -140,29 +141,31 @@ export function SearchSelect({
     .filter((group) => group.options.length > 0);
 
   const hasResults = filteredOptions.length > 0 || filteredGroups.length > 0;
-  const showCreateButton =
-    allowCreate && onCreateClick && searchValue && !hasResults;
+  const hasNoneOption = allowNone && !searchValue;
+  const canShowCreateButton = allowCreate && !!onCreateClick && !!searchValue && !hasResults && !isLoading;
+
   return (
-    <Combobox
-      open={open}
-      onOpenChange={(value) => {
-        setOpen(value);
-        setSearchValue("");
-        onSearchChange?.("");
-      }}
-    >
-      <ComboboxTrigger asChild>
-        <ComboboxButton
-          className={className}
-          placeholder={placeholder}
-          selectedLabel={selectedLabel}
-          clearable={clearable && !!value}
-          onClear={handleClear}
-          disabled={disabled}
-        />
-      </ComboboxTrigger>
+    <div className="w-full">
+      <Combobox
+        open={open}
+        onOpenChange={(value) => {
+          setOpen(value);
+          setSearchValue("");
+          onSearchChange?.("");
+        }}
+      >
+        <ComboboxTrigger asChild>
+          <ComboboxButton
+            className={className}
+            placeholder={placeholder}
+            selectedLabel={selectedLabel}
+            clearable={clearable && !!value}
+            onClear={handleClear}
+            disabled={disabled}
+          />
+        </ComboboxTrigger>
       <ComboboxContent>
-        <ComboboxCommand shouldFilter={false}>
+        <ComboboxCommand shouldFilter={false} filter={() => 1}>
           {searchable && (
             <ComboboxInput
               placeholder={searchPlaceholder}
@@ -171,16 +174,21 @@ export function SearchSelect({
           )}
           <ComboboxList>
             {isLoading ? (
-              <ComboboxEmpty>{loadingMessage}</ComboboxEmpty>
+              <div className="py-6 text-center text-sm text-muted-foreground">
+                {loadingMessage}
+              </div>
             ) : (
               <>
                 {/* None option */}
-                {allowNone && (
+                {hasNoneOption && (
                   <ComboboxItem
                     selected={value === "none"}
                     onSelect={() => handleSelect("none")}
+                    value="__none__"
                   >
-                    {noneLabel}
+                    <span className="block truncate overflow-hidden text-ellipsis whitespace-nowrap flex-1 min-w-0">
+                      {noneLabel}
+                    </span>
                   </ComboboxItem>
                 )}
 
@@ -188,14 +196,17 @@ export function SearchSelect({
                 {filteredOptions.map((option) => (
                   <ComboboxItem
                     key={option.id}
+                    value={option.id}
                     selected={value === option.id}
                     onSelect={() => handleSelect(option.id)}
                     disabled={option.disabled}
                   >
-                    <div className="flex flex-col">
-                      <span>{option.label}</span>
+                    <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
+                      <span className="truncate overflow-hidden text-ellipsis whitespace-nowrap block">
+                        {option.label}
+                      </span>
                       {option.metadata && (
-                        <span className="text-muted-foreground text-xs">
+                        <span className="text-muted-foreground text-xs truncate overflow-hidden text-ellipsis whitespace-nowrap block">
                           {option.metadata}
                         </span>
                       )}
@@ -212,14 +223,17 @@ export function SearchSelect({
                     {group.options.map((option) => (
                       <ComboboxItem
                         key={option.id}
+                        value={option.id}
                         selected={value === option.id}
                         onSelect={() => handleSelect(option.id)}
                         disabled={option.disabled}
                       >
-                        <div className="flex flex-col">
-                          <span>{option.label}</span>
+                        <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
+                          <span className="truncate overflow-hidden text-ellipsis whitespace-nowrap block">
+                            {option.label}
+                          </span>
                           {option.metadata && (
-                            <span className="text-muted-foreground text-xs">
+                            <span className="text-muted-foreground text-xs truncate overflow-hidden text-ellipsis whitespace-nowrap block">
                               {option.metadata}
                             </span>
                           )}
@@ -229,55 +243,40 @@ export function SearchSelect({
                   </ComboboxGroup>
                 ))}
 
-                {/* Empty state with create button */}
-                {!hasResults && !isLoading && (
-                  <div className="py-6 text-center">
-                    <p className="text-muted-foreground text-sm mb-3">
-                      {emptyMessage}
-                    </p>
-                    {showCreateButton && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setOpen(false);
-                          onCreateClick?.(searchValue);
-                        }}
-                        className="gap-2"
-                      >
-                        <Plus className="h-4 w-4" />
-                        {createLabel}
-                      </Button>
-                    )}
-                  </div>
-                )}
-
-                {/* No results but has items */}
-                {!hasResults &&
-                  !isLoading &&
-                  (options.length > 0 || groups.length > 0) &&
-                  !showCreateButton && (
-                    <ComboboxEmpty>{emptyMessage}</ComboboxEmpty>
+                {/* Always render ComboboxEmpty to prevent Command from auto-rendering its own */}
+                <ComboboxEmpty>
+                  {!hasResults && !hasNoneOption && (
+                    <div className="px-2 py-3">
+                      <div className="py-3 text-center">
+                        <p className="text-muted-foreground text-sm mb-3">
+                          {emptyMessage}
+                        </p>
+                        {canShowCreateButton && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setOpen(false);
+                              onCreateClick?.(searchValue);
+                            }}
+                            className="gap-2"
+                          >
+                            <Plus className="h-4 w-4" />
+                            {createLabel}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
                   )}
-                {showCreateButton && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setOpen(false);
-                      onCreateClick?.(searchValue);
-                    }}
-                    className="gap-2"
-                  >
-                    <Plus className="h-4 w-4" />
-                    {createLabel}
-                  </Button>
-                )}
+                </ComboboxEmpty>
               </>
             )}
           </ComboboxList>
         </ComboboxCommand>
       </ComboboxContent>
     </Combobox>
+    </div>
   );
 }
