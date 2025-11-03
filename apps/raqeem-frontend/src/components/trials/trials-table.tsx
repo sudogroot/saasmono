@@ -35,7 +35,7 @@ import { globalSheet } from '@/stores/global-sheet-store'
 import { orpc } from '@/utils/orpc'
 import { getErrorMessage } from '@/utils/error-utils'
 import { Calendar, Clock, Edit, Eye, Gavel, MoreHorizontal, Plus, Trash2, Users } from 'lucide-react'
-import { format, isToday, isTomorrow, isThisWeek, isThisMonth, isPast, isFuture } from 'date-fns'
+import { format, isToday, isTomorrow, isThisWeek, isThisMonth, isPast, isFuture, addWeeks, startOfDay, endOfDay } from 'date-fns'
 import { ar } from 'date-fns/locale'
 import { toast } from 'sonner'
 
@@ -266,8 +266,12 @@ export function TrialsTable({
     () => [
       {
         key: 'trialStatus',
-        label: 'حالة الجلسة',
+        label: 'الفترة الزمنية',
         values: [
+          { label: 'اليوم', value: 'today' },
+          { label: 'هذا الأسبوع', value: 'this_week' },
+          { label: 'الأسبوعين القادمين', value: 'next_2_weeks' },
+          { label: 'هذا الشهر', value: 'this_month' },
           { label: 'الجلسات القادمة', value: 'upcoming' },
           { label: 'الجلسات السابقة', value: 'past' },
           { label: 'جميع الجلسات', value: 'all' },
@@ -285,8 +289,19 @@ export function TrialsTable({
       filtered = filtered.filter((trial) => {
         const trialDate = new Date(trial.trialDateTime)
         const now = new Date()
+        const todayStart = startOfDay(now)
+        const todayEnd = endOfDay(now)
+        const twoWeeksFromNow = addWeeks(now, 2)
 
         switch (activeFilters.trialStatus) {
+          case 'today':
+            return isToday(trialDate)
+          case 'this_week':
+            return isThisWeek(trialDate, { weekStartsOn: 6 }) && (isFuture(trialDate) || isToday(trialDate))
+          case 'next_2_weeks':
+            return trialDate >= todayStart && trialDate <= twoWeeksFromNow
+          case 'this_month':
+            return isThisMonth(trialDate) && (isFuture(trialDate) || isToday(trialDate))
           case 'upcoming':
             return isFuture(trialDate) || isToday(trialDate)
           case 'past':
