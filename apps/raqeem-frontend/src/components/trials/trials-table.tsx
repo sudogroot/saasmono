@@ -94,7 +94,7 @@ export function TrialsTable({
   const queryClient = useQueryClient()
 
   const [searchValue, setSearchValue] = useState('')
-  const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
+  const [activeFilters, setActiveFilters] = useState<Record<string, string>>({ trialStatus: 'upcoming' })
   const [deletingTrialId, setDeletingTrialId] = useState<string | null>(null)
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -132,22 +132,11 @@ export function TrialsTable({
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('trialNumber', {
-        id: 'trialNumber',
-        header: 'رقم الجلسة',
-        size: 100,
-        cell: ({ getValue }) => (
-          <div className="flex items-center gap-2">
-            <div className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full shrink-0">
-              <span className="text-sm font-bold">#{getValue()}</span>
-            </div>
-          </div>
-        ),
-      }),
       columnHelper.accessor('caseNumber', {
         id: 'case',
         header: 'القضية',
         size: 250,
+        enableSorting: true,
         cell: ({ row }) => (
           <div className="min-w-0 max-w-[250px] overflow-hidden">
             <div className="text-foreground font-medium truncate">{row.original.caseNumber}</div>
@@ -159,6 +148,7 @@ export function TrialsTable({
         id: 'client',
         header: 'المنوب',
         size: 150,
+        enableSorting: true,
         cell: ({ getValue }) => (
           <div className="flex items-center gap-2 min-w-0 max-w-[150px]">
             <Users className="text-muted-foreground h-4 w-4 shrink-0" />
@@ -170,6 +160,7 @@ export function TrialsTable({
         id: 'court',
         header: 'المحكمة',
         size: 150,
+        enableSorting: true,
         cell: ({ getValue }) => (
           <div className="flex items-center gap-2 min-w-0 max-w-[150px]">
             <Gavel className="text-muted-foreground h-4 w-4 shrink-0" />
@@ -181,6 +172,8 @@ export function TrialsTable({
         id: 'datetime',
         header: 'التاريخ والوقت',
         size: 180,
+        enableSorting: true,
+        sortingFn: 'datetime',
         cell: ({ getValue }) => {
           const date = new Date(getValue())
           const timeBadge = getTrialTimeBadge(date)
@@ -272,15 +265,12 @@ export function TrialsTable({
   const filterConfigs = useMemo(
     () => [
       {
-        key: 'timeRange',
-        label: 'الوقت',
+        key: 'trialStatus',
+        label: 'حالة الجلسة',
         values: [
-          { label: 'اليوم', value: 'today' },
-          { label: 'غداً', value: 'tomorrow' },
-          { label: 'هذا الأسبوع', value: 'this-week' },
-          { label: 'هذا الشهر', value: 'this-month' },
+          { label: 'الجلسات القادمة', value: 'upcoming' },
           { label: 'الجلسات السابقة', value: 'past' },
-          { label: 'الجلسات القادمة', value: 'future' },
+          { label: 'جميع الجلسات', value: 'all' },
         ],
       },
     ],
@@ -290,24 +280,17 @@ export function TrialsTable({
   const filteredData = useMemo(() => {
     let filtered = trials
 
-    // Apply time range filter
-    if (activeFilters.timeRange) {
+    // Apply trial status filter (default: upcoming)
+    if (activeFilters.trialStatus && activeFilters.trialStatus !== 'all') {
       filtered = filtered.filter((trial) => {
         const trialDate = new Date(trial.trialDateTime)
+        const now = new Date()
 
-        switch (activeFilters.timeRange) {
-          case 'today':
-            return isToday(trialDate)
-          case 'tomorrow':
-            return isTomorrow(trialDate)
-          case 'this-week':
-            return isThisWeek(trialDate)
-          case 'this-month':
-            return isThisMonth(trialDate)
+        switch (activeFilters.trialStatus) {
+          case 'upcoming':
+            return isFuture(trialDate) || isToday(trialDate)
           case 'past':
             return isPast(trialDate) && !isToday(trialDate)
-          case 'future':
-            return isFuture(trialDate) || isToday(trialDate)
           default:
             return true
         }

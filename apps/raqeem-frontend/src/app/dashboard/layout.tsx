@@ -1,6 +1,7 @@
 'use client'
 
 import { drawerItems, mainNavItems, quickActions } from '@/components/layout/config'
+import { PWAInstallPrompt } from '@/components/pwa/install-prompt'
 import { raqeemDashboardSidebarData } from '@/config/dashboard-sidebar'
 import { useSheetUrlSync } from '@/hooks/use-sheet-url-sync'
 import { authClient } from '@/lib/auth-client'
@@ -128,6 +129,7 @@ export default function NewLayout({ children }: { children: React.ReactNode }) {
         />
       </DashboardLayout>
       <Toaster richColors position="top-center" dir="rtl" />
+      <PWAInstallPrompt />
     </>
   )
 }

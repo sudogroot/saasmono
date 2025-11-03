@@ -119,6 +119,7 @@ export function OpponentsTable({
       columnHelper.accessor('name', {
         id: 'opponent',
         header: 'الخصم',
+        enableSorting: true,
         cell: ({ row }) => (
           <div className="flex items-center gap-3 min-w-0">
             <div className="min-w-0 flex-1">
@@ -130,11 +131,14 @@ export function OpponentsTable({
       columnHelper.accessor('opponentType', {
         id: 'type',
         header: 'النوع',
+        enableSorting: true,
         cell: ({ getValue }) => <EntityBadge type="entityType" value={getValue()} />,
       }),
       columnHelper.accessor('createdAt', {
         id: 'created_at',
         header: 'تاريخ الإضافة',
+        enableSorting: true,
+        sortingFn: 'datetime',
         cell: ({ getValue }) => (
           <div className="flex gap-2">
             <CalendarCheck className="h-4 w-4" />

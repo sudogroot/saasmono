@@ -2,7 +2,7 @@
 
 import { flexRender } from "@tanstack/react-table";
 import { Checkbox } from "../../ui/checkbox";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -117,16 +117,40 @@ export function DesktopTable<TData>({
                       />
                     </TableHead>
                   )}
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  ))}
+                  {headerGroup.headers.map((header) => {
+                    const canSort = header.column.getCanSort();
+                    const isSorted = header.column.getIsSorted();
+
+                    return (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder ? null : (
+                          <div
+                            className={cn(
+                              "flex items-center gap-2",
+                              canSort && "cursor-pointer select-none hover:text-foreground transition-colors",
+                            )}
+                            onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
+                          >
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                            {canSort && (
+                              <div className="text-muted-foreground">
+                                {isSorted === "asc" ? (
+                                  <ArrowUp className="h-4 w-4" />
+                                ) : isSorted === "desc" ? (
+                                  <ArrowDown className="h-4 w-4" />
+                                ) : (
+                                  <ArrowUpDown className="h-4 w-4 opacity-50" />
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
               ))}
             </TableHeader>

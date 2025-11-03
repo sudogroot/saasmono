@@ -137,6 +137,7 @@ export function CasesTable({
         id: 'case',
         header: 'القضية',
         size: 300,
+        enableSorting: true,
         cell: ({ row }) => (
           <div className="flex items-center gap-3 min-w-0 max-w-[300px]">
             <div className="min-w-0 flex-1 overflow-hidden">
@@ -156,12 +157,14 @@ export function CasesTable({
         id: 'status',
         header: 'الحالة',
         size: 120,
+        enableSorting: true,
         cell: ({ getValue }) => <EntityBadge type="caseStatus" value={getValue()} />,
       }),
       columnHelper.accessor('priority', {
         id: 'priority',
         header: 'الأولوية',
         size: 100,
+        enableSorting: true,
         cell: ({ getValue }) => <EntityBadge type="priority" value={getValue()} />,
       }),
       columnHelper.display({
@@ -190,6 +193,8 @@ export function CasesTable({
         id: 'created_at',
         header: 'تاريخ الإضافة',
         size: 130,
+        enableSorting: true,
+        sortingFn: 'datetime',
         cell: ({ getValue }) => (
           <div className="flex gap-2 items-center min-w-0">
             <CalendarCheck className="h-4 w-4 shrink-0" />

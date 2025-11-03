@@ -119,6 +119,7 @@ export function ClientsTable({
         id: 'client',
         header: 'المنوب',
         size: 250,
+        enableSorting: true,
         cell: ({ row }) => (
           <div className="flex items-center gap-3 min-w-0 max-w-[250px]">
             <div className="min-w-0 flex-1 overflow-hidden">
@@ -138,6 +139,7 @@ export function ClientsTable({
         id: 'type',
         header: 'النوع',
         size: 120,
+        enableSorting: true,
         cell: ({ getValue }) => <EntityBadge type="entityType" value={getValue()} />,
       }),
       columnHelper.display({
@@ -165,6 +167,8 @@ export function ClientsTable({
         id: 'created_at',
         header: 'تاريخ الإضافة',
         size: 130,
+        enableSorting: true,
+        sortingFn: 'datetime',
         cell: ({ getValue }) => (
           <div className="flex gap-2 items-center min-w-0">
             <CalendarCheck className="h-4 w-4 shrink-0" />
