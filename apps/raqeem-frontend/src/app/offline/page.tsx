@@ -1,3 +1,5 @@
+'use client'
+
 import { Button, Card, Text } from '@repo/ui'
 import { WifiOff } from 'lucide-react'
 import Link from 'next/link'
