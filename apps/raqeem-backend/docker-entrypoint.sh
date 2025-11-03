@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+set -e  # Exit immediately if any command fails
 
 echo "Starting raqeem-backend..."
 
@@ -9,14 +9,21 @@ if [ -f "$DATABASE_URL_FILE" ]; then
   echo "Loaded DATABASE_URL from secret file"
 fi
 
-# Check if RUN_MIGRATIONS is set to true
-if [ "$RUN_MIGRATIONS" = "true" ]; then
-  echo "Running database migrations..."
-  pnpm db:migrate
-  echo "Migrations completed successfully"
-else
-  echo "Skipping migrations (RUN_MIGRATIONS not set to true)"
+# Verify DATABASE_URL is set
+if [ -z "$DATABASE_URL" ]; then
+  echo "ERROR: DATABASE_URL is not set. Cannot proceed with deployment."
+  exit 1
 fi
 
+# Always run migrations on deployment
+echo "Running database migrations..."
+if ! pnpm db:migrate; then
+  echo "ERROR: Database migrations failed!"
+  echo "Deployment cannot continue. Please check your migration files and database connection."
+  exit 1
+fi
+echo "✓ Migrations completed successfully"
+
+echo "Starting server..."
 # Execute the main command
 exec "$@"
