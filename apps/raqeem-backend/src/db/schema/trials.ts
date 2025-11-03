@@ -31,6 +31,9 @@ export const trials = pgTable(
     deletedBy: text('deleted_by').references(() => user.id),
   },
   (table) => [
+    // Unique constraint for trial number per case excluding soft-deleted records
+    unique('trials_case_trial_number_unique').on(table.caseId, table.trialNumber, table.deletedAt),
+
     // Indexes
     index('idx_trials_organization_id').on(table.organizationId),
     index('idx_trials_case_id').on(table.caseId),

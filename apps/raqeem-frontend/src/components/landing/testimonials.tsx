@@ -7,7 +7,7 @@ const problemsSolved = [
   {
     icon: Calendar,
     title: "لن تفوت موعداً مرة أخرى",
-    description: "تنبيهات تلقائية لجلسات المحكمة ولقاءات العملاء",
+    description: "تنبيهات تلقائية لجلسات المحكمة ولقاءات المنوبين",
     color: "text-blue-600",
     bgColor: "bg-blue-50"
   },

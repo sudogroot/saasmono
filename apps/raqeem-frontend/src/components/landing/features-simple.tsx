@@ -28,7 +28,7 @@ const features = [
   },
   {
     icon: Users,
-    title: "إدارة العملاء",
+    title: "إدارة المنوبين",
     description: "قاعدة بيانات شاملة"
   },
   {

@@ -290,12 +290,23 @@ export class CaseService {
       throw new Error('Case not found')
     }
 
-      // Soft delete
+      const now = new Date()
+
+      // Cascading soft delete: First, soft delete all trials for this case
+      await this.db
+        .update(trials)
+        .set({
+          deletedBy: userId,
+          deletedAt: now,
+        })
+        .where(and(eq(trials.caseId, caseId), isNull(trials.deletedAt)))
+
+      // Then soft delete the case
       await this.db
         .update(cases)
         .set({
           deletedBy: userId,
-          deletedAt: new Date(),
+          deletedAt: now,
         })
         .where(eq(cases.id, caseId))
 
@@ -306,6 +317,47 @@ export class CaseService {
         throw error
       }
       throw new Error('Failed to delete case')
+    }
+  }
+
+  async getCaseDeletionImpact(caseId: string, orgId: string): Promise<{
+    trialsCount: number
+    trials: Array<{ id: string; trialNumber: number; trialDateTime: Date; courtName: string | null }>
+  }> {
+    try {
+      // Verify case exists
+      const existingCase = await this.db
+        .select()
+        .from(cases)
+        .where(and(eq(cases.id, caseId), eq(cases.organizationId, orgId), isNull(cases.deletedAt)))
+
+      if (existingCase.length === 0) {
+        throw new Error('Case not found')
+      }
+
+      // Get all trials for this case
+      const trialsResult = await this.db
+        .select({
+          id: trials.id,
+          trialNumber: trials.trialNumber,
+          trialDateTime: trials.trialDateTime,
+          courtName: courts.name,
+        })
+        .from(trials)
+        .leftJoin(courts, eq(trials.courtId, courts.id))
+        .where(and(eq(trials.caseId, caseId), isNull(trials.deletedAt)))
+        .orderBy(trials.trialNumber)
+
+      return {
+        trialsCount: trialsResult.length,
+        trials: trialsResult,
+      }
+    } catch (error) {
+      console.error('[CASE SERVICE] Get deletion impact error:', error)
+      if (error instanceof Error && error.message.includes('not found')) {
+        throw error
+      }
+      throw new Error('Failed to get deletion impact')
     }
   }
 

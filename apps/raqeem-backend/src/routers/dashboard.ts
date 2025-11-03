@@ -26,13 +26,14 @@ export const dashboardRouter = {
     .handler(async ({ context }) => {
       const orgId = getOrgId(context)
       try {
-        const [stats, todayTrials, tomorrowTrials, upcomingTrials, recentTrials, latestCases, latestClients] =
+        const [stats, todayTrials, tomorrowTrials, upcomingTrials, recentTrials, newTrials, latestCases, latestClients] =
           await Promise.all([
             dashboardService.getStats(orgId),
             dashboardService.getTodayTrials(orgId),
             dashboardService.getTomorrowTrials(orgId),
             dashboardService.getUpcomingTrials(orgId, 10),
             dashboardService.getRecentTrials(orgId, 5),
+            dashboardService.getNewTrials(orgId, 5),
             dashboardService.getLatestCases(orgId, 5),
             dashboardService.getLatestClients(orgId, 5),
           ])
@@ -43,6 +44,7 @@ export const dashboardRouter = {
           tomorrowTrials,
           upcomingTrials,
           recentTrials,
+          newTrials,
           latestCases,
           latestClients,
         }
@@ -194,6 +196,29 @@ export const dashboardRouter = {
         return await dashboardService.getLatestClients(orgId, input.limit)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch latest clients')
+      }
+    }),
+
+  getNewTrials: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(50).optional().default(10),
+      })
+    )
+    .output(z.array(TrialListItemSchema))
+    .route({
+      method: 'GET',
+      path: '/dashboard/new-trials',
+      tags: ['Dashboard'],
+      summary: 'Get newly created trials',
+      description: 'Retrieves recently created trials ordered by creation date',
+    })
+    .handler(async ({ input, context }) => {
+      const orgId = getOrgId(context)
+      try {
+        return await dashboardService.getNewTrials(orgId, input.limit)
+      } catch (error) {
+        throw OrpcErrorHelper.handleServiceError(error, 'Failed to fetch new trials')
       }
     }),
 }

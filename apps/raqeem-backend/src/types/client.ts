@@ -101,6 +101,17 @@ export const SuccessResponseSchema = z.object({
   success: z.boolean(),
 })
 
+export const ClientDeletionImpactSchema = z.object({
+  casesCount: z.number(),
+  trialsCount: z.number(),
+  cases: z.array(z.object({
+    id: z.string(),
+    caseNumber: z.string(),
+    caseTitle: z.string(),
+    trialsCount: z.number(),
+  })),
+})
+
 // Type exports
 export type ClientType = z.infer<typeof ClientTypeSchema>
 export type CreateClientInput = z.infer<typeof CreateClientSchema>
@@ -110,3 +121,4 @@ export type DetailedClientResponse = z.infer<typeof DetailedClientSchema>
 export type ClientListItem = z.infer<typeof ClientListItemSchema>
 export type ClientDropdownItem = z.infer<typeof ClientDropdownItemSchema>
 export type SuccessResponse = z.infer<typeof SuccessResponseSchema>
+export type ClientDeletionImpact = z.infer<typeof ClientDeletionImpactSchema>

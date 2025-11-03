@@ -81,7 +81,7 @@ export function CalendarFeature() {
           <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
             <Users className="h-4 w-4 text-blue-600" />
             <div className="flex-1">
-              <Text size="sm" className="font-medium">لقاء عميل - سيدي بوزيد</Text>
+              <Text size="sm" className="font-medium">لقاء منوب - سيدي بوزيد</Text>
               <Text size="xs" className="text-gray-600">2:00 م - مكتب المحاماة</Text>
             </div>
           </div>
@@ -149,7 +149,7 @@ export function ClientsFeature() {
         <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
           <UserCheck className="h-5 w-5 text-orange-600" />
         </div>
-        <Heading level={3} className="font-semibold">إدارة العملاء</Heading>
+        <Heading level={3} className="font-semibold">إدارة المنوبين</Heading>
       </div>
 
       <div className="space-y-3">
@@ -187,7 +187,7 @@ export function ClientsFeature() {
 
       <div className="pt-4 border-t">
         <div className="flex items-center justify-between text-gray-600">
-          <Text as="span" size="sm">إجمالي العملاء: 89</Text>
+          <Text as="span" size="sm">إجمالي المنوبين: 89</Text>
           <Text as="span" size="sm">نشطين: 34</Text>
         </div>
       </div>

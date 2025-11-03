@@ -99,13 +99,13 @@ import { SheetTrigger } from '@/components/base/sheet';
 function MyComponent() {
   return (
     <SheetTrigger
-      title="عرض العميل"
+      title="عرض المنوب"
       component="ClientDetails"
       props={{ clientId: '123' }}
       size="lg"
       urlParams={{ clientId: '123' }}
     >
-      <button>عرض العميل</button>
+      <button>عرض المنوب</button>
     </SheetTrigger>
   );
 }

@@ -70,7 +70,7 @@ export function FeaturesShowcase() {
                         </Badge>
                         <Heading level={3} className="font-bold mb-3 lg:mb-4">جدولة ذكية للمواعيد</Heading>
                         <Text className="text-gray-600 leading-relaxed">
-                          نظام تقويم متقدم لإدارة جلسات المحكمة واجتماعات العملاء
+                          نظام تقويم متقدم لإدارة جلسات المحكمة واجتماعات المنوبين
                           مع تنبيهات تلقائية وتذكيرات قبل المواعيد.
                         </Text>
                       </div>
@@ -142,12 +142,12 @@ export function FeaturesShowcase() {
                       <div>
                         <Badge variant="secondary" className="mb-4">
                           <UserCheck className="h-4 w-4 mr-2" />
-                          العملاء
+                          المنوبين
                         </Badge>
-                        <Heading level={3} className="font-bold mb-3 lg:mb-4">قاعدة بيانات شاملة للعملاء</Heading>
+                        <Heading level={3} className="font-bold mb-3 lg:mb-4">قاعدة بيانات شاملة للمنوبين</Heading>
                         <Text className="text-gray-600 leading-relaxed">
-                          إدارة متكاملة لمعلومات العملاء مع تتبع تاريخ التعامل
-                          وجميع القضايا المرتبطة بكل عميل.
+                          إدارة متكاملة لمعلومات المنوبين مع تتبع تاريخ التعامل
+                          وجميع القضايا المرتبطة بكل منوب.
                         </Text>
                       </div>
                       <ul className="space-y-2 lg:space-y-3">

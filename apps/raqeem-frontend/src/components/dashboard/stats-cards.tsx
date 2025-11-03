@@ -30,7 +30,7 @@ export function StatsCards({ stats }: StatsCardsProps) {
       bgColor: 'bg-green-100',
     },
     {
-      title: 'إجمالي العملاء',
+      title: 'إجمالي المنوبين',
       value: stats.totalClients,
       icon: Users,
       iconColor: 'text-purple-600',

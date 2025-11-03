@@ -4,6 +4,7 @@ import { OrpcErrorHelper, getCurrentUserId, getOrgId } from '../lib/errors/orpc-
 import { protectedProcedure } from '../lib/orpc'
 import { createCaseService } from '../services/cases'
 import {
+  CaseDeletionImpactSchema,
   CaseListItemSchema,
   CaseSchema,
   CaseWithRelationsSchema,
@@ -121,6 +122,29 @@ export const caseRouter = {
         return await caseService.deleteCase(input.caseId, orgId, userId)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to delete case')
+      }
+    }),
+
+  getCaseDeletionImpact: protectedProcedure
+    .input(
+      z.object({
+        caseId: z.string().min(1).describe('Case ID'),
+      })
+    )
+    .output(CaseDeletionImpactSchema)
+    .route({
+      method: 'GET',
+      path: '/cases/{caseId}/deletion-impact',
+      tags: ['Cases'],
+      summary: 'Get case deletion impact',
+      description: 'Retrieves information about what will be affected when deleting a case (trials)',
+    })
+    .handler(async ({ input, context }) => {
+      const orgId = getOrgId(context)
+      try {
+        return await caseService.getCaseDeletionImpact(input.caseId, orgId)
+      } catch (error) {
+        throw OrpcErrorHelper.handleServiceError(error, 'Failed to get deletion impact')
       }
     }),
 

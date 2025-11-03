@@ -364,7 +364,7 @@ const openSheet = (type: 'details' | 'form', entity: 'case' | 'client' | 'oppone
 const getTitleForSheet = (entity: string, type: string, mode?: string): string => {
   const entityLabels = {
     case: type === 'details' ? 'تفاصيل القضية' : mode === 'create' ? 'إضافة قضية جديدة' : 'تعديل القضية',
-    client: type === 'details' ? 'تفاصيل المنوب' : mode === 'create' ? 'إضافة عميل جديد' : 'تعديل المنوب',
+    client: type === 'details' ? 'تفاصيل المنوب' : mode === 'create' ? 'إضافة منوب جديد' : 'تعديل المنوب',
     opponent: type === 'details' ? 'تفاصيل الخصم' : mode === 'create' ? 'إضافة خصم جديد' : 'تعديل الخصم',
   }
   return entityLabels[entity as keyof typeof entityLabels] || ''

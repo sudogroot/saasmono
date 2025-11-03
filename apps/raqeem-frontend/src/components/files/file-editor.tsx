@@ -286,7 +286,7 @@ export function FileEditor({ file, onSave, onCancel, className }: FileEditorProp
                   options={[
                     { id: 'case', label: 'قضية' },
                     { id: 'trial', label: 'جلسة' },
-                    { id: 'client', label: 'عميل' },
+                    { id: 'client', label: 'منوب' },
                     { id: 'opponent', label: 'خصم' },
                   ]}
                   placeholder="اختر النوع"
@@ -298,7 +298,7 @@ export function FileEditor({ file, onSave, onCancel, className }: FileEditorProp
                 <FieldLabel htmlFor="entity-id">
                   {entityType === 'case' && 'القضية'}
                   {entityType === 'trial' && 'الجلسة'}
-                  {entityType === 'client' && 'العميل'}
+                  {entityType === 'client' && 'المنوب'}
                   {entityType === 'opponent' && 'الخصم'}
                 </FieldLabel>
                 <SearchSelect
@@ -354,7 +354,7 @@ export function FileEditor({ file, onSave, onCancel, className }: FileEditorProp
                       <p className="text-xs text-muted-foreground mb-0.5">
                         {entity.type === 'case' && 'قضية'}
                         {entity.type === 'trial' && 'جلسة'}
-                        {entity.type === 'client' && 'عميل'}
+                        {entity.type === 'client' && 'منوب'}
                         {entity.type === 'opponent' && 'خصم'}
                       </p>
                       <p className="text-sm font-medium truncate">{entity.name}</p>
@@ -377,7 +377,7 @@ export function FileEditor({ file, onSave, onCancel, className }: FileEditorProp
 
         {linkedEntities.length === 0 && !showAddEntity && (
           <p className="text-sm text-muted-foreground text-center py-4">
-            لم يتم ربط هذا الملف بأي قضية أو جلسة أو عميل بعد
+            لم يتم ربط هذا الملف بأي قضية أو جلسة أو منوب بعد
           </p>
         )}
       </div>

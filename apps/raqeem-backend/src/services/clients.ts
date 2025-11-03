@@ -173,7 +173,7 @@ export class ClientService {
     }
   }
 
-  async deleteClient(clientId: string, orgId: string): Promise<{ success: boolean }> {
+  async deleteClient(clientId: string, orgId: string, userId: string): Promise<{ success: boolean }> {
     try {
     // Verify client exists and belongs to organization
     const existingClient = await this.db
@@ -185,11 +185,44 @@ export class ClientService {
       throw new Error('Client not found')
     }
 
-      // Soft delete
+      const now = new Date()
+
+      // Cascading soft delete: First, soft delete all trials for cases belonging to this client
+      const clientCases = await this.db
+        .select({ id: cases.id })
+        .from(cases)
+        .where(and(eq(cases.clientId, clientId), isNull(cases.deletedAt)))
+
+      if (clientCases.length > 0) {
+        const caseIds = clientCases.map(c => c.id)
+
+        // Soft delete all trials for these cases
+        await this.db
+          .update(trials)
+          .set({
+            deletedBy: userId,
+            deletedAt: now,
+          })
+          .where(and(
+            inArray(trials.caseId, caseIds),
+            isNull(trials.deletedAt)
+          ))
+
+        // Soft delete all cases for this client
+        await this.db
+          .update(cases)
+          .set({
+            deletedBy: userId,
+            deletedAt: now,
+          })
+          .where(and(eq(cases.clientId, clientId), isNull(cases.deletedAt)))
+      }
+
+      // Finally, soft delete the client
       await this.db
         .update(clients)
         .set({
-          deletedAt: new Date(),
+          deletedAt: now,
         })
         .where(eq(clients.id, clientId))
 
@@ -200,6 +233,69 @@ export class ClientService {
         throw error
       }
       throw new Error('Failed to delete client')
+    }
+  }
+
+  async getClientDeletionImpact(clientId: string, orgId: string): Promise<{
+    casesCount: number
+    trialsCount: number
+    cases: Array<{ id: string; caseNumber: string; caseTitle: string; trialsCount: number }>
+  }> {
+    try {
+      // Verify client exists
+      const existingClient = await this.db
+        .select()
+        .from(clients)
+        .where(and(eq(clients.id, clientId), eq(clients.organizationId, orgId), isNull(clients.deletedAt)))
+
+      if (existingClient.length === 0) {
+        throw new Error('Client not found')
+      }
+
+      // Get all cases and their trials
+      const casesWithTrials = await this.db
+        .select({
+          caseId: cases.id,
+          caseNumber: cases.caseNumber,
+          caseTitle: cases.caseTitle,
+          trialId: trials.id,
+        })
+        .from(cases)
+        .leftJoin(trials, and(eq(trials.caseId, cases.id), isNull(trials.deletedAt)))
+        .where(and(eq(cases.clientId, clientId), isNull(cases.deletedAt)))
+
+      // Group by case
+      const casesMap = new Map<string, { id: string; caseNumber: string; caseTitle: string; trialsCount: number }>()
+      let totalTrials = 0
+
+      for (const row of casesWithTrials) {
+        if (!casesMap.has(row.caseId)) {
+          casesMap.set(row.caseId, {
+            id: row.caseId,
+            caseNumber: row.caseNumber,
+            caseTitle: row.caseTitle,
+            trialsCount: 0,
+          })
+        }
+
+        if (row.trialId) {
+          const caseData = casesMap.get(row.caseId)!
+          caseData.trialsCount++
+          totalTrials++
+        }
+      }
+
+      return {
+        casesCount: casesMap.size,
+        trialsCount: totalTrials,
+        cases: Array.from(casesMap.values()),
+      }
+    } catch (error) {
+      console.error('[CLIENT SERVICE] Get deletion impact error:', error)
+      if (error instanceof Error && error.message.includes('not found')) {
+        throw error
+      }
+      throw new Error('Failed to get deletion impact')
     }
   }
 

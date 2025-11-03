@@ -32,7 +32,7 @@ const caseFormSchema = z.object({
   caseNumber: z.string().min(1, 'رقم القضية مطلوب'),
   caseTitle: z.string().min(1, 'عنوان القضية مطلوب'),
   caseSubject: z.string().min(1, 'موضوع القضية مطلوب'),
-  clientId: z.string().min(1, 'يجب اختيار عميل'),
+  clientId: z.string().min(1, 'يجب اختيار منوب'),
   opponentId: z.string().optional(),
   courtId: z.string().optional(),
   courtFileNumber: z.string().optional(),
@@ -264,7 +264,7 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
                 {presetClient && (
                   <div className="flex min-w-0 items-center gap-2">
                     <User className="text-muted-foreground h-3 w-3 shrink-0" />
-                    <span className="text-muted-foreground shrink-0 text-xs">العميل:</span>
+                    <span className="text-muted-foreground shrink-0 text-xs">المنوب:</span>
                     <span className="truncate text-sm font-medium">{presetClient.name}</span>
                   </div>
                 )}
@@ -287,7 +287,7 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
           </div>
           <div className="bg-primary/10 rounded-md px-3 py-2 pr-6">
             <p className="text-primary text-sm font-medium">
-              {presetClient && 'القضية ستُضاف لهذا العميل'}
+              {presetClient && 'القضية ستُضاف لهذا المنوب'}
               {presetOpponent && !presetClient && 'القضية ستُضاف ضد هذا الخصم'}
             </p>
           </div>
@@ -471,7 +471,7 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
             name="clientId"
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="client-select">العميل *</FieldLabel>
+                <FieldLabel htmlFor="client-select">المنوب *</FieldLabel>
                 <SearchSelect
                   value={field.value}
                   onValueChange={field.onChange}
@@ -480,13 +480,13 @@ export function CaseForm({ initialData, caseId, presetData, onSuccess, onCancel 
                     label: client.name,
                     metadata: client.clientType,
                   }))}
-                  placeholder="اختر العميل"
-                  searchPlaceholder="ابحث عن عميل..."
-                  emptyMessage="لا يوجد عملاء"
+                  placeholder="اختر المنوب"
+                  searchPlaceholder="ابحث عن منوب..."
+                  emptyMessage="لا يوجد منوبين"
                   disabled={!!presetData?.clientId}
                   clearable={true}
                   allowCreate={true}
-                  createLabel="إضافة عميل جديد"
+                  createLabel="إضافة منوب جديد"
                   onCreateClick={(searchValue) => {
                     // Save current form state before navigating
                     saveFormState(formStateKey, form.getValues())

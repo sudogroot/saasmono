@@ -5,6 +5,7 @@ import { protectedProcedure } from '../lib/orpc'
 import { createOpponentService } from '../services/opponents'
 import {
   CreateOpponentSchema,
+  OpponentDeletionImpactSchema,
   OpponentDropdownItemSchema,
   UpdateOpponentSchema,
   OpponentSchema,
@@ -104,6 +105,29 @@ export const opponentRouter = {
         return await opponentService.deleteOpponent(input.opponentId, orgId, userId)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to delete opponent')
+      }
+    }),
+
+  getOpponentDeletionImpact: protectedProcedure
+    .input(
+      z.object({
+        opponentId: z.string().min(1).describe('Opponent ID'),
+      })
+    )
+    .output(OpponentDeletionImpactSchema)
+    .route({
+      method: 'GET',
+      path: '/opponents/{opponentId}/deletion-impact',
+      tags: ['Opponents'],
+      summary: 'Get opponent deletion impact',
+      description: 'Retrieves information about what will be affected when deleting an opponent (cases that will be unassigned)',
+    })
+    .handler(async ({ input, context }) => {
+      const orgId = getOrgId(context)
+      try {
+        return await opponentService.getOpponentDeletionImpact(input.opponentId, orgId)
+      } catch (error) {
+        throw OrpcErrorHelper.handleServiceError(error, 'Failed to get deletion impact')
       }
     }),
 

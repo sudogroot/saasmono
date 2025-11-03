@@ -1,4 +1,4 @@
-import { index, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { index, pgTable, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core'
 import { organization, user } from './auth'
 import { clientTypeEnum } from './enums'
 export const clients = pgTable(
@@ -26,6 +26,9 @@ export const clients = pgTable(
   },
 
   (table) => [
+    // Unique constraint for national ID per organization excluding soft-deleted records
+    unique('clients_org_national_id_unique').on(table.organizationId, table.nationalId, table.deletedAt),
+
     index('idx_clients_organization_id').on(table.organizationId),
     index('idx_clients_client_type').on(table.clientType),
     index('idx_clients_deleted_at').on(table.deletedAt),

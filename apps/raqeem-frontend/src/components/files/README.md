@@ -87,7 +87,7 @@ import { FileViewer } from '@/components/files'
 ```
 
 ### 6. FileEditor
-تعديل بيانات الملف وإضافة الوسوم والربط مع القضايا والعملاء.
+تعديل بيانات الملف وإضافة الوسوم والربط مع القضايا والمنوبين.
 
 ```tsx
 import { FileEditor } from '@/components/files'
@@ -123,7 +123,7 @@ import { FileEditor } from '@/components/files'
 ربط الملفات مع:
 - القضايا (Cases)
 - الجلسات (Trials)
-- العملاء (Clients)
+- المنوبين (Clients)
 - الخصوم (Opponents)
 
 ### ✅ البحث والتصفية

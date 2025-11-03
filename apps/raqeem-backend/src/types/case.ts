@@ -143,6 +143,16 @@ export const SuccessResponseSchema = z.object({
   success: z.boolean(),
 })
 
+export const CaseDeletionImpactSchema = z.object({
+  trialsCount: z.number(),
+  trials: z.array(z.object({
+    id: z.string(),
+    trialNumber: z.number(),
+    trialDateTime: z.coerce.date(),
+    courtName: z.string().nullable(),
+  })),
+})
+
 // Type exports
 export type CaseStatus = z.infer<typeof CaseStatusSchema>
 export type Priority = z.infer<typeof PrioritySchema>
@@ -152,3 +162,4 @@ export type CaseResponse = z.infer<typeof CaseSchema>
 export type CaseWithRelations = z.infer<typeof CaseWithRelationsSchema>
 export type CaseListItem = z.infer<typeof CaseListItemSchema>
 export type SuccessResponse = z.infer<typeof SuccessResponseSchema>
+export type CaseDeletionImpact = z.infer<typeof CaseDeletionImpactSchema>

@@ -85,13 +85,18 @@ export default function TrialsPage() {
       <AlertDialog open={!!deletingTrialId} onOpenChange={() => setDeletingTrialId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
-            <AlertDialogDescription>
-              هل أنت متأكد من حذف هذه الجلسة؟ يمكنك استرداده لاحقاً من قسم المحذوفات.
+            <AlertDialogTitle>تأكيد حذف الجلسة</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3">
+              <div className="font-medium text-foreground">
+                هل أنت متأكد من أنك تريد حذف هذه الجلسة؟
+              </div>
+              <div className="text-sm text-muted-foreground">
+                لا يمكن التراجع عن هذا الإجراء.
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>إلغاء</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
               disabled={deleteMutation.isPending}
@@ -103,7 +108,7 @@ export default function TrialsPage() {
                   جاري الحذف...
                 </>
               ) : (
-                'حذف'
+                'تأكيد الحذف'
               )}
             </AlertDialogAction>
           </AlertDialogFooter>

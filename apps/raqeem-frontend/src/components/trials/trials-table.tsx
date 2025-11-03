@@ -157,7 +157,7 @@ export function TrialsTable({
       }),
       columnHelper.accessor('clientName', {
         id: 'client',
-        header: 'العميل',
+        header: 'المنوب',
         size: 150,
         cell: ({ getValue }) => (
           <div className="flex items-center gap-2 min-w-0 max-w-[150px]">
@@ -444,7 +444,7 @@ export function TrialsTable({
             size: 'md',
           })
         }}
-        searchPlaceholder="البحث عن جلسة (رقم، قضية، عميل، محكمة...)"
+        searchPlaceholder="البحث عن جلسة (رقم، قضية، منوب، محكمة...)"
         noDataMessage="لا توجد جلسات مطابقة للبحث"
         showQuickFilters={true}
         quickFilters={quickFilters as any}

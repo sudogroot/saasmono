@@ -327,10 +327,10 @@ export function DashboardSidebar({ isCollapsed = false }: DashboardSidebarProps)
             onClick={handleNewClient}
             className={isCollapsed ? 'justify-center' : ''}
             isCollapsed={isCollapsed}
-            tooltipText='عميل جديد'
+            tooltipText='منوب جديد'
           >
             <UserPlus data-slot='icon' />
-            {!isCollapsed && <SidebarLabel>عميل جديد</SidebarLabel>}
+            {!isCollapsed && <SidebarLabel>منوب جديد</SidebarLabel>}
           </SidebarItemWithTooltip>
           <SidebarItemWithTooltip
             onClick={handleNewCase}

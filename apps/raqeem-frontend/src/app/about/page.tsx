@@ -28,7 +28,7 @@ export default function AboutPage() {
     },
     {
       icon: Users,
-      title: "التركيز على العميل",
+      title: "التركيز على المنوب",
       description: "نضع احتياجات عملائنا في صميم كل قرار نتخذه",
     },
     {

@@ -22,13 +22,13 @@ export function LatestClients({ clients }: LatestClientsProps) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold">أحدث العملاء</h3>
+        <h3 className="text-base font-semibold">أحدث المنوبين</h3>
         {clients.length > 0 && <Text variant="muted" size="sm">{clients.length}</Text>}
       </div>
 
       {clients.length === 0 ? (
         <div className="text-muted-foreground rounded-lg border border-dashed py-8 text-center">
-          <Text size="sm">لا يوجد عملاء بعد</Text>
+          <Text size="sm">لا يوجد منوبين بعد</Text>
         </div>
       ) : (
         <div className="space-y-2">

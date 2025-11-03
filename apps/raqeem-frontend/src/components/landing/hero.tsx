@@ -29,7 +29,7 @@ export function Hero() {
 
             {/* Functional Description */}
             <Text size="xl" className="text-gray-600 leading-relaxed max-w-3xl mx-auto text-lg md:text-xl font-medium">
-              منصة متكاملة لإدارة القضايا، الجلسات، الموكلين، والمستندات — كل ما يحتاجه محاميك في مكان واحد
+              منصة متكاملة لإدارة القضايا، الجلسات، المنوبون، والمستندات — كل ما يحتاجه محاميك في مكان واحد
             </Text>
           </div>
 

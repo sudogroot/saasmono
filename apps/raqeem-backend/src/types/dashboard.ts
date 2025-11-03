@@ -56,6 +56,7 @@ export const DashboardDataSchema = z.object({
   tomorrowTrials: z.array(TrialListItemSchema),
   upcomingTrials: z.array(TrialListItemSchema),
   recentTrials: z.array(TrialListItemSchema),
+  newTrials: z.array(TrialListItemSchema),
   latestCases: z.array(CaseListItemDashboardSchema),
   latestClients: z.array(ClientListItemDashboardSchema),
 })

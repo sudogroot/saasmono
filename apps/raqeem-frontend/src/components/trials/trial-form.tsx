@@ -165,7 +165,7 @@ export function TrialForm({ initialData, trialId, caseId, presetData, onSuccess,
                 {(presetCase as any).client?.name && (
                   <div className="flex items-center gap-2 min-w-0">
                     <User className="h-3 w-3 text-muted-foreground shrink-0" />
-                    <span className="text-xs text-muted-foreground shrink-0">العميل:</span>
+                    <span className="text-xs text-muted-foreground shrink-0">المنوب:</span>
                     <span className="text-sm truncate">{(presetCase as any).client.name}</span>
                   </div>
                 )}

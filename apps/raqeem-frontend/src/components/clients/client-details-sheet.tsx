@@ -72,7 +72,7 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
     return (
       <div className="flex items-center justify-center py-8">
         <Loader2 className="ml-2 h-6 w-6 animate-spin" />
-        <span>جاري تحميل بيانات العميل...</span>
+        <span>جاري تحميل بيانات المنوب...</span>
       </div>
     )
   }
@@ -89,7 +89,7 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
   if (!clientData) {
     return (
       <div className="text-muted-foreground flex items-center justify-center py-8">
-        <span>لم يتم العثور على العميل</span>
+        <span>لم يتم العثور على المنوب</span>
       </div>
     )
   }
@@ -389,7 +389,7 @@ export function ClientDetails({ clientId, organizationId, renderMode = 'content'
               <div className="text-muted-foreground py-8 text-center">
                 <FileText className="mx-auto mb-3 h-12 w-12 opacity-50" />
                 <p className="mb-1 text-lg font-medium">لا توجد قضايا</p>
-                <p className="text-sm">لم يتم إنشاء أي قضايا لهذا العميل بعد</p>
+                <p className="text-sm">لم يتم إنشاء أي قضايا لهذا المنوب بعد</p>
               </div>
             )}
           </div>

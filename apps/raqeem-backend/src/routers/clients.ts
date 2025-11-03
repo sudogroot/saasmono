@@ -4,6 +4,7 @@ import { OrpcErrorHelper, getCurrentUserId, getOrgId } from '../lib/errors/orpc-
 import { protectedProcedure } from '../lib/orpc'
 import { createClientService } from '../services/clients'
 import {
+  ClientDeletionImpactSchema,
   ClientDropdownItemSchema,
   ClientListItemSchema,
   ClientSchema,
@@ -106,9 +107,32 @@ export const clientRouter = {
       console.log('Delete client input:', input)
       console.log('Client ID:', input.clientId)
       try {
-        return await clientService.deleteClient(input.clientId, orgId)
+        return await clientService.deleteClient(input.clientId, orgId, userId)
       } catch (error) {
         throw OrpcErrorHelper.handleServiceError(error, 'Failed to delete client')
+      }
+    }),
+
+  getClientDeletionImpact: protectedProcedure
+    .input(
+      z.object({
+        clientId: z.string().min(1).describe('Client ID'),
+      })
+    )
+    .output(ClientDeletionImpactSchema)
+    .route({
+      method: 'GET',
+      path: '/clients/{clientId}/deletion-impact',
+      tags: ['Clients'],
+      summary: 'Get client deletion impact',
+      description: 'Retrieves information about what will be affected when deleting a client (cases and trials)',
+    })
+    .handler(async ({ input, context }) => {
+      const orgId = getOrgId(context)
+      try {
+        return await clientService.getClientDeletionImpact(input.clientId, orgId)
+      } catch (error) {
+        throw OrpcErrorHelper.handleServiceError(error, 'Failed to get deletion impact')
       }
     }),
 

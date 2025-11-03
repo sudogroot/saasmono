@@ -201,7 +201,7 @@ export function FileViewer({ file, onEdit, onDownload, onClose, className }: Fil
                         <p className="text-xs text-muted-foreground mb-0.5">
                           {entity.type === 'case' && 'قضية'}
                           {entity.type === 'trial' && 'جلسة'}
-                          {entity.type === 'client' && 'عميل'}
+                          {entity.type === 'client' && 'منوب'}
                           {entity.type === 'opponent' && 'خصم'}
                         </p>
                         <p className="text-sm font-medium truncate">{entity.name}</p>

@@ -21,7 +21,7 @@ import {
   Heading,
   Text,
 } from '@repo/ui'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -74,11 +74,21 @@ export function ClientsTable({
     pageSize: 20,
   })
 
+  // Fetch deletion impact when dialog opens
+  const { data: deletionImpact, isLoading: isLoadingImpact } = useQuery({
+    ...orpc.clients.getClientDeletionImpact.queryOptions({
+      input: {
+        clientId: deletingClientId!,
+      },
+    }),
+    enabled: !!deletingClientId,
+  })
+
   // Delete mutation
   const deleteMutation = useMutation({
     ...orpc.clients.deleteClient.mutationOptions({
       onSuccess: () => {
-        toast.success('تم حذف العميل بنجاح')
+        toast.success('تم حذف المنوب بنجاح')
         queryClient.invalidateQueries({ queryKey: orpc.clients.listClients.key() })
         setDeletingClientId(null)
       },
@@ -107,7 +117,7 @@ export function ClientsTable({
     () => [
       columnHelper.accessor('name', {
         id: 'client',
-        header: 'العميل',
+        header: 'المنوب',
         size: 250,
         cell: ({ row }) => (
           <div className="flex items-center gap-3 min-w-0 max-w-[250px]">
@@ -236,7 +246,7 @@ export function ClientsTable({
     () => [
       {
         key: 'clientType',
-        label: 'نوع العميل',
+        label: 'نوع المنوب',
         values: [
           {
             label: <EntityBadge type="entityType" value="individual" />,
@@ -371,14 +381,14 @@ export function ClientsTable({
   const emptyStateAction = onCreateNew ? (
     <Button onClick={onCreateNew} className="mt-4">
       <Plus className="ml-1 h-4 w-4" />
-      إضافة عميل جديد
+      إضافة منوب جديد
     </Button>
   ) : null
 
   const headerActions = onCreateNew ? (
     <Button onClick={onCreateNew}>
       <Plus className="ml-1 h-4 w-4" />
-      إضافة عميل
+      إضافة منوب
     </Button>
   ) : null
 
@@ -391,10 +401,10 @@ export function ClientsTable({
           </div>
           <div>
             <Heading level={3} className="font-semibold">
-              لا يوجد عملاء
+              لا يوجد منوبين
             </Heading>
             <Text variant="muted" className="mt-1">
-              ابدأ بإضافة عميل جديد لإدارة ملفاتك القانونية
+              ابدأ بإضافة منوب جديد لإدارة ملفاتك القانونية
             </Text>
           </div>
           {emptyStateAction}
@@ -418,8 +428,8 @@ export function ClientsTable({
         error={error}
         searchValue={searchValue}
         onSearchChange={setSearchValue}
-        // searchPlaceholder="البحث عن عميل (الاسم، الهوية، الهاتف، البريد الإلكتروني...)"
-        noDataMessage="لا يوجد عملاء مطابقين للبحث"
+        // searchPlaceholder="البحث عن منوب (الاسم، الهوية، الهاتف، البريد الإلكتروني...)"
+        noDataMessage="لا يوجد منوبين مطابقين للبحث"
         mobileCardRenderer={mobileCardRenderer}
         showQuickFilters={true}
         quickFilters={quickFilters as any}
@@ -436,19 +446,77 @@ export function ClientsTable({
       <AlertDialog open={!!deletingClientId} onOpenChange={() => setDeletingClientId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
-            <AlertDialogDescription>
-              هل أنت متأكد من أنك تريد حذف هذا العميل؟ لا يمكن التراجع عن هذا الإجراء.
+            <AlertDialogTitle>تأكيد حذف المنوب</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3">
+              {isLoadingImpact ? (
+                <div className="flex items-center justify-center py-4">
+                  <div className="text-sm text-muted-foreground">جاري التحقق من البيانات المرتبطة...</div>
+                </div>
+              ) : deletionImpact ? (
+                <>
+                  <div className="font-medium text-foreground">
+                    هل أنت متأكد من أنك تريد حذف هذا المنوب؟
+                  </div>
+
+                  {(deletionImpact.casesCount > 0 || deletionImpact.trialsCount > 0) && (
+                    <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 space-y-3">
+                      <div className="font-semibold text-destructive text-sm">
+                        ⚠️ تحذير: سيتم حذف البيانات التالية المرتبطة بهذا المنوب:
+                      </div>
+
+                      <div className="text-sm space-y-2">
+                        {deletionImpact.casesCount > 0 && (
+                          <div>
+                            <span className="font-medium">• القضايا: </span>
+                            <span>{deletionImpact.casesCount} قضية</span>
+                          </div>
+                        )}
+
+                        {deletionImpact.trialsCount > 0 && (
+                          <div>
+                            <span className="font-medium">• الجلسات: </span>
+                            <span>{deletionImpact.trialsCount} جلسة</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {deletionImpact.cases.length > 0 && (
+                        <div className="mt-2 pt-2 border-t border-destructive/20">
+                          <div className="text-xs font-medium mb-1">تفاصيل القضايا:</div>
+                          <div className="space-y-1 max-h-32 overflow-y-auto">
+                            {deletionImpact.cases.map((caseItem) => (
+                              <div key={caseItem.id} className="text-xs">
+                                <span className="font-medium">{caseItem.caseNumber}</span> - {caseItem.caseTitle}
+                                {caseItem.trialsCount > 0 && (
+                                  <span className="text-muted-foreground mr-1">
+                                    ({caseItem.trialsCount} جلسة)
+                                  </span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="text-sm text-muted-foreground">
+                    لا يمكن التراجع عن هذا الإجراء.
+                  </div>
+                </>
+              ) : (
+                <div>هل أنت متأكد من أنك تريد حذف هذا المنوب؟</div>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>إلغاء</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
-              disabled={deleteMutation.isPending}
+              disabled={deleteMutation.isPending || isLoadingImpact}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleteMutation.isPending ? 'جاري الحذف...' : 'حذف'}
+              {deleteMutation.isPending ? 'جاري الحذف...' : 'تأكيد الحذف'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -22,7 +22,7 @@ import {
   Heading,
   Text,
 } from '@repo/ui'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -74,12 +74,23 @@ export function OpponentsTable({
     pageSize: 20,
   })
 
+  // Fetch deletion impact when dialog opens
+  const { data: deletionImpact, isLoading: isLoadingImpact } = useQuery({
+    ...orpc.opponents.getOpponentDeletionImpact.queryOptions({
+      input: {
+        opponentId: deletingOpponentId!,
+      },
+    }),
+    enabled: !!deletingOpponentId,
+  })
+
   // Delete mutation
   const deleteMutation = useMutation({
     ...orpc.opponents.deleteOpponent.mutationOptions({
       onSuccess: () => {
         toast.success('تم حذف الخصم بنجاح')
         queryClient.invalidateQueries({ queryKey: orpc.opponents.listOpponents.key() })
+        queryClient.invalidateQueries({ queryKey: orpc.cases.listCases.key() })
         setDeletingOpponentId(null)
       },
       onError: (error: any) => {
@@ -370,19 +381,65 @@ export function OpponentsTable({
       <AlertDialog open={!!deletingOpponentId} onOpenChange={() => setDeletingOpponentId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
-            <AlertDialogDescription>
-              هل أنت متأكد من أنك تريد حذف هذا الخصم؟ لا يمكن التراجع عن هذا الإجراء.
+            <AlertDialogTitle>تأكيد حذف الخصم</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3">
+              {isLoadingImpact ? (
+                <div className="flex items-center justify-center py-4">
+                  <div className="text-sm text-muted-foreground">جاري التحقق من البيانات المرتبطة...</div>
+                </div>
+              ) : deletionImpact ? (
+                <>
+                  <div className="font-medium text-foreground">
+                    هل أنت متأكد من أنك تريد حذف هذا الخصم؟
+                  </div>
+
+                  {deletionImpact.casesCount > 0 && (
+                    <div className="bg-warning/10 border border-warning/20 rounded-lg p-4 space-y-3">
+                      <div className="font-semibold text-warning text-sm">
+                        ⚠️ تنبيه: سيتم إلغاء تعيين هذا الخصم من القضايا التالية:
+                      </div>
+
+                      <div className="text-sm">
+                        <span className="font-medium">• عدد القضايا: </span>
+                        <span>{deletionImpact.casesCount} قضية</span>
+                      </div>
+
+                      {deletionImpact.cases.length > 0 && (
+                        <div className="mt-2 pt-2 border-t border-warning/20">
+                          <div className="text-xs font-medium mb-1">القضايا المتأثرة:</div>
+                          <div className="space-y-1 max-h-32 overflow-y-auto">
+                            {deletionImpact.cases.map((caseItem) => (
+                              <div key={caseItem.id} className="text-xs">
+                                <span className="font-medium">{caseItem.caseNumber}</span> - {caseItem.caseTitle}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="text-xs text-muted-foreground italic">
+                        ملاحظة: القضايا لن يتم حذفها، فقط سيتم إزالة الخصم منها.
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="text-sm text-muted-foreground">
+                    لا يمكن التراجع عن هذا الإجراء.
+                  </div>
+                </>
+              ) : (
+                <div>هل أنت متأكد من أنك تريد حذف هذا الخصم؟</div>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>إلغاء</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
-              disabled={deleteMutation.isPending}
+              disabled={deleteMutation.isPending || isLoadingImpact}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleteMutation.isPending ? 'جاري الحذف...' : 'حذف'}
+              {deleteMutation.isPending ? 'جاري الحذف...' : 'تأكيد الحذف'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

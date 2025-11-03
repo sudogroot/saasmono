@@ -144,6 +144,7 @@ export class DashboardService {
         and(
           eq(trials.organizationId, orgId),
           isNull(trials.deletedAt),
+          isNull(cases.deletedAt),
           gte(trials.trialDateTime, today),
           lt(trials.trialDateTime, tomorrow)
         )
@@ -184,6 +185,7 @@ export class DashboardService {
         and(
           eq(trials.organizationId, orgId),
           isNull(trials.deletedAt),
+          isNull(cases.deletedAt),
           gte(trials.trialDateTime, tomorrow),
           lt(trials.trialDateTime, dayAfterTomorrow)
         )
@@ -216,7 +218,7 @@ export class DashboardService {
       .from(trials)
       .innerJoin(courts, eq(trials.courtId, courts.id))
       .innerJoin(cases, eq(trials.caseId, cases.id))
-      .where(and(eq(trials.organizationId, orgId), isNull(trials.deletedAt), gte(trials.trialDateTime, now)))
+      .where(and(eq(trials.organizationId, orgId), isNull(trials.deletedAt), isNull(cases.deletedAt), gte(trials.trialDateTime, now)))
       .orderBy(trials.trialDateTime)
       .limit(limit)
 
@@ -246,7 +248,7 @@ export class DashboardService {
       .from(trials)
       .innerJoin(courts, eq(trials.courtId, courts.id))
       .innerJoin(cases, eq(trials.caseId, cases.id))
-      .where(and(eq(trials.organizationId, orgId), isNull(trials.deletedAt), lt(trials.trialDateTime, now)))
+      .where(and(eq(trials.organizationId, orgId), isNull(trials.deletedAt), isNull(cases.deletedAt), lt(trials.trialDateTime, now)))
       .orderBy(desc(trials.trialDateTime))
       .limit(limit)
 
@@ -267,7 +269,7 @@ export class DashboardService {
       })
       .from(cases)
       .innerJoin(clients, eq(cases.clientId, clients.id))
-      .where(and(eq(cases.organizationId, orgId), isNull(cases.deletedAt)))
+      .where(and(eq(cases.organizationId, orgId), isNull(cases.deletedAt), isNull(clients.deletedAt)))
       .orderBy(desc(cases.createdAt))
       .limit(limit)
 
@@ -290,6 +292,34 @@ export class DashboardService {
       .limit(limit)
 
     return result as ClientListItemDashboard[]
+  }
+
+  async getNewTrials(orgId: string, limit: number = 10): Promise<TrialListItem[]> {
+    const result = await this.db
+      .select({
+        id: trials.id,
+        trialNumber: trials.trialNumber,
+        trialDateTime: trials.trialDateTime,
+        court: {
+          id: courts.id,
+          name: courts.name,
+        },
+        case: {
+          id: cases.id,
+          caseNumber: cases.caseNumber,
+          caseTitle: cases.caseTitle,
+          caseStatus: cases.caseStatus,
+          priority: cases.priority,
+        },
+      })
+      .from(trials)
+      .innerJoin(courts, eq(trials.courtId, courts.id))
+      .innerJoin(cases, eq(trials.caseId, cases.id))
+      .where(and(eq(trials.organizationId, orgId), isNull(trials.deletedAt), isNull(cases.deletedAt)))
+      .orderBy(desc(trials.createdAt))
+      .limit(limit)
+
+    return result as TrialListItem[]
   }
 }
 

@@ -61,7 +61,7 @@ export const mockFiles: FileDocument[] = [
     status: 'ready',
     uploadedAt: new Date('2024-03-14T14:20:00'),
     updatedAt: new Date('2024-03-14T14:20:00'),
-    description: 'صورة من الهوية الوطنية للموكل',
+    description: 'صورة من الهوية الوطنية للمنوب',
     tags: [mockTags[2]!, mockTags[6]!],
     linkedEntities: [
       {

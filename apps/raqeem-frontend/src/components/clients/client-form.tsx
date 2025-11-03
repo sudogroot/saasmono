@@ -26,12 +26,12 @@ import { z } from 'zod'
 import { EntityBadge } from '../base/entity-badge'
 
 const clientFormSchema = z.object({
-  name: z.string().min(1, 'اسم العميل مطلوب'),
+  name: z.string().min(1, 'اسم المنوب مطلوب'),
   nationalId: z.string().optional(),
   phone: z.string().optional(),
   email: z.string().email('البريد الإلكتروني غير صحيح').optional().or(z.literal('')),
   clientType: z.enum(['individual', 'company', 'institution', 'organization', 'government', 'association'], {
-    errorMap: () => ({ message: 'نوع العميل مطلوب' }),
+    errorMap: () => ({ message: 'نوع المنوب مطلوب' }),
   }),
 })
 
@@ -64,7 +64,7 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
     orpc.clients.createClient.mutationOptions({
       onSuccess: (data) => {
         console.log('Creating toast...')
-        toast.success('تم إنشاء العميل بنجاح')
+        toast.success('تم إنشاء المنوب بنجاح')
         console.log('Toast created')
         form.reset()
         // Invalidate and refetch queries
@@ -96,7 +96,7 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
   const updateMutation = useMutation(
     orpc.clients.updateClient.mutationOptions({
       onSuccess: (data) => {
-        toast.success('تم تحديث العميل بنجاح')
+        toast.success('تم تحديث المنوب بنجاح')
         // Invalidate and refetch queries
         queryClient.invalidateQueries({ queryKey: orpc.clients.listClients.key() })
         queryClient.invalidateQueries({
@@ -167,11 +167,11 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
           name="name"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>اسم العميل *</FieldLabel>
+              <FieldLabel htmlFor={field.name}>اسم المنوب *</FieldLabel>
               <Input
                 {...field}
                 id={field.name}
-                placeholder="أدخل اسم العميل الكامل"
+                placeholder="أدخل اسم المنوب الكامل"
                 aria-invalid={fieldState.invalid}
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -185,10 +185,10 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
             name="clientType"
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="client-type">نوع العميل *</FieldLabel>
+                <FieldLabel htmlFor="client-type">نوع المنوب *</FieldLabel>
                 <Select name={field.name} value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger id="client-type" aria-invalid={fieldState.invalid}>
-                    <SelectValue placeholder="اختر نوع العميل" />
+                    <SelectValue placeholder="اختر نوع المنوب" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="individual"><EntityBadge type="entityType" value="individual" /></SelectItem>
@@ -278,7 +278,7 @@ export function ClientForm({ initialData, clientId, onSuccess, onCancel }: Clien
             ) : (
               <>
                 <Save className="ml-1 h-4 w-4" />
-                {isEditing ? 'تحديث العميل' : 'حفظ العميل'}
+                {isEditing ? 'تحديث المنوب' : 'حفظ المنوب'}
               </>
             )}
           </Button>

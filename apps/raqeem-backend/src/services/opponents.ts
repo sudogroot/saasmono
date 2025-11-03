@@ -2,6 +2,7 @@ import { and, eq, isNull } from 'drizzle-orm'
 import { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import { member } from '../db/schema/auth'
 import { opponents } from '../db/schema/opponents'
+import { cases } from '../db/schema/cases'
 import type { CreateOpponentInput, OpponentDropdownItem, OpponentListItem, OpponentResponse, UpdateOpponentInput } from '../types/opponent'
 
 export class OpponentService {
@@ -125,12 +126,24 @@ export class OpponentService {
         throw new Error('Opponent not found')
       }
 
-      // Soft delete
+      const now = new Date()
+
+      // Unassign opponent from all cases (set opponentId to null)
+      await this.db
+        .update(cases)
+        .set({
+          opponentId: null,
+          updatedBy: userId,
+          updatedAt: now,
+        })
+        .where(and(eq(cases.opponentId, opponentId), isNull(cases.deletedAt)))
+
+      // Soft delete opponent
       await this.db
         .update(opponents)
         .set({
           deletedBy: userId,
-          deletedAt: new Date(),
+          deletedAt: now,
         })
         .where(eq(opponents.id, opponentId))
 
@@ -141,6 +154,44 @@ export class OpponentService {
         throw error
       }
       throw new Error('Failed to delete opponent')
+    }
+  }
+
+  async getOpponentDeletionImpact(opponentId: string, orgId: string): Promise<{
+    casesCount: number
+    cases: Array<{ id: string; caseNumber: string; caseTitle: string }>
+  }> {
+    try {
+      // Verify opponent exists
+      const existingOpponent = await this.db
+        .select()
+        .from(opponents)
+        .where(and(eq(opponents.id, opponentId), eq(opponents.organizationId, orgId), isNull(opponents.deletedAt)))
+
+      if (existingOpponent.length === 0) {
+        throw new Error('Opponent not found')
+      }
+
+      // Get all cases assigned to this opponent
+      const casesResult = await this.db
+        .select({
+          id: cases.id,
+          caseNumber: cases.caseNumber,
+          caseTitle: cases.caseTitle,
+        })
+        .from(cases)
+        .where(and(eq(cases.opponentId, opponentId), isNull(cases.deletedAt)))
+
+      return {
+        casesCount: casesResult.length,
+        cases: casesResult,
+      }
+    } catch (error) {
+      console.error('[OPPONENT SERVICE] Get deletion impact error:', error)
+      if (error instanceof Error && error.message.includes('not found')) {
+        throw error
+      }
+      throw new Error('Failed to get deletion impact')
     }
   }
 

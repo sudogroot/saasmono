@@ -369,7 +369,7 @@ export default function CalendarPage() {
               </div>
 
               <div>
-                <Text variant="muted" size="sm" className="font-medium">اسم الموكل</Text>
+                <Text variant="muted" size="sm" className="font-medium">اسم المنوب</Text>
                 <Text size="lg">{selectedEvent.extendedProps.clientName}</Text>
               </div>
 
@@ -381,7 +381,7 @@ export default function CalendarPage() {
               <div>
                 <Text variant="muted" size="sm" className="font-medium">وقت البداية</Text>
                 <Text size="lg">
-                  {selectedEvent.start.toLocaleString('ar-SA', {
+                  {selectedEvent.start.toLocaleString('ar-TN', {
                     dateStyle: 'full',
                     timeStyle: 'short',
                   })}
@@ -391,7 +391,7 @@ export default function CalendarPage() {
               <div>
                 <Text variant="muted" size="sm" className="font-medium">وقت النهاية</Text>
                 <Text size="lg">
-                  {selectedEvent.end.toLocaleString('ar-SA', {
+                  {selectedEvent.end.toLocaleString('ar-TN', {
                     dateStyle: 'full',
                     timeStyle: 'short',
                   })}

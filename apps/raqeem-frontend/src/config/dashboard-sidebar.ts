@@ -13,7 +13,7 @@ export const raqeemDashboardSidebarData = {
       icon: Gavel,
     },
     {
-      title: 'الموكلين',
+      title: 'المنوبون',
       url: '/dashboard/clients',
       icon: Users,
     },

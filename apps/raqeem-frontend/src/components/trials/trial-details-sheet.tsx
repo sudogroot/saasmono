@@ -163,14 +163,14 @@ export function TrialDetails({ trialId, renderMode = 'content' }: TrialDetailsSh
           </div>
           <div className="flex items-center gap-4 rounded-lg border p-3">
             <Text variant="muted" size="sm">
-              العميل
+              المنوب
             </Text>
             <ValueText value={trialData.client.name} size="sm" />
           </div>
           {trialData.client.phone && (
             <div className="flex items-center gap-4 rounded-lg border p-3">
               <Text variant="muted" size="sm">
-                هاتف العميل
+                هاتف المنوب
               </Text>
               <div className="flex-1">
                 <ValueText value={trialData.client.phone} size="sm" className="font-mono" />

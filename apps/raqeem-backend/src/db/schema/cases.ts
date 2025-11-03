@@ -42,7 +42,8 @@ export const cases = pgTable(
     deletedBy: text('deleted_by').references(() => user.id, { onDelete: 'set null' }),
   },
   (table) => [
-    unique('cases_org_case_number_unique').on(table.organizationId, table.caseNumber),
+    // Unique constraint excluding soft-deleted records
+    unique('cases_org_case_number_unique').on(table.organizationId, table.caseNumber, table.deletedAt),
 
     index('idx_cases_organization_id').on(table.organizationId),
     index('idx_cases_client_id').on(table.clientId),

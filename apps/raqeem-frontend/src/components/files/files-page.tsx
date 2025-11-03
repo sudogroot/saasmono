@@ -169,7 +169,7 @@ export function FilesPage() {
             <Heading level={2} className="text-2xl sm:text-3xl">
               الملفات
             </Heading>
-            <p className="text-sm text-muted-foreground">إدارة جميع ملفات القضايا والعملاء</p>
+            <p className="text-sm text-muted-foreground">إدارة جميع ملفات القضايا والمنوبين</p>
           </div>
         </div>
 

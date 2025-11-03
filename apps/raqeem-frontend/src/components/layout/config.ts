@@ -48,7 +48,7 @@ export const drawerItems = [
     title: 'المنوبون',
     href: 'clients',
     icon: Users,
-    description: 'إدارة ملفات العملاء',
+    description: 'إدارة ملفات المنوبين',
   },
   {
     title: 'الخصوم',
@@ -146,7 +146,7 @@ export const quickActions = [
 
 export const breadcrumbs: any = {
   '/dashboard': 'الرئيسية',
-  '/dashboard/clients': 'عملاء',
+  '/dashboard/clients': 'منوبين',
 }
 
 // Navigation items for the dashboard
@@ -157,7 +157,7 @@ export const navigationItems = [
     href: '',
   },
   {
-    title: 'العملاء',
+    title: 'المنوبين',
     icon: Users,
     href: '/clients',
   },

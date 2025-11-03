@@ -92,6 +92,16 @@ export function CasesTable({
   const isLoading = propsIsLoading || fetchIsLoading
   const error = propsError || fetchError
 
+  // Fetch deletion impact when dialog opens
+  const { data: deletionImpact, isLoading: isLoadingImpact } = useQuery({
+    ...orpc.cases.getCaseDeletionImpact.queryOptions({
+      input: {
+        caseId: deletingCaseId!,
+      },
+    }),
+    enabled: !!deletingCaseId,
+  })
+
   // Delete mutation
   const deleteMutation = useMutation({
     ...orpc.cases.deleteCase.mutationOptions({
@@ -156,7 +166,7 @@ export function CasesTable({
       }),
       columnHelper.display({
         id: 'client',
-        header: 'العميل',
+        header: 'المنوب',
         size: 150,
         cell: ({ row }) => (
           <div className="flex items-center gap-2 min-w-0 max-w-[150px]">
@@ -565,7 +575,7 @@ export function CasesTable({
         error={error}
         searchValue={searchValue}
         onSearchChange={setSearchValue}
-        // searchPlaceholder="البحث في القضايا (العنوان، الرقم، الموضوع، العميل، الخصم...)"
+        // searchPlaceholder="البحث في القضايا (العنوان، الرقم، الموضوع، المنوب، الخصم...)"
         noDataMessage="لا توجد قضايا مطابقة للبحث"
         mobileCardRenderer={mobileCardRenderer}
         showQuickFilters={true}
@@ -583,19 +593,65 @@ export function CasesTable({
       <AlertDialog open={!!deletingCaseId} onOpenChange={() => setDeletingCaseId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
-            <AlertDialogDescription>
-              هل أنت متأكد من أنك تريد حذف هذه القضية؟ لا يمكن التراجع عن هذا الإجراء.
+            <AlertDialogTitle>تأكيد حذف القضية</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3">
+              {isLoadingImpact ? (
+                <div className="flex items-center justify-center py-4">
+                  <div className="text-sm text-muted-foreground">جاري التحقق من البيانات المرتبطة...</div>
+                </div>
+              ) : deletionImpact ? (
+                <>
+                  <div className="font-medium text-foreground">
+                    هل أنت متأكد من أنك تريد حذف هذه القضية؟
+                  </div>
+
+                  {deletionImpact.trialsCount > 0 && (
+                    <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 space-y-3">
+                      <div className="font-semibold text-destructive text-sm">
+                        ⚠️ تحذير: سيتم حذف البيانات التالية المرتبطة بهذه القضية:
+                      </div>
+
+                      <div className="text-sm">
+                        <span className="font-medium">• الجلسات: </span>
+                        <span>{deletionImpact.trialsCount} جلسة</span>
+                      </div>
+
+                      {deletionImpact.trials.length > 0 && (
+                        <div className="mt-2 pt-2 border-t border-destructive/20">
+                          <div className="text-xs font-medium mb-1">تفاصيل الجلسات:</div>
+                          <div className="space-y-1 max-h-32 overflow-y-auto">
+                            {deletionImpact.trials.map((trial) => (
+                              <div key={trial.id} className="text-xs">
+                                <span className="font-medium">جلسة #{trial.trialNumber}</span>
+                                {trial.courtName && <span className="text-muted-foreground mr-1">- {trial.courtName}</span>}
+                                <span className="text-muted-foreground mr-1">
+                                  ({new Date(trial.trialDateTime).toLocaleDateString('ar-TN')})
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="text-sm text-muted-foreground">
+                    لا يمكن التراجع عن هذا الإجراء.
+                  </div>
+                </>
+              ) : (
+                <div>هل أنت متأكد من أنك تريد حذف هذه القضية؟</div>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>إلغاء</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
-              disabled={deleteMutation.isPending}
+              disabled={deleteMutation.isPending || isLoadingImpact}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleteMutation.isPending ? 'جاري الحذف...' : 'حذف'}
+              {deleteMutation.isPending ? 'جاري الحذف...' : 'تأكيد الحذف'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
