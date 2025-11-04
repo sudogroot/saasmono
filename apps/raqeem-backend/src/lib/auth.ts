@@ -10,13 +10,20 @@ import { openAPI } from 'better-auth/plugins'
 import { admin, anonymous, organization, username } from 'better-auth/plugins'
 import * as schema from '../db/schema/auth'
 
+// Parse CORS_ORIGIN to support multiple origins (comma-separated)
+const getTrustedOrigins = (): string[] => {
+  const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3001'
+  const webOrigins = corsOrigin.split(',').map((origin) => origin.trim())
+  return [...webOrigins, 'mybettertapp://', 'exp://']
+}
+
 const betterAuthOptions: BetterAuthOptions = {
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema: schema,
   }),
   secret: getBetterAuthSecret(),
-  trustedOrigins: [process.env.CORS_ORIGIN || 'http://localhost:3001', 'mybettertapp://', 'exp://'],
+  trustedOrigins: getTrustedOrigins(),
   emailAndPassword: {
     enabled: true,
   },
