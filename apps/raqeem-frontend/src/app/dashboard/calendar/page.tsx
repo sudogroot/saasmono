@@ -71,19 +71,36 @@ function ComingSoonCalendar() {
   return (
     <div className="flex h-[calc(100vh-80px)] w-full items-center justify-center p-4" dir="rtl">
       <div className="mx-auto w-full max-w-3xl">
-        <div className="flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center gap-8">
           {/* Icon and Badge */}
-          <div className="flex items-center gap-3">
-            <div className="bg-primary/10 rounded-2xl p-4">
-              <CalendarDays className="text-primary h-12 w-12" />
+          <div className="flex items-center gap-4">
+            <div className="bg-primary/10 rounded-2xl p-6">
+              <CalendarDays className="text-primary h-16 w-16" />
             </div>
-            <div className="bg-primary/15 text-primary rounded-full px-4 py-1.5 text-xs font-medium animate-pulse">
+            <div className="bg-primary/15 text-primary rounded-full px-6 py-2 text-sm font-medium animate-pulse">
               قريباً
             </div>
           </div>
 
           {/* Title */}
-          <Heading level={1}>التقويم</Heading>
+          <Heading level={1} className="text-4xl">التقويم</Heading>
+
+          {/* Status Badge - More Prominent */}
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-primary h-1.5 w-12 rounded-full"></div>
+              <div className="bg-primary h-1.5 w-12 rounded-full"></div>
+              <div className="bg-primary/30 h-1.5 w-12 rounded-full"></div>
+            </div>
+            <div className="bg-muted/50 rounded-lg px-8 py-4 text-center">
+              <Text as="p" size="lg" className="font-semibold text-foreground">
+                قيد التطوير
+              </Text>
+              <Text as="p" size="sm" className="text-muted-foreground mt-1">
+                نعمل على إضافة هذه الميزة قريباً
+              </Text>
+            </div>
+          </div>
 
           {/* Calendar Preview */}
           <div className="bg-card w-full max-w-md rounded-xl border shadow-sm">
@@ -130,16 +147,6 @@ function ComingSoonCalendar() {
                 <Text as="span" size="xs" className="text-muted-foreground">تنبيهات تلقائية</Text>
               </div>
             </div>
-          </div>
-
-          {/* Progress */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1">
-              <div className="bg-primary h-1 w-6 rounded-full"></div>
-              <div className="bg-primary h-1 w-6 rounded-full"></div>
-              <div className="bg-primary/30 h-1 w-6 rounded-full"></div>
-            </div>
-            <Text as="span" size="xs" className="text-muted-foreground">قيد التطوير</Text>
           </div>
         </div>
       </div>

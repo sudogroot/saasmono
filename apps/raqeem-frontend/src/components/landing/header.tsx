@@ -18,71 +18,23 @@ export function Header() {
             <Image src="/raqeem-logo.svg" alt="Logo" width={120} height={30} />
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
-            <Link href="/" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">الرئيسية</Link>
-            <Link href="/features" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">الميزات</Link>
-            <Link href="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">الأسعار</Link>
-            <Link href="/about" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">من نحن</Link>
-            <Link href="/contact" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">اتصل بنا</Link>
-          </nav>
-
-          {/* Desktop Actions */}
+          {/* Desktop Actions - Simplified for Early Access */}
           <div className="hidden lg:flex items-center gap-3">
             <Button asChild size="sm" variant="outline">
               <Link href="/login">تسجيل الدخول</Link>
             </Button>
             <Button asChild className="bg-primary hover:bg-primary/90 px-6">
-              <Link href="/register">إنشاء حساب</Link>
+              <Link href="/register">سجل اهتمامك</Link>
             </Button>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="lg:hidden flex items-center gap-2">
             <Button asChild size="sm" className="bg-primary hover:bg-primary/90">
-              <Link href="/register">إنشاء حساب</Link>
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2"
-            >
-              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              <Link href="/register">سجل اهتمامك</Link>
             </Button>
           </div>
         </div>
-
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden border-t bg-white py-4">
-            <nav className="flex flex-col gap-4">
-              <Link href="/" className="text-gray-600 hover:text-gray-900 py-2" onClick={() => setMobileMenuOpen(false)}>
-                الرئيسية
-              </Link>
-              <Link href="/features" className="text-gray-600 hover:text-gray-900 py-2" onClick={() => setMobileMenuOpen(false)}>
-                الميزات
-              </Link>
-              <Link href="/pricing" className="text-gray-600 hover:text-gray-900 py-2" onClick={() => setMobileMenuOpen(false)}>
-                الأسعار
-              </Link>
-              <Link href="/about" className="text-gray-600 hover:text-gray-900 py-2" onClick={() => setMobileMenuOpen(false)}>
-                من نحن
-              </Link>
-              <Link href="/contact" className="text-gray-600 hover:text-gray-900 py-2" onClick={() => setMobileMenuOpen(false)}>
-                اتصل بنا
-              </Link>
-              <div className="pt-4 border-t flex flex-col gap-3">
-                <Button asChild variant="outline" className="w-full">
-                  <Link href="/login">تسجيل الدخول</Link>
-                </Button>
-                <Button asChild className="w-full">
-                  <Link href="/register">إنشاء حساب</Link>
-                </Button>
-              </div>
-            </nav>
-          </div>
-        )}
       </div>
     </header>
   );
