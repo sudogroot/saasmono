@@ -49,7 +49,7 @@ RUN pnpm install --frozen-lockfile --prod --filter web
 # Copy built files and necessary Next.js files from builder
 COPY --from=builder /app/apps/web/.next ./apps/web/.next
 COPY --from=builder /app/apps/web/public ./apps/web/public
-COPY --from=builder /app/apps/web/next.config.ts ./apps/web/
+COPY --from=builder /app/apps/web/next.config.js ./apps/web/
 
 # Set working directory to frontend app
 WORKDIR /app/apps/web
