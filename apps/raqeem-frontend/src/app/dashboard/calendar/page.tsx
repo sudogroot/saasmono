@@ -148,8 +148,8 @@ function ComingSoonCalendar() {
 }
 
 export default function CalendarPage() {
-  // Show coming soon page for now
-  const SHOW_COMING_SOON = true
+  // Check feature flag from environment variable
+  const isCalendarEnabled = process.env.NEXT_PUBLIC_ENABLE_CALENDAR === 'true'
 
   const { data: session } = authClient.useSession()
   const calendarRef = useRef<FullCalendar>(null)
@@ -162,7 +162,7 @@ export default function CalendarPage() {
     error,
   } = useQuery({
     ...orpc.trials.listTrials.queryOptions(),
-    enabled: !!session && !SHOW_COMING_SOON,
+    enabled: !!session && isCalendarEnabled,
   })
 
   // Convert trials to FullCalendar events
@@ -243,8 +243,8 @@ export default function CalendarPage() {
     // TODO: Update event in backend
   }
 
-  // Show coming soon page
-  if (SHOW_COMING_SOON) {
+  // Show coming soon page if feature is not enabled
+  if (!isCalendarEnabled) {
     return <ComingSoonCalendar />
   }
 
