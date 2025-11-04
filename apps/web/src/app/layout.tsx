@@ -8,7 +8,7 @@ const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin', 'latin-ext'],
 })
-
+ 
 const jetbrainsMono = JetBrains_Mono({
   variable: '--font-jetbrains-mono',
   subsets: ['latin'],
