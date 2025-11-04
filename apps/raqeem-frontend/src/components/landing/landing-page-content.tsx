@@ -9,23 +9,23 @@ import Link from "next/link";
 // Early Adopter Landing Page
 function EarlyAdopterHero() {
   return (
-    <section className="relative bg-gradient-to-br from-slate-50 via-white to-gray-50 py-20 md:py-28 lg:py-36 overflow-hidden min-h-[calc(100vh-80px)]">
+    <section className="relative bg-gradient-to-br from-slate-50 via-white to-gray-50 overflow-hidden h-[calc(100vh-80px)] flex items-center">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
 
-      <div className="container mx-auto px-4 lg:px-8 relative">
-        <div className="text-center max-w-5xl mx-auto space-y-12">
+      <div className="container mx-auto px-4 lg:px-8 relative w-full">
+        <div className="text-center max-w-4xl mx-auto space-y-6">
           {/* Early Access Badge */}
           <div className="flex justify-center">
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded-full px-6 py-3 shadow-lg animate-pulse">
-              <Sparkles className="h-5 w-5" />
-              <span className="font-semibold text-sm">برنامج الوصول المبكر</span>
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded-full px-5 py-2 shadow-lg animate-pulse">
+              <Sparkles className="h-4 w-4" />
+              <span className="font-semibold text-xs">برنامج الوصول المبكر</span>
             </div>
           </div>
 
           {/* Main Headline */}
-          <div className="space-y-6">
-            <Heading level={1} className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-[1.2] tracking-tight">
+          <div className="space-y-3">
+            <Heading level={1} className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight tracking-tight">
               مستقبل إدارة
               <br />
               <span className="bg-gradient-to-l from-slate-900 via-slate-700 to-slate-900 bg-clip-text text-transparent">
@@ -33,94 +33,86 @@ function EarlyAdopterHero() {
               </span>
             </Heading>
 
-            <Text size="xl" className="text-gray-600 leading-relaxed max-w-3xl mx-auto text-lg md:text-2xl font-medium">
+            <Text className="text-gray-600 leading-relaxed max-w-2xl mx-auto text-base md:text-lg">
               نبني منصة متكاملة لإدارة القضايا، الجلسات، المنوبين والمستندات بذكاء وكفاءة
             </Text>
           </div>
 
-          {/* Early Adopter Benefits */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl border-2 border-slate-200 p-8 md:p-10 shadow-xl max-w-3xl mx-auto">
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 justify-center">
-                <Scale className="h-8 w-8 text-primary" />
-                <Heading level={3} className="text-2xl font-bold text-gray-900">
+          {/* Early Adopter Benefits - Compact */}
+          <div className="bg-white/60 backdrop-blur-sm rounded-xl border-2 border-slate-200 p-6 shadow-xl max-w-2xl mx-auto">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 justify-center">
+                <Scale className="h-6 w-6 text-primary" />
+                <Heading level={3} className="text-lg font-bold text-gray-900">
                   كن من أوائل المستخدمين
                 </Heading>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-4 text-right">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-right">
                 {[
-                  "وصول مبكر للميزات الجديدة",
-                  "تأثير مباشر على تطوير المنتج",
+                  "وصول مبكر للميزات",
                   "أسعار تفضيلية مدى الحياة",
-                  "دعم فني مخصص وسريع",
-                  "تدريب شخصي على المنصة",
-                  "استشارات مجانية لتحسين العمل"
+                  "دعم فني مخصص",
+                  "تدريب شخصي"
                 ].map((benefit, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
-                    <Text className="text-gray-700 font-medium">{benefit}</Text>
+                  <div key={index} className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <Text className="text-gray-700 text-sm">{benefit}</Text>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+          {/* CTA Buttons - Compact */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
             <Button
-              size="lg"
-              className="text-lg px-12 py-8 shadow-2xl transform hover:scale-105 transition-all duration-300 font-bold"
+              size="default"
+              className="shadow-xl transform hover:scale-105 transition-all duration-300 font-bold"
               asChild
             >
               <Link href="/contact">
-                <Mail className="ml-2 h-5 w-5" />
+                <Mail className="ml-2 h-4 w-4" />
                 احجز عرضاً توضيحياً
               </Link>
             </Button>
 
             <Button
-              size="lg"
+              size="default"
               variant="outline"
-              className="text-lg px-12 py-8 border-2 hover:bg-gray-50 font-semibold shadow-lg"
+              className="border-2 hover:bg-gray-50 font-semibold shadow-lg"
               asChild
             >
               <Link href="/register">
-                <Calendar className="ml-2 h-5 w-5" />
+                <Calendar className="ml-2 h-4 w-4" />
                 سجل اهتمامك
               </Link>
             </Button>
           </div>
 
-          {/* Trust Indicators */}
-          <div className="pt-8">
-            <Text size="sm" className="text-gray-500 mb-4">
-              منصة مصممة خصيصاً للمحامين في تونس
-            </Text>
-            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600" />
-                <span className="font-medium">متوافق مع القانون التونسي</span>
+          {/* Trust Indicators - Compact */}
+          <div className="pt-4">
+            <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-500">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <span>متوافق مع القانون التونسي</span>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600" />
-                <span className="font-medium">بيانات آمنة ومشفرة</span>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <span>بيانات آمنة</span>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600" />
-                <span className="font-medium">دعم باللغة العربية</span>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <span>دعم عربي</span>
               </div>
             </div>
           </div>
 
-          {/* Launch Timeline */}
-          <div className="pt-12">
-            <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-xl p-6 border border-slate-200">
-              <Text className="text-slate-900 font-semibold mb-2">
-                📅 الإطلاق التجريبي المخطط
-              </Text>
-              <Text size="lg" className="text-slate-700 font-bold">
-                الربع الثاني من 2025
+          {/* Launch Timeline - Compact */}
+          <div className="pt-3">
+            <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-lg p-4 border border-slate-200 inline-block">
+              <Text className="text-slate-900 font-semibold text-sm">
+                📅 الإطلاق التجريبي: <span className="text-slate-700 font-bold">Q2 2025</span>
               </Text>
             </div>
           </div>
@@ -132,10 +124,9 @@ function EarlyAdopterHero() {
 
 export function LandingPageContent() {
   return (
-    <div className="min-h-screen" dir="rtl">
+    <div className="h-screen overflow-hidden" dir="rtl">
       <Header />
       <EarlyAdopterHero />
-      <Footer />
     </div>
   );
 }
