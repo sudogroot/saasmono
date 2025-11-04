@@ -153,7 +153,8 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
             </form.Subscribe>
           </form>
 
-          <div className="text-center">
+          {/* Commented out - Early Access Mode */}
+          {/* <div className="text-center">
             <Text className="mb-2 text-gray-600">ليس لديك حساب؟</Text>
             <Button
               variant="link"
@@ -163,7 +164,7 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
               <Plus className="mr-2" />
               إنشاء حساب جديد
             </Button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

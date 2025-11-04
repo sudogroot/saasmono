@@ -4,6 +4,7 @@ import { caseRouter } from './cases'
 import { clientRouter } from './clients'
 import { courtRouter } from './courts'
 import { dashboardRouter } from './dashboard'
+import { interestRouter } from './interest'
 import { opponentRouter } from './opponents'
 import { trialRouter } from './trials'
 
@@ -41,6 +42,9 @@ export const appRouter = {
   opponents: opponentRouter,
   trials: trialRouter,
   dashboard: dashboardRouter,
+
+  // Public routes
+  interest: interestRouter,
 }
 
 export type AppRouter = typeof appRouter

@@ -26,11 +26,11 @@ function EarlyAdopterHero() {
           {/* Main Headline */}
           <div className="space-y-3">
             <Heading level={1} className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight tracking-tight">
-              مستقبل إدارة
-              <br />
               <span className="bg-gradient-to-l from-slate-900 via-slate-700 to-slate-900 bg-clip-text text-transparent">
-                المكاتب القانونية
+                منصة المحامي
               </span>
+              <br />
+              لإدارة مكتبه بكفاءة
             </Heading>
 
             <Text className="text-gray-600 leading-relaxed max-w-2xl mx-auto text-base md:text-lg">
@@ -51,7 +51,7 @@ function EarlyAdopterHero() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-right">
                 {[
                   "وصول مبكر للميزات",
-                  "أسعار تفضيلية مدى الحياة",
+                  "مزايا حصرية للمستخدمين الأوائل",
                   "دعم فني مخصص",
                   "تدريب شخصي"
                 ].map((benefit, index) => (
@@ -71,7 +71,7 @@ function EarlyAdopterHero() {
               className="shadow-xl transform hover:scale-105 transition-all duration-300 font-bold"
               asChild
             >
-              <Link href="/contact">
+              <Link href="/interest">
                 <Mail className="ml-2 h-4 w-4" />
                 احجز عرضاً توضيحياً
               </Link>
@@ -83,7 +83,7 @@ function EarlyAdopterHero() {
               className="border-2 hover:bg-gray-50 font-semibold shadow-lg"
               asChild
             >
-              <Link href="/register">
+              <Link href="/interest">
                 <Calendar className="ml-2 h-4 w-4" />
                 سجل اهتمامك
               </Link>
@@ -95,25 +95,16 @@ function EarlyAdopterHero() {
             <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-500">
               <div className="flex items-center gap-1.5">
                 <CheckCircle className="h-4 w-4 text-green-600" />
-                <span>متوافق مع القانون التونسي</span>
+                <span>مصمم للمحامين التونسيين</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle className="h-4 w-4 text-green-600" />
-                <span>بيانات آمنة</span>
+                <span>أمان وخصوصية تامة</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle className="h-4 w-4 text-green-600" />
-                <span>دعم عربي</span>
+                <span>واجهة عربية بالكامل</span>
               </div>
-            </div>
-          </div>
-
-          {/* Launch Timeline - Compact */}
-          <div className="pt-3">
-            <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-lg p-4 border border-slate-200 inline-block">
-              <Text className="text-slate-900 font-semibold text-sm">
-                📅 الإطلاق التجريبي: <span className="text-slate-700 font-bold">Q2 2025</span>
-              </Text>
             </div>
           </div>
         </div>

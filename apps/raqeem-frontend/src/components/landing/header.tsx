@@ -24,14 +24,14 @@ export function Header() {
               <Link href="/login">تسجيل الدخول</Link>
             </Button>
             <Button asChild className="bg-primary hover:bg-primary/90 px-6">
-              <Link href="/register">سجل اهتمامك</Link>
+              <Link href="/interest">سجل اهتمامك</Link>
             </Button>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="lg:hidden flex items-center gap-2">
             <Button asChild size="sm" className="bg-primary hover:bg-primary/90">
-              <Link href="/register">سجل اهتمامك</Link>
+              <Link href="/interest">سجل اهتمامك</Link>
             </Button>
           </div>
         </div>
