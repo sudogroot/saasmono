@@ -16,11 +16,26 @@ import { validateFile } from './lib/fileUtils'
 
 const app = express()
 
+// Parse CORS_ORIGIN to support multiple origins (comma-separated)
+const getAllowedOrigins = (): string[] => {
+  const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3001'
+  return corsOrigin.split(',').map((origin) => origin.trim())
+}
+
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || '',
-    methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: (origin, callback) => {
+      const allowedOrigins = getAllowedOrigins()
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true)
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
     credentials: true,
   })
 )
