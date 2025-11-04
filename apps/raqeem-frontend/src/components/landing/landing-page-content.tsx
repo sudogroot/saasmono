@@ -17,7 +17,7 @@ function EarlyAdopterHero() {
         <div className="text-center max-w-5xl mx-auto space-y-12">
           {/* Early Access Badge */}
           <div className="flex justify-center">
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-full px-6 py-3 shadow-lg animate-pulse">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded-full px-6 py-3 shadow-lg animate-pulse">
               <Sparkles className="h-5 w-5" />
               <span className="font-semibold text-sm">برنامج الوصول المبكر</span>
             </div>
@@ -28,7 +28,7 @@ function EarlyAdopterHero() {
             <Heading level={1} className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-[1.2] tracking-tight">
               مستقبل إدارة
               <br />
-              <span className="bg-gradient-to-l from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-l from-slate-900 via-slate-700 to-slate-900 bg-clip-text text-transparent">
                 المكاتب القانونية
               </span>
             </Heading>
@@ -39,10 +39,10 @@ function EarlyAdopterHero() {
           </div>
 
           {/* Early Adopter Benefits */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl border-2 border-violet-200 p-8 md:p-10 shadow-xl max-w-3xl mx-auto">
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl border-2 border-slate-200 p-8 md:p-10 shadow-xl max-w-3xl mx-auto">
             <div className="space-y-6">
               <div className="flex items-center gap-3 justify-center">
-                <Scale className="h-8 w-8 text-violet-600" />
+                <Scale className="h-8 w-8 text-primary" />
                 <Heading level={3} className="text-2xl font-bold text-gray-900">
                   كن من أوائل المستخدمين
                 </Heading>
@@ -70,7 +70,7 @@ function EarlyAdopterHero() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
             <Button
               size="lg"
-              className="text-lg px-12 py-8 shadow-2xl transform hover:scale-105 transition-all duration-300 font-bold bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
+              className="text-lg px-12 py-8 shadow-2xl transform hover:scale-105 transition-all duration-300 font-bold"
               asChild
             >
               <Link href="/contact">
@@ -82,7 +82,7 @@ function EarlyAdopterHero() {
             <Button
               size="lg"
               variant="outline"
-              className="text-lg px-12 py-8 border-2 hover:bg-gray-50 font-semibold shadow-lg border-violet-600 text-violet-600 hover:bg-violet-50"
+              className="text-lg px-12 py-8 border-2 hover:bg-gray-50 font-semibold shadow-lg"
               asChild
             >
               <Link href="/register">
@@ -99,15 +99,15 @@ function EarlyAdopterHero() {
             </Text>
             <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500">
               <div className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-violet-600" />
+                <CheckCircle className="h-5 w-5 text-green-600" />
                 <span className="font-medium">متوافق مع القانون التونسي</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-violet-600" />
+                <CheckCircle className="h-5 w-5 text-green-600" />
                 <span className="font-medium">بيانات آمنة ومشفرة</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-violet-600" />
+                <CheckCircle className="h-5 w-5 text-green-600" />
                 <span className="font-medium">دعم باللغة العربية</span>
               </div>
             </div>
@@ -115,11 +115,11 @@ function EarlyAdopterHero() {
 
           {/* Launch Timeline */}
           <div className="pt-12">
-            <div className="bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl p-6 border border-violet-200">
-              <Text className="text-violet-900 font-semibold mb-2">
+            <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-xl p-6 border border-slate-200">
+              <Text className="text-slate-900 font-semibold mb-2">
                 📅 الإطلاق التجريبي المخطط
               </Text>
-              <Text size="lg" className="text-violet-700 font-bold">
+              <Text size="lg" className="text-slate-700 font-bold">
                 الربع الثاني من 2025
               </Text>
             </div>
