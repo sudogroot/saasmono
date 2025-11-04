@@ -23,8 +23,8 @@ RUN pnpm --filter @repo/ui build
 ARG NEXT_PUBLIC_SERVER_URL
 ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL
 
-# Build the frontend (disable type checking and linting during build)
-RUN NEXT_SKIP_TYPE_CHECK=1 NEXT_DISABLE_ESLINT=1 pnpm --filter web build
+# Build the frontend
+RUN pnpm --filter web build
 
 # Production stage
 FROM node:22-alpine AS runner
@@ -49,7 +49,7 @@ RUN pnpm install --frozen-lockfile --prod --filter web
 # Copy built files and necessary Next.js files from builder
 COPY --from=builder /app/apps/web/.next ./apps/web/.next
 COPY --from=builder /app/apps/web/public ./apps/web/public
-COPY --from=builder /app/apps/web/next.config.ts ./apps/web/
+COPY --from=builder /app/apps/web/next.config.js ./apps/web/
 
 # Set working directory to frontend app
 WORKDIR /app/apps/web
