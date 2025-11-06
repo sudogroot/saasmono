@@ -46,6 +46,9 @@ COPY --from=builder /app/apps/raqeem-backend/dist ./apps/raqeem-backend/dist
 COPY --from=builder /app/apps/raqeem-backend/src ./apps/raqeem-backend/src
 COPY --from=builder /app/apps/raqeem-backend/drizzle.config.ts ./apps/raqeem-backend/
 
+# Copy scripts folder (needed for create-user script)
+COPY --from=builder /app/apps/raqeem-backend/scripts ./apps/raqeem-backend/scripts
+
 # Copy entrypoint script
 COPY apps/raqeem-backend/docker-entrypoint.sh ./apps/raqeem-backend/
 RUN chmod +x ./apps/raqeem-backend/docker-entrypoint.sh

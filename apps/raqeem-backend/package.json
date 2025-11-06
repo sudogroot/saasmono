@@ -45,6 +45,7 @@
     "drizzle-seed": "^0.3.1",
     "express": "^5.1.0",
     "pg": "^8.16.3",
+    "tsx": "^4.20.5",
     "zod": "^4.1.9"
   },
   "devDependencies": {
@@ -69,7 +70,6 @@
     "redoc-cli": "^0.13.21",
     "supertest": "^7.1.4",
     "tsdown": "^0.15.2",
-    "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   }
