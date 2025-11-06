@@ -15,6 +15,13 @@
       "when": 1762156169237,
       "tag": "0001_thankful_power_pack",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1762261793471,
+      "tag": "0002_thin_mac_gargan",
+      "breakpoints": true
     }
   ]
 }

@@ -1,6 +1,6 @@
 import { boolean, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
-export const user = pgTable('user', {
+export const user = pgTable('users', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
@@ -21,9 +21,10 @@ export const user = pgTable('user', {
   isAnonymous: boolean('is_anonymous'),
   username: text('username').unique(),
   displayUsername: text('display_username'),
+  passwordChangeRequired: boolean('password_change_required').default(false),
 })
 
-export const session = pgTable('session', {
+export const session = pgTable('sessions', {
   id: text('id').primaryKey(),
   expiresAt: timestamp('expires_at').notNull(),
   token: text('token').notNull().unique(),
@@ -56,7 +57,7 @@ export const account = pgTable('account', {
   updatedAt: timestamp('updated_at').notNull(),
 })
 
-export const verification = pgTable('verification', {
+export const verification = pgTable('verifications', {
   id: text('id').primaryKey(),
   identifier: text('identifier').notNull(),
   value: text('value').notNull(),
@@ -65,7 +66,7 @@ export const verification = pgTable('verification', {
   updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date()),
 })
 
-export const organization = pgTable('organization', {
+export const organization = pgTable('organizations', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
   slug: text('slug').unique(),
@@ -74,7 +75,7 @@ export const organization = pgTable('organization', {
   metadata: text('metadata'),
 })
 
-export const member = pgTable('member', {
+export const member = pgTable('members', {
   id: text('id').primaryKey(),
   organizationId: text('organization_id')
     .notNull()
@@ -86,7 +87,7 @@ export const member = pgTable('member', {
   createdAt: timestamp('created_at').notNull(),
 })
 
-export const invitation = pgTable('invitation', {
+export const invitation = pgTable('invitations', {
   id: text('id').primaryKey(),
   organizationId: text('organization_id')
     .notNull()

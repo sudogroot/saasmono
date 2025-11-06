@@ -26,7 +26,15 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
           password: value.password,
         },
         {
-          onSuccess: async () => {
+          onSuccess: async (ctx) => {
+            // Check if user needs to change password
+            const user = ctx.data?.user
+            if (user && (user as any).passwordChangeRequired) {
+              router.push('/change-password')
+              toast.info('يجب تغيير كلمة المرور المؤقتة')
+              return
+            }
+
             const organizations = await authClient.organization.list()
             // every user should have only one organization  that is why we are hard coding 0 index there
             // TODO : may be we should throw if login sucess and have no organization that should not happe

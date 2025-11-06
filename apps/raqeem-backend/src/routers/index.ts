@@ -7,6 +7,7 @@ import { dashboardRouter } from './dashboard'
 import { interestRouter } from './interest'
 import { opponentRouter } from './opponents'
 import { trialRouter } from './trials'
+import { userRouter } from './user'
 
 export const appRouter = {
   healthCheck: publicProcedure
@@ -45,6 +46,9 @@ export const appRouter = {
 
   // Public routes
   interest: interestRouter,
+
+  // User management
+  user: userRouter,
 }
 
 export type AppRouter = typeof appRouter

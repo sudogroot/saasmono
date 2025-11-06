@@ -1,6 +1,7 @@
 'use client'
 
 import { drawerItems, mainNavItems, quickActions } from '@/components/layout/config'
+import { PasswordChangeGuard } from '@/components/password-change-guard'
 import { PWAInstallPrompt } from '@/components/pwa/install-prompt'
 import { raqeemDashboardSidebarData } from '@/config/dashboard-sidebar'
 import { useSheetUrlSync } from '@/hooks/use-sheet-url-sync'
@@ -96,23 +97,24 @@ export default function NewLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <DashboardLayout
-        sidebarData={{
-          ...raqeemDashboardSidebarData,
-          user: {
-            name: user?.name,
-            email: user?.email,
-            avatar: user?.image || '/raqeem-icon.svg',
-            onLogout: async () => {
-              await authClient.signOut()
-              window.location.href = '/'
+      <PasswordChangeGuard>
+        <DashboardLayout
+          sidebarData={{
+            ...raqeemDashboardSidebarData,
+            user: {
+              name: user?.name,
+              email: user?.email,
+              avatar: user?.image || '/raqeem-icon.svg',
+              onLogout: async () => {
+                await authClient.signOut()
+                window.location.href = '/'
+              },
             },
-          },
-        }}
-        brandLogo={<img src="/logo.svg" alt="رقيم" className="!w-24" />}
-        brandIcon={<img src="/raqeem-icon.svg" alt="رقيم" className="!w-[34px]" />}
-      >
-        {children}
+          }}
+          brandLogo={<img src="/logo.svg" alt="رقيم" className="!w-24" />}
+          brandIcon={<img src="/raqeem-icon.svg" alt="رقيم" className="!w-[34px]" />}
+        >
+          {children}
 
         {/* Mobile Navigation */}
         <MobileNav
@@ -128,6 +130,7 @@ export default function NewLayout({ children }: { children: React.ReactNode }) {
           }}
         />
       </DashboardLayout>
+      </PasswordChangeGuard>
       <Toaster richColors position="top-center" dir="rtl" />
       <PWAInstallPrompt />
     </>

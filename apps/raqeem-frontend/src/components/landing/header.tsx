@@ -30,6 +30,9 @@ export function Header() {
 
           {/* Mobile Menu Button */}
           <div className="lg:hidden flex items-center gap-2">
+            <Button asChild size="sm" variant="outline">
+              <Link href="/login">تسجيل الدخول</Link>
+            </Button>
             <Button asChild size="sm" className="bg-primary hover:bg-primary/90">
               <Link href="/interest">سجل اهتمامك</Link>
             </Button>

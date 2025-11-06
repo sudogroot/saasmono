@@ -27,6 +27,15 @@ const betterAuthOptions: BetterAuthOptions = {
   emailAndPassword: {
     enabled: true,
   },
+  user: {
+    additionalFields: {
+      passwordChangeRequired: {
+        type: 'boolean',
+        defaultValue: false,
+        required: false,
+      },
+    },
+  },
   advanced: {
     defaultCookieAttributes: {
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
