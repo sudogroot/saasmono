@@ -1,5 +1,5 @@
 {
-  "id": "d0dc0919-64da-408a-a0c7-d0744a47f111",
+  "id": "27f5a31d-2a50-427a-b7a9-bfa1b2065e14",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -89,10 +89,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "account_user_id_user_id_fk": {
-          "name": "account_user_id_user_id_fk",
+        "account_user_id_users_id_fk": {
+          "name": "account_user_id_users_id_fk",
           "tableFrom": "account",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
@@ -109,8 +109,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.invitation": {
-      "name": "invitation",
+    "public.invitations": {
+      "name": "invitations",
       "schema": "",
       "columns": {
         "id": {
@@ -159,10 +159,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "invitation_organization_id_organization_id_fk": {
-          "name": "invitation_organization_id_organization_id_fk",
-          "tableFrom": "invitation",
-          "tableTo": "organization",
+        "invitations_organization_id_organizations_id_fk": {
+          "name": "invitations_organization_id_organizations_id_fk",
+          "tableFrom": "invitations",
+          "tableTo": "organizations",
           "columnsFrom": [
             "organization_id"
           ],
@@ -172,10 +172,10 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "invitation_inviter_id_user_id_fk": {
-          "name": "invitation_inviter_id_user_id_fk",
-          "tableFrom": "invitation",
-          "tableTo": "user",
+        "invitations_inviter_id_users_id_fk": {
+          "name": "invitations_inviter_id_users_id_fk",
+          "tableFrom": "invitations",
+          "tableTo": "users",
           "columnsFrom": [
             "inviter_id"
           ],
@@ -192,8 +192,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.member": {
-      "name": "member",
+    "public.members": {
+      "name": "members",
       "schema": "",
       "columns": {
         "id": {
@@ -230,10 +230,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "member_organization_id_organization_id_fk": {
-          "name": "member_organization_id_organization_id_fk",
-          "tableFrom": "member",
-          "tableTo": "organization",
+        "members_organization_id_organizations_id_fk": {
+          "name": "members_organization_id_organizations_id_fk",
+          "tableFrom": "members",
+          "tableTo": "organizations",
           "columnsFrom": [
             "organization_id"
           ],
@@ -243,10 +243,10 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "member_user_id_user_id_fk": {
-          "name": "member_user_id_user_id_fk",
-          "tableFrom": "member",
-          "tableTo": "user",
+        "members_user_id_users_id_fk": {
+          "name": "members_user_id_users_id_fk",
+          "tableFrom": "members",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
@@ -263,8 +263,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.organization": {
-      "name": "organization",
+    "public.organizations": {
+      "name": "organizations",
       "schema": "",
       "columns": {
         "id": {
@@ -308,8 +308,8 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "organization_slug_unique": {
-          "name": "organization_slug_unique",
+        "organizations_slug_unique": {
+          "name": "organizations_slug_unique",
           "nullsNotDistinct": false,
           "columns": [
             "slug"
@@ -320,8 +320,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.session": {
-      "name": "session",
+    "public.sessions": {
+      "name": "sessions",
       "schema": "",
       "columns": {
         "id": {
@@ -387,10 +387,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "session_user_id_user_id_fk": {
-          "name": "session_user_id_user_id_fk",
-          "tableFrom": "session",
-          "tableTo": "user",
+        "sessions_user_id_users_id_fk": {
+          "name": "sessions_user_id_users_id_fk",
+          "tableFrom": "sessions",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
@@ -403,8 +403,8 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "session_token_unique": {
-          "name": "session_token_unique",
+        "sessions_token_unique": {
+          "name": "sessions_token_unique",
           "nullsNotDistinct": false,
           "columns": [
             "token"
@@ -415,8 +415,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.user": {
-      "name": "user",
+    "public.users": {
+      "name": "users",
       "schema": "",
       "columns": {
         "id": {
@@ -502,21 +502,28 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "password_change_required": {
+          "name": "password_change_required",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "user_email_unique": {
-          "name": "user_email_unique",
+        "users_email_unique": {
+          "name": "users_email_unique",
           "nullsNotDistinct": false,
           "columns": [
             "email"
           ]
         },
-        "user_username_unique": {
-          "name": "user_username_unique",
+        "users_username_unique": {
+          "name": "users_username_unique",
           "nullsNotDistinct": false,
           "columns": [
             "username"
@@ -527,8 +534,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.verification": {
-      "name": "verification",
+    "public.verifications": {
+      "name": "verifications",
       "schema": "",
       "columns": {
         "id": {
@@ -768,10 +775,10 @@
         }
       },
       "foreignKeys": {
-        "cases_organization_id_organization_id_fk": {
-          "name": "cases_organization_id_organization_id_fk",
+        "cases_organization_id_organizations_id_fk": {
+          "name": "cases_organization_id_organizations_id_fk",
           "tableFrom": "cases",
-          "tableTo": "organization",
+          "tableTo": "organizations",
           "columnsFrom": [
             "organization_id"
           ],
@@ -820,10 +827,10 @@
           "onDelete": "set null",
           "onUpdate": "no action"
         },
-        "cases_created_by_user_id_fk": {
-          "name": "cases_created_by_user_id_fk",
+        "cases_created_by_users_id_fk": {
+          "name": "cases_created_by_users_id_fk",
           "tableFrom": "cases",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "created_by"
           ],
@@ -833,10 +840,10 @@
           "onDelete": "set null",
           "onUpdate": "no action"
         },
-        "cases_updated_by_user_id_fk": {
-          "name": "cases_updated_by_user_id_fk",
+        "cases_updated_by_users_id_fk": {
+          "name": "cases_updated_by_users_id_fk",
           "tableFrom": "cases",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "updated_by"
           ],
@@ -846,10 +853,10 @@
           "onDelete": "set null",
           "onUpdate": "no action"
         },
-        "cases_deleted_by_user_id_fk": {
-          "name": "cases_deleted_by_user_id_fk",
+        "cases_deleted_by_users_id_fk": {
+          "name": "cases_deleted_by_users_id_fk",
           "tableFrom": "cases",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "deleted_by"
           ],
@@ -867,7 +874,8 @@
           "nullsNotDistinct": false,
           "columns": [
             "organization_id",
-            "case_number"
+            "case_number",
+            "deleted_at"
           ]
         }
       },
@@ -999,10 +1007,10 @@
         }
       },
       "foreignKeys": {
-        "clients_organization_id_organization_id_fk": {
-          "name": "clients_organization_id_organization_id_fk",
+        "clients_organization_id_organizations_id_fk": {
+          "name": "clients_organization_id_organizations_id_fk",
           "tableFrom": "clients",
-          "tableTo": "organization",
+          "tableTo": "organizations",
           "columnsFrom": [
             "organization_id"
           ],
@@ -1012,10 +1020,10 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "clients_created_by_user_id_fk": {
-          "name": "clients_created_by_user_id_fk",
+        "clients_created_by_users_id_fk": {
+          "name": "clients_created_by_users_id_fk",
           "tableFrom": "clients",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "created_by"
           ],
@@ -1027,7 +1035,17 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "clients_org_national_id_unique": {
+          "name": "clients_org_national_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "organization_id",
+            "national_id",
+            "deleted_at"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -1123,6 +1141,75 @@
           "with": {}
         }
       },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.interest_request": {
+      "name": "interest_request",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone_number": {
+          "name": "phone_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "wants_demo": {
+          "name": "wants_demo",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        }
+      },
+      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
@@ -1263,10 +1350,10 @@
         }
       },
       "foreignKeys": {
-        "opponents_organization_id_organization_id_fk": {
-          "name": "opponents_organization_id_organization_id_fk",
+        "opponents_organization_id_organizations_id_fk": {
+          "name": "opponents_organization_id_organizations_id_fk",
           "tableFrom": "opponents",
-          "tableTo": "organization",
+          "tableTo": "organizations",
           "columnsFrom": [
             "organization_id"
           ],
@@ -1276,10 +1363,10 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "opponents_created_by_user_id_fk": {
-          "name": "opponents_created_by_user_id_fk",
+        "opponents_created_by_users_id_fk": {
+          "name": "opponents_created_by_users_id_fk",
           "tableFrom": "opponents",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "created_by"
           ],
@@ -1289,10 +1376,10 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "opponents_updated_by_user_id_fk": {
-          "name": "opponents_updated_by_user_id_fk",
+        "opponents_updated_by_users_id_fk": {
+          "name": "opponents_updated_by_users_id_fk",
           "tableFrom": "opponents",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "updated_by"
           ],
@@ -1302,10 +1389,10 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "opponents_deleted_by_user_id_fk": {
-          "name": "opponents_deleted_by_user_id_fk",
+        "opponents_deleted_by_users_id_fk": {
+          "name": "opponents_deleted_by_users_id_fk",
           "tableFrom": "opponents",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "deleted_by"
           ],
@@ -1480,10 +1567,10 @@
         }
       },
       "foreignKeys": {
-        "trials_organization_id_organization_id_fk": {
-          "name": "trials_organization_id_organization_id_fk",
+        "trials_organization_id_organizations_id_fk": {
+          "name": "trials_organization_id_organizations_id_fk",
           "tableFrom": "trials",
-          "tableTo": "organization",
+          "tableTo": "organizations",
           "columnsFrom": [
             "organization_id"
           ],
@@ -1519,10 +1606,10 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "trials_created_by_user_id_fk": {
-          "name": "trials_created_by_user_id_fk",
+        "trials_created_by_users_id_fk": {
+          "name": "trials_created_by_users_id_fk",
           "tableFrom": "trials",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "created_by"
           ],
@@ -1532,10 +1619,10 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "trials_updated_by_user_id_fk": {
-          "name": "trials_updated_by_user_id_fk",
+        "trials_updated_by_users_id_fk": {
+          "name": "trials_updated_by_users_id_fk",
           "tableFrom": "trials",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "updated_by"
           ],
@@ -1545,10 +1632,10 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "trials_deleted_by_user_id_fk": {
-          "name": "trials_deleted_by_user_id_fk",
+        "trials_deleted_by_users_id_fk": {
+          "name": "trials_deleted_by_users_id_fk",
           "tableFrom": "trials",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "deleted_by"
           ],
@@ -1566,7 +1653,8 @@
           "nullsNotDistinct": false,
           "columns": [
             "case_id",
-            "trial_number"
+            "trial_number",
+            "deleted_at"
           ]
         }
       },

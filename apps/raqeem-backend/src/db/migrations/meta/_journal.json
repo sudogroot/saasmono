@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1758985048480,
-      "tag": "0000_happy_magik",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1762156169237,
-      "tag": "0001_thankful_power_pack",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1762261793471,
-      "tag": "0002_thin_mac_gargan",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1762428986398,
-      "tag": "0003_young_magma",
+      "when": 1762534282195,
+      "tag": "0000_lively_adam_warlock",
       "breakpoints": true
     }
   ]
