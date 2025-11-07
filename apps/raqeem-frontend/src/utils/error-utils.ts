@@ -17,14 +17,31 @@ export function getErrorMessage(error: unknown): string {
   if (typeof error === 'object') {
     const err = error as any
 
-    // Check for auth client error format (error.error.message)
-    if (err.error?.message) {
-      return err.error.message
+    // Log error for debugging (helps identify unhandled error structures)
+    console.error('Error object received:', err)
+
+    // Check for better-auth error format (top-level message from API response)
+    // The error response structure: { code: "INVALID_EMAIL_OR_PASSWORD", message: "Invalid email or password" }
+    if (err.message && typeof err.message === 'string' && !err.message.message) {
+      return err.message
     }
 
-    // Check for auth client error status text
-    if (err.error?.statusText) {
-      return err.error.statusText
+    // Check for better-auth error context format (error wrapped in context)
+    if (err.error) {
+      // Check for nested error.error.message
+      if (err.error.message && typeof err.error.message === 'string') {
+        return err.error.message
+      }
+
+      // Check for error.error.statusText
+      if (err.error.statusText) {
+        return err.error.statusText
+      }
+
+      // Check if err.error itself has the error data directly
+      if (typeof err.error === 'object' && err.error.code && err.error.message) {
+        return err.error.message
+      }
     }
 
     // Check for ORPC error format (nested message)
@@ -32,24 +49,19 @@ export function getErrorMessage(error: unknown): string {
       return err.message.message
     }
 
-    // Check for standard error message
-    if (err.message && typeof err.message === 'string') {
-      return err.message
-    }
-
     // Check for response data message (axios-like errors)
     if (err.response?.data?.message) {
       return err.response.data.message
     }
 
+    // Check for response body message (fetch-like errors with body parsed as JSON)
+    if (err.response?.body?.message) {
+      return err.response.body.message
+    }
+
     // Check for data message
     if (err.data?.message) {
       return err.data.message
-    }
-
-    // Check for error property
-    if (err.error?.message) {
-      return err.error.message
     }
 
     // Check for issues array (Zod-like errors)

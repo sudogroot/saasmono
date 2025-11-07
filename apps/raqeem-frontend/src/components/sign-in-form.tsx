@@ -6,13 +6,15 @@ import z from 'zod'
 import Loader from './loader'
 import { getErrorMessage } from '@/utils/error-utils'
 
-import { Lock, Mail, Plus } from 'lucide-react'
+import { Lock, Mail, Plus, AlertCircle, XCircle } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () => void }) {
   const router = useRouter()
   const { isPending } = authClient.useSession()
+  const [loginError, setLoginError] = useState<string | null>(null)
 
   const form = useForm({
     defaultValues: {
@@ -20,6 +22,9 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
       password: '',
     },
     onSubmit: async ({ value }) => {
+      // Clear previous error when submitting
+      setLoginError(null)
+
       await authClient.signIn.email(
         {
           email: value.email,
@@ -46,6 +51,8 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
           },
           onError: (error) => {
             const errorMessage = getErrorMessage(error)
+            setLoginError(errorMessage)
+            // Keep toast for backward compatibility
             toast.error(errorMessage)
           },
         }
@@ -80,6 +87,26 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
             </div>
           </div>
 
+          {/* Error Alert */}
+          {loginError && (
+            <div className="animate-in slide-in-from-top-2 fade-in duration-300 rounded-lg border border-red-200 bg-red-50 p-4">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-600 mt-0.5" />
+                <div className="flex-1">
+                  <h3 className="text-sm font-semibold text-red-800 mb-1">فشل تسجيل الدخول</h3>
+                  <p className="text-sm text-red-700">{loginError}</p>
+                </div>
+                <button
+                  onClick={() => setLoginError(null)}
+                  className="flex-shrink-0 text-red-400 hover:text-red-600 transition-colors"
+                  aria-label="إغلاق"
+                >
+                  <XCircle className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+          )}
+
           <form
             onSubmit={(e) => {
               e.preventDefault()
@@ -96,7 +123,9 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
                       البريد الإلكتروني
                     </Label>
                     <div className="relative">
-                      <Mail className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
+                      <Mail className={`absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform ${
+                        loginError ? 'text-red-400' : 'text-gray-400'
+                      }`} />
                       <Input
                         id={field.name}
                         name={field.name}
@@ -104,8 +133,16 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
                         placeholder="اكتب بريدك الإلكتروني"
                         value={field.state.value}
                         onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        className="focus:border-primary focus:ring-primary/20 h-12 rounded-lg border-gray-200 pl-10"
+                        onChange={(e) => {
+                          field.handleChange(e.target.value)
+                          // Clear error when user starts typing
+                          if (loginError) setLoginError(null)
+                        }}
+                        className={`h-12 rounded-lg pl-10 transition-colors ${
+                          loginError
+                            ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
+                            : 'border-gray-200 focus:border-primary focus:ring-primary/20'
+                        }`}
                       />
                     </div>
                     {field.state.meta.errors.map((error) => (
@@ -126,7 +163,9 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
                       كلمة المرور
                     </Label>
                     <div className="relative">
-                      <Lock className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
+                      <Lock className={`absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform ${
+                        loginError ? 'text-red-400' : 'text-gray-400'
+                      }`} />
                       <Input
                         id={field.name}
                         name={field.name}
@@ -134,8 +173,16 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
                         placeholder="اكتب كلمة المرور"
                         value={field.state.value}
                         onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        className="focus:border-primary focus:ring-primary/20 h-12 rounded-lg border-gray-200 pl-10"
+                        onChange={(e) => {
+                          field.handleChange(e.target.value)
+                          // Clear error when user starts typing
+                          if (loginError) setLoginError(null)
+                        }}
+                        className={`h-12 rounded-lg pl-10 transition-colors ${
+                          loginError
+                            ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
+                            : 'border-gray-200 focus:border-primary focus:ring-primary/20'
+                        }`}
                       />
                     </div>
                     {field.state.meta.errors.map((error) => (
