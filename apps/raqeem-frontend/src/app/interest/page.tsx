@@ -2,8 +2,9 @@
 
 import { Header } from '@/components/landing'
 import { Button, Card, CardContent, Heading, Text } from '@repo/ui'
-import { orpc } from '@/utils/orpc'
-import { CheckCircle, Loader2, Mail, Phone, User, Sparkles } from 'lucide-react'
+import { client } from '@/utils/orpc'
+import { getErrorMessage } from '@/utils/error-utils'
+import { AlertCircle, CheckCircle, Loader2, Mail, Phone, User, Sparkles, XCircle } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -16,21 +17,25 @@ export default function InterestPage() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setError(null) // Clear previous errors
 
     try {
-      const response = await orpc.interest.createInterestRequest.mutate(formData)
+      const response = await client.interest.createInterestRequest(formData)
 
       if (response.success) {
         setIsSuccess(true)
         toast.success(response.message)
       }
-    } catch (error) {
-      toast.error('حدث خطأ، يرجى المحاولة مرة أخرى')
-      console.error(error)
+    } catch (err) {
+      const errorMessage = getErrorMessage(err)
+      setError(errorMessage)
+      toast.error(errorMessage)
+      console.error(err)
     } finally {
       setIsSubmitting(false)
     }
@@ -89,6 +94,26 @@ export default function InterestPage() {
               </Text>
             </div>
 
+            {/* Error Alert */}
+            {error && (
+              <div className="animate-in slide-in-from-top-2 fade-in duration-300 rounded-lg border border-red-200 bg-red-50 p-4 mb-6">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-600 mt-0.5" />
+                  <div className="flex-1">
+                    <h3 className="text-sm font-semibold text-red-800 mb-1">خطأ في الإرسال</h3>
+                    <p className="text-sm text-red-700">{error}</p>
+                  </div>
+                  <button
+                    onClick={() => setError(null)}
+                    className="flex-shrink-0 text-red-400 hover:text-red-600 transition-colors"
+                    aria-label="إغلاق"
+                  >
+                    <XCircle className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Name Field */}
@@ -104,7 +129,10 @@ export default function InterestPage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                   placeholder="أدخل اسمك الكامل"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, name: e.target.value })
+                    if (error) setError(null)
+                  }}
                 />
               </div>
 
@@ -120,7 +148,10 @@ export default function InterestPage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                   placeholder="example@email.com"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, email: e.target.value })
+                    if (error) setError(null)
+                  }}
                 />
               </div>
 
@@ -137,7 +168,10 @@ export default function InterestPage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                   placeholder="+216 XX XXX XXX"
                   value={formData.phoneNumber}
-                  onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, phoneNumber: e.target.value })
+                    if (error) setError(null)
+                  }}
                 />
               </div>
 
