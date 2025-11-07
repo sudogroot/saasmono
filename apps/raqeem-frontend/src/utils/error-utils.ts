@@ -1,4 +1,47 @@
 /**
+ * Maps better-auth error codes to Arabic messages
+ */
+const betterAuthErrorCodes: Record<string, string> = {
+  // Authentication errors
+  'INVALID_EMAIL_OR_PASSWORD': 'البريد الإلكتروني أو كلمة المرور غير صحيحة',
+  'INVALID_PASSWORD': 'كلمة المرور غير صحيحة',
+  'INVALID_EMAIL': 'البريد الإلكتروني غير صحيح',
+  'USER_NOT_FOUND': 'المستخدم غير موجود',
+  'USER_ALREADY_EXISTS': 'المستخدم موجود بالفعل',
+
+  // Password errors
+  'PASSWORD_TOO_SHORT': 'كلمة المرور قصيرة جداً',
+  'PASSWORD_TOO_LONG': 'كلمة المرور طويلة جداً',
+  'USER_ALREADY_HAS_PASSWORD': 'المستخدم لديه كلمة مرور بالفعل',
+
+  // Session errors
+  'FAILED_TO_CREATE_SESSION': 'فشل في إنشاء الجلسة',
+  'FAILED_TO_GET_SESSION': 'فشل في الحصول على الجلسة',
+  'SESSION_EXPIRED': 'انتهت صلاحية الجلسة',
+
+  // User management errors
+  'FAILED_TO_CREATE_USER': 'فشل في إنشاء المستخدم',
+  'FAILED_TO_UPDATE_USER': 'فشل في تحديث المستخدم',
+  'USER_EMAIL_NOT_FOUND': 'البريد الإلكتروني للمستخدم غير موجود',
+  'EMAIL_NOT_VERIFIED': 'البريد الإلكتروني غير مؤكد',
+  'EMAIL_CAN_NOT_BE_UPDATED': 'لا يمكن تحديث البريد الإلكتروني',
+
+  // Account linking errors
+  'SOCIAL_ACCOUNT_ALREADY_LINKED': 'الحساب الاجتماعي مرتبط بالفعل',
+  'CREDENTIAL_ACCOUNT_NOT_FOUND': 'حساب بيانات الاعتماد غير موجود',
+  'ACCOUNT_NOT_FOUND': 'الحساب غير موجود',
+  'FAILED_TO_UNLINK_LAST_ACCOUNT': 'فشل في إلغاء ربط الحساب الأخير',
+
+  // Provider errors
+  'PROVIDER_NOT_FOUND': 'مزود الخدمة غير موجود',
+  'FAILED_TO_GET_USER_INFO': 'فشل في الحصول على معلومات المستخدم',
+
+  // Token errors
+  'INVALID_TOKEN': 'الرمز غير صالح',
+  'ID_TOKEN_NOT_SUPPORTED': 'رمز المعرف غير مدعوم',
+}
+
+/**
  * Translates common error messages from English to Arabic
  */
 function translateErrorMessage(message: string): string {
@@ -65,8 +108,18 @@ export function getErrorMessage(error: unknown): string {
 
     let extractedMessage: string | null = null
 
-    // Check for better-auth error format (top-level message from API response)
+    // Check for better-auth error code first (priority)
     // The error response structure: { code: "INVALID_EMAIL_OR_PASSWORD", message: "Invalid email or password" }
+    if (err.code && betterAuthErrorCodes[err.code]) {
+      return betterAuthErrorCodes[err.code]
+    }
+
+    // Also check for error.error.code (error wrapped in context)
+    if (err.error?.code && betterAuthErrorCodes[err.error.code]) {
+      return betterAuthErrorCodes[err.error.code]
+    }
+
+    // Check for better-auth error format (top-level message from API response)
     if (err.message && typeof err.message === 'string' && !err.message.message) {
       extractedMessage = err.message
     }
